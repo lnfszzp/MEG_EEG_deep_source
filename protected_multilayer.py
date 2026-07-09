@@ -52,6 +52,8 @@ def source_amplitude(source: np.ndarray, noise_samples: int = NOISE_SAMPLES) -> 
     source = np.asarray(source, dtype=float)
     if source.ndim == 1:
         return np.abs(source)
+    if noise_samples <= 0:
+        return np.sqrt(np.mean(source**2, axis=1))
     if source.shape[1] <= noise_samples:
         return np.linalg.norm(source, axis=1)
     baseline = source[:, :noise_samples]
@@ -365,6 +367,7 @@ def _select_deep_by_residual(
             gt = g[:, trial]
             gram = gt.T @ gt
             ridge = 1e-3 * np.trace(gram) / max(1, gram.shape[0])
+            ridge = max(float(ridge), 1e-12)
             coef = np.linalg.solve(gram + ridge * np.eye(gram.shape[0]), gt.T @ residual)
             rss = float(np.linalg.norm(residual - gt @ coef, "fro") ** 2)
             score = n_obs * np.log(rss / n_obs + np.finfo(float).eps) + complexity_weight * len(trial) * np.log(n_obs)
@@ -403,6 +406,63 @@ def shrink_surface_core(
         new_surface[keep] = True
     new_support[:n_surf] = new_surface
     return new_support
+
+
+def _soft_threshold(values: np.ndarray, threshold: np.ndarray | float) -> np.ndarray:
+    return np.sign(values) * np.maximum(np.abs(values) - threshold, 0.0)
+
+
+def _support_edges(support_indices: np.ndarray, vert_conn: np.ndarray, n_surf: int) -> list[tuple[int, int]]:
+    pos = {int(src): i for i, src in enumerate(support_indices)}
+    edges = []
+    for a, b in zip(*np.nonzero(np.triu(np.asarray(vert_conn != 0)[:n_surf, :n_surf], 1))):
+        if int(a) in pos and int(b) in pos:
+            edges.append((pos[int(a)], pos[int(b)]))
+    return edges
+
+
+def sisses_style_refit_system(
+    b: np.ndarray,
+    l: np.ndarray,
+    support: np.ndarray,
+    vert_conn: np.ndarray,
+    n_surf: int,
+    *,
+    prior: np.ndarray | None = None,
+    lambda_amp: float = 0.05,
+    lambda_edge: float = 0.05,
+    lambda_prior: float = 0.01,
+    max_iter: int = 50,
+    weight_iter: int = 5,
+) -> np.ndarray:
+    support = np.asarray(support, dtype=bool).ravel()
+    result = np.zeros((support.size, b.shape[1]), dtype=float)
+    idx = np.flatnonzero(support)
+    if idx.size == 0:
+        return result
+    has_prior = prior is not None
+    prior = np.zeros_like(result) if prior is None else np.asarray(prior, dtype=float)
+    x = prior[idx].copy() if has_prior else ridge_refit_system(b, l, support, ridge_fraction=1e-3)[idx]
+    prior_sub = prior[idx]
+    ls = l[:, idx]
+    lipschitz = float(np.linalg.norm(ls, 2) ** 2 + lambda_prior + 1e-12)
+    step = 1.0 / lipschitz
+    edges = _support_edges(idx, vert_conn, n_surf)
+    amp_weight = np.ones(idx.size)
+    for _ in range(weight_iter):
+        for _ in range(max_iter):
+            grad = ls.T @ (ls @ x - b) + lambda_prior * (x - prior_sub)
+            x = _soft_threshold(x - step * grad, step * lambda_amp * amp_weight[:, None])
+            for a, b_idx in edges:
+                diff = x[a] - x[b_idx]
+                shrunk = _soft_threshold(diff, step * lambda_edge)
+                delta = 0.5 * (diff - shrunk)
+                x[a] -= delta
+                x[b_idx] += delta
+        amp_weight = 1.0 / (np.sqrt(np.mean(x**2, axis=1)) + 1e-3)
+        amp_weight /= max(float(np.median(amp_weight)), 1e-12)
+    result[idx] = x
+    return result
 
 
 def _select_from_components(
@@ -773,6 +833,59 @@ def component_refit_select_v5_compact_deep_prior(
     return (fitted, compact_support, broad_candidate) if return_candidate else (fitted, compact_support)
 
 
+def component_refit_select_v6_sisses_refit(
+    eeg: dict,
+    meg: dict,
+    sisses: np.ndarray,
+    vert_conn: np.ndarray,
+    n_surf: int,
+    src_vertices: np.ndarray,
+    *,
+    eeg_only_source: np.ndarray | None = None,
+    meg_only_source: np.ndarray | None = None,
+    admm_iters: int = 50,
+    max_weight_itr: int = 5,
+    return_candidate: bool = False,
+) -> dict[str, tuple[np.ndarray, np.ndarray] | tuple[np.ndarray, np.ndarray, np.ndarray]]:
+    b, l = whitened_joint_system(eeg, meg)
+    v4_fit, candidate, broad_candidate = component_refit_select_v4_deep_rescue(
+        eeg,
+        meg,
+        sisses,
+        vert_conn,
+        n_surf,
+        src_vertices,
+        eeg_only_source=eeg_only_source,
+        meg_only_source=meg_only_source,
+        return_candidate=True,
+    )
+    variants = {
+        "weak": (0.03, 0.015),
+        "mid": (0.05, 0.05),
+        "strong": (0.08, 0.16),
+    }
+    out = {}
+    for name, (lambda_amp, lambda_edge) in variants.items():
+        fitted = sisses_style_refit_system(
+            b,
+            l,
+            candidate,
+            vert_conn,
+            n_surf,
+            prior=v4_fit,
+            lambda_amp=lambda_amp,
+            lambda_edge=lambda_edge,
+            lambda_prior=100.0,
+            max_iter=admm_iters,
+            weight_iter=max_weight_itr,
+        )
+        mask = threshold_mask(fitted, 0.05) & candidate
+        if not mask.any():
+            mask = candidate.copy()
+        out[name] = (fitted, mask, broad_candidate) if return_candidate else (fitted, mask)
+    return out
+
+
 def metric_row(scenario: str, method: str, source: np.ndarray, truth: dict, mask: np.ndarray) -> dict:
     true_source = np.asarray(truth["s_true"], dtype=float)
     metrics = external_full_head_metrics(
@@ -854,6 +967,16 @@ def run_scenario(scenario: str) -> list[dict]:
         eeg_only_source=sources["eeg_only"],
         meg_only_source=sources["meg_only"],
     )
+    component_refit_v6 = component_refit_select_v6_sisses_refit(
+        eeg,
+        meg,
+        sources["both"],
+        vert_conn,
+        n_surf,
+        np.asarray(truth["src_vertices"], dtype=float),
+        eeg_only_source=sources["eeg_only"],
+        meg_only_source=sources["meg_only"],
+    )
     weighted_mask = threshold_mask(weighted, rel=0.10)
 
     candidate = build_candidate_mask(sources["both"], sources["meg_only"], vert_conn, n_surf)
@@ -868,6 +991,8 @@ def run_scenario(scenario: str) -> list[dict]:
     save_npz(scenario_out / "sisses_component_refit_v3_localize.npz", component_refit_v3, component_refit_v3_mask)
     save_npz(scenario_out / "sisses_component_refit_v4_deep_rescue.npz", component_refit_v4, component_refit_v4_mask)
     save_npz(scenario_out / "sisses_component_refit_v5_compact_deep_prior.npz", component_refit_v5, component_refit_v5_mask)
+    for variant, (source, mask) in component_refit_v6.items():
+        save_npz(scenario_out / f"sisses_component_refit_v6_sisses_refit_{variant}.npz", source, mask)
     save_npz(scenario_out / "sisses_weighted_multilayer.npz", weighted, weighted_mask)
     save_npz(scenario_out / "sisses_meg_only.npz", sources["meg_only"], masks["meg_only"])
     save_npz(scenario_out / "sisses_eeg_only.npz", sources["eeg_only"], masks["eeg_only"])
@@ -884,6 +1009,10 @@ def run_scenario(scenario: str) -> list[dict]:
         metric_row(scenario, "SISSES_component_refit_v3_localize", component_refit_v3, truth, component_refit_v3_mask),
         metric_row(scenario, "SISSES_component_refit_v4_deep_rescue", component_refit_v4, truth, component_refit_v4_mask),
         metric_row(scenario, "SISSES_component_refit_v5_compact_deep_prior", component_refit_v5, truth, component_refit_v5_mask),
+        *[
+            metric_row(scenario, f"SISSES_component_refit_v6_sisses_refit_{variant}", source, truth, mask)
+            for variant, (source, mask) in component_refit_v6.items()
+        ],
         metric_row(scenario, "SISSES_weighted_multilayer", weighted * weighted_mask[:, None], truth, weighted_mask),
         metric_row(scenario, "SISSES_protected_multilayer", protected, truth, candidate["final"]),
         metric_row(scenario, "SISSES_MEG_only", sources["meg_only"] * masks["meg_only"][:, None], truth, masks["meg_only"]),

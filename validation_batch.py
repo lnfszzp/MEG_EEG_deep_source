@@ -26,6 +26,7 @@ from protected_multilayer import (
     component_refit_select_v3,
     component_refit_select_v4_deep_rescue,
     component_refit_select_v5_compact_deep_prior,
+    component_refit_select_v6_sisses_refit,
     connected_components,
     evidence_aware_compact_mask,
     load_mat,
@@ -287,6 +288,17 @@ def summarize() -> None:
             return_candidate=True,
         )
         methods["ComponentRefit_v5"] = (component_v5, component_v5_mask)
+        component_v6 = component_refit_select_v6_sisses_refit(
+            sio.loadmat(job_dir / "sub_EEG.mat"),
+            sio.loadmat(job_dir / "sub_MEG.mat"),
+            sisses,
+            np.asarray(eeg["VertConn"], dtype=float),
+            n_surf,
+            np.asarray(truth["src_vertices"], dtype=float),
+            return_candidate=True,
+        )
+        for variant, (source, mask, _candidate) in component_v6.items():
+            methods[f"ComponentRefit_v6_{variant}"] = (source, mask)
         for method, (source, mask) in methods.items():
             metrics = external_full_head_metrics(
                 source * mask[:, None],
@@ -305,9 +317,9 @@ def summarize() -> None:
                     "dle_mm": metrics["dle_mm"],
                 }
             )
-            candidate = component_v5_candidate if method == "ComponentRefit_v5" else component_v4_candidate if method == "ComponentRefit_v4" else component_v3_candidate if method == "ComponentRefit_v3" else mask
+            candidate = component_v5_candidate if method == "ComponentRefit_v5" else component_v4_candidate if method == "ComponentRefit_v4" else component_v3_candidate if method == "ComponentRefit_v3" else component_v6[method.removeprefix("ComponentRefit_v6_")][2] if method.startswith("ComponentRefit_v6_") else mask
             group_rows.extend(_group_report_rows(job_dir.name, method, source * mask[:, None], mask, candidate, truth, np.asarray(eeg["VertConn"], dtype=float)))
-        for method, source in (("ComponentRefit_v4", component_v4), ("ComponentRefit_v5", component_v5)):
+        for method, source in (("ComponentRefit_v4", component_v4), ("ComponentRefit_v5", component_v5), ("ComponentRefit_v6_mid", component_v6["mid"][0])):
             for rel in (0.05, 0.10, 0.20, 0.30, 0.40, 0.50, 0.70, 0.90):
                 mask = threshold_mask(source, rel)
                 metrics = external_full_head_metrics(
@@ -355,7 +367,7 @@ def plot_waveforms(limit: int | None = None) -> None:
         eeg = load_mat(job_dir / "sub_EEG.mat")
         compact_mask = evidence_aware_compact_mask(sisses, np.asarray(eeg["VertConn"], dtype=float), int(np.asarray(truth["n_surf"]).ravel()[0]))
         compact = sisses * compact_mask[:, None]
-        component, _ = component_refit_select_v5_compact_deep_prior(load_mat(job_dir / "sub_EEG.mat"), load_mat(job_dir / "sub_MEG.mat"), sisses, np.asarray(eeg["VertConn"], dtype=float), int(np.asarray(truth["n_surf"]).ravel()[0]), np.asarray(truth["src_vertices"], dtype=float))
+        component = component_refit_select_v6_sisses_refit(load_mat(job_dir / "sub_EEG.mat"), load_mat(job_dir / "sub_MEG.mat"), sisses, np.asarray(eeg["VertConn"], dtype=float), int(np.asarray(truth["n_surf"]).ravel()[0]), np.asarray(truth["src_vertices"], dtype=float))["mid"][0]
         times = np.asarray(truth["times"], dtype=float).ravel()
         groups = _true_groups(truth)
         fig, axes = plt.subplots(len(groups), 1, figsize=(8.5, 2.3 * len(groups)), squeeze=False)
@@ -365,7 +377,7 @@ def plot_waveforms(limit: int | None = None) -> None:
             sis_idx, sis_wave = best_estimated_waveform(sisses, group)
             comp_idx, comp_wave = best_estimated_waveform(compact, group)
             refit_idx, refit_wave = best_estimated_waveform(component, group)
-            for label, wave, color in (("truth", true_wave, "black"), (f"SISSES {sis_idx + 1}", sis_wave, "#0072b2"), (f"Compact {comp_idx + 1}", comp_wave, "#d55e00"), (f"Refit v5 {refit_idx + 1}", refit_wave, "#009e73")):
+            for label, wave, color in (("truth", true_wave, "black"), (f"SISSES {sis_idx + 1}", sis_wave, "#0072b2"), (f"Compact {comp_idx + 1}", comp_wave, "#d55e00"), (f"Refit v6 {refit_idx + 1}", refit_wave, "#009e73")):
                 scale = max(float(np.max(np.abs(wave), initial=0.0)), np.finfo(float).eps)
                 ax.plot(times, wave / scale, label=label, color=color, linewidth=1.5)
             ax.axvline(times[NOISE_SAMPLES], color="0.75", linewidth=1)

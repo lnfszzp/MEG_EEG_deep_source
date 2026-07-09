@@ -12,6 +12,7 @@ from protected_multilayer import (
     component_refit_select_v3,
     component_refit_select_v4_deep_rescue,
     component_refit_select_v5_compact_deep_prior,
+    component_refit_select_v6_sisses_refit,
     component_refit_select,
     evidence_aware_compact_mask,
     graph_hop_mask,
@@ -20,6 +21,7 @@ from protected_multilayer import (
     residual_deep_timecourse,
     ridge_refit,
     ridge_refit_system,
+    sisses_style_refit_system,
     shrink_surface_core,
     source_amplitude,
 )
@@ -289,6 +291,57 @@ class ProtectedMultilayerTests(unittest.TestCase):
         )
         self.assertTrue(support[2])
         self.assertGreater(source_amplitude(fitted)[2], 0.2)
+
+    def test_sisses_style_refit_system_suppresses_weak_tail(self):
+        t = np.linspace(0, 1, 40)
+        wave = np.sin(2 * np.pi * t)
+        leadfield = np.eye(3)
+        truth = np.zeros((3, t.size))
+        truth[0] = wave
+        data = leadfield @ truth
+        support = np.array([True, True, False])
+        prior = np.zeros_like(truth)
+        prior[0] = wave
+        prior[1] = 0.2 * wave
+        vert_conn = np.eye(3)
+        vert_conn[0, 1] = vert_conn[1, 0] = 1
+        fitted = sisses_style_refit_system(
+            data,
+            leadfield,
+            support,
+            vert_conn,
+            n_surf=2,
+            prior=prior,
+            lambda_amp=0.05,
+            lambda_edge=0.05,
+            lambda_prior=0.01,
+            max_iter=40,
+            weight_iter=2,
+        )
+        amp = source_amplitude(fitted, noise_samples=0)
+        self.assertGreater(amp[0], 0.5)
+        self.assertLess(amp[1], 0.1)
+
+    def test_component_refit_v6_returns_three_sparse_variants(self):
+        t = np.linspace(0, 1, 30)
+        wave = np.sin(2 * np.pi * t)
+        gain = np.eye(3)
+        source = np.zeros((3, t.size))
+        source[0] = wave
+        data = gain @ source
+        vertices = np.zeros((3, 3))
+        variants = component_refit_select_v6_sisses_refit(
+            {"F": data, "Gain": gain},
+            {"F": data, "Gain": gain},
+            source,
+            np.eye(3),
+            2,
+            vertices,
+            admm_iters=10,
+            max_weight_itr=1,
+        )
+        self.assertEqual(set(variants), {"weak", "mid", "strong"})
+        self.assertTrue(all(variants[name][1][0] for name in variants))
 
 
 if __name__ == "__main__":
