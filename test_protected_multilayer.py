@@ -11,13 +11,16 @@ from protected_multilayer import (
     build_candidate_mask,
     component_refit_select_v3,
     component_refit_select_v4_deep_rescue,
+    component_refit_select_v5_compact_deep_prior,
     component_refit_select,
     evidence_aware_compact_mask,
     graph_hop_mask,
     numpy_knn_expand_deep,
     residual_deep_scores,
+    residual_deep_timecourse,
     ridge_refit,
     ridge_refit_system,
+    shrink_surface_core,
     source_amplitude,
 )
 
@@ -175,6 +178,23 @@ class ProtectedMultilayerTests(unittest.TestCase):
         scores = residual_deep_scores(residual, leadfield, n_surf=2)
         self.assertGreater(scores[0], scores[1])
 
+    def test_residual_deep_timecourse_recovers_projection(self):
+        wave = np.array([1.0, -2.0, 3.0])
+        leadfield = np.array([[0.0, 2.0], [0.0, 0.0]])
+        residual = leadfield[:, [1]] @ wave[None, :]
+        estimated = residual_deep_timecourse(residual, leadfield, n_surf=1, deep_id=0)
+        self.assertTrue(np.allclose(estimated, wave))
+
+    def test_shrink_surface_core_keeps_peak_limited_core(self):
+        fitted = np.zeros((6, 220))
+        fitted[:, 200:] = np.array([[1.0], [0.8], [0.6], [0.2], [0.1], [0.05]])
+        support = np.ones(6, dtype=bool)
+        vert_conn = np.eye(6)
+        for a, b in [(0, 1), (1, 2), (2, 3), (3, 4), (4, 5)]:
+            vert_conn[a, b] = vert_conn[b, a] = 1
+        shrunk = shrink_surface_core(support, fitted, vert_conn, n_surf=6, core_rel=0.5, min_keep=2, max_keep=3)
+        self.assertEqual(np.flatnonzero(shrunk).tolist(), [0, 1, 2])
+
     def test_numpy_knn_expand_deep_adds_nearby_deep_points(self):
         vertices = np.array(
             [
@@ -243,6 +263,32 @@ class ProtectedMultilayerTests(unittest.TestCase):
         )
         self.assertTrue(support[0])
         self.assertFalse(support[2])
+
+    def test_component_refit_v5_uses_residual_prior_for_rescued_deep(self):
+        t = np.linspace(0, 1, 30)
+        surface_wave = np.sin(2 * np.pi * t)
+        deep_wave = np.cos(2 * np.pi * t)
+        gain = np.array([[1.0, 0.0, 0.3], [0.0, 1.0, 1.0], [0.1, 0.0, 0.5]])
+        truth = np.zeros((3, t.size))
+        truth[0] = surface_wave
+        truth[2] = deep_wave
+        data = gain @ truth
+        sisses = np.zeros_like(truth)
+        sisses[0] = surface_wave
+        vertices = np.array([[0, 0, 0], [0.001, 0, 0], [0, 0, 0]], dtype=float)
+        fitted, support = component_refit_select_v5_compact_deep_prior(
+            {"F": data, "Gain": gain},
+            {"F": data, "Gain": gain},
+            sisses,
+            np.eye(3),
+            2,
+            vertices,
+            deep_rescue_top=1,
+            deep_k=1,
+            max_deep_points=1,
+        )
+        self.assertTrue(support[2])
+        self.assertGreater(source_amplitude(fitted)[2], 0.2)
 
 
 if __name__ == "__main__":

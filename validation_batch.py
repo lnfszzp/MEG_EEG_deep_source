@@ -25,6 +25,8 @@ from protected_multilayer import (
     component_refit_select,
     component_refit_select_v3,
     component_refit_select_v4_deep_rescue,
+    component_refit_select_v5_compact_deep_prior,
+    connected_components,
     evidence_aware_compact_mask,
     load_mat,
     load_source,
@@ -81,12 +83,14 @@ def _true_groups(truth: dict) -> list[np.ndarray]:
     return groups
 
 
-def _group_report_rows(case_id: str, method: str, source: np.ndarray, mask: np.ndarray, candidate: np.ndarray, truth: dict) -> list[dict]:
+def _group_report_rows(case_id: str, method: str, source: np.ndarray, mask: np.ndarray, candidate: np.ndarray, truth: dict, vert_conn: np.ndarray) -> list[dict]:
     positions = np.asarray(truth["src_vertices"], dtype=float) * 1000.0
     n_surf = int(np.asarray(truth["n_surf"]).ravel()[0])
     support = np.flatnonzero(mask)
     candidates = np.flatnonzero(candidate)
     amp = source_amplitude(source)
+    clusters = connected_components(mask[:n_surf], vert_conn[:n_surf, :n_surf])
+    clusters += [np.array([idx], dtype=int) for idx in np.flatnonzero(mask[n_surf:]) + n_surf]
     rows = []
     for group_id, group in enumerate(_true_groups(truth), start=1):
         group = np.asarray(group, dtype=int).ravel()
@@ -101,6 +105,7 @@ def _group_report_rows(case_id: str, method: str, source: np.ndarray, mask: np.n
 
         nearest_support = nearest(support)
         peak_dist = float("nan")
+        cluster_peak_dist = float("nan")
         centroid_dist = float("nan")
         if support.size:
             peak = int(support[np.argmax(amp[support])])
@@ -109,6 +114,10 @@ def _group_report_rows(case_id: str, method: str, source: np.ndarray, mask: np.n
             if float(weights.sum()) > 0:
                 centroid = np.average(positions[support], axis=0, weights=weights)
                 centroid_dist = float(np.linalg.norm(centroid[None, :] - true_xyz, axis=1).min())
+        if clusters:
+            nearest_cluster = min(clusters, key=nearest)
+            cluster_peak = int(nearest_cluster[np.argmax(amp[nearest_cluster])])
+            cluster_peak_dist = nearest(np.array([cluster_peak], dtype=int))
         rows.append(
             {
                 "scenario": case_id.rsplit("_", 1)[0],
@@ -117,6 +126,8 @@ def _group_report_rows(case_id: str, method: str, source: np.ndarray, mask: np.n
                 "group_type": group_type,
                 "method": method,
                 "nearest_support_dist_mm": nearest_support,
+                "global_peak_dist_mm": peak_dist,
+                "cluster_peak_dist_mm": cluster_peak_dist,
                 "peak_dist_mm": peak_dist,
                 "centroid_dist_mm": centroid_dist,
                 "support_hit_true": int(np.isfinite(nearest_support) and nearest_support <= 10.0),
@@ -225,6 +236,7 @@ def generate() -> None:
 def summarize() -> None:
     rows = []
     group_rows = []
+    threshold_rows = []
     rng = np.random.default_rng(7)
     for job_dir in sorted(VAL_DATA.iterdir()):
         if not job_dir.is_dir():
@@ -265,6 +277,16 @@ def summarize() -> None:
             return_candidate=True,
         )
         methods["ComponentRefit_v4"] = (component_v4, component_v4_mask)
+        component_v5, component_v5_mask, component_v5_candidate = component_refit_select_v5_compact_deep_prior(
+            sio.loadmat(job_dir / "sub_EEG.mat"),
+            sio.loadmat(job_dir / "sub_MEG.mat"),
+            sisses,
+            np.asarray(eeg["VertConn"], dtype=float),
+            n_surf,
+            np.asarray(truth["src_vertices"], dtype=float),
+            return_candidate=True,
+        )
+        methods["ComponentRefit_v5"] = (component_v5, component_v5_mask)
         for method, (source, mask) in methods.items():
             metrics = external_full_head_metrics(
                 source * mask[:, None],
@@ -283,8 +305,32 @@ def summarize() -> None:
                     "dle_mm": metrics["dle_mm"],
                 }
             )
-            candidate = component_v4_candidate if method == "ComponentRefit_v4" else component_v3_candidate if method == "ComponentRefit_v3" else mask
-            group_rows.extend(_group_report_rows(job_dir.name, method, source * mask[:, None], mask, candidate, truth))
+            candidate = component_v5_candidate if method == "ComponentRefit_v5" else component_v4_candidate if method == "ComponentRefit_v4" else component_v3_candidate if method == "ComponentRefit_v3" else mask
+            group_rows.extend(_group_report_rows(job_dir.name, method, source * mask[:, None], mask, candidate, truth, np.asarray(eeg["VertConn"], dtype=float)))
+        for method, source in (("ComponentRefit_v4", component_v4), ("ComponentRefit_v5", component_v5)):
+            for rel in (0.05, 0.10, 0.20, 0.30, 0.40, 0.50, 0.70, 0.90):
+                mask = threshold_mask(source, rel)
+                metrics = external_full_head_metrics(
+                    source * mask[:, None],
+                    np.asarray(truth["s_true"], dtype=float),
+                    np.asarray(truth["src_vertices"], dtype=float),
+                    true_groups=_true_groups(truth),
+                )
+                report = _group_report_rows(job_dir.name, method, source * mask[:, None], mask, mask, truth, np.asarray(eeg["VertConn"], dtype=float))
+                threshold_rows.append(
+                    {
+                        "job": job_dir.name,
+                        "method": method,
+                        "rel": rel,
+                        "active_count": int(mask.sum()),
+                        "auc": metrics["auc"],
+                        "rmse": metrics["rmse"],
+                        "sd_mm": metrics["sd_mm"],
+                        "dle_mm": metrics["dle_mm"],
+                        "nearest_support_dist_mm": float(np.nanmean([row["nearest_support_dist_mm"] for row in report])),
+                        "support_hit_true": float(np.mean([row["support_hit_true"] for row in report])),
+                    }
+                )
     with (VAL_ROOT / "metrics.csv").open("w", newline="", encoding="utf-8-sig") as handle:
         writer = csv.DictWriter(handle, fieldnames=list(rows[0]))
         writer.writeheader()
@@ -293,6 +339,10 @@ def summarize() -> None:
         writer = csv.DictWriter(handle, fieldnames=list(group_rows[0]))
         writer.writeheader()
         writer.writerows(group_rows)
+    with (VAL_ROOT / "threshold_sweep.csv").open("w", newline="", encoding="utf-8-sig") as handle:
+        writer = csv.DictWriter(handle, fieldnames=list(threshold_rows[0]))
+        writer.writeheader()
+        writer.writerows(threshold_rows)
 
 
 def plot_waveforms(limit: int | None = None) -> None:
@@ -305,7 +355,7 @@ def plot_waveforms(limit: int | None = None) -> None:
         eeg = load_mat(job_dir / "sub_EEG.mat")
         compact_mask = evidence_aware_compact_mask(sisses, np.asarray(eeg["VertConn"], dtype=float), int(np.asarray(truth["n_surf"]).ravel()[0]))
         compact = sisses * compact_mask[:, None]
-        component, _ = component_refit_select_v4_deep_rescue(load_mat(job_dir / "sub_EEG.mat"), load_mat(job_dir / "sub_MEG.mat"), sisses, np.asarray(eeg["VertConn"], dtype=float), int(np.asarray(truth["n_surf"]).ravel()[0]), np.asarray(truth["src_vertices"], dtype=float))
+        component, _ = component_refit_select_v5_compact_deep_prior(load_mat(job_dir / "sub_EEG.mat"), load_mat(job_dir / "sub_MEG.mat"), sisses, np.asarray(eeg["VertConn"], dtype=float), int(np.asarray(truth["n_surf"]).ravel()[0]), np.asarray(truth["src_vertices"], dtype=float))
         times = np.asarray(truth["times"], dtype=float).ravel()
         groups = _true_groups(truth)
         fig, axes = plt.subplots(len(groups), 1, figsize=(8.5, 2.3 * len(groups)), squeeze=False)
@@ -315,7 +365,7 @@ def plot_waveforms(limit: int | None = None) -> None:
             sis_idx, sis_wave = best_estimated_waveform(sisses, group)
             comp_idx, comp_wave = best_estimated_waveform(compact, group)
             refit_idx, refit_wave = best_estimated_waveform(component, group)
-            for label, wave, color in (("truth", true_wave, "black"), (f"SISSES {sis_idx + 1}", sis_wave, "#0072b2"), (f"Compact {comp_idx + 1}", comp_wave, "#d55e00"), (f"Refit v4 {refit_idx + 1}", refit_wave, "#009e73")):
+            for label, wave, color in (("truth", true_wave, "black"), (f"SISSES {sis_idx + 1}", sis_wave, "#0072b2"), (f"Compact {comp_idx + 1}", comp_wave, "#d55e00"), (f"Refit v5 {refit_idx + 1}", refit_wave, "#009e73")):
                 scale = max(float(np.max(np.abs(wave), initial=0.0)), np.finfo(float).eps)
                 ax.plot(times, wave / scale, label=label, color=color, linewidth=1.5)
             ax.axvline(times[NOISE_SAMPLES], color="0.75", linewidth=1)

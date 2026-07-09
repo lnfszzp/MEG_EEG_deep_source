@@ -309,6 +309,18 @@ def residual_deep_scores(
     return numerator / denominator
 
 
+def residual_deep_timecourse(
+    residual: np.ndarray,
+    leadfield: np.ndarray,
+    n_surf: int,
+    deep_id: int,
+    *,
+    eps: float = 1e-12,
+) -> np.ndarray:
+    lj = np.asarray(leadfield, dtype=float)[:, n_surf + int(deep_id)]
+    return ((lj[:, None].T @ np.asarray(residual, dtype=float)) / (float(lj @ lj) + eps)).ravel()
+
+
 def numpy_knn_expand_deep(
     seed_deep_ids: np.ndarray,
     src_vertices: np.ndarray,
@@ -363,6 +375,34 @@ def _select_deep_by_residual(
         current_score, best_col = best
         selected.append(best_col)
     return deep_ids[selected]
+
+
+def shrink_surface_core(
+    support: np.ndarray,
+    fitted: np.ndarray,
+    vert_conn: np.ndarray,
+    n_surf: int,
+    *,
+    core_rel: float = 0.35,
+    min_keep: int = 16,
+    max_keep: int = 36,
+) -> np.ndarray:
+    amp = source_amplitude(fitted)
+    new_support = np.asarray(support, dtype=bool).copy()
+    new_surface = np.zeros(n_surf, dtype=bool)
+    for comp in connected_components(new_support[:n_surf], vert_conn[:n_surf, :n_surf]):
+        comp_amp = amp[comp]
+        peak = float(comp_amp.max(initial=0.0))
+        if peak <= 0:
+            continue
+        keep = comp[comp_amp >= core_rel * peak]
+        if keep.size < min_keep:
+            keep = comp[np.argsort(comp_amp)[::-1][: min(min_keep, comp.size)]]
+        if keep.size > max_keep:
+            keep = keep[np.argsort(amp[keep])[::-1][:max_keep]]
+        new_surface[keep] = True
+    new_support[:n_surf] = new_surface
+    return new_support
 
 
 def _select_from_components(
@@ -646,6 +686,93 @@ def component_refit_select_v4_deep_rescue(
     return (fitted, candidate, broad_candidate) if return_candidate else (fitted, candidate)
 
 
+def component_refit_select_v5_compact_deep_prior(
+    eeg: dict,
+    meg: dict,
+    sisses: np.ndarray,
+    vert_conn: np.ndarray,
+    n_surf: int,
+    src_vertices: np.ndarray,
+    *,
+    eeg_only_source: np.ndarray | None = None,
+    meg_only_source: np.ndarray | None = None,
+    loose_rel: float = 0.05,
+    complexity_weight: float = 1.0,
+    max_surface_components: int = 6,
+    surface_hops: int = 8,
+    deep_rescue_top: int = 8,
+    deep_k: int = 8,
+    max_deep_points: int = 1,
+    final_ridge_fraction: float = 0.3,
+    core_rel: float = 0.03,
+    min_keep: int = 24,
+    max_keep: int = 160,
+    deep_prior_weight: float = 0.05,
+    return_candidate: bool = False,
+) -> tuple[np.ndarray, np.ndarray] | tuple[np.ndarray, np.ndarray, np.ndarray]:
+    b, l = whitened_joint_system(eeg, meg)
+    base_fit, base_support, base_candidate = component_refit_select_v3(
+        eeg,
+        meg,
+        sisses,
+        vert_conn,
+        n_surf,
+        src_vertices,
+        loose_rel=loose_rel,
+        complexity_weight=complexity_weight,
+        max_components=max_surface_components,
+        surface_hops=surface_hops,
+        deep_k=deep_k,
+        final_ridge_fraction=final_ridge_fraction,
+        return_candidate=True,
+    )
+    residual = b - l @ base_fit
+    scores = residual_deep_scores(residual, l, n_surf)
+    seed_deep = set(np.flatnonzero(threshold_mask(sisses, loose_rel)[n_surf:]).astype(int).tolist())
+    for extra in (eeg_only_source, meg_only_source):
+        if extra is not None:
+            deep_amp = source_amplitude(extra)[n_surf:]
+            seed_deep.update(int(i) for i in np.argsort(deep_amp)[::-1][:deep_rescue_top])
+    if scores.size:
+        seed_deep.update(int(i) for i in np.argsort(scores)[::-1][:deep_rescue_top])
+    rescued = numpy_knn_expand_deep(np.array(sorted(seed_deep), dtype=int), src_vertices, n_surf, deep_k=deep_k)
+    if rescued.size > max_deep_points:
+        rescued = rescued[np.argsort(scores[rescued])[::-1][:max_deep_points]]
+    rescued = _select_deep_by_residual(
+        residual,
+        l,
+        n_surf,
+        rescued,
+        complexity_weight=complexity_weight,
+        max_points=max_deep_points,
+    )
+
+    broad_support = base_support.copy()
+    broad_support[n_surf + rescued] = True
+    prior = sisses * broad_support[:, None]
+    for deep_id in rescued:
+        idx = n_surf + int(deep_id)
+        prior[idx] = (1.0 - deep_prior_weight) * prior[idx] + deep_prior_weight * residual_deep_timecourse(residual, l, n_surf, int(deep_id))
+    broad_fit = ridge_refit_system(b, l, broad_support, ridge_fraction=final_ridge_fraction, prior=prior)
+    compact_support = shrink_surface_core(
+        broad_support,
+        broad_fit,
+        vert_conn,
+        n_surf,
+        core_rel=core_rel,
+        min_keep=min_keep,
+        max_keep=max_keep,
+    )
+    compact_prior = sisses * compact_support[:, None]
+    for deep_id in rescued:
+        if compact_support[n_surf + int(deep_id)]:
+            idx = n_surf + int(deep_id)
+            compact_prior[idx] = (1.0 - deep_prior_weight) * compact_prior[idx] + deep_prior_weight * residual_deep_timecourse(residual, l, n_surf, int(deep_id))
+    fitted = ridge_refit_system(b, l, compact_support, ridge_fraction=final_ridge_fraction, prior=compact_prior)
+    broad_candidate = base_candidate | broad_support
+    return (fitted, compact_support, broad_candidate) if return_candidate else (fitted, compact_support)
+
+
 def metric_row(scenario: str, method: str, source: np.ndarray, truth: dict, mask: np.ndarray) -> dict:
     true_source = np.asarray(truth["s_true"], dtype=float)
     metrics = external_full_head_metrics(
@@ -717,6 +844,16 @@ def run_scenario(scenario: str) -> list[dict]:
         eeg_only_source=sources["eeg_only"],
         meg_only_source=sources["meg_only"],
     )
+    component_refit_v5, component_refit_v5_mask = component_refit_select_v5_compact_deep_prior(
+        eeg,
+        meg,
+        sources["both"],
+        vert_conn,
+        n_surf,
+        np.asarray(truth["src_vertices"], dtype=float),
+        eeg_only_source=sources["eeg_only"],
+        meg_only_source=sources["meg_only"],
+    )
     weighted_mask = threshold_mask(weighted, rel=0.10)
 
     candidate = build_candidate_mask(sources["both"], sources["meg_only"], vert_conn, n_surf)
@@ -730,6 +867,7 @@ def run_scenario(scenario: str) -> list[dict]:
     save_npz(scenario_out / "sisses_component_refit_v2.npz", component_refit, component_refit_mask)
     save_npz(scenario_out / "sisses_component_refit_v3_localize.npz", component_refit_v3, component_refit_v3_mask)
     save_npz(scenario_out / "sisses_component_refit_v4_deep_rescue.npz", component_refit_v4, component_refit_v4_mask)
+    save_npz(scenario_out / "sisses_component_refit_v5_compact_deep_prior.npz", component_refit_v5, component_refit_v5_mask)
     save_npz(scenario_out / "sisses_weighted_multilayer.npz", weighted, weighted_mask)
     save_npz(scenario_out / "sisses_meg_only.npz", sources["meg_only"], masks["meg_only"])
     save_npz(scenario_out / "sisses_eeg_only.npz", sources["eeg_only"], masks["eeg_only"])
@@ -745,6 +883,7 @@ def run_scenario(scenario: str) -> list[dict]:
         metric_row(scenario, "SISSES_component_refit_v2", component_refit, truth, component_refit_mask),
         metric_row(scenario, "SISSES_component_refit_v3_localize", component_refit_v3, truth, component_refit_v3_mask),
         metric_row(scenario, "SISSES_component_refit_v4_deep_rescue", component_refit_v4, truth, component_refit_v4_mask),
+        metric_row(scenario, "SISSES_component_refit_v5_compact_deep_prior", component_refit_v5, truth, component_refit_v5_mask),
         metric_row(scenario, "SISSES_weighted_multilayer", weighted * weighted_mask[:, None], truth, weighted_mask),
         metric_row(scenario, "SISSES_protected_multilayer", protected, truth, candidate["final"]),
         metric_row(scenario, "SISSES_MEG_only", sources["meg_only"] * masks["meg_only"][:, None], truth, masks["meg_only"]),
