@@ -1,0 +1,765 @@
+from __future__ import annotations
+
+import csv
+from collections import deque
+from pathlib import Path
+import sys
+
+import h5py
+import numpy as np
+import scipy.io as sio
+
+ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
+from algorithms.external_metrics import external_full_head_metrics
+from pipelines.sisses_direct_utils import true_source_groups
+from pipelines.run_whole_brain_fusion import whitening_matrix
+
+SCENARIOS = ("deep_only", "surface_only", "deep_plus_surface", "deep_plus_two_surface")
+MODES = ("both", "meg_only", "eeg_only")
+DATA_ROOT = ROOT / "generated"
+OUT_ROOT = Path(__file__).resolve().parent / "results"
+SISSES_RUN_ROOT = OUT_ROOT / "sisses_runs"
+WEIGHTED_ROOT = OUT_ROOT / "weighted_sisses"
+PROTECTED_ROOT = OUT_ROOT / "protected"
+NOISE_SAMPLES = 200
+
+
+def load_mat(path: Path) -> dict:
+    try:
+        return {key: value for key, value in sio.loadmat(path).items() if not key.startswith("__")}
+    except NotImplementedError:
+        result = {}
+        with h5py.File(path, "r") as handle:
+            for key in handle.keys():
+                if isinstance(handle[key], h5py.Dataset):
+                    result[key] = np.array(handle[key])
+        return result
+
+
+def load_source(path: Path, n_sources: int) -> np.ndarray:
+    source = np.asarray(load_mat(path)["s_wen"], dtype=float)
+    if source.shape[0] != n_sources and source.shape[1] == n_sources:
+        source = source.T
+    if source.shape[0] != n_sources:
+        raise ValueError(f"{path} does not match source count {n_sources}")
+    return source
+
+
+def source_amplitude(source: np.ndarray, noise_samples: int = NOISE_SAMPLES) -> np.ndarray:
+    source = np.asarray(source, dtype=float)
+    if source.ndim == 1:
+        return np.abs(source)
+    if source.shape[1] <= noise_samples:
+        return np.linalg.norm(source, axis=1)
+    baseline = source[:, :noise_samples]
+    active = source[:, noise_samples:]
+    baseline_power = np.mean(baseline**2, axis=1)
+    active_power = np.mean(active**2, axis=1)
+    return np.sqrt(np.maximum(active_power - baseline_power, 0.0))
+
+
+def threshold_mask(source: np.ndarray, rel: float = 0.10) -> np.ndarray:
+    amp = source_amplitude(source)
+    peak = float(amp.max(initial=0.0))
+    return amp >= rel * peak if peak > 0 else np.zeros(amp.size, dtype=bool)
+
+
+def adaptive_sisses_threshold(source: np.ndarray) -> float:
+    active_at_default = int(threshold_mask(source, 0.10).sum())
+    if active_at_default > 100:
+        return 0.115
+    if active_at_default > 40:
+        return 0.105
+    return 0.110
+
+
+def evidence_aware_compact_mask(source: np.ndarray, vert_conn: np.ndarray, n_surf: int) -> np.ndarray:
+    amp = source_amplitude(source)
+    peak = float(amp.max(initial=0.0))
+    if peak <= 0:
+        return np.zeros(amp.size, dtype=bool)
+    default = threshold_mask(source, 0.10)
+    has_surface = bool(default[:n_surf].any())
+    has_deep = bool(default[n_surf:].any())
+    if not (has_surface and has_deep):
+        return threshold_mask(source, adaptive_sisses_threshold(source))
+
+    # ponytail: fixed mixed-layer compacting rule; tune only if new simulations break it.
+    mask = np.zeros(amp.size, dtype=bool)
+    surface_raw = amp[:n_surf] >= 0.09 * peak
+    components = connected_components(surface_raw, vert_conn[:n_surf, :n_surf])
+    components.sort(key=lambda comp: float(amp[comp].sum()), reverse=True)
+    keep_components = 2 if int(default[:n_surf].sum()) > 80 else 1
+    for component in components[:keep_components]:
+        mask[component] = True
+    if n_surf < amp.size:
+        deep_amp = amp[n_surf:]
+        deep_peak = float(deep_amp.max(initial=0.0))
+        if deep_peak > 0:
+            deep_candidates = n_surf + np.flatnonzero(deep_amp >= 0.15 * deep_peak)
+            if deep_candidates.size:
+                order = np.argsort(amp[deep_candidates])[::-1]
+                mask[deep_candidates[order[:4]]] = True
+    return mask if mask.any() else default
+
+
+def connected_components(mask: np.ndarray, adjacency: np.ndarray) -> list[np.ndarray]:
+    mask = np.asarray(mask, dtype=bool).ravel()
+    adjacency = np.asarray(adjacency != 0)
+    seen = np.zeros(mask.size, dtype=bool)
+    components: list[np.ndarray] = []
+    for start in np.flatnonzero(mask):
+        if seen[start]:
+            continue
+        queue: deque[int] = deque([int(start)])
+        seen[start] = True
+        comp = []
+        while queue:
+            item = queue.popleft()
+            comp.append(item)
+            neighbors = np.flatnonzero(adjacency[item] & mask & ~seen)
+            seen[neighbors] = True
+            queue.extend(int(n) for n in neighbors)
+        components.append(np.asarray(comp, dtype=int))
+    return components
+
+
+def graph_hop_mask(center: int, adjacency: np.ndarray, allowed: np.ndarray, *, hops: int = 2) -> np.ndarray:
+    allowed = np.asarray(allowed, dtype=bool).ravel()
+    adjacency = np.asarray(adjacency != 0)
+    keep = np.zeros(allowed.size, dtype=bool)
+    if center < 0 or center >= allowed.size or not allowed[center]:
+        return keep
+    frontier = {int(center)}
+    keep[center] = True
+    for _ in range(hops):
+        nxt = set()
+        for item in frontier:
+            nxt.update(int(n) for n in np.flatnonzero(adjacency[item] & allowed & ~keep))
+        if not nxt:
+            break
+        keep[list(nxt)] = True
+        frontier = nxt
+    return keep
+
+
+def prune_surface_components(
+    mask: np.ndarray,
+    weights: np.ndarray,
+    adjacency: np.ndarray,
+    *,
+    min_energy_fraction: float = 0.20,
+    max_components: int = 2,
+) -> np.ndarray:
+    components = connected_components(mask, adjacency)
+    if not components:
+        return np.zeros_like(mask, dtype=bool)
+    scored = [(float(weights[c].sum()), c) for c in components]
+    scored.sort(key=lambda item: item[0], reverse=True)
+    strongest = scored[0][0]
+    keep = np.zeros_like(mask, dtype=bool)
+    for energy, comp in scored[:max_components]:
+        if energy >= min_energy_fraction * strongest:
+            keep[comp] = True
+    return keep
+
+
+def top_deep_mask(source: np.ndarray, n_surf: int, *, rel: float = 0.22, max_points: int = 4) -> np.ndarray:
+    amp = source_amplitude(source)
+    deep_amp = amp[n_surf:]
+    mask = np.zeros(amp.size, dtype=bool)
+    peak = float(deep_amp.max(initial=0.0))
+    if peak <= 0:
+        return mask
+    candidates = np.flatnonzero(deep_amp >= rel * peak)
+    if candidates.size > max_points:
+        order = np.argsort(deep_amp[candidates])[::-1][:max_points]
+        candidates = candidates[order]
+    mask[n_surf + candidates] = True
+    return mask
+
+
+def _norm01(values: np.ndarray) -> np.ndarray:
+    peak = float(np.max(values, initial=0.0))
+    return values / peak if peak > 0 else np.asarray(values, dtype=float)
+
+
+def build_candidate_mask(
+    joint: np.ndarray,
+    meg: np.ndarray,
+    vert_conn: np.ndarray,
+    n_surf: int,
+    *,
+    layer_gate: float = 0.10,
+) -> dict:
+    joint_amp = source_amplitude(joint)
+    meg_amp = source_amplitude(meg)
+    surface_keep = np.zeros(joint.shape[0], dtype=bool)
+    deep_keep = np.zeros_like(surface_keep)
+    joint_peak = float(joint_amp.max(initial=0.0))
+    if joint_peak <= 0:
+        final = np.zeros_like(surface_keep)
+        return {"surface": surface_keep, "deep": deep_keep, "final": final}
+
+    has_surface_evidence = float(joint_amp[:n_surf].max(initial=0.0)) >= layer_gate * joint_peak
+    if has_surface_evidence:
+        surface_score = np.maximum(_norm01(meg_amp[:n_surf]), _norm01(joint_amp[:n_surf]))
+        surface_raw = surface_score >= 0.12
+        surface_keep[:n_surf] = prune_surface_components(
+            surface_raw,
+            surface_score,
+            vert_conn[:n_surf, :n_surf],
+            min_energy_fraction=0.15,
+            max_components=4,
+        )
+
+    has_deep_evidence = float(joint_amp[n_surf:].max(initial=0.0)) >= layer_gate * joint_peak
+    if has_deep_evidence:
+        deep_keep = top_deep_mask(joint, n_surf)
+
+    final = surface_keep | deep_keep
+    if not final.any():
+        final = threshold_mask(joint, rel=0.10)
+    return {"surface": surface_keep, "deep": deep_keep, "final": final}
+
+
+def whitened_joint_system(eeg: dict, meg: dict) -> tuple[np.ndarray, np.ndarray]:
+    eeg_w = whitening_matrix(np.asarray(eeg["F"], dtype=float), NOISE_SAMPLES)
+    meg_w = whitening_matrix(np.asarray(meg["F"], dtype=float), NOISE_SAMPLES)
+    b = np.vstack([eeg_w @ np.asarray(eeg["F"], dtype=float), meg_w @ np.asarray(meg["F"], dtype=float)])
+    l = np.vstack([eeg_w @ np.asarray(eeg["Gain"], dtype=float), meg_w @ np.asarray(meg["Gain"], dtype=float)])
+    return b, l
+
+
+def ridge_refit(eeg: dict, meg: dict, support: np.ndarray, *, ridge_fraction: float = 1e-3) -> np.ndarray:
+    b, l = whitened_joint_system(eeg, meg)
+    return ridge_refit_system(b, l, support, ridge_fraction=ridge_fraction)
+
+
+def ridge_refit_system(
+    b: np.ndarray,
+    l: np.ndarray,
+    support: np.ndarray,
+    *,
+    ridge_fraction: float = 1e-3,
+    prior: np.ndarray | None = None,
+) -> np.ndarray:
+    support = np.asarray(support, dtype=bool).ravel()
+    result = np.zeros((support.size, b.shape[1]), dtype=float)
+    indices = np.flatnonzero(support)
+    if indices.size == 0:
+        return result
+    lc = l[:, indices]
+    scale = np.linalg.norm(lc, axis=0)
+    scale = np.maximum(scale, np.median(scale) * 1e-6)
+    ln = lc / scale[None, :]
+    gram = ln.T @ ln
+    ridge = ridge_fraction * np.trace(gram) / max(1, gram.shape[0])
+    rhs = ln.T @ b
+    if prior is not None:
+        prior = np.asarray(prior, dtype=float)
+        prior_active = prior[indices]
+        if prior_active.ndim == 1:
+            prior_active = prior_active[:, None]
+        rhs = rhs + ridge * prior_active * scale[:, None]
+    coef = np.linalg.solve(gram + ridge * np.eye(gram.shape[0]), rhs)
+    result[indices] = coef / scale[:, None]
+    return result
+
+
+def _component_candidates(
+    source: np.ndarray,
+    vert_conn: np.ndarray,
+    n_surf: int,
+    *,
+    loose_rel: float = 0.05,
+    src_vertices: np.ndarray | None = None,
+    deep_k: int = 1,
+) -> list[np.ndarray]:
+    amp = source_amplitude(source)
+    loose = threshold_mask(source, loose_rel)
+    components = connected_components(loose[:n_surf], vert_conn[:n_surf, :n_surf])
+    deep_ids = np.flatnonzero(loose[n_surf:])
+    if src_vertices is not None and deep_k > 1 and deep_ids.size:
+        deep_xyz = np.asarray(src_vertices, dtype=float)[n_surf:]
+        expanded = set(int(idx) for idx in deep_ids)
+        for idx in deep_ids:
+            dist = np.linalg.norm(deep_xyz - deep_xyz[int(idx)], axis=1)
+            expanded.update(int(i) for i in np.argsort(dist)[:deep_k])
+        deep_ids = np.array(sorted(expanded), dtype=int)
+    deep = [np.array([idx + n_surf], dtype=int) for idx in deep_ids]
+    candidates = components + deep
+    candidates.sort(key=lambda comp: float(amp[comp].sum()), reverse=True)
+    return candidates
+
+
+def residual_deep_scores(
+    residual: np.ndarray,
+    leadfield: np.ndarray,
+    n_surf: int,
+    *,
+    eps: float = 1e-12,
+) -> np.ndarray:
+    deep_l = np.asarray(leadfield, dtype=float)[:, n_surf:]
+    numerator = np.sum((deep_l.T @ np.asarray(residual, dtype=float)) ** 2, axis=1)
+    denominator = np.sum(deep_l**2, axis=0) + eps
+    return numerator / denominator
+
+
+def numpy_knn_expand_deep(
+    seed_deep_ids: np.ndarray,
+    src_vertices: np.ndarray,
+    n_surf: int,
+    *,
+    deep_k: int = 8,
+) -> np.ndarray:
+    seed_deep_ids = np.asarray(seed_deep_ids, dtype=int).ravel()
+    if seed_deep_ids.size == 0:
+        return seed_deep_ids
+    deep_xyz = np.asarray(src_vertices, dtype=float)[n_surf:]
+    expanded = set(int(i) for i in seed_deep_ids)
+    for idx in seed_deep_ids:
+        dist = np.linalg.norm(deep_xyz - deep_xyz[int(idx)], axis=1)
+        expanded.update(int(i) for i in np.argsort(dist)[:deep_k])
+    return np.array(sorted(expanded), dtype=int)
+
+
+def _select_deep_by_residual(
+    residual: np.ndarray,
+    leadfield: np.ndarray,
+    n_surf: int,
+    deep_ids: np.ndarray,
+    *,
+    complexity_weight: float = 1.0,
+    max_points: int = 4,
+) -> np.ndarray:
+    deep_ids = np.asarray(deep_ids, dtype=int).ravel()
+    if deep_ids.size == 0:
+        return deep_ids
+    g = np.asarray(leadfield, dtype=float)[:, n_surf + deep_ids]
+    selected: list[int] = []
+    n_obs = residual.size
+    current_rss = float(np.linalg.norm(residual, "fro") ** 2)
+    current_score = n_obs * np.log(current_rss / n_obs + np.finfo(float).eps)
+    for _ in range(min(max_points, deep_ids.size)):
+        best = None
+        for col in range(deep_ids.size):
+            if col in selected:
+                continue
+            trial = selected + [col]
+            gt = g[:, trial]
+            gram = gt.T @ gt
+            ridge = 1e-3 * np.trace(gram) / max(1, gram.shape[0])
+            coef = np.linalg.solve(gram + ridge * np.eye(gram.shape[0]), gt.T @ residual)
+            rss = float(np.linalg.norm(residual - gt @ coef, "fro") ** 2)
+            score = n_obs * np.log(rss / n_obs + np.finfo(float).eps) + complexity_weight * len(trial) * np.log(n_obs)
+            if best is None or score < best[0]:
+                best = (score, col)
+        if best is None or best[0] >= current_score:
+            break
+        current_score, best_col = best
+        selected.append(best_col)
+    return deep_ids[selected]
+
+
+def _select_from_components(
+    b: np.ndarray,
+    l: np.ndarray,
+    sisses: np.ndarray,
+    components: list[np.ndarray],
+    *,
+    complexity_weight: float,
+    max_components: int,
+) -> list[np.ndarray]:
+    amp = source_amplitude(sisses)
+    patterns = []
+    kept_components = []
+    for component in components:
+        weights = amp[component].astype(float)
+        norm = float(np.linalg.norm(weights))
+        if norm <= 0:
+            if len(component) != 1:
+                continue
+            weights = np.ones(1, dtype=float)
+            norm = 1.0
+        weights = weights / norm
+        patterns.append(l[:, component] @ weights)
+        kept_components.append(component)
+    if not patterns:
+        return []
+    g = np.column_stack(patterns)
+    selected: list[int] = []
+    n_obs = b.size
+    current_rss = float(np.linalg.norm(b, "fro") ** 2)
+    current_score = n_obs * np.log(current_rss / n_obs + np.finfo(float).eps)
+
+    for _ in range(min(max_components, len(kept_components))):
+        best = None
+        for idx, component in enumerate(kept_components):
+            if idx in selected:
+                continue
+            trial_ids = selected + [idx]
+            gt = g[:, trial_ids]
+            gram = gt.T @ gt
+            ridge = 1e-3 * np.trace(gram) / max(1, gram.shape[0])
+            coef = np.linalg.solve(gram + ridge * np.eye(gram.shape[0]), gt.T @ b)
+            rss = float(np.linalg.norm(b - gt @ coef, "fro") ** 2)
+            active = sum(len(kept_components[i]) for i in trial_ids)
+            score = n_obs * np.log(rss / n_obs + np.finfo(float).eps) + complexity_weight * active * np.log(n_obs)
+            if best is None or score < best[0]:
+                best = (score, idx)
+        if best is None or best[0] >= current_score:
+            break
+        current_score, best_idx = best
+        selected.append(best_idx)
+    return [kept_components[i] for i in selected]
+
+
+def _select_components(
+    b: np.ndarray,
+    l: np.ndarray,
+    sisses: np.ndarray,
+    vert_conn: np.ndarray,
+    n_surf: int,
+    *,
+    loose_rel: float,
+    complexity_weight: float,
+    max_components: int,
+    src_vertices: np.ndarray | None = None,
+    deep_k: int = 1,
+) -> list[np.ndarray]:
+    components = _component_candidates(
+        sisses,
+        vert_conn,
+        n_surf,
+        loose_rel=loose_rel,
+        src_vertices=src_vertices,
+        deep_k=deep_k,
+    )
+    return _select_from_components(
+        b,
+        l,
+        sisses,
+        components,
+        complexity_weight=complexity_weight,
+        max_components=max_components,
+    )
+
+
+def component_refit_select(
+    eeg: dict,
+    meg: dict,
+    sisses: np.ndarray,
+    vert_conn: np.ndarray,
+    n_surf: int,
+    *,
+    loose_rel: float = 0.05,
+    complexity_weight: float = 1.0,
+    max_components: int = 6,
+    final_ridge_fraction: float = 0.3,
+) -> tuple[np.ndarray, np.ndarray]:
+    b, l = whitened_joint_system(eeg, meg)
+    components = _component_candidates(sisses, vert_conn, n_surf, loose_rel=loose_rel)
+    amp = source_amplitude(sisses)
+    patterns = []
+    kept_components = []
+    for component in components:
+        weights = amp[component].astype(float)
+        norm = float(np.linalg.norm(weights))
+        if norm <= 0:
+            continue
+        weights = weights / norm
+        patterns.append(l[:, component] @ weights)
+        kept_components.append((component, weights))
+    if not patterns:
+        support = threshold_mask(sisses, 0.10)
+        return sisses * support[:, None], support
+    g = np.column_stack(patterns)
+    support = np.zeros(sisses.shape[0], dtype=bool)
+    selected: list[int] = []
+    n_obs = b.size
+    current_rss = float(np.linalg.norm(b, "fro") ** 2)
+    current_score = n_obs * np.log(current_rss / n_obs + np.finfo(float).eps)
+
+    for _ in range(min(max_components, len(kept_components))):
+        best = None
+        for idx, (component, _weights) in enumerate(kept_components):
+            if idx in selected:
+                continue
+            trial_ids = selected + [idx]
+            gt = g[:, trial_ids]
+            gram = gt.T @ gt
+            ridge = 1e-3 * np.trace(gram) / max(1, gram.shape[0])
+            coef = np.linalg.solve(gram + ridge * np.eye(gram.shape[0]), gt.T @ b)
+            rss = float(np.linalg.norm(b - gt @ coef, "fro") ** 2)
+            active = sum(len(kept_components[i][0]) for i in trial_ids)
+            score = n_obs * np.log(rss / n_obs + np.finfo(float).eps) + complexity_weight * active * np.log(n_obs)
+            if best is None or score < best[0]:
+                best = (score, idx, rss)
+        if best is None or best[0] >= current_score:
+            break
+        current_score, best_idx, current_rss = best
+        selected.append(best_idx)
+
+    if not selected:
+        support = threshold_mask(sisses, 0.10)
+        return sisses * support[:, None], support
+
+    support = np.zeros(sisses.shape[0], dtype=bool)
+    for idx in selected:
+        component, _weights = kept_components[idx]
+        support[component] = True
+    fitted = ridge_refit_system(
+        b,
+        l,
+        support,
+        ridge_fraction=final_ridge_fraction,
+        prior=sisses * support[:, None],
+    )
+    return fitted, support
+
+
+def component_refit_select_v3(
+    eeg: dict,
+    meg: dict,
+    sisses: np.ndarray,
+    vert_conn: np.ndarray,
+    n_surf: int,
+    src_vertices: np.ndarray,
+    *,
+    loose_rel: float = 0.05,
+    complexity_weight: float = 1.0,
+    max_components: int = 6,
+    surface_hops: int = 8,
+    deep_k: int = 8,
+    final_ridge_fraction: float = 0.3,
+    return_candidate: bool = False,
+) -> tuple[np.ndarray, np.ndarray] | tuple[np.ndarray, np.ndarray, np.ndarray]:
+    b, l = whitened_joint_system(eeg, meg)
+    components = _select_components(
+        b,
+        l,
+        sisses,
+        vert_conn,
+        n_surf,
+        loose_rel=loose_rel,
+        complexity_weight=complexity_weight,
+        max_components=max_components,
+        src_vertices=src_vertices,
+        deep_k=deep_k,
+    )
+    if not components:
+        support = threshold_mask(sisses, 0.10)
+        fitted = sisses * support[:, None]
+        return (fitted, support, support.copy()) if return_candidate else (fitted, support)
+
+    broad = np.zeros(sisses.shape[0], dtype=bool)
+    for component in components:
+        broad[component] = True
+    broad_fit = ridge_refit_system(b, l, broad, ridge_fraction=final_ridge_fraction, prior=sisses * broad[:, None])
+    amp = source_amplitude(broad_fit)
+
+    support = np.zeros_like(broad)
+    for component in components:
+        if np.all(component < n_surf):
+            allowed = np.zeros(n_surf, dtype=bool)
+            allowed[component] = True
+            peak = int(component[np.argmax(amp[component])])
+            support[:n_surf] |= graph_hop_mask(peak, vert_conn[:n_surf, :n_surf], allowed, hops=surface_hops)
+        else:
+            support[component] = True
+
+    fitted = ridge_refit_system(b, l, support, ridge_fraction=final_ridge_fraction, prior=sisses * support[:, None])
+    return (fitted, support, broad) if return_candidate else (fitted, support)
+
+
+def component_refit_select_v4_deep_rescue(
+    eeg: dict,
+    meg: dict,
+    sisses: np.ndarray,
+    vert_conn: np.ndarray,
+    n_surf: int,
+    src_vertices: np.ndarray,
+    *,
+    eeg_only_source: np.ndarray | None = None,
+    meg_only_source: np.ndarray | None = None,
+    loose_rel: float = 0.05,
+    complexity_weight: float = 1.0,
+    max_surface_components: int = 6,
+    surface_hops: int = 8,
+    deep_rescue_top: int = 8,
+    deep_k: int = 8,
+    max_deep_points: int = 1,
+    final_ridge_fraction: float = 0.3,
+    return_candidate: bool = False,
+) -> tuple[np.ndarray, np.ndarray] | tuple[np.ndarray, np.ndarray, np.ndarray]:
+    b, l = whitened_joint_system(eeg, meg)
+    base_fit, base_support, base_candidate = component_refit_select_v3(
+        eeg,
+        meg,
+        sisses,
+        vert_conn,
+        n_surf,
+        src_vertices,
+        loose_rel=loose_rel,
+        complexity_weight=complexity_weight,
+        max_components=max_surface_components,
+        surface_hops=surface_hops,
+        deep_k=deep_k,
+        final_ridge_fraction=final_ridge_fraction,
+        return_candidate=True,
+    )
+    residual = b - l @ base_fit
+
+    seed_deep = set(np.flatnonzero(threshold_mask(sisses, loose_rel)[n_surf:]).astype(int).tolist())
+    for extra in (eeg_only_source, meg_only_source):
+        if extra is None:
+            continue
+        deep_amp = source_amplitude(extra)[n_surf:]
+        if deep_amp.size:
+            seed_deep.update(int(i) for i in np.argsort(deep_amp)[::-1][:deep_rescue_top])
+
+    scores = residual_deep_scores(residual, l, n_surf)
+    if scores.size:
+        seed_deep.update(int(i) for i in np.argsort(scores)[::-1][:deep_rescue_top])
+    expanded_deep = numpy_knn_expand_deep(np.array(sorted(seed_deep), dtype=int), src_vertices, n_surf, deep_k=deep_k)
+    if expanded_deep.size > max_deep_points:
+        order = np.argsort(scores[expanded_deep])[::-1][:max_deep_points]
+        expanded_deep = expanded_deep[order]
+    expanded_deep = _select_deep_by_residual(
+        residual,
+        l,
+        n_surf,
+        expanded_deep,
+        complexity_weight=complexity_weight,
+        max_points=max_deep_points,
+    )
+    candidate = base_support.copy()
+    candidate[n_surf + expanded_deep] = True
+    if not candidate.any():
+        candidate = threshold_mask(sisses, 0.10)
+    fitted = ridge_refit_system(b, l, candidate, ridge_fraction=final_ridge_fraction, prior=sisses * candidate[:, None])
+    broad_candidate = base_candidate | candidate
+    return (fitted, candidate, broad_candidate) if return_candidate else (fitted, candidate)
+
+
+def metric_row(scenario: str, method: str, source: np.ndarray, truth: dict, mask: np.ndarray) -> dict:
+    true_source = np.asarray(truth["s_true"], dtype=float)
+    metrics = external_full_head_metrics(
+        source,
+        true_source,
+        np.asarray(truth["src_vertices"], dtype=float),
+        true_groups=true_source_groups(truth),
+    )
+    n_surf = int(np.asarray(truth["n_surf"]).ravel()[0])
+    return {
+        "scenario": scenario,
+        "method": method,
+        "active_count": int(mask.sum()),
+        "surface_active_count": int(mask[:n_surf].sum()),
+        "deep_active_count": int(mask[n_surf:].sum()),
+        "auc": metrics["auc"],
+        "rmse": metrics["rmse"],
+        "sd_mm": metrics["sd_mm"],
+        "dle_mm": metrics["dle_mm"],
+    }
+
+
+def save_npz(path: Path, source: np.ndarray, mask: np.ndarray) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    np.savez_compressed(path, S=source, region_mask=mask)
+
+
+def write_csv(path: Path, rows: list[dict]) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with path.open("w", newline="", encoding="utf-8-sig") as handle:
+        writer = csv.DictWriter(handle, fieldnames=list(rows[0]))
+        writer.writeheader()
+        writer.writerows(rows)
+
+
+def run_scenario(scenario: str) -> list[dict]:
+    eeg = load_mat(DATA_ROOT / scenario / "sub_EEG.mat")
+    meg = load_mat(DATA_ROOT / scenario / "sub_MEG.mat")
+    truth = load_mat(DATA_ROOT / scenario / "s_true.mat")
+    n_sources = np.asarray(truth["s_true"]).shape[0]
+    n_surf = int(np.asarray(truth["n_surf"]).ravel()[0])
+    vert_conn = np.asarray(eeg["VertConn"], dtype=float)
+
+    sources = {
+        mode: load_source(SISSES_RUN_ROOT / scenario / mode / "s_wen.mat", n_sources)
+        for mode in MODES
+    }
+    weighted = load_source(WEIGHTED_ROOT / scenario / "s_wen.mat", n_sources)
+    masks = {mode: threshold_mask(source, rel=0.10) for mode, source in sources.items()}
+    adaptive_rel = adaptive_sisses_threshold(sources["both"])
+    adaptive_mask = threshold_mask(sources["both"], adaptive_rel)
+    compact_mask = evidence_aware_compact_mask(sources["both"], vert_conn, n_surf)
+    component_refit, component_refit_mask = component_refit_select(eeg, meg, sources["both"], vert_conn, n_surf)
+    component_refit_v3, component_refit_v3_mask = component_refit_select_v3(
+        eeg,
+        meg,
+        sources["both"],
+        vert_conn,
+        n_surf,
+        np.asarray(truth["src_vertices"], dtype=float),
+    )
+    component_refit_v4, component_refit_v4_mask = component_refit_select_v4_deep_rescue(
+        eeg,
+        meg,
+        sources["both"],
+        vert_conn,
+        n_surf,
+        np.asarray(truth["src_vertices"], dtype=float),
+        eeg_only_source=sources["eeg_only"],
+        meg_only_source=sources["meg_only"],
+    )
+    weighted_mask = threshold_mask(weighted, rel=0.10)
+
+    candidate = build_candidate_mask(sources["both"], sources["meg_only"], vert_conn, n_surf)
+    protected = sources["both"] * candidate["final"][:, None]
+    protected_refit = ridge_refit(eeg, meg, candidate["final"])
+
+    scenario_out = PROTECTED_ROOT / scenario
+    save_npz(scenario_out / "sisses_eeg_meg_direct.npz", sources["both"], masks["both"])
+    save_npz(scenario_out / "sisses_adaptive_threshold.npz", sources["both"], adaptive_mask)
+    save_npz(scenario_out / "sisses_evidence_compact.npz", sources["both"], compact_mask)
+    save_npz(scenario_out / "sisses_component_refit_v2.npz", component_refit, component_refit_mask)
+    save_npz(scenario_out / "sisses_component_refit_v3_localize.npz", component_refit_v3, component_refit_v3_mask)
+    save_npz(scenario_out / "sisses_component_refit_v4_deep_rescue.npz", component_refit_v4, component_refit_v4_mask)
+    save_npz(scenario_out / "sisses_weighted_multilayer.npz", weighted, weighted_mask)
+    save_npz(scenario_out / "sisses_meg_only.npz", sources["meg_only"], masks["meg_only"])
+    save_npz(scenario_out / "sisses_eeg_only.npz", sources["eeg_only"], masks["eeg_only"])
+    save_npz(scenario_out / "sisses_protected_multilayer.npz", protected, candidate["final"])
+    save_npz(scenario_out / "sisses_protected_refit.npz", protected_refit, candidate["final"])
+    save_npz(scenario_out / "candidate_surface_layer.npz", protected, candidate["surface"])
+    save_npz(scenario_out / "candidate_deep_layer.npz", protected, candidate["deep"])
+
+    return [
+        metric_row(scenario, "SISSES_EEG_MEG_direct", sources["both"] * masks["both"][:, None], truth, masks["both"]),
+        metric_row(scenario, f"SISSES_adaptive_threshold_{adaptive_rel:.3f}", sources["both"] * adaptive_mask[:, None], truth, adaptive_mask),
+        metric_row(scenario, "SISSES_evidence_compact", sources["both"] * compact_mask[:, None], truth, compact_mask),
+        metric_row(scenario, "SISSES_component_refit_v2", component_refit, truth, component_refit_mask),
+        metric_row(scenario, "SISSES_component_refit_v3_localize", component_refit_v3, truth, component_refit_v3_mask),
+        metric_row(scenario, "SISSES_component_refit_v4_deep_rescue", component_refit_v4, truth, component_refit_v4_mask),
+        metric_row(scenario, "SISSES_weighted_multilayer", weighted * weighted_mask[:, None], truth, weighted_mask),
+        metric_row(scenario, "SISSES_protected_multilayer", protected, truth, candidate["final"]),
+        metric_row(scenario, "SISSES_MEG_only", sources["meg_only"] * masks["meg_only"][:, None], truth, masks["meg_only"]),
+        metric_row(scenario, "SISSES_EEG_only", sources["eeg_only"] * masks["eeg_only"][:, None], truth, masks["eeg_only"]),
+    ]
+
+
+def main() -> None:
+    rows: list[dict] = []
+    for scenario in SCENARIOS:
+        print("Processing", scenario)
+        rows.extend(run_scenario(scenario))
+    write_csv(OUT_ROOT / "metrics.csv", rows)
+    print("Saved:", OUT_ROOT / "metrics.csv")
+
+
+if __name__ == "__main__":
+    main()

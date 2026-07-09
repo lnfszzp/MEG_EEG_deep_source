@@ -1,0 +1,9 @@
+__pycache__/
+*.pyc
+*.zip
+results/**
+!results/
+!results/metrics.csv
+!results/position_validation/
+!results/position_validation/metrics.csv
+!results/position_validation/per_group_localization_report.csv
