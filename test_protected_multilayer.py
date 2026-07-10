@@ -32,6 +32,7 @@ from protected_multilayer import (
     tbf_ridge_refit_system,
     tbf_selection,
 )
+from validation_batch import _group_report_rows, _layer_sd_row
 
 
 class ProtectedMultilayerTests(unittest.TestCase):
@@ -476,6 +477,45 @@ class ProtectedMultilayerTests(unittest.TestCase):
         )
         self.assertTrue(support[0])
         self.assertEqual(fitted.shape, source.shape)
+
+    def test_group_report_adds_nearest_cluster_sd(self):
+        source = np.zeros((4, 4))
+        source[0] = 1.0
+        source[1] = 1.0
+        mask = np.array([True, True, False, False])
+        truth = {
+            "src_vertices": np.array([[0, 0, 0], [0.003, 0, 0], [0.1, 0, 0], [0.2, 0, 0]], dtype=float),
+            "n_surf": np.array([[3]]),
+            "true_surface_patch_labels": np.array([[1]]),
+            "true_surface_indices0": np.array([[0]]),
+            "has_deep_source": np.array([[0]]),
+            "true_deep_idx0": np.array([[3]]),
+        }
+        vert_conn = np.eye(4)
+        vert_conn[0, 1] = vert_conn[1, 0] = 1
+        rows = _group_report_rows("surface_00", "toy", source, mask, mask, truth, vert_conn)
+        self.assertAlmostEqual(rows[0]["group_sd_mm"], np.sqrt((0.0**2 + 3.0**2) / 2.0), places=6)
+        self.assertEqual(rows[0]["group_active_count"], 2)
+
+    def test_layer_sd_row_splits_surface_and_deep(self):
+        report = [
+            {"group_type": "surface", "group_sd_mm": 2.0},
+            {"group_type": "deep", "group_sd_mm": 5.0},
+        ]
+        mask = np.array([True, False, True, True])
+        row = _layer_sd_row(
+            "mixed_00",
+            "toy",
+            {"sd_mm": 9.0, "dle_mm": 4.0},
+            mask,
+            report,
+            n_surf=2,
+            vert_conn=np.eye(2),
+        )
+        self.assertEqual(row["surface_sd_mm"], 2.0)
+        self.assertEqual(row["deep_sd_mm"], 5.0)
+        self.assertEqual(row["surface_component_count"], 1)
+        self.assertEqual(row["deep_component_count"], 2)
 
 
 if __name__ == "__main__":

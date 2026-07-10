@@ -98,6 +98,16 @@ def _group_report_rows(case_id: str, method: str, source: np.ndarray, mask: np.n
     clusters = connected_components(mask[:n_surf], vert_conn[:n_surf, :n_surf])
     clusters += [np.array([idx], dtype=int) for idx in np.flatnonzero(mask[n_surf:]) + n_surf]
     rows = []
+
+    def group_sd(indices: np.ndarray, true_xyz: np.ndarray) -> float:
+        if indices.size == 0:
+            return float("nan")
+        weights = amp[indices]
+        if float(weights.sum()) <= 0:
+            return float("nan")
+        dist = np.linalg.norm(positions[indices, None, :] - true_xyz[None, :, :], axis=2).min(axis=1)
+        return float(np.sqrt(np.average(dist**2, weights=weights)))
+
     for group_id, group in enumerate(_true_groups(truth), start=1):
         group = np.asarray(group, dtype=int).ravel()
         group_type = "deep" if np.all(group >= n_surf) else "surface"
@@ -124,6 +134,11 @@ def _group_report_rows(case_id: str, method: str, source: np.ndarray, mask: np.n
             nearest_cluster = min(clusters, key=nearest)
             cluster_peak = int(nearest_cluster[np.argmax(amp[nearest_cluster])])
             cluster_peak_dist = nearest(np.array([cluster_peak], dtype=int))
+            cluster_sd = group_sd(nearest_cluster, true_xyz)
+            group_active_count = int(nearest_cluster.size)
+        else:
+            cluster_sd = float("nan")
+            group_active_count = 0
         rows.append(
             {
                 "scenario": case_id.rsplit("_", 1)[0],
@@ -134,6 +149,8 @@ def _group_report_rows(case_id: str, method: str, source: np.ndarray, mask: np.n
                 "nearest_support_dist_mm": nearest_support,
                 "global_peak_dist_mm": peak_dist,
                 "cluster_peak_dist_mm": cluster_peak_dist,
+                "group_sd_mm": cluster_sd,
+                "group_active_count": group_active_count,
                 "peak_dist_mm": peak_dist,
                 "centroid_dist_mm": centroid_dist,
                 "support_hit_true": int(np.isfinite(nearest_support) and nearest_support <= 10.0),
@@ -144,6 +161,27 @@ def _group_report_rows(case_id: str, method: str, source: np.ndarray, mask: np.n
             }
         )
     return rows
+
+
+def _layer_sd_row(case_id: str, method: str, metrics: dict, mask: np.ndarray, report: list[dict], n_surf: int, vert_conn: np.ndarray) -> dict:
+    def mean_for(group_type: str) -> float:
+        values = [float(row["group_sd_mm"]) for row in report if row["group_type"] == group_type and np.isfinite(float(row["group_sd_mm"]))]
+        return float(np.mean(values)) if values else float("nan")
+
+    surface_components = connected_components(mask[:n_surf], vert_conn[:n_surf, :n_surf])
+    return {
+        "scenario": case_id.rsplit("_", 1)[0],
+        "case_id": case_id,
+        "method": method,
+        "surface_sd_mm": mean_for("surface"),
+        "deep_sd_mm": mean_for("deep"),
+        "surface_active_count": int(mask[:n_surf].sum()),
+        "deep_active_count": int(mask[n_surf:].sum()),
+        "surface_component_count": len(surface_components),
+        "deep_component_count": int(mask[n_surf:].sum()),
+        "global_sd_mm": float(metrics["sd_mm"]),
+        "dle_mm": float(metrics["dle_mm"]),
+    }
 
 
 def make_jobs() -> list[dict]:
@@ -242,6 +280,7 @@ def generate() -> None:
 def summarize(*, include_v6: bool = True) -> None:
     rows = []
     group_rows = []
+    layer_rows = []
     threshold_rows = []
     rng = np.random.default_rng(7)
     for job_dir in sorted(VAL_DATA.iterdir()):
@@ -369,7 +408,9 @@ def summarize(*, include_v6: bool = True) -> None:
                 }
             )
             candidate = component_v9_candidates[method] if method in component_v9_candidates else component_v8_candidates[method] if method in component_v8_candidates else component_v7_candidate if method == "ComponentRefit_v7" else component_v5_candidate if method == "ComponentRefit_v5" else component_v4_candidate if method == "ComponentRefit_v4" else component_v3_candidate if method == "ComponentRefit_v3" else component_v6[method.removeprefix("ComponentRefit_v6_")][2] if method.startswith("ComponentRefit_v6_") and include_v6 else mask
-            group_rows.extend(_group_report_rows(job_dir.name, method, source * mask[:, None], mask, candidate, truth, np.asarray(eeg["VertConn"], dtype=float)))
+            report = _group_report_rows(job_dir.name, method, source * mask[:, None], mask, candidate, truth, np.asarray(eeg["VertConn"], dtype=float))
+            group_rows.extend(report)
+            layer_rows.append(_layer_sd_row(job_dir.name, method, metrics, mask, report, n_surf, np.asarray(eeg["VertConn"], dtype=float)))
         sweep_sources = [("ComponentRefit_v4", component_v4), ("ComponentRefit_v5", component_v5), ("ComponentRefit_v7", component_v7)]
         if "ComponentRefit_v8_p025" in component_v8:
             sweep_sources.append(("ComponentRefit_v8_p025", component_v8["ComponentRefit_v8_p025"][0]))
@@ -409,6 +450,10 @@ def summarize(*, include_v6: bool = True) -> None:
         writer = csv.DictWriter(handle, fieldnames=list(group_rows[0]))
         writer.writeheader()
         writer.writerows(group_rows)
+    with (VAL_ROOT / "layerwise_sd_report.csv").open("w", newline="", encoding="utf-8-sig") as handle:
+        writer = csv.DictWriter(handle, fieldnames=list(layer_rows[0]))
+        writer.writeheader()
+        writer.writerows(layer_rows)
     with (VAL_ROOT / "threshold_sweep.csv").open("w", newline="", encoding="utf-8-sig") as handle:
         writer = csv.DictWriter(handle, fieldnames=list(threshold_rows[0]))
         writer.writeheader()
