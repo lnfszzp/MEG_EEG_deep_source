@@ -24,6 +24,7 @@ from protected_multilayer import (
     OUT_ROOT,
     V8_FACTORS,
     V9_FACTORS,
+    V9B_VARIANTS,
     component_refit_select,
     component_refit_select_v3,
     component_refit_select_v4_deep_rescue,
@@ -184,6 +185,33 @@ def _layer_sd_row(case_id: str, method: str, metrics: dict, mask: np.ndarray, re
     }
 
 
+def _mesh_resolution_row(case_id: str, truth: dict, vert_conn: np.ndarray) -> dict:
+    positions = np.asarray(truth["src_vertices"], dtype=float) * 1000.0
+    n_surf = int(np.asarray(truth["n_surf"]).ravel()[0])
+    surface_edges = np.array(np.nonzero(np.triu(np.asarray(vert_conn != 0)[:n_surf, :n_surf], 1))).T
+    surface_lengths = np.linalg.norm(positions[surface_edges[:, 0]] - positions[surface_edges[:, 1]], axis=1) if surface_edges.size else np.array([])
+    deep = positions[n_surf:]
+    if deep.shape[0] > 1:
+        dist = np.linalg.norm(deep[:, None, :] - deep[None, :, :], axis=2)
+        dist[dist == 0] = np.nan
+        deep_nn = np.nanmin(dist, axis=1)
+    else:
+        deep_nn = np.array([])
+    oracle = []
+    for group in _true_groups(truth):
+        group = np.asarray(group, dtype=int).ravel()
+        centroid = positions[group].mean(axis=0)
+        pool = positions[n_surf:] if np.all(group >= n_surf) else positions[:n_surf]
+        oracle.append(float(np.linalg.norm(pool - centroid, axis=1).min()))
+    return {
+        "scenario": case_id.rsplit("_", 1)[0],
+        "case_id": case_id,
+        "median_surface_edge_mm": float(np.nanmedian(surface_lengths)) if surface_lengths.size else float("nan"),
+        "median_deep_nn_dist_mm": float(np.nanmedian(deep_nn)) if deep_nn.size else float("nan"),
+        "oracle_nearest_grid_dist_mm": float(np.mean(oracle)) if oracle else float("nan"),
+    }
+
+
 def make_jobs() -> list[dict]:
     base = load_mat(DATA_ROOT / "deep_plus_two_surface" / "sub_EEG.mat")
     n_surf = int(np.asarray(base["n_surf"]).ravel()[0])
@@ -281,6 +309,7 @@ def summarize(*, include_v6: bool = True) -> None:
     rows = []
     group_rows = []
     layer_rows = []
+    mesh_rows = []
     threshold_rows = []
     rng = np.random.default_rng(7)
     for job_dir in sorted(VAL_DATA.iterdir()):
@@ -291,6 +320,7 @@ def summarize(*, include_v6: bool = True) -> None:
             continue
         truth = load_mat(job_dir / "s_true.mat")
         eeg = load_mat(job_dir / "sub_EEG.mat")
+        mesh_rows.append(_mesh_resolution_row(job_dir.name, truth, np.asarray(eeg["VertConn"], dtype=float)))
         n_sources = np.asarray(truth["s_true"]).shape[0]
         n_surf = int(np.asarray(truth["n_surf"]).ravel()[0])
         sisses = load_source(run_file, n_sources)
@@ -389,6 +419,23 @@ def summarize(*, include_v6: bool = True) -> None:
             component_v9[method] = (source, mask)
             component_v9_candidates[method] = candidate
             methods[method] = (source, mask)
+        component_v9b = {}
+        component_v9b_candidates = {}
+        for name, params in V9B_VARIANTS.items():
+            source, mask, candidate = component_refit_select_v9_layerwise_sisses(
+                sio.loadmat(job_dir / "sub_EEG.mat"),
+                sio.loadmat(job_dir / "sub_MEG.mat"),
+                sisses,
+                np.asarray(eeg["VertConn"], dtype=float),
+                n_surf,
+                np.asarray(truth["src_vertices"], dtype=float),
+                **params,
+                return_candidate=True,
+            )
+            method = f"ComponentRefit_v9b_{name}"
+            component_v9b[method] = (source, mask)
+            component_v9b_candidates[method] = candidate
+            methods[method] = (source, mask)
         for method, (source, mask) in methods.items():
             metrics = external_full_head_metrics(
                 source * mask[:, None],
@@ -396,6 +443,11 @@ def summarize(*, include_v6: bool = True) -> None:
                 np.asarray(truth["src_vertices"], dtype=float),
                 true_groups=_true_groups(truth),
             )
+            candidate = component_v9b_candidates[method] if method in component_v9b_candidates else component_v9_candidates[method] if method in component_v9_candidates else component_v8_candidates[method] if method in component_v8_candidates else component_v7_candidate if method == "ComponentRefit_v7" else component_v5_candidate if method == "ComponentRefit_v5" else component_v4_candidate if method == "ComponentRefit_v4" else component_v3_candidate if method == "ComponentRefit_v3" else component_v6[method.removeprefix("ComponentRefit_v6_")][2] if method.startswith("ComponentRefit_v6_") and include_v6 else mask
+            report = _group_report_rows(job_dir.name, method, source * mask[:, None], mask, candidate, truth, np.asarray(eeg["VertConn"], dtype=float))
+            group_rows.extend(report)
+            layer_row = _layer_sd_row(job_dir.name, method, metrics, mask, report, n_surf, np.asarray(eeg["VertConn"], dtype=float))
+            layer_rows.append(layer_row)
             rows.append(
                 {
                     "job": job_dir.name,
@@ -403,19 +455,19 @@ def summarize(*, include_v6: bool = True) -> None:
                     "active_count": int(mask.sum()),
                     "auc": metrics["auc"],
                     "rmse": metrics["rmse"],
-                    "sd_mm": metrics["sd_mm"],
+                    "surface_sd_mm": layer_row["surface_sd_mm"],
+                    "deep_sd_mm": layer_row["deep_sd_mm"],
+                    "global_sd_reference_mm": metrics["sd_mm"],
                     "dle_mm": metrics["dle_mm"],
                 }
             )
-            candidate = component_v9_candidates[method] if method in component_v9_candidates else component_v8_candidates[method] if method in component_v8_candidates else component_v7_candidate if method == "ComponentRefit_v7" else component_v5_candidate if method == "ComponentRefit_v5" else component_v4_candidate if method == "ComponentRefit_v4" else component_v3_candidate if method == "ComponentRefit_v3" else component_v6[method.removeprefix("ComponentRefit_v6_")][2] if method.startswith("ComponentRefit_v6_") and include_v6 else mask
-            report = _group_report_rows(job_dir.name, method, source * mask[:, None], mask, candidate, truth, np.asarray(eeg["VertConn"], dtype=float))
-            group_rows.extend(report)
-            layer_rows.append(_layer_sd_row(job_dir.name, method, metrics, mask, report, n_surf, np.asarray(eeg["VertConn"], dtype=float)))
         sweep_sources = [("ComponentRefit_v4", component_v4), ("ComponentRefit_v5", component_v5), ("ComponentRefit_v7", component_v7)]
         if "ComponentRefit_v8_p025" in component_v8:
             sweep_sources.append(("ComponentRefit_v8_p025", component_v8["ComponentRefit_v8_p025"][0]))
         if "ComponentRefit_v9_p025" in component_v9:
             sweep_sources.append(("ComponentRefit_v9_p025", component_v9["ComponentRefit_v9_p025"][0]))
+        if "ComponentRefit_v9b_balanced" in component_v9b:
+            sweep_sources.append(("ComponentRefit_v9b_balanced", component_v9b["ComponentRefit_v9b_balanced"][0]))
         if include_v6:
             sweep_sources.append(("ComponentRefit_v6_mid", component_v6["mid"][0]))
         for method, source in sweep_sources:
@@ -454,6 +506,10 @@ def summarize(*, include_v6: bool = True) -> None:
         writer = csv.DictWriter(handle, fieldnames=list(layer_rows[0]))
         writer.writeheader()
         writer.writerows(layer_rows)
+    with (VAL_ROOT / "mesh_resolution_report.csv").open("w", newline="", encoding="utf-8-sig") as handle:
+        writer = csv.DictWriter(handle, fieldnames=list(mesh_rows[0]))
+        writer.writeheader()
+        writer.writerows(mesh_rows)
     with (VAL_ROOT / "threshold_sweep.csv").open("w", newline="", encoding="utf-8-sig") as handle:
         writer = csv.DictWriter(handle, fieldnames=list(threshold_rows[0]))
         writer.writeheader()

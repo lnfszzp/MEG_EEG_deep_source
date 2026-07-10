@@ -32,7 +32,7 @@ from protected_multilayer import (
     tbf_ridge_refit_system,
     tbf_selection,
 )
-from validation_batch import _group_report_rows, _layer_sd_row
+from validation_batch import _group_report_rows, _layer_sd_row, _mesh_resolution_row
 
 
 class ProtectedMultilayerTests(unittest.TestCase):
@@ -458,6 +458,41 @@ class ProtectedMultilayerTests(unittest.TestCase):
         )
         self.assertLess(source_amplitude(fitted, noise_samples=0)[2], 1e-3)
 
+    def test_layerwise_sisses_nonprotected_deep_penalty_suppresses_deep(self):
+        t = np.linspace(0, 1, 30)
+        gb = np.sin(2 * np.pi * t)[None, :]
+        gb = gb / np.linalg.norm(gb, axis=1, keepdims=True)
+        data = np.vstack([gb[0], np.zeros_like(t)])
+        leadfield = np.array([[1.0, 0.8], [0.0, 0.2]])
+        candidate = np.array([True, True])
+        loose = layerwise_sisses_admm_refit_system(
+            data,
+            leadfield,
+            candidate,
+            np.eye(2),
+            n_surf=1,
+            gb=gb,
+            sigma_deep=0.1,
+            sigma_deep_group=0.1,
+            deep_nonprotected_factor=1.0,
+            admm_iters=10,
+            max_weight_itr=1,
+        )
+        strong = layerwise_sisses_admm_refit_system(
+            data,
+            leadfield,
+            candidate,
+            np.eye(2),
+            n_surf=1,
+            gb=gb,
+            sigma_deep=0.1,
+            sigma_deep_group=0.1,
+            deep_nonprotected_factor=8.0,
+            admm_iters=10,
+            max_weight_itr=1,
+        )
+        self.assertLess(source_amplitude(strong, noise_samples=0)[1], source_amplitude(loose, noise_samples=0)[1])
+
     def test_component_refit_v9_returns_layerwise_solution(self):
         t = np.linspace(0, 1, 30)
         wave = np.sin(2 * np.pi * t)
@@ -516,6 +551,22 @@ class ProtectedMultilayerTests(unittest.TestCase):
         self.assertEqual(row["deep_sd_mm"], 5.0)
         self.assertEqual(row["surface_component_count"], 1)
         self.assertEqual(row["deep_component_count"], 2)
+
+    def test_mesh_resolution_row_reports_grid_spacing(self):
+        truth = {
+            "src_vertices": np.array([[0, 0, 0], [0.004, 0, 0], [0, 0, 0], [0.006, 0, 0]], dtype=float),
+            "n_surf": np.array([[2]]),
+            "true_surface_patch_labels": np.array([[1]]),
+            "true_surface_indices0": np.array([[0]]),
+            "has_deep_source": np.array([[1]]),
+            "true_deep_idx0": np.array([[2]]),
+        }
+        vert_conn = np.eye(4)
+        vert_conn[0, 1] = vert_conn[1, 0] = 1
+        row = _mesh_resolution_row("mixed_00", truth, vert_conn)
+        self.assertEqual(row["median_surface_edge_mm"], 4.0)
+        self.assertEqual(row["median_deep_nn_dist_mm"], 6.0)
+        self.assertEqual(row["oracle_nearest_grid_dist_mm"], 0.0)
 
 
 if __name__ == "__main__":

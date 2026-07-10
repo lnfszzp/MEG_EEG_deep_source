@@ -8,4 +8,5 @@ results/**
 !results/position_validation/metrics.csv
 !results/position_validation/per_group_localization_report.csv
 !results/position_validation/layerwise_sd_report.csv
+!results/position_validation/mesh_resolution_report.csv
 !results/position_validation/threshold_sweep.csv

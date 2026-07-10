@@ -21,6 +21,12 @@ SCENARIOS = ("deep_only", "surface_only", "deep_plus_surface", "deep_plus_two_su
 MODES = ("both", "meg_only", "eeg_only")
 V8_FACTORS = {"no_protect": 1.0, "p050": 0.5, "p025": 0.25, "p010": 0.1}
 V9_FACTORS = {"p050": 0.5, "p025": 0.25, "p010": 0.1}
+V9B_VARIANTS = {
+    "balanced": {"sigma_surface": 1.5, "alpha_surface": 2.0, "sigma_deep": 2.0, "sigma_deep_group": 4.0, "deep_protect_factor": 0.25, "deep_nonprotected_factor": 4.0},
+    "surface_strong": {"sigma_surface": 1.5, "alpha_surface": 4.0, "sigma_deep": 2.0, "sigma_deep_group": 4.0, "deep_protect_factor": 0.25, "deep_nonprotected_factor": 4.0},
+    "deep_strong": {"sigma_surface": 1.0, "alpha_surface": 2.0, "sigma_deep": 4.0, "sigma_deep_group": 8.0, "deep_protect_factor": 0.25, "deep_nonprotected_factor": 8.0},
+    "protected_loose": {"sigma_surface": 1.5, "alpha_surface": 2.0, "sigma_deep": 2.0, "sigma_deep_group": 4.0, "deep_protect_factor": 0.10, "deep_nonprotected_factor": 4.0},
+}
 DATA_ROOT = ROOT / "generated"
 OUT_ROOT = Path(__file__).resolve().parent / "results"
 SISSES_RUN_ROOT = OUT_ROOT / "sisses_runs"
@@ -589,6 +595,7 @@ def layerwise_sisses_admm_refit_system(
     sigma_deep_group: float = 1.0,
     tau: float = 0.5,
     deep_protect_factor: float = 0.25,
+    deep_nonprotected_factor: float = 1.0,
     rho: float = 1.0,
     epsilon: float = 0.05,
     admm_iters: int = 50,
@@ -632,8 +639,8 @@ def layerwise_sisses_admm_refit_system(
     deep_weight = np.ones(deep_pos.size, dtype=float)
 
     for _ in range(max_weight_itr):
-        weighted_deep = deep_weight.copy()
-        weighted_deep[protected_deep] *= deep_protect_factor
+        weighted_deep = deep_weight * deep_nonprotected_factor
+        weighted_deep[protected_deep] = deep_weight[protected_deep] * deep_protect_factor
         for _ in range(admm_iters):
             rhs = rhs_data.copy()
             if surface_pos.size:
@@ -1264,6 +1271,7 @@ def component_refit_select_v9_layerwise_sisses(
     sigma_deep_group: float = 1.0,
     tau: float = 0.5,
     deep_protect_factor: float = 0.25,
+    deep_nonprotected_factor: float = 1.0,
     deep_rescue_top: int = 8,
     deep_k: int = 8,
     max_deep_points: int = 1,
@@ -1306,6 +1314,7 @@ def component_refit_select_v9_layerwise_sisses(
         sigma_deep_group=sigma_deep_group,
         tau=tau,
         deep_protect_factor=deep_protect_factor,
+        deep_nonprotected_factor=deep_nonprotected_factor,
         admm_iters=admm_iters,
         max_weight_itr=max_weight_itr,
     )
@@ -1445,6 +1454,20 @@ def run_scenario(scenario: str) -> list[dict]:
         )
         for name, factor in V9_FACTORS.items()
     }
+    component_refit_v9b = {
+        name: component_refit_select_v9_layerwise_sisses(
+            eeg,
+            meg,
+            sources["both"],
+            vert_conn,
+            n_surf,
+            np.asarray(truth["src_vertices"], dtype=float),
+            eeg_only_source=sources["eeg_only"],
+            meg_only_source=sources["meg_only"],
+            **params,
+        )
+        for name, params in V9B_VARIANTS.items()
+    }
     weighted_mask = threshold_mask(weighted, rel=0.10)
 
     candidate = build_candidate_mask(sources["both"], sources["meg_only"], vert_conn, n_surf)
@@ -1466,6 +1489,8 @@ def run_scenario(scenario: str) -> list[dict]:
         save_npz(scenario_out / f"sisses_component_refit_v8_protected_sisses_{variant}.npz", source, mask)
     for variant, (source, mask) in component_refit_v9.items():
         save_npz(scenario_out / f"sisses_component_refit_v9_layerwise_sisses_{variant}.npz", source, mask)
+    for variant, (source, mask) in component_refit_v9b.items():
+        save_npz(scenario_out / f"sisses_component_refit_v9b_layerwise_sisses_{variant}.npz", source, mask)
     save_npz(scenario_out / "sisses_weighted_multilayer.npz", weighted, weighted_mask)
     save_npz(scenario_out / "sisses_meg_only.npz", sources["meg_only"], masks["meg_only"])
     save_npz(scenario_out / "sisses_eeg_only.npz", sources["eeg_only"], masks["eeg_only"])
@@ -1494,6 +1519,10 @@ def run_scenario(scenario: str) -> list[dict]:
         *[
             metric_row(scenario, f"SISSES_component_refit_v9_layerwise_sisses_{variant}", source, truth, mask)
             for variant, (source, mask) in component_refit_v9.items()
+        ],
+        *[
+            metric_row(scenario, f"SISSES_component_refit_v9b_layerwise_sisses_{variant}", source, truth, mask)
+            for variant, (source, mask) in component_refit_v9b.items()
         ],
         metric_row(scenario, "SISSES_weighted_multilayer", weighted * weighted_mask[:, None], truth, weighted_mask),
         metric_row(scenario, "SISSES_protected_multilayer", protected, truth, candidate["final"]),

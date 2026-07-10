@@ -51,6 +51,7 @@ def rows_for(scenario: str, truth: dict) -> list[tuple[str, np.ndarray]]:
         ("Component Refit v7 TBF", load_npz_source(base / "sisses_component_refit_v7_tbf_refit.npz")),
         ("Protected SISSES v8", load_npz_source(base / "sisses_component_refit_v8_protected_sisses_p025.npz")),
         ("Layer-wise SISSES v9", load_npz_source(base / "sisses_component_refit_v9_layerwise_sisses_p025.npz")),
+        ("Layer-wise SISSES v9b", load_npz_source(base / "sisses_component_refit_v9b_layerwise_sisses_balanced.npz")),
         ("Weighted SISSES", load_npz_source(base / "sisses_weighted_multilayer.npz")),
         ("Protected SISSES", load_npz_source(base / "sisses_protected_multilayer.npz")),
         ("SISSES MEG-only", load_npz_source(base / "sisses_meg_only.npz")),
