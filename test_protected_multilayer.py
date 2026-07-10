@@ -14,6 +14,7 @@ from protected_multilayer import (
     component_refit_select_v5_compact_deep_prior,
     component_refit_select_v6_sisses_refit,
     component_refit_select_v7_tbf_refit,
+    component_refit_select_v8_protected_sisses,
     component_refit_select,
     evidence_aware_compact_mask,
     graph_hop_mask,
@@ -23,6 +24,7 @@ from protected_multilayer import (
     ridge_refit,
     ridge_refit_system,
     sisses_style_refit_system,
+    protected_sisses_admm_refit_system,
     shrink_surface_core,
     source_amplitude,
     tbf_ridge_refit_system,
@@ -381,6 +383,54 @@ class ProtectedMultilayerTests(unittest.TestCase):
         )
         self.assertTrue(support[0])
         self.assertEqual(fitted.shape, source.shape)
+
+    def test_protected_sisses_admm_stays_in_tbf_space(self):
+        t = np.linspace(0, 1, 40)
+        gb = np.sin(2 * np.pi * t)[None, :]
+        gb = gb / np.linalg.norm(gb, axis=1, keepdims=True)
+        leadfield = np.eye(2)
+        data = np.vstack([gb[0] + 0.2 * np.cos(8 * np.pi * t), np.zeros_like(t)])
+        fitted = protected_sisses_admm_refit_system(
+            data,
+            leadfield,
+            np.array([True, False]),
+            np.eye(2),
+            n_surf=1,
+            gb=gb,
+            admm_iters=8,
+            max_weight_itr=1,
+        )
+        projection = fitted[0] @ gb.T @ gb
+        self.assertTrue(np.allclose(fitted[0], projection, atol=1e-8))
+
+    def test_component_refit_v8_protects_rescued_deep_penalty(self):
+        t = np.linspace(0, 1, 30)
+        surface_wave = np.sin(2 * np.pi * t)
+        deep_wave = np.cos(2 * np.pi * t)
+        gain = np.array([[1.0, 0.0, 0.2], [0.0, 1.0, 1.0], [0.1, 0.0, 0.5]])
+        truth = np.zeros((3, t.size))
+        truth[0] = surface_wave
+        truth[2] = deep_wave
+        data = gain @ truth
+        sisses = np.zeros_like(truth)
+        sisses[0] = surface_wave
+        vertices = np.array([[0, 0, 0], [0.001, 0, 0], [0, 0, 0]], dtype=float)
+        fitted, mask = component_refit_select_v8_protected_sisses(
+            {"F": data, "Gain": gain},
+            {"F": data, "Gain": gain},
+            sisses,
+            np.eye(3),
+            2,
+            vertices,
+            deep_rescue_top=1,
+            deep_k=1,
+            max_deep_points=1,
+            admm_iters=12,
+            max_weight_itr=2,
+            deep_protect_factor=0.1,
+        )
+        self.assertTrue(mask[2])
+        self.assertGreater(source_amplitude(fitted, noise_samples=0)[2], 0.05)
 
 
 if __name__ == "__main__":
