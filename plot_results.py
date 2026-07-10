@@ -50,6 +50,7 @@ def rows_for(scenario: str, truth: dict) -> list[tuple[str, np.ndarray]]:
         ("Component Refit v6 mid", load_npz_source(base / "sisses_component_refit_v6_sisses_refit_mid.npz")),
         ("Component Refit v7 TBF", load_npz_source(base / "sisses_component_refit_v7_tbf_refit.npz")),
         ("Protected SISSES v8", load_npz_source(base / "sisses_component_refit_v8_protected_sisses_p025.npz")),
+        ("Layer-wise SISSES v9", load_npz_source(base / "sisses_component_refit_v9_layerwise_sisses_p025.npz")),
         ("Weighted SISSES", load_npz_source(base / "sisses_weighted_multilayer.npz")),
         ("Protected SISSES", load_npz_source(base / "sisses_protected_multilayer.npz")),
         ("SISSES MEG-only", load_npz_source(base / "sisses_meg_only.npz")),
@@ -173,6 +174,7 @@ def draw_waveforms() -> None:
         component_v6 = load_npz_source(OUT_ROOT / "protected" / scenario / "sisses_component_refit_v6_sisses_refit_mid.npz")
         component_v7 = load_npz_source(OUT_ROOT / "protected" / scenario / "sisses_component_refit_v7_tbf_refit.npz")
         component_v8 = load_npz_source(OUT_ROOT / "protected" / scenario / "sisses_component_refit_v8_protected_sisses_p025.npz")
+        component_v9 = load_npz_source(OUT_ROOT / "protected" / scenario / "sisses_component_refit_v9_layerwise_sisses_p025.npz")
         groups = true_source_groups(truth)
         fig, axes = plt.subplots(len(groups), 1, figsize=(8.5, 2.5 * len(groups)), squeeze=False)
         for row, group in enumerate(groups):
@@ -187,6 +189,7 @@ def draw_waveforms() -> None:
             component_v6_peak, component_v6_wave = best_estimated_waveform(component_v6, group)
             component_v7_peak, component_v7_wave = best_estimated_waveform(component_v7, group)
             component_v8_peak, component_v8_wave = best_estimated_waveform(component_v8, group)
+            component_v9_peak, component_v9_wave = best_estimated_waveform(component_v9, group)
             ax.plot(times, normalize(truth_wave), color="black", linewidth=2.0, label="truth")
             ax.plot(times, normalize(direct_wave), color="#0072b2", linewidth=1.4, label=f"SISSES {direct_peak + 1}")
             ax.plot(times, normalize(protected_wave), color="#d55e00", linewidth=1.4, label=f"protected {protected_peak + 1}")
@@ -197,6 +200,7 @@ def draw_waveforms() -> None:
             ax.plot(times, normalize(component_v6_wave), color="#999999", linewidth=1.0, linestyle=":", label=f"refit v6 {component_v6_peak + 1}")
             ax.plot(times, normalize(component_v7_wave), color="#882255", linewidth=1.2, linestyle="-.", label=f"refit v7 {component_v7_peak + 1}")
             ax.plot(times, normalize(component_v8_wave), color="#117733", linewidth=1.3, linestyle="-", label=f"v8 {component_v8_peak + 1}")
+            ax.plot(times, normalize(component_v9_wave), color="#332288", linewidth=1.3, linestyle="--", label=f"v9 {component_v9_peak + 1}")
             ax.axvline(times[min(200, len(times) - 1)], color="0.75", linewidth=1.0)
             ax.set_ylim(-1.15, 1.15)
             ax.set_ylabel(f"group {row + 1}")

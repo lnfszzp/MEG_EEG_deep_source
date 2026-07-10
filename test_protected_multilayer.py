@@ -15,6 +15,7 @@ from protected_multilayer import (
     component_refit_select_v6_sisses_refit,
     component_refit_select_v7_tbf_refit,
     component_refit_select_v8_protected_sisses,
+    component_refit_select_v9_layerwise_sisses,
     component_refit_select,
     evidence_aware_compact_mask,
     graph_hop_mask,
@@ -25,6 +26,7 @@ from protected_multilayer import (
     ridge_refit_system,
     sisses_style_refit_system,
     protected_sisses_admm_refit_system,
+    layerwise_sisses_admm_refit_system,
     shrink_surface_core,
     source_amplitude,
     tbf_ridge_refit_system,
@@ -431,6 +433,49 @@ class ProtectedMultilayerTests(unittest.TestCase):
         )
         self.assertTrue(mask[2])
         self.assertGreater(source_amplitude(fitted, noise_samples=0)[2], 0.05)
+
+    def test_layerwise_sisses_does_not_graph_regularize_deep(self):
+        t = np.linspace(0, 1, 30)
+        gb = np.sin(2 * np.pi * t)[None, :]
+        gb = gb / np.linalg.norm(gb, axis=1, keepdims=True)
+        data = np.vstack([gb[0], gb[0], np.zeros_like(t)])
+        leadfield = np.eye(3)
+        candidate = np.array([True, True, True])
+        vert_conn = np.ones((3, 3))
+        fitted = layerwise_sisses_admm_refit_system(
+            data,
+            leadfield,
+            candidate,
+            vert_conn,
+            n_surf=2,
+            gb=gb,
+            sigma_surface=0.1,
+            sigma_deep=10.0,
+            sigma_deep_group=10.0,
+            admm_iters=10,
+            max_weight_itr=1,
+        )
+        self.assertLess(source_amplitude(fitted, noise_samples=0)[2], 1e-3)
+
+    def test_component_refit_v9_returns_layerwise_solution(self):
+        t = np.linspace(0, 1, 30)
+        wave = np.sin(2 * np.pi * t)
+        gain = np.eye(3)
+        source = np.zeros((3, t.size))
+        source[0] = wave
+        data = gain @ source
+        fitted, support = component_refit_select_v9_layerwise_sisses(
+            {"F": data, "Gain": gain},
+            {"F": data, "Gain": gain},
+            source,
+            np.eye(3),
+            2,
+            np.zeros((3, 3)),
+            admm_iters=10,
+            max_weight_itr=1,
+        )
+        self.assertTrue(support[0])
+        self.assertEqual(fitted.shape, source.shape)
 
 
 if __name__ == "__main__":

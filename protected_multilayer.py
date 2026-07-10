@@ -20,6 +20,7 @@ from pipelines.run_whole_brain_fusion import whitening_matrix
 SCENARIOS = ("deep_only", "surface_only", "deep_plus_surface", "deep_plus_two_surface")
 MODES = ("both", "meg_only", "eeg_only")
 V8_FACTORS = {"no_protect": 1.0, "p050": 0.5, "p025": 0.25, "p010": 0.1}
+V9_FACTORS = {"p050": 0.5, "p025": 0.25, "p010": 0.1}
 DATA_ROOT = ROOT / "generated"
 OUT_ROOT = Path(__file__).resolve().parent / "results"
 SISSES_RUN_ROOT = OUT_ROOT / "sisses_runs"
@@ -464,6 +465,12 @@ def _soft_threshold(values: np.ndarray, threshold: np.ndarray | float) -> np.nda
     return np.sign(values) * np.maximum(np.abs(values) - threshold, 0.0)
 
 
+def _row_group_soft_threshold(values: np.ndarray, threshold: np.ndarray) -> np.ndarray:
+    norm = np.linalg.norm(values, axis=1, keepdims=True)
+    scale = np.maximum(1.0 - threshold[:, None] / np.maximum(norm, 1e-12), 0.0)
+    return values * scale
+
+
 def _support_edges(support_indices: np.ndarray, vert_conn: np.ndarray, n_surf: int) -> list[tuple[int, int]]:
     pos = {int(src): i for i, src in enumerate(support_indices)}
     edges = []
@@ -562,6 +569,106 @@ def protected_sisses_admm_refit_system(
             edge_norm = np.linalg.norm(dmm @ a, axis=1)
             edge_scale = max(float(edge_norm.max(initial=0.0)), 1e-12)
             edge_weight = 1.0 / (edge_norm / edge_scale + epsilon)
+
+    result[idx] = a @ gb
+    return result
+
+
+def layerwise_sisses_admm_refit_system(
+    b: np.ndarray,
+    l: np.ndarray,
+    candidate: np.ndarray,
+    vert_conn: np.ndarray,
+    n_surf: int,
+    *,
+    gb: np.ndarray,
+    protected_indices: np.ndarray | None = None,
+    sigma_surface: float = 1.0,
+    alpha_surface: float = 1.0,
+    sigma_deep: float = 1.0,
+    sigma_deep_group: float = 1.0,
+    tau: float = 0.5,
+    deep_protect_factor: float = 0.25,
+    rho: float = 1.0,
+    epsilon: float = 0.05,
+    admm_iters: int = 50,
+    max_weight_itr: int = 5,
+) -> np.ndarray:
+    candidate = np.asarray(candidate, dtype=bool).ravel()
+    gb = np.asarray(gb, dtype=float)
+    result = np.zeros((candidate.size, b.shape[1]), dtype=float)
+    idx = np.flatnonzero(candidate)
+    if idx.size == 0:
+        return result
+
+    ls = l[:, idx]
+    y_data = b @ gb.T
+    surface_pos = np.flatnonzero(idx < n_surf)
+    deep_pos = np.flatnonzero(idx >= n_surf)
+    surface_idx = idx[surface_pos]
+    mm_s = _candidate_graph_filter(surface_idx, vert_conn, n_surf, tau) if surface_pos.size else np.zeros((0, 0))
+    dmm_s = _candidate_edge_matrix(surface_idx, vert_conn, n_surf) @ mm_s if surface_pos.size else np.zeros((0, 0))
+
+    lhs = ls.T @ ls + 1e-8 * np.eye(idx.size)
+    if surface_pos.size:
+        lhs[np.ix_(surface_pos, surface_pos)] += rho * (mm_s.T @ mm_s + dmm_s.T @ dmm_s)
+    if deep_pos.size:
+        lhs[np.ix_(deep_pos, deep_pos)] += rho * np.eye(deep_pos.size)
+    lhs_inv = np.linalg.inv(lhs)
+    rhs_data = ls.T @ y_data
+
+    a = np.zeros((idx.size, gb.shape[0]), dtype=float)
+    z_s = np.zeros((surface_pos.size, gb.shape[0]), dtype=float)
+    y_s = np.zeros_like(z_s)
+    z_edge = np.zeros((dmm_s.shape[0], gb.shape[0]), dtype=float)
+    y_edge = np.zeros_like(z_edge)
+    z_deep = np.zeros((deep_pos.size, gb.shape[0]), dtype=float)
+    y_deep = np.zeros_like(z_deep)
+
+    protected = set() if protected_indices is None else set(int(i) for i in np.asarray(protected_indices).ravel())
+    protected_deep = np.array([int(global_idx) in protected for global_idx in idx[deep_pos]], dtype=bool)
+    surface_weight = np.ones(surface_pos.size, dtype=float)
+    edge_weight = np.ones(dmm_s.shape[0], dtype=float)
+    deep_weight = np.ones(deep_pos.size, dtype=float)
+
+    for _ in range(max_weight_itr):
+        weighted_deep = deep_weight.copy()
+        weighted_deep[protected_deep] *= deep_protect_factor
+        for _ in range(admm_iters):
+            rhs = rhs_data.copy()
+            if surface_pos.size:
+                rhs[surface_pos] += rho * mm_s.T @ (z_s - y_s)
+                if dmm_s.size:
+                    rhs[surface_pos] += rho * dmm_s.T @ (z_edge - y_edge)
+            if deep_pos.size:
+                rhs[deep_pos] += rho * (z_deep - y_deep)
+            a = lhs_inv @ rhs
+
+            if surface_pos.size:
+                ma = mm_s @ a[surface_pos]
+                z_s = _soft_threshold(ma + y_s, (sigma_surface / rho) * surface_weight[:, None])
+                y_s += ma - z_s
+                if dmm_s.size:
+                    da = dmm_s @ a[surface_pos]
+                    z_edge = _soft_threshold(da + y_edge, (sigma_surface * alpha_surface / rho) * edge_weight[:, None])
+                    y_edge += da - z_edge
+            if deep_pos.size:
+                deep_trial = _soft_threshold(a[deep_pos] + y_deep, (sigma_deep / rho) * weighted_deep[:, None])
+                z_deep = _row_group_soft_threshold(deep_trial, (sigma_deep_group / rho) * weighted_deep)
+                y_deep += a[deep_pos] - z_deep
+
+        if surface_pos.size:
+            surface_norm = np.linalg.norm(mm_s @ a[surface_pos], axis=1)
+            surface_scale = max(float(surface_norm.max(initial=0.0)), 1e-12)
+            surface_weight = 1.0 / (surface_norm / surface_scale + epsilon)
+        if dmm_s.size:
+            edge_norm = np.linalg.norm(dmm_s @ a[surface_pos], axis=1)
+            edge_scale = max(float(edge_norm.max(initial=0.0)), 1e-12)
+            edge_weight = 1.0 / (edge_norm / edge_scale + epsilon)
+        if deep_pos.size:
+            deep_norm = np.linalg.norm(a[deep_pos], axis=1)
+            deep_scale = max(float(deep_norm.max(initial=0.0)), 1e-12)
+            deep_weight = 1.0 / (deep_norm / deep_scale + epsilon)
 
     result[idx] = a @ gb
     return result
@@ -1141,6 +1248,74 @@ def component_refit_select_v8_protected_sisses(
     return (fitted, mask, candidate) if return_candidate else (fitted, mask)
 
 
+def component_refit_select_v9_layerwise_sisses(
+    eeg: dict,
+    meg: dict,
+    sisses: np.ndarray,
+    vert_conn: np.ndarray,
+    n_surf: int,
+    src_vertices: np.ndarray,
+    *,
+    eeg_only_source: np.ndarray | None = None,
+    meg_only_source: np.ndarray | None = None,
+    sigma_surface: float = 1.0,
+    alpha_surface: float = 1.0,
+    sigma_deep: float = 1.0,
+    sigma_deep_group: float = 1.0,
+    tau: float = 0.5,
+    deep_protect_factor: float = 0.25,
+    deep_rescue_top: int = 8,
+    deep_k: int = 8,
+    max_deep_points: int = 1,
+    admm_iters: int = 50,
+    max_weight_itr: int = 5,
+    metric_rel: float = 0.10,
+    return_candidate: bool = False,
+) -> tuple[np.ndarray, np.ndarray] | tuple[np.ndarray, np.ndarray, np.ndarray]:
+    b, l = whitened_joint_system(eeg, meg)
+    _v4_fit, v4_candidate, broad_candidate = component_refit_select_v4_deep_rescue(
+        eeg,
+        meg,
+        sisses,
+        vert_conn,
+        n_surf,
+        src_vertices,
+        eeg_only_source=eeg_only_source,
+        meg_only_source=meg_only_source,
+        deep_rescue_top=deep_rescue_top,
+        deep_k=deep_k,
+        max_deep_points=max_deep_points,
+        return_candidate=True,
+    )
+    candidate = broad_candidate.copy()
+    candidate[n_surf:] |= v4_candidate[n_surf:]
+    if not candidate.any():
+        candidate = threshold_mask(sisses, 0.05)
+    protected_deep = np.flatnonzero(v4_candidate[n_surf:]) + n_surf
+    fitted = layerwise_sisses_admm_refit_system(
+        b,
+        l,
+        candidate,
+        vert_conn,
+        n_surf,
+        gb=tbf_selection(b),
+        protected_indices=protected_deep,
+        sigma_surface=sigma_surface,
+        alpha_surface=alpha_surface,
+        sigma_deep=sigma_deep,
+        sigma_deep_group=sigma_deep_group,
+        tau=tau,
+        deep_protect_factor=deep_protect_factor,
+        admm_iters=admm_iters,
+        max_weight_itr=max_weight_itr,
+    )
+    mask = threshold_mask(fitted, metric_rel) & candidate
+    mask[protected_deep] = True
+    if not mask.any():
+        mask = candidate.copy()
+    return (fitted, mask, candidate) if return_candidate else (fitted, mask)
+
+
 def metric_row(scenario: str, method: str, source: np.ndarray, truth: dict, mask: np.ndarray) -> dict:
     true_source = np.asarray(truth["s_true"], dtype=float)
     metrics = external_full_head_metrics(
@@ -1256,6 +1431,20 @@ def run_scenario(scenario: str) -> list[dict]:
         )
         for name, factor in V8_FACTORS.items()
     }
+    component_refit_v9 = {
+        name: component_refit_select_v9_layerwise_sisses(
+            eeg,
+            meg,
+            sources["both"],
+            vert_conn,
+            n_surf,
+            np.asarray(truth["src_vertices"], dtype=float),
+            eeg_only_source=sources["eeg_only"],
+            meg_only_source=sources["meg_only"],
+            deep_protect_factor=factor,
+        )
+        for name, factor in V9_FACTORS.items()
+    }
     weighted_mask = threshold_mask(weighted, rel=0.10)
 
     candidate = build_candidate_mask(sources["both"], sources["meg_only"], vert_conn, n_surf)
@@ -1275,6 +1464,8 @@ def run_scenario(scenario: str) -> list[dict]:
     save_npz(scenario_out / "sisses_component_refit_v7_tbf_refit.npz", component_refit_v7, component_refit_v7_mask)
     for variant, (source, mask) in component_refit_v8.items():
         save_npz(scenario_out / f"sisses_component_refit_v8_protected_sisses_{variant}.npz", source, mask)
+    for variant, (source, mask) in component_refit_v9.items():
+        save_npz(scenario_out / f"sisses_component_refit_v9_layerwise_sisses_{variant}.npz", source, mask)
     save_npz(scenario_out / "sisses_weighted_multilayer.npz", weighted, weighted_mask)
     save_npz(scenario_out / "sisses_meg_only.npz", sources["meg_only"], masks["meg_only"])
     save_npz(scenario_out / "sisses_eeg_only.npz", sources["eeg_only"], masks["eeg_only"])
@@ -1299,6 +1490,10 @@ def run_scenario(scenario: str) -> list[dict]:
         *[
             metric_row(scenario, f"SISSES_component_refit_v8_protected_sisses_{variant}", source, truth, mask)
             for variant, (source, mask) in component_refit_v8.items()
+        ],
+        *[
+            metric_row(scenario, f"SISSES_component_refit_v9_layerwise_sisses_{variant}", source, truth, mask)
+            for variant, (source, mask) in component_refit_v9.items()
         ],
         metric_row(scenario, "SISSES_weighted_multilayer", weighted * weighted_mask[:, None], truth, weighted_mask),
         metric_row(scenario, "SISSES_protected_multilayer", protected, truth, candidate["final"]),
