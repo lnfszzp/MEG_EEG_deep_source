@@ -13,6 +13,7 @@ from protected_multilayer import (
     component_refit_select_v4_deep_rescue,
     component_refit_select_v5_compact_deep_prior,
     component_refit_select_v6_sisses_refit,
+    component_refit_select_v7_tbf_refit,
     component_refit_select,
     evidence_aware_compact_mask,
     graph_hop_mask,
@@ -24,6 +25,8 @@ from protected_multilayer import (
     sisses_style_refit_system,
     shrink_surface_core,
     source_amplitude,
+    tbf_ridge_refit_system,
+    tbf_selection,
 )
 
 
@@ -342,6 +345,42 @@ class ProtectedMultilayerTests(unittest.TestCase):
         )
         self.assertEqual(set(variants), {"weak", "mid", "strong"})
         self.assertTrue(all(variants[name][1][0] for name in variants))
+
+    def test_tbf_selection_returns_orthonormal_low_rank_basis(self):
+        t = np.linspace(0, 1, 40)
+        b = np.vstack([np.sin(2 * np.pi * t), 2 * np.sin(2 * np.pi * t)])
+        gb = tbf_selection(b)
+        self.assertEqual(gb.shape[1], b.shape[1])
+        self.assertGreaterEqual(gb.shape[0], 1)
+        self.assertTrue(np.allclose(gb @ gb.T, np.eye(gb.shape[0]), atol=1e-10))
+
+    def test_tbf_ridge_refit_stays_in_tbf_space(self):
+        t = np.linspace(0, 1, 50)
+        gb = np.sin(2 * np.pi * t)[None, :]
+        gb = gb / np.linalg.norm(gb, axis=1, keepdims=True)
+        b = np.vstack([gb[0] + 0.25 * np.cos(6 * np.pi * t), np.zeros_like(t)])
+        l = np.eye(2)
+        fitted = tbf_ridge_refit_system(b, l, np.array([True, False]), gb, ridge_fraction=1e-8)
+        projection = fitted[0] @ gb.T @ gb
+        self.assertTrue(np.allclose(fitted[0], projection, atol=1e-8))
+
+    def test_component_refit_v7_returns_tbf_refit(self):
+        t = np.linspace(0, 1, 30)
+        wave = np.sin(2 * np.pi * t)
+        gain = np.eye(3)
+        source = np.zeros((3, t.size))
+        source[0] = wave
+        data = gain @ source
+        fitted, support = component_refit_select_v7_tbf_refit(
+            {"F": data, "Gain": gain},
+            {"F": data, "Gain": gain},
+            source,
+            np.eye(3),
+            2,
+            np.zeros((3, 3)),
+        )
+        self.assertTrue(support[0])
+        self.assertEqual(fitted.shape, source.shape)
 
 
 if __name__ == "__main__":

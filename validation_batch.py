@@ -27,6 +27,7 @@ from protected_multilayer import (
     component_refit_select_v4_deep_rescue,
     component_refit_select_v5_compact_deep_prior,
     component_refit_select_v6_sisses_refit,
+    component_refit_select_v7_tbf_refit,
     connected_components,
     evidence_aware_compact_mask,
     load_mat,
@@ -234,7 +235,7 @@ def generate() -> None:
         writer.writerows(jobs)
 
 
-def summarize() -> None:
+def summarize(*, include_v6: bool = True) -> None:
     rows = []
     group_rows = []
     threshold_rows = []
@@ -288,7 +289,20 @@ def summarize() -> None:
             return_candidate=True,
         )
         methods["ComponentRefit_v5"] = (component_v5, component_v5_mask)
-        component_v6 = component_refit_select_v6_sisses_refit(
+        component_v6 = {}
+        if include_v6:
+            component_v6 = component_refit_select_v6_sisses_refit(
+                sio.loadmat(job_dir / "sub_EEG.mat"),
+                sio.loadmat(job_dir / "sub_MEG.mat"),
+                sisses,
+                np.asarray(eeg["VertConn"], dtype=float),
+                n_surf,
+                np.asarray(truth["src_vertices"], dtype=float),
+                return_candidate=True,
+            )
+            for variant, (source, mask, _candidate) in component_v6.items():
+                methods[f"ComponentRefit_v6_{variant}"] = (source, mask)
+        component_v7, component_v7_mask, component_v7_candidate = component_refit_select_v7_tbf_refit(
             sio.loadmat(job_dir / "sub_EEG.mat"),
             sio.loadmat(job_dir / "sub_MEG.mat"),
             sisses,
@@ -297,8 +311,7 @@ def summarize() -> None:
             np.asarray(truth["src_vertices"], dtype=float),
             return_candidate=True,
         )
-        for variant, (source, mask, _candidate) in component_v6.items():
-            methods[f"ComponentRefit_v6_{variant}"] = (source, mask)
+        methods["ComponentRefit_v7"] = (component_v7, component_v7_mask)
         for method, (source, mask) in methods.items():
             metrics = external_full_head_metrics(
                 source * mask[:, None],
@@ -317,9 +330,12 @@ def summarize() -> None:
                     "dle_mm": metrics["dle_mm"],
                 }
             )
-            candidate = component_v5_candidate if method == "ComponentRefit_v5" else component_v4_candidate if method == "ComponentRefit_v4" else component_v3_candidate if method == "ComponentRefit_v3" else component_v6[method.removeprefix("ComponentRefit_v6_")][2] if method.startswith("ComponentRefit_v6_") else mask
+            candidate = component_v7_candidate if method == "ComponentRefit_v7" else component_v5_candidate if method == "ComponentRefit_v5" else component_v4_candidate if method == "ComponentRefit_v4" else component_v3_candidate if method == "ComponentRefit_v3" else component_v6[method.removeprefix("ComponentRefit_v6_")][2] if method.startswith("ComponentRefit_v6_") and include_v6 else mask
             group_rows.extend(_group_report_rows(job_dir.name, method, source * mask[:, None], mask, candidate, truth, np.asarray(eeg["VertConn"], dtype=float)))
-        for method, source in (("ComponentRefit_v4", component_v4), ("ComponentRefit_v5", component_v5), ("ComponentRefit_v6_mid", component_v6["mid"][0])):
+        sweep_sources = [("ComponentRefit_v4", component_v4), ("ComponentRefit_v5", component_v5), ("ComponentRefit_v7", component_v7)]
+        if include_v6:
+            sweep_sources.append(("ComponentRefit_v6_mid", component_v6["mid"][0]))
+        for method, source in sweep_sources:
             for rel in (0.05, 0.10, 0.20, 0.30, 0.40, 0.50, 0.70, 0.90):
                 mask = threshold_mask(source, rel)
                 metrics = external_full_head_metrics(
@@ -367,7 +383,7 @@ def plot_waveforms(limit: int | None = None) -> None:
         eeg = load_mat(job_dir / "sub_EEG.mat")
         compact_mask = evidence_aware_compact_mask(sisses, np.asarray(eeg["VertConn"], dtype=float), int(np.asarray(truth["n_surf"]).ravel()[0]))
         compact = sisses * compact_mask[:, None]
-        component = component_refit_select_v6_sisses_refit(load_mat(job_dir / "sub_EEG.mat"), load_mat(job_dir / "sub_MEG.mat"), sisses, np.asarray(eeg["VertConn"], dtype=float), int(np.asarray(truth["n_surf"]).ravel()[0]), np.asarray(truth["src_vertices"], dtype=float))["mid"][0]
+        component, _ = component_refit_select_v7_tbf_refit(load_mat(job_dir / "sub_EEG.mat"), load_mat(job_dir / "sub_MEG.mat"), sisses, np.asarray(eeg["VertConn"], dtype=float), int(np.asarray(truth["n_surf"]).ravel()[0]), np.asarray(truth["src_vertices"], dtype=float))
         times = np.asarray(truth["times"], dtype=float).ravel()
         groups = _true_groups(truth)
         fig, axes = plt.subplots(len(groups), 1, figsize=(8.5, 2.3 * len(groups)), squeeze=False)
@@ -377,7 +393,7 @@ def plot_waveforms(limit: int | None = None) -> None:
             sis_idx, sis_wave = best_estimated_waveform(sisses, group)
             comp_idx, comp_wave = best_estimated_waveform(compact, group)
             refit_idx, refit_wave = best_estimated_waveform(component, group)
-            for label, wave, color in (("truth", true_wave, "black"), (f"SISSES {sis_idx + 1}", sis_wave, "#0072b2"), (f"Compact {comp_idx + 1}", comp_wave, "#d55e00"), (f"Refit v6 {refit_idx + 1}", refit_wave, "#009e73")):
+            for label, wave, color in (("truth", true_wave, "black"), (f"SISSES {sis_idx + 1}", sis_wave, "#0072b2"), (f"Compact {comp_idx + 1}", comp_wave, "#d55e00"), (f"Refit v7 {refit_idx + 1}", refit_wave, "#009e73")):
                 scale = max(float(np.max(np.abs(wave), initial=0.0)), np.finfo(float).eps)
                 ax.plot(times, wave / scale, label=label, color=color, linewidth=1.5)
             ax.axvline(times[NOISE_SAMPLES], color="0.75", linewidth=1)
@@ -398,6 +414,8 @@ def main() -> None:
         generate()
     elif command == "summarize":
         summarize()
+    elif command == "summarize_fast":
+        summarize(include_v6=False)
     elif command == "waveforms":
         plot_waveforms()
     else:

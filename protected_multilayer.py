@@ -272,6 +272,57 @@ def ridge_refit_system(
     return result
 
 
+def tbf_selection(b: np.ndarray) -> np.ndarray:
+    b = np.asarray(b, dtype=float)
+    if b.ndim != 2:
+        raise ValueError("b must be channels x time")
+    if not np.any(b):
+        basis = np.zeros((1, b.shape[1]), dtype=float)
+        basis[0, 0] = 1.0
+        return basis
+    _u, s, vt = np.linalg.svd(b, full_matrices=False)
+    eigvals = s**2
+    total = float(eigvals.sum())
+    keep = eigvals / total >= 1.0 / max(1, b.shape[0])
+    k = max(1, int(keep.sum()))
+    return vt[:k]
+
+
+def tbf_ridge_refit_system(
+    b: np.ndarray,
+    l: np.ndarray,
+    support: np.ndarray,
+    gb: np.ndarray,
+    *,
+    ridge_fraction: float = 0.03,
+    prior: np.ndarray | None = None,
+    prior_weight: float = 0.0,
+) -> np.ndarray:
+    support = np.asarray(support, dtype=bool).ravel()
+    gb = np.asarray(gb, dtype=float)
+    if gb.ndim != 2 or gb.shape[1] != b.shape[1]:
+        raise ValueError("gb must be basis x time and match b")
+    result = np.zeros((support.size, b.shape[1]), dtype=float)
+    idx = np.flatnonzero(support)
+    if idx.size == 0:
+        return result
+    lc = l[:, idx]
+    b_tbf = b @ gb.T
+    scale = np.linalg.norm(lc, axis=0)
+    scale = np.maximum(scale, np.median(scale) * 1e-6)
+    ln = lc / scale[None, :]
+    gram = ln.T @ ln
+    ridge = max(float(ridge_fraction * np.trace(gram) / max(1, gram.shape[0])), 1e-12)
+    rhs = ln.T @ b_tbf
+    if prior is not None and prior_weight > 0:
+        prior_a = np.asarray(prior, dtype=float)[idx] @ gb.T
+        rhs = rhs + prior_weight * ridge * prior_a * scale[:, None]
+        gram = gram + prior_weight * ridge * np.eye(gram.shape[0])
+    coef = np.linalg.solve(gram + ridge * np.eye(gram.shape[0]), rhs)
+    result[idx] = (coef / scale[:, None]) @ gb
+    return result
+
+
 def _component_candidates(
     source: np.ndarray,
     vert_conn: np.ndarray,
@@ -886,6 +937,50 @@ def component_refit_select_v6_sisses_refit(
     return out
 
 
+def component_refit_select_v7_tbf_refit(
+    eeg: dict,
+    meg: dict,
+    sisses: np.ndarray,
+    vert_conn: np.ndarray,
+    n_surf: int,
+    src_vertices: np.ndarray,
+    *,
+    eeg_only_source: np.ndarray | None = None,
+    meg_only_source: np.ndarray | None = None,
+    ridge_fraction: float = 0.003,
+    prior_weight: float = 5.0,
+    mask_rel: float = 0.05,
+    return_candidate: bool = False,
+) -> tuple[np.ndarray, np.ndarray] | tuple[np.ndarray, np.ndarray, np.ndarray]:
+    b, l = whitened_joint_system(eeg, meg)
+    v4_fit, candidate, broad_candidate = component_refit_select_v4_deep_rescue(
+        eeg,
+        meg,
+        sisses,
+        vert_conn,
+        n_surf,
+        src_vertices,
+        eeg_only_source=eeg_only_source,
+        meg_only_source=meg_only_source,
+        return_candidate=True,
+    )
+    gb = tbf_selection(b)
+    fitted = tbf_ridge_refit_system(
+        b,
+        l,
+        candidate,
+        gb,
+        ridge_fraction=ridge_fraction,
+        prior=v4_fit,
+        prior_weight=prior_weight,
+    )
+    mask = threshold_mask(fitted, mask_rel) & candidate
+    mask[n_surf:] = candidate[n_surf:]
+    if not mask.any():
+        mask = candidate.copy()
+    return (fitted, mask, broad_candidate) if return_candidate else (fitted, mask)
+
+
 def metric_row(scenario: str, method: str, source: np.ndarray, truth: dict, mask: np.ndarray) -> dict:
     true_source = np.asarray(truth["s_true"], dtype=float)
     metrics = external_full_head_metrics(
@@ -977,6 +1072,16 @@ def run_scenario(scenario: str) -> list[dict]:
         eeg_only_source=sources["eeg_only"],
         meg_only_source=sources["meg_only"],
     )
+    component_refit_v7, component_refit_v7_mask = component_refit_select_v7_tbf_refit(
+        eeg,
+        meg,
+        sources["both"],
+        vert_conn,
+        n_surf,
+        np.asarray(truth["src_vertices"], dtype=float),
+        eeg_only_source=sources["eeg_only"],
+        meg_only_source=sources["meg_only"],
+    )
     weighted_mask = threshold_mask(weighted, rel=0.10)
 
     candidate = build_candidate_mask(sources["both"], sources["meg_only"], vert_conn, n_surf)
@@ -993,6 +1098,7 @@ def run_scenario(scenario: str) -> list[dict]:
     save_npz(scenario_out / "sisses_component_refit_v5_compact_deep_prior.npz", component_refit_v5, component_refit_v5_mask)
     for variant, (source, mask) in component_refit_v6.items():
         save_npz(scenario_out / f"sisses_component_refit_v6_sisses_refit_{variant}.npz", source, mask)
+    save_npz(scenario_out / "sisses_component_refit_v7_tbf_refit.npz", component_refit_v7, component_refit_v7_mask)
     save_npz(scenario_out / "sisses_weighted_multilayer.npz", weighted, weighted_mask)
     save_npz(scenario_out / "sisses_meg_only.npz", sources["meg_only"], masks["meg_only"])
     save_npz(scenario_out / "sisses_eeg_only.npz", sources["eeg_only"], masks["eeg_only"])
@@ -1013,6 +1119,7 @@ def run_scenario(scenario: str) -> list[dict]:
             metric_row(scenario, f"SISSES_component_refit_v6_sisses_refit_{variant}", source, truth, mask)
             for variant, (source, mask) in component_refit_v6.items()
         ],
+        metric_row(scenario, "SISSES_component_refit_v7_tbf_refit", component_refit_v7, truth, component_refit_v7_mask),
         metric_row(scenario, "SISSES_weighted_multilayer", weighted * weighted_mask[:, None], truth, weighted_mask),
         metric_row(scenario, "SISSES_protected_multilayer", protected, truth, candidate["final"]),
         metric_row(scenario, "SISSES_MEG_only", sources["meg_only"] * masks["meg_only"][:, None], truth, masks["meg_only"]),
