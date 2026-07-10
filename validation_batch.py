@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import csv
 from collections import deque
+from itertools import groupby
 from pathlib import Path
 import sys
 
@@ -39,6 +40,7 @@ from protected_multilayer import (
     load_source,
     source_amplitude,
     threshold_mask,
+    whitened_joint_system,
 )
 
 VAL_ROOT = OUT_ROOT / "position_validation"
@@ -159,6 +161,95 @@ def _group_report_rows(case_id: str, method: str, source: np.ndarray, mask: np.n
                 "active_count": int(mask.sum()),
                 "surface_active_count": int(mask[:n_surf].sum()),
                 "deep_active_count": int(mask[n_surf:].sum()),
+            }
+        )
+    return rows
+
+
+def _prediction_components(mask: np.ndarray, n_surf: int, vert_conn: np.ndarray) -> list[np.ndarray]:
+    components = connected_components(mask[:n_surf], vert_conn[:n_surf, :n_surf])
+    components += [np.array([idx], dtype=int) for idx in np.flatnonzero(mask[n_surf:]) + n_surf]
+    return components
+
+
+def _component_evidence(b: np.ndarray, l: np.ndarray, source: np.ndarray, components: list[np.ndarray]) -> list[dict]:
+    full_rss = float(np.linalg.norm(b - l @ source, "fro") ** 2)
+    amp = source_amplitude(source)
+    rows = []
+    for component_id, component in enumerate(components, start=1):
+        without = source.copy()
+        without[component] = 0.0
+        residual_drop = max(0.0, float(np.linalg.norm(b - l @ without, "fro") ** 2) - full_rss)
+        energy = float(np.linalg.norm(source[component]))
+        complexity = float(np.sqrt(max(1, component.size)))
+        score = residual_drop * energy / complexity
+        peak = int(component[np.argmax(amp[component])])
+        rows.append(
+            {
+                "component_id": component_id,
+                "peak_index": peak,
+                "n_points": int(component.size),
+                "source_energy": energy,
+                "residual_drop": residual_drop,
+                "complexity": complexity,
+                "evidence_score": score,
+            }
+        )
+    return sorted(rows, key=lambda row: row["evidence_score"], reverse=True)
+
+
+def _evidence_peak_rows(case_id: str, method: str, source: np.ndarray, mask: np.ndarray, truth: dict, vert_conn: np.ndarray, eeg: dict, meg: dict) -> list[dict]:
+    positions = np.asarray(truth["src_vertices"], dtype=float) * 1000.0
+    n_surf = int(np.asarray(truth["n_surf"]).ravel()[0])
+    components = _prediction_components(mask, n_surf, vert_conn)
+    b, l = whitened_joint_system(eeg, meg)
+    ranked = _component_evidence(b, l, source * mask[:, None], components)
+    if not ranked:
+        return []
+    amp = source_amplitude(source)
+    amp_peak = int(np.flatnonzero(mask)[np.argmax(amp[mask])]) if mask.any() else -1
+    evidence_peak = int(ranked[0]["peak_index"])
+    groups = [(i, np.asarray(group, dtype=int).ravel()) for i, group in enumerate(_true_groups(truth), start=1)]
+    assigned: dict[int, int] = {}
+    unused_groups = set(group_id for group_id, _group in groups)
+    for component in ranked:
+        if not unused_groups:
+            break
+        peak = int(component["peak_index"])
+        best_group = min(
+            unused_groups,
+            key=lambda gid: float(np.linalg.norm(positions[peak][None, :] - positions[groups[gid - 1][1]], axis=1).min()),
+        )
+        assigned[best_group] = peak
+        unused_groups.remove(best_group)
+    rows = []
+    for group_id, group in groups:
+        group = np.asarray(group, dtype=int).ravel()
+        group_type = "deep" if np.all(group >= n_surf) else "surface"
+        true_xyz = positions[group]
+
+        def dist_to(index: int) -> float:
+            if index < 0:
+                return float("nan")
+            return float(np.linalg.norm(positions[index][None, :] - true_xyz, axis=1).min())
+
+        rows.append(
+            {
+                "scenario": case_id.rsplit("_", 1)[0],
+                "case_id": case_id,
+                "method": method,
+                "group_id": group_id,
+                "group_type": group_type,
+                "amplitude_peak_index": amp_peak,
+                "evidence_peak_index": evidence_peak,
+                "amplitude_peak_dist_mm": dist_to(amp_peak),
+                "evidence_peak_dist_mm": dist_to(evidence_peak),
+                "evidence_assigned_peak_dist_mm": dist_to(assigned.get(group_id, evidence_peak)),
+                "top_component_id": int(ranked[0]["component_id"]),
+                "top_component_points": int(ranked[0]["n_points"]),
+                "top_component_score": float(ranked[0]["evidence_score"]),
+                "top_component_residual_drop": float(ranked[0]["residual_drop"]),
+                "top_component_energy": float(ranked[0]["source_energy"]),
             }
         )
     return rows
@@ -310,6 +401,7 @@ def summarize(*, include_v6: bool = True) -> None:
     group_rows = []
     layer_rows = []
     mesh_rows = []
+    evidence_rows = []
     threshold_rows = []
     rng = np.random.default_rng(7)
     for job_dir in sorted(VAL_DATA.iterdir()):
@@ -448,6 +540,18 @@ def summarize(*, include_v6: bool = True) -> None:
             group_rows.extend(report)
             layer_row = _layer_sd_row(job_dir.name, method, metrics, mask, report, n_surf, np.asarray(eeg["VertConn"], dtype=float))
             layer_rows.append(layer_row)
+            evidence_rows.extend(
+                _evidence_peak_rows(
+                    job_dir.name,
+                    method,
+                    source,
+                    mask,
+                    truth,
+                    np.asarray(eeg["VertConn"], dtype=float),
+                    sio.loadmat(job_dir / "sub_EEG.mat"),
+                    sio.loadmat(job_dir / "sub_MEG.mat"),
+                )
+            )
             rows.append(
                 {
                     "job": job_dir.name,
@@ -510,6 +614,31 @@ def summarize(*, include_v6: bool = True) -> None:
         writer = csv.DictWriter(handle, fieldnames=list(mesh_rows[0]))
         writer.writeheader()
         writer.writerows(mesh_rows)
+    with (VAL_ROOT / "evidence_peak_report.csv").open("w", newline="", encoding="utf-8-sig") as handle:
+        writer = csv.DictWriter(handle, fieldnames=list(evidence_rows[0]))
+        writer.writeheader()
+        writer.writerows(evidence_rows)
+    scenario_rows = []
+    for key, group in groupby(
+        sorted(evidence_rows, key=lambda row: (row["scenario"], row["method"])),
+        key=lambda row: (row["scenario"], row["method"]),
+    ):
+        items = list(group)
+        scenario, method = key
+        scenario_rows.append(
+            {
+                "scenario": scenario,
+                "method": method,
+                "metric_dle_mm": float(np.nanmean([row["dle_mm"] for row in rows if row["method"] == method and row["job"].rsplit("_", 1)[0] == scenario])),
+                "amplitude_global_peak_dle_mm": float(np.nanmean([row["amplitude_peak_dist_mm"] for row in items])),
+                "evidence_global_peak_dle_mm": float(np.nanmean([row["evidence_peak_dist_mm"] for row in items])),
+                "evidence_assigned_peak_dle_mm": float(np.nanmean([row["evidence_assigned_peak_dist_mm"] for row in items])),
+            }
+        )
+    with (VAL_ROOT / "dle_by_scenario_report.csv").open("w", newline="", encoding="utf-8-sig") as handle:
+        writer = csv.DictWriter(handle, fieldnames=list(scenario_rows[0]))
+        writer.writeheader()
+        writer.writerows(scenario_rows)
     with (VAL_ROOT / "threshold_sweep.csv").open("w", newline="", encoding="utf-8-sig") as handle:
         writer = csv.DictWriter(handle, fieldnames=list(threshold_rows[0]))
         writer.writeheader()

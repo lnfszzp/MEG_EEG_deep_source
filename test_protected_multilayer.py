@@ -32,7 +32,7 @@ from protected_multilayer import (
     tbf_ridge_refit_system,
     tbf_selection,
 )
-from validation_batch import _group_report_rows, _layer_sd_row, _mesh_resolution_row
+from validation_batch import _component_evidence, _group_report_rows, _layer_sd_row, _mesh_resolution_row
 
 
 class ProtectedMultilayerTests(unittest.TestCase):
@@ -567,6 +567,21 @@ class ProtectedMultilayerTests(unittest.TestCase):
         self.assertEqual(row["median_surface_edge_mm"], 4.0)
         self.assertEqual(row["median_deep_nn_dist_mm"], 6.0)
         self.assertEqual(row["oracle_nearest_grid_dist_mm"], 0.0)
+
+    def test_component_evidence_prefers_residual_important_component(self):
+        t = np.linspace(0, 1, 20)
+        source = np.zeros((3, t.size))
+        source[0] = np.sin(2 * np.pi * t)
+        source[2] = 0.1 * np.cos(2 * np.pi * t)
+        leadfield = np.eye(3)
+        rows = _component_evidence(
+            leadfield @ source,
+            leadfield,
+            source,
+            [np.array([0], dtype=int), np.array([2], dtype=int)],
+        )
+        self.assertEqual(rows[0]["peak_index"], 0)
+        self.assertGreater(rows[0]["evidence_score"], rows[1]["evidence_score"])
 
 
 if __name__ == "__main__":
