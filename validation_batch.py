@@ -19,6 +19,7 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from algorithms.external_metrics import external_full_head_metrics
+from auc_metric import an_auc_from_cortex, auc_cortex
 from pipelines.sisses_direct_utils import best_estimated_waveform, group_waveform
 from protected_multilayer import (
     DATA_ROOT,
@@ -415,6 +416,11 @@ def summarize(*, include_v6: bool = True) -> None:
         mesh_rows.append(_mesh_resolution_row(job_dir.name, truth, np.asarray(eeg["VertConn"], dtype=float)))
         n_sources = np.asarray(truth["s_true"]).shape[0]
         n_surf = int(np.asarray(truth["n_surf"]).ravel()[0])
+        cortex = auc_cortex(
+            np.asarray(truth["src_vertices"], dtype=float),
+            np.asarray(eeg["VertConn"], dtype=float),
+            n_surf,
+        )
         sisses = load_source(run_file, n_sources)
         random_source = rng.normal(size=sisses.shape)
         methods = {
@@ -535,6 +541,7 @@ def summarize(*, include_v6: bool = True) -> None:
                 np.asarray(truth["src_vertices"], dtype=float),
                 true_groups=_true_groups(truth),
             )
+            metrics["auc"] = an_auc_from_cortex(np.asarray(truth["s_true"], dtype=float), source * mask[:, None], cortex)
             candidate = component_v9b_candidates[method] if method in component_v9b_candidates else component_v9_candidates[method] if method in component_v9_candidates else component_v8_candidates[method] if method in component_v8_candidates else component_v7_candidate if method == "ComponentRefit_v7" else component_v5_candidate if method == "ComponentRefit_v5" else component_v4_candidate if method == "ComponentRefit_v4" else component_v3_candidate if method == "ComponentRefit_v3" else component_v6[method.removeprefix("ComponentRefit_v6_")][2] if method.startswith("ComponentRefit_v6_") and include_v6 else mask
             report = _group_report_rows(job_dir.name, method, source * mask[:, None], mask, candidate, truth, np.asarray(eeg["VertConn"], dtype=float))
             group_rows.extend(report)
@@ -583,6 +590,7 @@ def summarize(*, include_v6: bool = True) -> None:
                     np.asarray(truth["src_vertices"], dtype=float),
                     true_groups=_true_groups(truth),
                 )
+                metrics["auc"] = an_auc_from_cortex(np.asarray(truth["s_true"], dtype=float), source * mask[:, None], cortex)
                 report = _group_report_rows(job_dir.name, method, source * mask[:, None], mask, mask, truth, np.asarray(eeg["VertConn"], dtype=float))
                 threshold_rows.append(
                     {

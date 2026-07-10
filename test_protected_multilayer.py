@@ -36,6 +36,12 @@ from validation_batch import _component_evidence, _group_report_rows, _layer_sd_
 
 
 class ProtectedMultilayerTests(unittest.TestCase):
+    def test_auc_metric_uses_requested_function_and_threshold(self):
+        from auc_metric import AUC_THRESHOLD, An_cal_AUC
+
+        self.assertEqual(AUC_THRESHOLD, 0.01)
+        self.assertEqual(Path(An_cal_AUC.__code__.co_filename), Path(r"F:\PycharmProjects\meg\function\An_cal_AUC.py"))
+
     def test_candidate_mask_uses_meg_surface_and_joint_deep(self):
         n_surf = 6
         n_sources = 9

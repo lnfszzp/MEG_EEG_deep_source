@@ -16,6 +16,7 @@ if str(ROOT) not in sys.path:
 from algorithms.external_metrics import external_full_head_metrics
 from pipelines.sisses_direct_utils import true_source_groups
 from pipelines.run_whole_brain_fusion import whitening_matrix
+from auc_metric import an_auc_from_cortex, auc_cortex
 
 SCENARIOS = ("deep_only", "surface_only", "deep_plus_surface", "deep_plus_two_surface")
 MODES = ("both", "meg_only", "eeg_only")
@@ -1325,7 +1326,7 @@ def component_refit_select_v9_layerwise_sisses(
     return (fitted, mask, candidate) if return_candidate else (fitted, mask)
 
 
-def metric_row(scenario: str, method: str, source: np.ndarray, truth: dict, mask: np.ndarray) -> dict:
+def metric_row(scenario: str, method: str, source: np.ndarray, truth: dict, mask: np.ndarray, cortex: dict | None = None) -> dict:
     true_source = np.asarray(truth["s_true"], dtype=float)
     metrics = external_full_head_metrics(
         source,
@@ -1333,6 +1334,8 @@ def metric_row(scenario: str, method: str, source: np.ndarray, truth: dict, mask
         np.asarray(truth["src_vertices"], dtype=float),
         true_groups=true_source_groups(truth),
     )
+    if cortex is not None:
+        metrics["auc"] = an_auc_from_cortex(true_source, source, cortex)
     n_surf = int(np.asarray(truth["n_surf"]).ravel()[0])
     return {
         "scenario": scenario,
@@ -1367,6 +1370,7 @@ def run_scenario(scenario: str) -> list[dict]:
     n_sources = np.asarray(truth["s_true"]).shape[0]
     n_surf = int(np.asarray(truth["n_surf"]).ravel()[0])
     vert_conn = np.asarray(eeg["VertConn"], dtype=float)
+    cortex = auc_cortex(np.asarray(truth["src_vertices"], dtype=float), vert_conn, n_surf)
 
     sources = {
         mode: load_source(SISSES_RUN_ROOT / scenario / mode / "s_wen.mat", n_sources)
@@ -1499,35 +1503,38 @@ def run_scenario(scenario: str) -> list[dict]:
     save_npz(scenario_out / "candidate_surface_layer.npz", protected, candidate["surface"])
     save_npz(scenario_out / "candidate_deep_layer.npz", protected, candidate["deep"])
 
+    def row(method: str, source: np.ndarray, mask: np.ndarray) -> dict:
+        return metric_row(scenario, method, source, truth, mask, cortex)
+
     return [
-        metric_row(scenario, "SISSES_EEG_MEG_direct", sources["both"] * masks["both"][:, None], truth, masks["both"]),
-        metric_row(scenario, f"SISSES_adaptive_threshold_{adaptive_rel:.3f}", sources["both"] * adaptive_mask[:, None], truth, adaptive_mask),
-        metric_row(scenario, "SISSES_evidence_compact", sources["both"] * compact_mask[:, None], truth, compact_mask),
-        metric_row(scenario, "SISSES_component_refit_v2", component_refit, truth, component_refit_mask),
-        metric_row(scenario, "SISSES_component_refit_v3_localize", component_refit_v3, truth, component_refit_v3_mask),
-        metric_row(scenario, "SISSES_component_refit_v4_deep_rescue", component_refit_v4, truth, component_refit_v4_mask),
-        metric_row(scenario, "SISSES_component_refit_v5_compact_deep_prior", component_refit_v5, truth, component_refit_v5_mask),
+        row("SISSES_EEG_MEG_direct", sources["both"] * masks["both"][:, None], masks["both"]),
+        row(f"SISSES_adaptive_threshold_{adaptive_rel:.3f}", sources["both"] * adaptive_mask[:, None], adaptive_mask),
+        row("SISSES_evidence_compact", sources["both"] * compact_mask[:, None], compact_mask),
+        row("SISSES_component_refit_v2", component_refit, component_refit_mask),
+        row("SISSES_component_refit_v3_localize", component_refit_v3, component_refit_v3_mask),
+        row("SISSES_component_refit_v4_deep_rescue", component_refit_v4, component_refit_v4_mask),
+        row("SISSES_component_refit_v5_compact_deep_prior", component_refit_v5, component_refit_v5_mask),
         *[
-            metric_row(scenario, f"SISSES_component_refit_v6_sisses_refit_{variant}", source, truth, mask)
+            row(f"SISSES_component_refit_v6_sisses_refit_{variant}", source, mask)
             for variant, (source, mask) in component_refit_v6.items()
         ],
-        metric_row(scenario, "SISSES_component_refit_v7_tbf_refit", component_refit_v7, truth, component_refit_v7_mask),
+        row("SISSES_component_refit_v7_tbf_refit", component_refit_v7, component_refit_v7_mask),
         *[
-            metric_row(scenario, f"SISSES_component_refit_v8_protected_sisses_{variant}", source, truth, mask)
+            row(f"SISSES_component_refit_v8_protected_sisses_{variant}", source, mask)
             for variant, (source, mask) in component_refit_v8.items()
         ],
         *[
-            metric_row(scenario, f"SISSES_component_refit_v9_layerwise_sisses_{variant}", source, truth, mask)
+            row(f"SISSES_component_refit_v9_layerwise_sisses_{variant}", source, mask)
             for variant, (source, mask) in component_refit_v9.items()
         ],
         *[
-            metric_row(scenario, f"SISSES_component_refit_v9b_layerwise_sisses_{variant}", source, truth, mask)
+            row(f"SISSES_component_refit_v9b_layerwise_sisses_{variant}", source, mask)
             for variant, (source, mask) in component_refit_v9b.items()
         ],
-        metric_row(scenario, "SISSES_weighted_multilayer", weighted * weighted_mask[:, None], truth, weighted_mask),
-        metric_row(scenario, "SISSES_protected_multilayer", protected, truth, candidate["final"]),
-        metric_row(scenario, "SISSES_MEG_only", sources["meg_only"] * masks["meg_only"][:, None], truth, masks["meg_only"]),
-        metric_row(scenario, "SISSES_EEG_only", sources["eeg_only"] * masks["eeg_only"][:, None], truth, masks["eeg_only"]),
+        row("SISSES_weighted_multilayer", weighted * weighted_mask[:, None], weighted_mask),
+        row("SISSES_protected_multilayer", protected, candidate["final"]),
+        row("SISSES_MEG_only", sources["meg_only"] * masks["meg_only"][:, None], masks["meg_only"]),
+        row("SISSES_EEG_only", sources["eeg_only"] * masks["eeg_only"][:, None], masks["eeg_only"]),
     ]
 
 
