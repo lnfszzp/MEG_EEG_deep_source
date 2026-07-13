@@ -17,6 +17,7 @@ from protected_multilayer import (
     component_refit_select_v8_protected_sisses,
     component_refit_select_v9_layerwise_sisses,
     component_refit_select,
+    compactness_penalty_weights,
     evidence_aware_compact_mask,
     graph_hop_mask,
     numpy_knn_expand_deep,
@@ -33,6 +34,7 @@ from protected_multilayer import (
     tbf_selection,
 )
 from validation_batch import _component_evidence, _group_report_rows, _layer_sd_row, _mesh_resolution_row
+from refined_grid import refined_deep_evidence
 
 
 class ProtectedMultilayerTests(unittest.TestCase):
@@ -518,6 +520,41 @@ class ProtectedMultilayerTests(unittest.TestCase):
         )
         self.assertTrue(support[0])
         self.assertEqual(fitted.shape, source.shape)
+
+    def test_v11_compactness_penalizes_distance_without_truth(self):
+        source = np.zeros((5, 4))
+        source[0] = 2.0
+        candidate = np.ones(5, dtype=bool)
+        conn = np.eye(5)
+        conn[0, 1] = conn[1, 0] = 1
+        conn[1, 2] = conn[2, 1] = 1
+        vertices = np.array([[0, 0, 0], [0.005, 0, 0], [0.010, 0, 0], [0, 0, 0], [0.010, 0, 0]])
+        weights = compactness_penalty_weights(source, candidate, conn, 3, vertices, np.array([3]))
+        self.assertLess(weights[0], weights[2])
+        self.assertLess(weights[3], weights[4])
+
+    def test_refined_deep_evidence_requires_both_modalities(self):
+        rng = np.random.default_rng(4)
+        data = 0.01 * rng.normal(size=(2, 240))
+        data[1, 200:] += np.sin(np.linspace(0, 2 * np.pi, 40))
+        modality = {"F": data, "Gain": np.array([[0.0, 1.0], [0.0, 0.0]])}
+        refined = {
+            "gain_eeg": np.array([[0.0, 0.0], [0.0, 1.0]]),
+            "gain_meg": np.array([[0.0, 0.0], [0.0, 1.0]]),
+            "vertices": np.array([[0, 0, 0], [0.005, 0, 0]]),
+            "n_surf": np.array([1]),
+        }
+        evidence = refined_deep_evidence(
+            modality,
+            modality,
+            np.zeros((2, 240)),
+            np.array([[0, 0, 0], [0, 0, 0]]),
+            1,
+            refined,
+        )
+        self.assertIsNotNone(evidence)
+        self.assertEqual(evidence["grid"], "fine")
+        self.assertGreater(evidence["eeg_drop"], 0.05)
 
     def test_group_report_adds_nearest_cluster_sd(self):
         source = np.zeros((4, 4))

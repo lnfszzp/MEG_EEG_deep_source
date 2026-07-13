@@ -12,3 +12,14 @@ results/**
 !results/position_validation/evidence_peak_report.csv
 !results/position_validation/dle_by_scenario_report.csv
 !results/position_validation/threshold_sweep.csv
+!results/v11/
+!results/v11/metrics.csv
+!results/v11/grid_resolution.csv
+!results/v11/localization_deep_00.png
+!results/v11/localization_surface_04.png
+!results/v11/localization_mixed_04.png
+!results/v11/localization_mixed2_02.png
+!results/v11/waveforms_deep_00.png
+!results/v11/waveforms_surface_04.png
+!results/v11/waveforms_mixed_04.png
+!results/v11/waveforms_mixed2_02.png

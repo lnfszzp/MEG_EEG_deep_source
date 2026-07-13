@@ -24,9 +24,11 @@ from visualization.visualize_spatial_fused_cortical import (
     render_surface_view,
     source_to_continuous_surface,
 )
-from protected_multilayer import DATA_ROOT, OUT_ROOT, SCENARIOS, load_mat, source_amplitude
+from protected_multilayer import DATA_ROOT, OUT_ROOT, SCENARIOS, load_mat, load_source, source_amplitude, threshold_mask
+from validation_batch import VAL_DATA, VAL_RUNS, V11_ROOT
 
 FIG_ROOT = OUT_ROOT / "figures"
+V11_CASES = ("deep_00", "surface_04", "mixed_04", "mixed2_02")
 
 
 def load_npz_source(path: Path) -> np.ndarray:
@@ -152,10 +154,85 @@ def draw_localization() -> None:
         plt.close(fig)
 
 
+def draw_v11_localization() -> None:
+    pv.global_theme.allow_empty_mesh = True
+    surface_context = load_surface_context()
+    anatomical_context = load_anatomical_context()
+    for case_id in V11_CASES:
+        truth = load_mat(VAL_DATA / case_id / "s_true.mat")
+        n_sources = np.asarray(truth["s_true"]).shape[0]
+        sisses = load_source(VAL_RUNS / case_id / "s_wen.mat", n_sources)
+        sisses *= threshold_mask(sisses, 0.10)[:, None]
+        with np.load(V11_ROOT / "sources" / f"{case_id}.npz") as saved:
+            v11 = np.asarray(saved["S"], dtype=float) * np.asarray(saved["region_mask"], dtype=bool)[:, None]
+        rows = (("Ground truth", np.asarray(truth["s_true"], dtype=float)), ("SISSES", sisses), ("V11 compact + refined", v11))
+        lateral_hemi = dominant_truth_hemi(truth, surface_context)
+        fig, axes = plt.subplots(3, 3, figsize=(14.2, 10.5), facecolor="white")
+        for row_index, (label, source) in enumerate(rows):
+            lh, rh = source_to_continuous_surface(source, surface_context, smoothing_steps=5)
+            images = (
+                render_surface_view(lh, rh, surface_context, "ventral", lateral_hemi),
+                render_surface_view(lh, rh, surface_context, "lateral", lateral_hemi),
+                render_deep_activation(truth, source, anatomical_context),
+            )
+            for col, image in enumerate(images):
+                axes[row_index, col].imshow(image)
+                axes[row_index, col].set_axis_off()
+            axes[row_index, 0].text(
+                -0.03,
+                0.5,
+                label,
+                rotation=90,
+                va="center",
+                ha="right",
+                transform=axes[row_index, 0].transAxes,
+                fontsize=12,
+                fontweight="bold",
+            )
+        axes[0, 0].set_title("Inflated ventral", fontsize=13)
+        axes[0, 1].set_title(f"Inflated {lateral_hemi.upper()} lateral", fontsize=13)
+        axes[0, 2].set_title("Deep activation", fontsize=13)
+        fig.suptitle(f"V11 compactness + refined grid: {case_id}", fontsize=15, y=0.995)
+        fig.subplots_adjust(left=0.085, right=0.995, top=0.91, bottom=0.01, wspace=0.02, hspace=0.035)
+        fig.savefig(V11_ROOT / f"localization_{case_id}.png", dpi=180, bbox_inches="tight")
+        plt.close(fig)
+
+
 def normalize(wave: np.ndarray) -> np.ndarray:
     wave = np.asarray(wave, dtype=float).ravel()
     scale = float(np.max(np.abs(wave), initial=0.0))
     return wave / scale if scale > 0 else wave
+
+
+def draw_v11_waveforms() -> None:
+    for case_id in V11_CASES:
+        truth = load_mat(VAL_DATA / case_id / "s_true.mat")
+        true_source = np.asarray(truth["s_true"], dtype=float)
+        sisses = load_source(VAL_RUNS / case_id / "s_wen.mat", true_source.shape[0])
+        with np.load(V11_ROOT / "sources" / f"{case_id}.npz") as saved:
+            v11 = np.asarray(saved["S"], dtype=float) * np.asarray(saved["region_mask"], dtype=bool)[:, None]
+        groups = true_source_groups(truth)
+        times = np.asarray(truth["times"], dtype=float).ravel()
+        fig, axes = plt.subplots(len(groups), 1, figsize=(8.4, 2.35 * len(groups)), squeeze=False)
+        for row, group in enumerate(groups):
+            truth_wave = group_waveform(true_source, group)
+            sisses_index, sisses_wave = best_estimated_waveform(sisses, group)
+            v11_index, v11_wave = best_estimated_waveform(v11, group)
+            ax = axes[row, 0]
+            ax.plot(times, normalize(truth_wave), color="black", linewidth=2.0, label="truth")
+            ax.plot(times, normalize(sisses_wave), color="#0072b2", linewidth=1.3, label=f"SISSES {sisses_index + 1}")
+            ax.plot(times, normalize(v11_wave), color="#d55e00", linewidth=1.5, label=f"V11 {v11_index + 1}")
+            ax.axvline(times[min(200, times.size - 1)], color="0.75", linewidth=1.0)
+            ax.set_ylim(-1.15, 1.15)
+            ax.set_ylabel(f"group {row + 1}")
+            ax.spines[["top", "right"]].set_visible(False)
+            if row == 0:
+                ax.legend(frameon=False, loc="upper right")
+        axes[-1, 0].set_xlabel("Time (s)")
+        fig.suptitle(f"Source waveform comparison: {case_id}", fontsize=13)
+        fig.tight_layout()
+        fig.savefig(V11_ROOT / f"waveforms_{case_id}.png", dpi=180)
+        plt.close(fig)
 
 
 def draw_waveforms() -> None:
@@ -216,6 +293,11 @@ def draw_waveforms() -> None:
 
 
 def main() -> None:
+    if len(sys.argv) > 1 and sys.argv[1] == "v11":
+        draw_v11_localization()
+        draw_v11_waveforms()
+        print("Saved:", V11_ROOT)
+        return
     draw_localization()
     draw_waveforms()
     print("Saved:", FIG_ROOT)

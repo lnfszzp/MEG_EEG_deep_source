@@ -35,6 +35,7 @@ from protected_multilayer import (
     component_refit_select_v7_tbf_refit,
     component_refit_select_v8_protected_sisses,
     component_refit_select_v9_layerwise_sisses,
+    component_refit_select_v11_compactness_sisses,
     connected_components,
     evidence_aware_compact_mask,
     load_mat,
@@ -43,11 +44,13 @@ from protected_multilayer import (
     threshold_mask,
     whitened_joint_system,
 )
+from refined_grid import load_refined_forward, refined_deep_evidence, refined_sd_dle
 
 VAL_ROOT = OUT_ROOT / "position_validation"
 VAL_DATA = VAL_ROOT / "generated"
 VAL_RUNS = VAL_ROOT / "sisses_runs"
 VAL_FIGS = VAL_ROOT / "waveforms"
+V11_ROOT = OUT_ROOT / "v11"
 NOISE_SAMPLES = 200
 
 
@@ -541,7 +544,9 @@ def summarize(*, include_v6: bool = True) -> None:
                 np.asarray(truth["src_vertices"], dtype=float),
                 true_groups=_true_groups(truth),
             )
-            metrics["auc"] = an_auc_from_cortex(np.asarray(truth["s_true"], dtype=float), source * mask[:, None], cortex)
+            metrics["auc"] = an_auc_from_cortex(
+                np.asarray(truth["s_true"], dtype=float), source * mask[:, None], cortex, _true_groups(truth)
+            )
             candidate = component_v9b_candidates[method] if method in component_v9b_candidates else component_v9_candidates[method] if method in component_v9_candidates else component_v8_candidates[method] if method in component_v8_candidates else component_v7_candidate if method == "ComponentRefit_v7" else component_v5_candidate if method == "ComponentRefit_v5" else component_v4_candidate if method == "ComponentRefit_v4" else component_v3_candidate if method == "ComponentRefit_v3" else component_v6[method.removeprefix("ComponentRefit_v6_")][2] if method.startswith("ComponentRefit_v6_") and include_v6 else mask
             report = _group_report_rows(job_dir.name, method, source * mask[:, None], mask, candidate, truth, np.asarray(eeg["VertConn"], dtype=float))
             group_rows.extend(report)
@@ -590,7 +595,9 @@ def summarize(*, include_v6: bool = True) -> None:
                     np.asarray(truth["src_vertices"], dtype=float),
                     true_groups=_true_groups(truth),
                 )
-                metrics["auc"] = an_auc_from_cortex(np.asarray(truth["s_true"], dtype=float), source * mask[:, None], cortex)
+                metrics["auc"] = an_auc_from_cortex(
+                    np.asarray(truth["s_true"], dtype=float), source * mask[:, None], cortex, _true_groups(truth)
+                )
                 report = _group_report_rows(job_dir.name, method, source * mask[:, None], mask, mask, truth, np.asarray(eeg["VertConn"], dtype=float))
                 threshold_rows.append(
                     {
@@ -653,6 +660,146 @@ def summarize(*, include_v6: bool = True) -> None:
         writer.writerows(threshold_rows)
 
 
+def summarize_v11() -> None:
+    from SD import SD
+
+    refined = load_refined_forward()
+    rows = []
+    source_dir = V11_ROOT / "sources"
+    source_dir.mkdir(parents=True, exist_ok=True)
+    for job_dir in sorted(VAL_DATA.iterdir()):
+        run_file = VAL_RUNS / job_dir.name / "s_wen.mat"
+        if not job_dir.is_dir() or not run_file.exists():
+            continue
+        truth = load_mat(job_dir / "s_true.mat")
+        eeg = load_mat(job_dir / "sub_EEG.mat")
+        meg = load_mat(job_dir / "sub_MEG.mat")
+        true_source = np.asarray(truth["s_true"], dtype=float)
+        vertices = np.asarray(truth["src_vertices"], dtype=float)
+        groups = _true_groups(truth)
+        n_surf = int(np.asarray(truth["n_surf"]).ravel()[0])
+        vert_conn = np.asarray(eeg["VertConn"], dtype=float)
+        sisses = load_source(run_file, true_source.shape[0])
+        cortex = auc_cortex(vertices, vert_conn, n_surf)
+
+        v9, v9_mask = component_refit_select_v9_layerwise_sisses(
+            eeg,
+            meg,
+            sisses,
+            vert_conn,
+            n_surf,
+            vertices,
+            **V9B_VARIANTS["balanced"],
+        )
+        v11, range_mask, candidate = component_refit_select_v11_compactness_sisses(
+            eeg,
+            meg,
+            sisses,
+            vert_conn,
+            n_surf,
+            vertices,
+            surface_compactness=0.10,
+            sigma_surface_component=0.10,
+            deep_compactness=0.50,
+            return_candidate=True,
+        )
+        compact_mask = threshold_mask(v11, 0.50) & candidate
+        compact_mask[n_surf:] = False
+        compact = v11 * compact_mask[:, None]
+        deep = refined_deep_evidence(eeg, meg, v11, vertices, n_surf, refined)
+        if deep is not None:
+            compact[int(deep["coarse_index"])] = deep["timecourse"]
+            compact_mask[int(deep["coarse_index"])] = True
+
+        methods = {
+            "SISSES_0.10": (sisses, threshold_mask(sisses, 0.10)),
+            "V9b_balanced": (v9, v9_mask),
+            "V11_range": (v11, range_mask),
+        }
+        for method, (source, mask) in methods.items():
+            used = source * mask[:, None]
+            metrics = external_full_head_metrics(used, true_source, vertices, true_groups=groups)
+            metrics["auc"] = an_auc_from_cortex(true_source, used, cortex, groups)
+            report = _group_report_rows(job_dir.name, method, used, mask, mask, truth, vert_conn)
+            surface_values = [r["group_sd_mm"] for r in report if r["group_type"] == "surface"]
+            deep_values = [r["group_sd_mm"] for r in report if r["group_type"] == "deep"]
+            rows.append(
+                {
+                    "case_id": job_dir.name,
+                    "scenario": job_dir.name.rsplit("_", 1)[0],
+                    "method": method,
+                    "auc": metrics["auc"],
+                    "rmse": metrics["rmse"],
+                    "surface_sd_mm": float(np.mean(surface_values)) if surface_values else np.nan,
+                    "deep_sd_mm": float(np.mean(deep_values)) if deep_values else np.nan,
+                    "dle_mm": metrics["dle_mm"],
+                    "active_count": int(mask.sum()),
+                    "deep_grid": "coarse",
+                    "eeg_drop": np.nan,
+                    "meg_drop": np.nan,
+                }
+            )
+
+        predicted_vertices = vertices[:n_surf]
+        predicted_source = compact[:n_surf]
+        predicted_mask = compact_mask[:n_surf]
+        if deep is not None:
+            predicted_vertices = np.vstack([predicted_vertices, deep["position"]])
+            predicted_source = np.vstack([predicted_source, deep["timecourse"]])
+            predicted_mask = np.r_[predicted_mask, True]
+        _sd_mm, dle_mm = refined_sd_dle(predicted_source, predicted_mask, predicted_vertices, vertices, groups)
+        surface_groups = [group for group in groups if np.all(group < n_surf)]
+        deep_groups = [group for group in groups if np.all(group >= n_surf)]
+        surface_sd = (
+            float(SD(compact[:n_surf], np.vstack([vertices[group] for group in surface_groups]), vertices[:n_surf], 0.0) * 1000.0)
+            if surface_groups
+            else np.nan
+        )
+        deep_sd = (
+            float(np.linalg.norm(deep["position"] - vertices[deep_groups[0]], axis=1).min() * 1000.0)
+            if deep is not None and deep_groups
+            else np.nan
+        )
+        mapped_metrics = external_full_head_metrics(compact, true_source, vertices, true_groups=groups)
+        rows.append(
+            {
+                "case_id": job_dir.name,
+                "scenario": job_dir.name.rsplit("_", 1)[0],
+                "method": "V11_compact_refined",
+                "auc": an_auc_from_cortex(true_source, compact, cortex, groups),
+                "rmse": mapped_metrics["rmse"],
+                "surface_sd_mm": surface_sd,
+                "deep_sd_mm": deep_sd,
+                "dle_mm": dle_mm,
+                "active_count": int(predicted_mask.sum()),
+                "deep_grid": deep["grid"] if deep is not None else "none",
+                "eeg_drop": deep["eeg_drop"] if deep is not None else np.nan,
+                "meg_drop": deep["meg_drop"] if deep is not None else np.nan,
+            }
+        )
+        np.savez_compressed(
+            source_dir / f"{job_dir.name}.npz",
+            S=compact,
+            region_mask=compact_mask,
+            deep_position=np.asarray(deep["position"]) if deep is not None else np.empty((0, 3)),
+        )
+        print("V11", job_dir.name, flush=True)
+
+    V11_ROOT.mkdir(parents=True, exist_ok=True)
+    with (V11_ROOT / "metrics.csv").open("w", newline="", encoding="utf-8-sig") as handle:
+        writer = csv.DictWriter(handle, fieldnames=list(rows[0]))
+        writer.writeheader()
+        writer.writerows(rows)
+    spacing_rows = [
+        {"layer": "surface", "coarse_mm": 5.065213849225115, "refined_mm": float(refined["surface_spacing_mm"][0])},
+        {"layer": "deep", "coarse_mm": 9.999999399353555, "refined_mm": float(refined["deep_spacing_mm"][0])},
+    ]
+    with (V11_ROOT / "grid_resolution.csv").open("w", newline="", encoding="utf-8-sig") as handle:
+        writer = csv.DictWriter(handle, fieldnames=list(spacing_rows[0]))
+        writer.writeheader()
+        writer.writerows(spacing_rows)
+
+
 def plot_waveforms(limit: int | None = None) -> None:
     VAL_FIGS.mkdir(parents=True, exist_ok=True)
     for job_dir in sorted(VAL_DATA.iterdir())[:limit]:
@@ -706,6 +853,8 @@ def main() -> None:
         summarize(include_v6=False)
     elif command == "waveforms":
         plot_waveforms()
+    elif command == "v11":
+        summarize_v11()
     else:
         raise SystemExit(f"unknown command: {command}")
 

@@ -478,6 +478,19 @@ def _row_group_soft_threshold(values: np.ndarray, threshold: np.ndarray) -> np.n
     return values * scale
 
 
+def _component_group_soft_threshold(
+    values: np.ndarray,
+    components: list[np.ndarray],
+    threshold: float,
+) -> np.ndarray:
+    result = values.copy()
+    for component in components:
+        norm = float(np.linalg.norm(result[component]))
+        scale = max(1.0 - threshold * np.sqrt(component.size) / max(norm, 1e-12), 0.0)
+        result[component] *= scale
+    return result
+
+
 def _support_edges(support_indices: np.ndarray, vert_conn: np.ndarray, n_surf: int) -> list[tuple[int, int]]:
     pos = {int(src): i for i, src in enumerate(support_indices)}
     edges = []
@@ -507,6 +520,57 @@ def _candidate_edge_matrix(support_indices: np.ndarray, vert_conn: np.ndarray, n
         edge_matrix[row, a] = 1.0
         edge_matrix[row, b] = -1.0
     return edge_matrix
+
+
+def compactness_penalty_weights(
+    source: np.ndarray,
+    candidate: np.ndarray,
+    vert_conn: np.ndarray,
+    n_surf: int,
+    src_vertices: np.ndarray,
+    protected_deep: np.ndarray,
+    *,
+    surface_scale: float = 0.25,
+    deep_scale: float = 1.0,
+) -> np.ndarray:
+    """Static evidence-centered weights; no ground-truth positions are used."""
+    candidate = np.asarray(candidate, dtype=bool).ravel()
+    weights = np.ones(candidate.size, dtype=float)
+    amp = source_amplitude(source)
+    surface_conn = np.asarray(vert_conn != 0)[:n_surf, :n_surf]
+    for component in connected_components(candidate[:n_surf], surface_conn):
+        peak = int(component[np.argmax(amp[component])])
+        hops = np.full(n_surf, np.inf)
+        hops[peak] = 0.0
+        queue: deque[int] = deque([peak])
+        allowed = np.zeros(n_surf, dtype=bool)
+        allowed[component] = True
+        while queue:
+            item = queue.popleft()
+            for neighbor in np.flatnonzero(surface_conn[item] & allowed):
+                if not np.isfinite(hops[neighbor]):
+                    hops[neighbor] = hops[item] + 1.0
+                    queue.append(int(neighbor))
+        weights[component] = 1.0 + surface_scale * hops[component] ** 2
+
+    deep_ids = np.flatnonzero(candidate[n_surf:]) + n_surf
+    protected_deep = np.asarray(protected_deep, dtype=int).ravel()
+    if deep_ids.size and protected_deep.size:
+        xyz = np.asarray(src_vertices, dtype=float)
+        deep_xyz = xyz[n_surf:]
+        if deep_xyz.shape[0] > 1:
+            dist = np.linalg.norm(deep_xyz[:, None] - deep_xyz[None, :], axis=2)
+            dist[dist == 0] = np.nan
+            spacing = max(float(np.nanmedian(np.nanmin(dist, axis=1))), 1e-12)
+        else:
+            spacing = 1.0
+        nearest = np.linalg.norm(
+            xyz[deep_ids, None, :] - xyz[protected_deep][None, :, :],
+            axis=2,
+        ).min(axis=1)
+        weights[deep_ids] = 1.0 + deep_scale * (nearest / spacing) ** 2
+        weights[protected_deep] = 1.0
+    return weights
 
 
 def protected_sisses_admm_refit_system(
@@ -592,6 +656,7 @@ def layerwise_sisses_admm_refit_system(
     protected_indices: np.ndarray | None = None,
     sigma_surface: float = 1.0,
     alpha_surface: float = 1.0,
+    sigma_surface_component: float = 0.0,
     sigma_deep: float = 1.0,
     sigma_deep_group: float = 1.0,
     tau: float = 0.5,
@@ -601,6 +666,7 @@ def layerwise_sisses_admm_refit_system(
     epsilon: float = 0.05,
     admm_iters: int = 50,
     max_weight_itr: int = 5,
+    source_penalty_weights: np.ndarray | None = None,
 ) -> np.ndarray:
     candidate = np.asarray(candidate, dtype=bool).ravel()
     gb = np.asarray(gb, dtype=float)
@@ -616,6 +682,21 @@ def layerwise_sisses_admm_refit_system(
     surface_idx = idx[surface_pos]
     mm_s = _candidate_graph_filter(surface_idx, vert_conn, n_surf, tau) if surface_pos.size else np.zeros((0, 0))
     dmm_s = _candidate_edge_matrix(surface_idx, vert_conn, n_surf) @ mm_s if surface_pos.size else np.zeros((0, 0))
+    surface_components = (
+        connected_components(
+            np.ones(surface_pos.size, dtype=bool),
+            np.asarray(vert_conn != 0)[np.ix_(surface_idx, surface_idx)],
+        )
+        if surface_pos.size
+        else []
+    )
+    static_weight = np.ones(candidate.size, dtype=float)
+    if source_penalty_weights is not None:
+        static_weight = np.asarray(source_penalty_weights, dtype=float).ravel()
+        if static_weight.shape != candidate.shape or np.any(static_weight <= 0):
+            raise ValueError("source_penalty_weights must be positive and match candidate")
+    static_surface = static_weight[idx[surface_pos]]
+    static_deep = static_weight[idx[deep_pos]]
 
     lhs = ls.T @ ls + 1e-8 * np.eye(idx.size)
     if surface_pos.size:
@@ -640,7 +721,8 @@ def layerwise_sisses_admm_refit_system(
     deep_weight = np.ones(deep_pos.size, dtype=float)
 
     for _ in range(max_weight_itr):
-        weighted_deep = deep_weight * deep_nonprotected_factor
+        weighted_surface = surface_weight * static_surface
+        weighted_deep = deep_weight * static_deep * deep_nonprotected_factor
         weighted_deep[protected_deep] = deep_weight[protected_deep] * deep_protect_factor
         for _ in range(admm_iters):
             rhs = rhs_data.copy()
@@ -654,7 +736,13 @@ def layerwise_sisses_admm_refit_system(
 
             if surface_pos.size:
                 ma = mm_s @ a[surface_pos]
-                z_s = _soft_threshold(ma + y_s, (sigma_surface / rho) * surface_weight[:, None])
+                z_s = _soft_threshold(ma + y_s, (sigma_surface / rho) * weighted_surface[:, None])
+                if sigma_surface_component > 0:
+                    z_s = _component_group_soft_threshold(
+                        z_s,
+                        surface_components,
+                        sigma_surface_component / rho,
+                    )
                 y_s += ma - z_s
                 if dmm_s.size:
                     da = dmm_s @ a[surface_pos]
@@ -1326,6 +1414,79 @@ def component_refit_select_v9_layerwise_sisses(
     return (fitted, mask, candidate) if return_candidate else (fitted, mask)
 
 
+def component_refit_select_v11_compactness_sisses(
+    eeg: dict,
+    meg: dict,
+    sisses: np.ndarray,
+    vert_conn: np.ndarray,
+    n_surf: int,
+    src_vertices: np.ndarray,
+    *,
+    eeg_only_source: np.ndarray | None = None,
+    meg_only_source: np.ndarray | None = None,
+    sigma_surface: float = 1.5,
+    alpha_surface: float = 2.0,
+    sigma_surface_component: float = 0.1,
+    sigma_deep: float = 2.0,
+    sigma_deep_group: float = 4.0,
+    deep_protect_factor: float = 0.25,
+    deep_nonprotected_factor: float = 4.0,
+    surface_compactness: float = 0.1,
+    deep_compactness: float = 0.5,
+    metric_rel: float = 0.10,
+    return_candidate: bool = False,
+) -> tuple[np.ndarray, np.ndarray] | tuple[np.ndarray, np.ndarray, np.ndarray]:
+    b, l = whitened_joint_system(eeg, meg)
+    _v4_fit, v4_candidate, broad_candidate = component_refit_select_v4_deep_rescue(
+        eeg,
+        meg,
+        sisses,
+        vert_conn,
+        n_surf,
+        src_vertices,
+        eeg_only_source=eeg_only_source,
+        meg_only_source=meg_only_source,
+        return_candidate=True,
+    )
+    candidate = broad_candidate.copy()
+    candidate[n_surf:] |= v4_candidate[n_surf:]
+    if not candidate.any():
+        candidate = threshold_mask(sisses, 0.05)
+    protected_deep = np.flatnonzero(v4_candidate[n_surf:]) + n_surf
+    penalty = compactness_penalty_weights(
+        sisses,
+        candidate,
+        vert_conn,
+        n_surf,
+        src_vertices,
+        protected_deep,
+        surface_scale=surface_compactness,
+        deep_scale=deep_compactness,
+    )
+    fitted = layerwise_sisses_admm_refit_system(
+        b,
+        l,
+        candidate,
+        vert_conn,
+        n_surf,
+        gb=tbf_selection(b),
+        protected_indices=protected_deep,
+        sigma_surface=sigma_surface,
+        alpha_surface=alpha_surface,
+        sigma_surface_component=sigma_surface_component,
+        sigma_deep=sigma_deep,
+        sigma_deep_group=sigma_deep_group,
+        deep_protect_factor=deep_protect_factor,
+        deep_nonprotected_factor=deep_nonprotected_factor,
+        source_penalty_weights=penalty,
+    )
+    mask = threshold_mask(fitted, metric_rel) & candidate
+    mask[protected_deep] = True
+    if not mask.any():
+        mask = candidate.copy()
+    return (fitted, mask, candidate) if return_candidate else (fitted, mask)
+
+
 def metric_row(scenario: str, method: str, source: np.ndarray, truth: dict, mask: np.ndarray, cortex: dict | None = None) -> dict:
     true_source = np.asarray(truth["s_true"], dtype=float)
     metrics = external_full_head_metrics(
@@ -1335,7 +1496,7 @@ def metric_row(scenario: str, method: str, source: np.ndarray, truth: dict, mask
         true_groups=true_source_groups(truth),
     )
     if cortex is not None:
-        metrics["auc"] = an_auc_from_cortex(true_source, source, cortex)
+        metrics["auc"] = an_auc_from_cortex(true_source, source, cortex, true_source_groups(truth))
     n_surf = int(np.asarray(truth["n_surf"]).ravel()[0])
     return {
         "scenario": scenario,
