@@ -15,6 +15,7 @@ results/**
 !results/v11/
 !results/v11/metrics.csv
 !results/v11/grid_resolution.csv
+!results/v11/layerwise_dle_summary.csv
 !results/v11/localization_deep_00.png
 !results/v11/localization_surface_04.png
 !results/v11/localization_mixed_04.png

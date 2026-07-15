@@ -19,7 +19,7 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from algorithms.external_metrics import external_full_head_metrics
+from algorithms.external_metrics import DLE_an, external_full_head_metrics
 from auc_metric import an_auc_from_cortex, auc_cortex
 from pipelines.sisses_direct_utils import best_estimated_waveform, group_waveform
 from protected_multilayer import (
@@ -133,27 +133,106 @@ def _component_centroid_dle(
         layer = "deep" if np.all(group >= n_surf) else "surface"
         truth[layer].append(positions[group].mean(axis=0))
 
-    def matched_distances(center_index: int) -> tuple[list[float], int]:
-        distances: list[float] = []
-        matched = 0
-        for layer in ("surface", "deep"):
-            if not truth[layer] or not predicted[layer]:
-                continue
-            true_xyz = np.vstack(truth[layer])
-            predicted_xyz = np.vstack([item[center_index] for item in predicted[layer]])
-            cost = np.linalg.norm(true_xyz[:, None, :] - predicted_xyz[None, :, :], axis=2)
-            rows, columns = linear_sum_assignment(cost)
-            distances.extend(cost[rows, columns].tolist())
-            matched += len(rows)
-        return distances, matched
+    def matched_distances(center_index: int, layer: str) -> list[float]:
+        if not truth[layer] or not predicted[layer]:
+            return []
+        true_xyz = np.vstack(truth[layer])
+        predicted_xyz = np.vstack([item[center_index] for item in predicted[layer]])
+        cost = np.linalg.norm(true_xyz[:, None, :] - predicted_xyz[None, :, :], axis=2)
+        rows, columns = linear_sum_assignment(cost)
+        return cost[rows, columns].tolist()
 
-    support_distances, matched = matched_distances(0)
-    energy_distances, _ = matched_distances(1)
+    support_by_layer = {layer: matched_distances(0, layer) for layer in ("surface", "deep")}
+    energy_by_layer = {layer: matched_distances(1, layer) for layer in ("surface", "deep")}
+    support_distances = support_by_layer["surface"] + support_by_layer["deep"]
+    energy_distances = energy_by_layer["surface"] + energy_by_layer["deep"]
+    matched = len(support_distances)
     count = len(true_groups)
+
+    def mean_mm(values: list[float]) -> float:
+        return float(np.mean(values) * 1000.0) if values else np.nan
+
     return {
-        "support_centroid_dle_mm": float(np.mean(support_distances) * 1000.0) if support_distances else np.nan,
-        "energy_centroid_dle_mm": float(np.mean(energy_distances) * 1000.0) if energy_distances else np.nan,
+        "support_centroid_dle_mm": mean_mm(support_distances),
+        "energy_centroid_dle_mm": mean_mm(energy_distances),
         "centroid_match_rate": matched / count if count else np.nan,
+        "surface_support_centroid_dle_mm": mean_mm(support_by_layer["surface"]),
+        "deep_support_centroid_dle_mm": mean_mm(support_by_layer["deep"]),
+        "surface_energy_centroid_dle_mm": mean_mm(energy_by_layer["surface"]),
+        "deep_energy_centroid_dle_mm": mean_mm(energy_by_layer["deep"]),
+        "surface_centroid_match_rate": len(support_by_layer["surface"]) / len(truth["surface"]) if truth["surface"] else np.nan,
+        "deep_centroid_match_rate": len(support_by_layer["deep"]) / len(truth["deep"]) if truth["deep"] else np.nan,
+    }
+
+
+def _layerwise_peak_dle(
+    source: np.ndarray,
+    mask: np.ndarray,
+    positions: np.ndarray,
+    true_groups: list[np.ndarray],
+    n_surf: int,
+    vert_conn: np.ndarray,
+    *,
+    deep_position: np.ndarray | None = None,
+) -> dict[str, float]:
+    """Run the requested peak DLE independently in surface and deep spaces."""
+    source = np.asarray(source, dtype=float)
+    mask = np.asarray(mask, dtype=bool).ravel()
+    positions = np.asarray(positions, dtype=float)
+    deep_position = np.asarray(deep_position, dtype=float).reshape(-1, 3) if deep_position is not None else np.empty((0, 3))
+    groups = {
+        "surface": [np.asarray(group, dtype=int).ravel() for group in true_groups if np.all(np.asarray(group) < n_surf)],
+        "deep": [np.asarray(group, dtype=int).ravel() for group in true_groups if np.all(np.asarray(group) >= n_surf)],
+    }
+
+    def evaluate(layer: str) -> tuple[float, float]:
+        layer_groups = groups[layer]
+        if not layer_groups:
+            return np.nan, np.nan
+        if layer == "surface":
+            layer_source = source[:n_surf] * mask[:n_surf, None]
+            layer_positions = positions[:n_surf]
+            local_groups = [group + 1 for group in layer_groups]
+            active_positions = layer_positions[mask[:n_surf]]
+            component_count = len(connected_components(mask[:n_surf], vert_conn[:n_surf, :n_surf]))
+        else:
+            active = np.flatnonzero(mask[n_surf:]) + n_surf
+            active_positions = positions[active]
+            if deep_position.shape[0] == 1 and active.size == 1:
+                active_positions = deep_position
+                layer_source = source[active]
+                true_positions = np.vstack([positions[group] for group in layer_groups])
+                layer_positions = np.vstack([active_positions, true_positions])
+                layer_source = np.vstack([layer_source, np.zeros((true_positions.shape[0], source.shape[1]))])
+                local_groups = []
+                start = 1
+                for group in layer_groups:
+                    local_groups.append(np.arange(start, start + group.size) + 1)
+                    start += group.size
+            else:
+                layer_source = source[n_surf:] * mask[n_surf:, None]
+                layer_positions = positions[n_surf:]
+                local_groups = [group - n_surf + 1 for group in layer_groups]
+            component_count = active.size
+
+        hit = np.mean(
+            [
+                active_positions.size > 0
+                and float(np.linalg.norm(active_positions[:, None, :] - positions[group][None, :, :], axis=2).min()) <= 0.010
+                for group in layer_groups
+            ]
+        )
+        if component_count < len(layer_groups) or not np.any(np.sum(layer_source * layer_source, axis=1) > 0):
+            return np.nan, float(hit)
+        return float(DLE_an(layer_source, local_groups, layer_positions) * 1000.0), float(hit)
+
+    surface_dle, surface_hit = evaluate("surface")
+    deep_dle, deep_hit = evaluate("deep")
+    return {
+        "surface_dle_mm": surface_dle,
+        "deep_dle_mm": deep_dle,
+        "surface_hit_rate_10mm": surface_hit,
+        "deep_hit_rate_10mm": deep_hit,
     }
 
 
@@ -782,6 +861,7 @@ def summarize_v11() -> None:
             metrics = external_full_head_metrics(used, true_source, vertices, true_groups=groups)
             metrics["auc"] = an_auc_from_cortex(true_source, used, cortex, groups)
             centroid = _component_centroid_dle(used, mask, vertices, groups, n_surf, vert_conn)
+            layerwise_dle = _layerwise_peak_dle(used, mask, vertices, groups, n_surf, vert_conn)
             report = _group_report_rows(job_dir.name, method, used, mask, mask, truth, vert_conn)
             surface_values = [r["group_sd_mm"] for r in report if r["group_type"] == "surface"]
             deep_values = [r["group_sd_mm"] for r in report if r["group_type"] == "deep"]
@@ -795,6 +875,7 @@ def summarize_v11() -> None:
                     "surface_sd_mm": float(np.mean(surface_values)) if surface_values else np.nan,
                     "deep_sd_mm": float(np.mean(deep_values)) if deep_values else np.nan,
                     "dle_mm": metrics["dle_mm"],
+                    **layerwise_dle,
                     **centroid,
                     "active_count": int(mask.sum()),
                     "deep_grid": "coarse",
@@ -833,6 +914,15 @@ def summarize_v11() -> None:
             vert_conn,
             deep_position=deep["position"] if deep is not None else None,
         )
+        layerwise_dle = _layerwise_peak_dle(
+            compact,
+            compact_mask,
+            vertices,
+            groups,
+            n_surf,
+            vert_conn,
+            deep_position=deep["position"] if deep is not None else None,
+        )
         rows.append(
             {
                 "case_id": job_dir.name,
@@ -843,6 +933,7 @@ def summarize_v11() -> None:
                 "surface_sd_mm": surface_sd,
                 "deep_sd_mm": deep_sd,
                 "dle_mm": dle_mm,
+                **layerwise_dle,
                 **centroid,
                 "active_count": int(predicted_mask.sum()),
                 "deep_grid": deep["grid"] if deep is not None else "none",
@@ -863,6 +954,33 @@ def summarize_v11() -> None:
         writer = csv.DictWriter(handle, fieldnames=list(rows[0]))
         writer.writeheader()
         writer.writerows(rows)
+    summary_metrics = (
+        "dle_mm",
+        "surface_dle_mm",
+        "deep_dle_mm",
+        "surface_support_centroid_dle_mm",
+        "deep_support_centroid_dle_mm",
+        "surface_energy_centroid_dle_mm",
+        "deep_energy_centroid_dle_mm",
+        "surface_hit_rate_10mm",
+        "deep_hit_rate_10mm",
+    )
+    summary_rows = []
+    for method in sorted({row["method"] for row in rows}):
+        method_rows = [row for row in rows if row["method"] == method]
+        for scenario in ("all", "deep", "surface", "mixed", "mixed2"):
+            items = method_rows if scenario == "all" else [row for row in method_rows if row["scenario"] == scenario]
+            if not items:
+                continue
+            summary = {"method": method, "scenario": scenario, "cases": len(items)}
+            for metric in summary_metrics:
+                values = [float(row[metric]) for row in items if np.isfinite(float(row[metric]))]
+                summary[metric] = float(np.mean(values)) if values else np.nan
+            summary_rows.append(summary)
+    with (V11_ROOT / "layerwise_dle_summary.csv").open("w", newline="", encoding="utf-8-sig") as handle:
+        writer = csv.DictWriter(handle, fieldnames=list(summary_rows[0]))
+        writer.writeheader()
+        writer.writerows(summary_rows)
     spacing_rows = [
         {"layer": "surface", "coarse_mm": 5.065213849225115, "refined_mm": float(refined["surface_spacing_mm"][0])},
         {"layer": "deep", "coarse_mm": 9.999999399353555, "refined_mm": float(refined["deep_spacing_mm"][0])},

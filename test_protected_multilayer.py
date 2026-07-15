@@ -33,7 +33,7 @@ from protected_multilayer import (
     tbf_ridge_refit_system,
     tbf_selection,
 )
-from validation_batch import _component_centroid_dle, _component_evidence, _group_report_rows, _layer_sd_row, _mesh_resolution_row
+from validation_batch import _component_centroid_dle, _component_evidence, _group_report_rows, _layer_sd_row, _layerwise_peak_dle, _mesh_resolution_row
 from refined_grid import refined_deep_evidence
 
 
@@ -637,7 +637,28 @@ class ProtectedMultilayerTests(unittest.TestCase):
         adjacency[1, 2] = adjacency[2, 1] = 1
         result = _component_centroid_dle(source, mask, positions, [np.array([0, 2])], 3, adjacency)
         self.assertAlmostEqual(result["support_centroid_dle_mm"], 0.0)
+        self.assertAlmostEqual(result["surface_support_centroid_dle_mm"], 0.0)
         self.assertEqual(result["centroid_match_rate"], 1.0)
+
+    def test_layerwise_peak_dle_separates_surface_and_deep(self):
+        source = np.zeros((4, 4))
+        source[1] = 1.0
+        source[2] = 1.0
+        mask = np.array([False, True, True, False])
+        positions = np.array([[0.0, 0, 0], [0.002, 0, 0], [0.020, 0, 0], [0.030, 0, 0]])
+        adjacency = np.eye(4)
+        result = _layerwise_peak_dle(
+            source,
+            mask,
+            positions,
+            [np.array([0, 1]), np.array([2])],
+            2,
+            adjacency,
+        )
+        self.assertAlmostEqual(result["surface_dle_mm"], 1.0)
+        self.assertAlmostEqual(result["deep_dle_mm"], 0.0)
+        self.assertEqual(result["surface_hit_rate_10mm"], 1.0)
+        self.assertEqual(result["deep_hit_rate_10mm"], 1.0)
 
 
 if __name__ == "__main__":
