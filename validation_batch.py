@@ -13,6 +13,7 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import numpy as np
 import scipy.io as sio
+from scipy.optimize import linear_sum_assignment
 
 ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
@@ -94,6 +95,66 @@ def _true_groups(truth: dict) -> list[np.ndarray]:
     if int(np.asarray(truth["has_deep_source"]).ravel()[0]):
         groups.append(np.array([int(np.asarray(truth["true_deep_idx0"]).ravel()[0])], dtype=int))
     return groups
+
+
+def _component_centroid_dle(
+    source: np.ndarray,
+    mask: np.ndarray,
+    positions: np.ndarray,
+    true_groups: list[np.ndarray],
+    n_surf: int,
+    vert_conn: np.ndarray,
+    *,
+    deep_position: np.ndarray | None = None,
+) -> dict[str, float]:
+    """Match predicted components to true groups and compare their centroids."""
+    source = np.asarray(source, dtype=float)
+    mask = np.asarray(mask, dtype=bool).ravel()
+    positions = np.asarray(positions, dtype=float)
+    energy = np.sum(source * source, axis=1)
+    components = [("surface", component) for component in connected_components(mask[:n_surf], vert_conn[:n_surf, :n_surf])]
+    components += [("deep", np.array([index], dtype=int)) for index in np.flatnonzero(mask[n_surf:]) + n_surf]
+    deep_position = np.asarray(deep_position, dtype=float).reshape(-1, 3) if deep_position is not None else np.empty((0, 3))
+    deep_component_count = sum(layer == "deep" for layer, _component in components)
+
+    predicted: dict[str, list[tuple[np.ndarray, np.ndarray]]] = {"surface": [], "deep": []}
+    for layer, component in components:
+        xyz = positions[component]
+        if layer == "deep" and deep_position.shape[0] == 1 and deep_component_count == 1:
+            xyz = deep_position
+        support_center = xyz.mean(axis=0)
+        weights = np.maximum(energy[component], np.finfo(float).eps)
+        energy_center = np.average(xyz, axis=0, weights=weights[: xyz.shape[0]])
+        predicted[layer].append((support_center, energy_center))
+
+    truth: dict[str, list[np.ndarray]] = {"surface": [], "deep": []}
+    for group in true_groups:
+        group = np.asarray(group, dtype=int).ravel()
+        layer = "deep" if np.all(group >= n_surf) else "surface"
+        truth[layer].append(positions[group].mean(axis=0))
+
+    def matched_distances(center_index: int) -> tuple[list[float], int]:
+        distances: list[float] = []
+        matched = 0
+        for layer in ("surface", "deep"):
+            if not truth[layer] or not predicted[layer]:
+                continue
+            true_xyz = np.vstack(truth[layer])
+            predicted_xyz = np.vstack([item[center_index] for item in predicted[layer]])
+            cost = np.linalg.norm(true_xyz[:, None, :] - predicted_xyz[None, :, :], axis=2)
+            rows, columns = linear_sum_assignment(cost)
+            distances.extend(cost[rows, columns].tolist())
+            matched += len(rows)
+        return distances, matched
+
+    support_distances, matched = matched_distances(0)
+    energy_distances, _ = matched_distances(1)
+    count = len(true_groups)
+    return {
+        "support_centroid_dle_mm": float(np.mean(support_distances) * 1000.0) if support_distances else np.nan,
+        "energy_centroid_dle_mm": float(np.mean(energy_distances) * 1000.0) if energy_distances else np.nan,
+        "centroid_match_rate": matched / count if count else np.nan,
+    }
 
 
 def _group_report_rows(case_id: str, method: str, source: np.ndarray, mask: np.ndarray, candidate: np.ndarray, truth: dict, vert_conn: np.ndarray) -> list[dict]:
@@ -720,6 +781,7 @@ def summarize_v11() -> None:
             used = source * mask[:, None]
             metrics = external_full_head_metrics(used, true_source, vertices, true_groups=groups)
             metrics["auc"] = an_auc_from_cortex(true_source, used, cortex, groups)
+            centroid = _component_centroid_dle(used, mask, vertices, groups, n_surf, vert_conn)
             report = _group_report_rows(job_dir.name, method, used, mask, mask, truth, vert_conn)
             surface_values = [r["group_sd_mm"] for r in report if r["group_type"] == "surface"]
             deep_values = [r["group_sd_mm"] for r in report if r["group_type"] == "deep"]
@@ -733,6 +795,7 @@ def summarize_v11() -> None:
                     "surface_sd_mm": float(np.mean(surface_values)) if surface_values else np.nan,
                     "deep_sd_mm": float(np.mean(deep_values)) if deep_values else np.nan,
                     "dle_mm": metrics["dle_mm"],
+                    **centroid,
                     "active_count": int(mask.sum()),
                     "deep_grid": "coarse",
                     "eeg_drop": np.nan,
@@ -761,6 +824,15 @@ def summarize_v11() -> None:
             else np.nan
         )
         mapped_metrics = external_full_head_metrics(compact, true_source, vertices, true_groups=groups)
+        centroid = _component_centroid_dle(
+            compact,
+            compact_mask,
+            vertices,
+            groups,
+            n_surf,
+            vert_conn,
+            deep_position=deep["position"] if deep is not None else None,
+        )
         rows.append(
             {
                 "case_id": job_dir.name,
@@ -771,6 +843,7 @@ def summarize_v11() -> None:
                 "surface_sd_mm": surface_sd,
                 "deep_sd_mm": deep_sd,
                 "dle_mm": dle_mm,
+                **centroid,
                 "active_count": int(predicted_mask.sum()),
                 "deep_grid": deep["grid"] if deep is not None else "none",
                 "eeg_drop": deep["eeg_drop"] if deep is not None else np.nan,

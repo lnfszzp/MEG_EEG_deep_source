@@ -12,6 +12,7 @@ import mne
 import nibabel as nib
 import numpy as np
 import pyvista as pv
+from scipy.spatial import cKDTree
 
 ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
@@ -24,11 +25,13 @@ from visualization.visualize_spatial_fused_cortical import (
     render_surface_view,
     source_to_continuous_surface,
 )
+from visualization.visualize_spatial_fused_mri import draw_slice, plane_image, pos_to_vox
 from protected_multilayer import DATA_ROOT, OUT_ROOT, SCENARIOS, load_mat, load_source, source_amplitude, threshold_mask
 from validation_batch import VAL_DATA, VAL_RUNS, V11_ROOT
 
 FIG_ROOT = OUT_ROOT / "figures"
 V11_CASES = ("deep_00", "surface_04", "mixed_04", "mixed2_02")
+V11_DEEP_CASES = ("deep_00", "mixed_04", "mixed2_02")
 
 
 def load_npz_source(path: Path) -> np.ndarray:
@@ -198,6 +201,90 @@ def draw_v11_localization() -> None:
         plt.close(fig)
 
 
+def draw_v11_deep_multiview() -> None:
+    data_path = mne.datasets.sample.data_path()
+    t1 = nib.load(str(data_path / "subjects" / "sample" / "mri" / "T1.mgz"))
+    volume = np.asarray(t1.get_fdata(), dtype=float)
+    vox2ras_tkr = t1.header.get_vox2ras_tkr()
+    head_to_mri = mne.read_trans(data_path / "MEG" / "sample" / "sample_audvis_raw-trans.fif")["trans"]
+    anatomical = load_anatomical_context()
+    cortex_tree = cKDTree(np.vstack([anatomical["lh"]["vertices"], anatomical["rh"]["vertices"]]))
+    planes = ("coronal", "sagittal", "axial")
+
+    for case_id in V11_DEEP_CASES:
+        truth = load_mat(VAL_DATA / case_id / "s_true.mat")
+        vertices = np.asarray(truth["src_vertices"], dtype=float)
+        n_surf = int(np.asarray(truth["n_surf"]).ravel()[0])
+        deep_index = int(np.asarray(truth["true_deep_idx0"]).ravel()[0])
+        true_mri = mne.transforms.apply_trans(head_to_mri, vertices[deep_index])
+        center_voxel = pos_to_vox(true_mri, vox2ras_tkr)
+        sisses = load_source(VAL_RUNS / case_id / "s_wen.mat", vertices.shape[0])
+        sisses *= threshold_mask(sisses, 0.10)[:, None]
+        with np.load(V11_ROOT / "sources" / f"{case_id}.npz") as saved:
+            v11 = np.asarray(saved["S"], dtype=float) * np.asarray(saved["region_mask"], dtype=bool)[:, None]
+            refined_deep = np.asarray(saved["deep_position"], dtype=float).reshape(-1, 3)
+        rows = (
+            ("Ground truth", np.asarray(truth["s_true"], dtype=float), None),
+            ("SISSES", sisses, None),
+            ("V11 compact + refined", v11, refined_deep),
+        )
+        fig, axes = plt.subplots(3, 3, figsize=(12.3, 9.6), dpi=170, facecolor="black", squeeze=False)
+        for row, (label, source, position_override) in enumerate(rows):
+            amplitude = source_amplitude(source)[n_surf:]
+            active = np.flatnonzero(amplitude > 0)
+            points = vertices[n_surf:][active]
+            weights = amplitude[active]
+            if position_override is not None and position_override.shape[0] == 1 and active.size:
+                points = position_override
+                weights = np.array([float(weights.max())])
+            points_mri = mne.transforms.apply_trans(head_to_mri, points) if points.size else np.empty((0, 3))
+            source_voxels = np.vstack([pos_to_vox(point, vox2ras_tkr) for point in points_mri]) if points_mri.size else np.empty((0, 3))
+            if weights.size:
+                weights = weights / max(float(weights.max()), np.finfo(float).eps)
+                center_mm = np.average(points_mri * 1000.0, axis=0, weights=weights)
+                depth_mm = float(cortex_tree.query(center_mm)[0])
+                depth_label = f"depth to cortex {depth_mm:.1f} mm"
+            else:
+                depth_label = "no deep estimate"
+            for column, plane in enumerate(planes):
+                ax = axes[row, column]
+                draw_slice(ax, volume, plane, center_voxel, source_voxels, weights)
+                _image, _axis, _slice, point_2d = plane_image(volume, plane, center_voxel)
+                x, y = point_2d(center_voxel)
+                ax.plot(
+                    x,
+                    y,
+                    marker="o",
+                    markerfacecolor="none",
+                    markeredgecolor="#ffb000",
+                    markersize=12,
+                    markeredgewidth=2.0,
+                )
+                if row == 0:
+                    ax.set_title(plane.capitalize(), color="white", fontsize=12)
+            axes[row, 0].text(
+                -0.04,
+                0.5,
+                f"{label}\n{depth_label}",
+                rotation=90,
+                va="center",
+                ha="right",
+                transform=axes[row, 0].transAxes,
+                color="white",
+                fontsize=10.5,
+                fontweight="bold",
+            )
+        fig.suptitle(
+            f"Deep-source orthogonal MRI views: {case_id}\norange ring = true deep center, cyan = source estimate",
+            color="white",
+            fontsize=13,
+            y=0.985,
+        )
+        fig.subplots_adjust(left=0.10, right=0.995, top=0.91, bottom=0.01, wspace=0.02, hspace=0.04)
+        fig.savefig(V11_ROOT / f"deep_multiview_{case_id}.png", facecolor="black", bbox_inches="tight")
+        plt.close(fig)
+
+
 def normalize(wave: np.ndarray) -> np.ndarray:
     wave = np.asarray(wave, dtype=float).ravel()
     scale = float(np.max(np.abs(wave), initial=0.0))
@@ -295,6 +382,7 @@ def draw_waveforms() -> None:
 def main() -> None:
     if len(sys.argv) > 1 and sys.argv[1] == "v11":
         draw_v11_localization()
+        draw_v11_deep_multiview()
         draw_v11_waveforms()
         print("Saved:", V11_ROOT)
         return

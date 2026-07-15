@@ -33,7 +33,7 @@ from protected_multilayer import (
     tbf_ridge_refit_system,
     tbf_selection,
 )
-from validation_batch import _component_evidence, _group_report_rows, _layer_sd_row, _mesh_resolution_row
+from validation_batch import _component_centroid_dle, _component_evidence, _group_report_rows, _layer_sd_row, _mesh_resolution_row
 from refined_grid import refined_deep_evidence
 
 
@@ -625,6 +625,19 @@ class ProtectedMultilayerTests(unittest.TestCase):
         )
         self.assertEqual(rows[0]["peak_index"], 0)
         self.assertGreater(rows[0]["evidence_score"], rows[1]["evidence_score"])
+
+    def test_component_centroid_dle_uses_patch_center(self):
+        source = np.zeros((3, 4))
+        source[0] = 2.0
+        source[1:] = 1.0
+        mask = np.ones(3, dtype=bool)
+        positions = np.array([[0.0, 0, 0], [0.002, 0, 0], [0.004, 0, 0]])
+        adjacency = np.eye(3)
+        adjacency[0, 1] = adjacency[1, 0] = 1
+        adjacency[1, 2] = adjacency[2, 1] = 1
+        result = _component_centroid_dle(source, mask, positions, [np.array([0, 2])], 3, adjacency)
+        self.assertAlmostEqual(result["support_centroid_dle_mm"], 0.0)
+        self.assertEqual(result["centroid_match_rate"], 1.0)
 
 
 if __name__ == "__main__":
