@@ -8,6 +8,7 @@ import sys
 import h5py
 import numpy as np
 import scipy.io as sio
+from scipy.optimize import nnls
 
 ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
@@ -155,6 +156,21 @@ def graph_hop_mask(center: int, adjacency: np.ndarray, allowed: np.ndarray, *, h
         keep[list(nxt)] = True
         frontier = nxt
     return keep
+
+
+def _component_hop_distances(center: int, component: np.ndarray, adjacency: np.ndarray) -> np.ndarray:
+    adjacency = np.asarray(adjacency != 0)
+    allowed = np.zeros(adjacency.shape[0], dtype=bool)
+    allowed[np.asarray(component, dtype=int)] = True
+    distances = np.full(adjacency.shape[0], np.inf)
+    distances[int(center)] = 0.0
+    queue: deque[int] = deque([int(center)])
+    while queue:
+        item = queue.popleft()
+        for neighbor in np.flatnonzero(adjacency[item] & allowed & ~np.isfinite(distances)):
+            distances[neighbor] = distances[item] + 1.0
+            queue.append(int(neighbor))
+    return distances
 
 
 def prune_surface_components(
@@ -540,17 +556,7 @@ def compactness_penalty_weights(
     surface_conn = np.asarray(vert_conn != 0)[:n_surf, :n_surf]
     for component in connected_components(candidate[:n_surf], surface_conn):
         peak = int(component[np.argmax(amp[component])])
-        hops = np.full(n_surf, np.inf)
-        hops[peak] = 0.0
-        queue: deque[int] = deque([peak])
-        allowed = np.zeros(n_surf, dtype=bool)
-        allowed[component] = True
-        while queue:
-            item = queue.popleft()
-            for neighbor in np.flatnonzero(surface_conn[item] & allowed):
-                if not np.isfinite(hops[neighbor]):
-                    hops[neighbor] = hops[item] + 1.0
-                    queue.append(int(neighbor))
+        hops = _component_hop_distances(peak, component, surface_conn)
         weights[component] = 1.0 + surface_scale * hops[component] ** 2
 
     deep_ids = np.flatnonzero(candidate[n_surf:]) + n_surf
@@ -1485,6 +1491,87 @@ def component_refit_select_v11_compactness_sisses(
     if not mask.any():
         mask = candidate.copy()
     return (fitted, mask, candidate) if return_candidate else (fitted, mask)
+
+
+def _projected_tbf_rss(residual_tbf: np.ndarray, leadfield: np.ndarray, ridge_fraction: float) -> float:
+    scale = np.linalg.norm(leadfield, axis=0)
+    scale = np.maximum(scale, np.median(scale) * 1e-6)
+    normalized = leadfield / scale
+    gram = normalized.T @ normalized
+    ridge = max(float(ridge_fraction * np.trace(gram) / max(1, gram.shape[0])), 1e-12)
+    coefficients = np.linalg.solve(gram + ridge * np.eye(gram.shape[0]), normalized.T @ residual_tbf)
+    return float(np.linalg.norm(residual_tbf - normalized @ coefficients, "fro") ** 2)
+
+
+def residual_guided_surface_proximal_system(
+    b: np.ndarray,
+    l: np.ndarray,
+    source: np.ndarray,
+    mask: np.ndarray,
+    vert_conn: np.ndarray,
+    n_surf: int,
+    *,
+    compactness: float = 0.03,
+    local_hops: int = 1,
+    ridge_fraction: float = 0.03,
+) -> np.ndarray:
+    """Move surface energy toward residual-supported centers without moving support."""
+    source = np.asarray(source, dtype=float)
+    mask = np.asarray(mask, dtype=bool).ravel()
+    result = source * mask[:, None]
+    surface_conn = np.asarray(vert_conn != 0)[:n_surf, :n_surf]
+    components = connected_components(mask[:n_surf], surface_conn)
+    if not components:
+        return result
+
+    gb = tbf_selection(b)
+    for component in components:
+        without = result.copy()
+        without[component] = 0.0
+        residual_tbf = (b - l @ without) @ gb.T
+        allowed = np.zeros(n_surf, dtype=bool)
+        allowed[component] = True
+        best: tuple[float, int] | None = None
+        for center in component:
+            local = graph_hop_mask(int(center), surface_conn, allowed, hops=local_hops)
+            rss = _projected_tbf_rss(residual_tbf, l[:, np.flatnonzero(local)], ridge_fraction)
+            if best is None or rss < best[0]:
+                best = (rss, int(center))
+        distances = _component_hop_distances(best[1], component, surface_conn)
+        norm = float(np.linalg.norm(result[component]))
+        result[component] /= (1.0 + compactness * distances[component] ** 2)[:, None]
+        result[component] *= norm / max(float(np.linalg.norm(result[component])), 1e-20)
+
+    deep = np.flatnonzero(mask[n_surf:]) + n_surf
+    target = b - (l[:, deep] @ result[deep] if deep.size else 0.0)
+    contributions = np.column_stack([(l[:, component] @ result[component]).ravel() for component in components])
+    scales = nnls(contributions, np.asarray(target).ravel())[0]
+    for component, scale in zip(components, scales):
+        result[component] *= scale
+    return result
+
+
+def component_refit_select_v14_local_evidence(
+    eeg: dict,
+    meg: dict,
+    source: np.ndarray,
+    mask: np.ndarray,
+    vert_conn: np.ndarray,
+    n_surf: int,
+    *,
+    compactness: float = 0.03,
+) -> tuple[np.ndarray, np.ndarray]:
+    b, l = whitened_joint_system(eeg, meg)
+    fitted = residual_guided_surface_proximal_system(
+        b,
+        l,
+        source,
+        mask,
+        vert_conn,
+        n_surf,
+        compactness=compactness,
+    )
+    return fitted, np.asarray(mask, dtype=bool).copy()
 
 
 def metric_row(scenario: str, method: str, source: np.ndarray, truth: dict, mask: np.ndarray, cortex: dict | None = None) -> dict:

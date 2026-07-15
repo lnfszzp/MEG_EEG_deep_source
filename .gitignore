@@ -25,3 +25,8 @@ results/**
 !results/v11/waveforms_mixed_04.png
 !results/v11/waveforms_mixed2_02.png
 !results/v11/deep_multiview_*.png
+!results/v14/
+!results/v14/metrics.csv
+!results/v14/layerwise_dle_summary.csv
+!results/v14/grid_resolution.csv
+!results/v14/*.png

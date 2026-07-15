@@ -37,6 +37,7 @@ from protected_multilayer import (
     component_refit_select_v8_protected_sisses,
     component_refit_select_v9_layerwise_sisses,
     component_refit_select_v11_compactness_sisses,
+    component_refit_select_v14_local_evidence,
     connected_components,
     evidence_aware_compact_mask,
     load_mat,
@@ -52,6 +53,7 @@ VAL_DATA = VAL_ROOT / "generated"
 VAL_RUNS = VAL_ROOT / "sisses_runs"
 VAL_FIGS = VAL_ROOT / "waveforms"
 V11_ROOT = OUT_ROOT / "v11"
+V14_ROOT = OUT_ROOT / "v14"
 NOISE_SAMPLES = 200
 
 
@@ -800,13 +802,11 @@ def summarize(*, include_v6: bool = True) -> None:
         writer.writerows(threshold_rows)
 
 
-def summarize_v11() -> None:
+def summarize_v11(*, include_v14: bool = False) -> None:
     from SD import SD
 
     refined = load_refined_forward()
     rows = []
-    source_dir = V11_ROOT / "sources"
-    source_dir.mkdir(parents=True, exist_ok=True)
     for job_dir in sorted(VAL_DATA.iterdir()):
         run_file = VAL_RUNS / job_dir.name / "s_wen.mat"
         if not job_dir.is_dir() or not run_file.exists():
@@ -884,76 +884,85 @@ def summarize_v11() -> None:
                 }
             )
 
-        predicted_vertices = vertices[:n_surf]
-        predicted_source = compact[:n_surf]
-        predicted_mask = compact_mask[:n_surf]
-        if deep is not None:
-            predicted_vertices = np.vstack([predicted_vertices, deep["position"]])
-            predicted_source = np.vstack([predicted_source, deep["timecourse"]])
-            predicted_mask = np.r_[predicted_mask, True]
-        _sd_mm, dle_mm = refined_sd_dle(predicted_source, predicted_mask, predicted_vertices, vertices, groups)
         surface_groups = [group for group in groups if np.all(group < n_surf)]
         deep_groups = [group for group in groups if np.all(group >= n_surf)]
-        surface_sd = (
-            float(SD(compact[:n_surf], np.vstack([vertices[group] for group in surface_groups]), vertices[:n_surf], 0.0) * 1000.0)
-            if surface_groups
-            else np.nan
-        )
-        deep_sd = (
-            float(np.linalg.norm(deep["position"] - vertices[deep_groups[0]], axis=1).min() * 1000.0)
-            if deep is not None and deep_groups
-            else np.nan
-        )
-        mapped_metrics = external_full_head_metrics(compact, true_source, vertices, true_groups=groups)
-        centroid = _component_centroid_dle(
-            compact,
-            compact_mask,
-            vertices,
-            groups,
-            n_surf,
-            vert_conn,
-            deep_position=deep["position"] if deep is not None else None,
-        )
-        layerwise_dle = _layerwise_peak_dle(
-            compact,
-            compact_mask,
-            vertices,
-            groups,
-            n_surf,
-            vert_conn,
-            deep_position=deep["position"] if deep is not None else None,
-        )
-        rows.append(
-            {
-                "case_id": job_dir.name,
-                "scenario": job_dir.name.rsplit("_", 1)[0],
-                "method": "V11_compact_refined",
-                "auc": an_auc_from_cortex(true_source, compact, cortex, groups),
-                "rmse": mapped_metrics["rmse"],
-                "surface_sd_mm": surface_sd,
-                "deep_sd_mm": deep_sd,
-                "dle_mm": dle_mm,
-                **layerwise_dle,
-                **centroid,
-                "active_count": int(predicted_mask.sum()),
-                "deep_grid": deep["grid"] if deep is not None else "none",
-                "eeg_drop": deep["eeg_drop"] if deep is not None else np.nan,
-                "meg_drop": deep["meg_drop"] if deep is not None else np.nan,
-            }
-        )
-        np.savez_compressed(
-            source_dir / f"{job_dir.name}.npz",
-            S=compact,
-            region_mask=compact_mask,
-            deep_position=np.asarray(deep["position"]) if deep is not None else np.empty((0, 3)),
-        )
-        print("V11", job_dir.name, flush=True)
+        compact_methods = [("V11_compact_refined", compact, compact_mask, V11_ROOT)]
+        if include_v14:
+            v14, v14_mask = component_refit_select_v14_local_evidence(
+                eeg,
+                meg,
+                compact,
+                compact_mask,
+                vert_conn,
+                n_surf,
+            )
+            compact_methods.append(("V14_local_evidence", v14, v14_mask, V14_ROOT))
 
-    V11_ROOT.mkdir(parents=True, exist_ok=True)
-    with (V11_ROOT / "metrics.csv").open("w", newline="", encoding="utf-8-sig") as handle:
-        writer = csv.DictWriter(handle, fieldnames=list(rows[0]))
-        writer.writeheader()
-        writer.writerows(rows)
+        for method, compact_source, method_mask, result_root in compact_methods:
+            predicted_vertices = vertices[:n_surf]
+            predicted_source = compact_source[:n_surf]
+            predicted_mask = method_mask[:n_surf]
+            if deep is not None:
+                predicted_vertices = np.vstack([predicted_vertices, deep["position"]])
+                predicted_source = np.vstack([predicted_source, compact_source[int(deep["coarse_index"])]])
+                predicted_mask = np.r_[predicted_mask, True]
+            _sd_mm, dle_mm = refined_sd_dle(predicted_source, predicted_mask, predicted_vertices, vertices, groups)
+            surface_sd = (
+                float(SD(compact_source[:n_surf], np.vstack([vertices[group] for group in surface_groups]), vertices[:n_surf], 0.0) * 1000.0)
+                if surface_groups
+                else np.nan
+            )
+            deep_sd = (
+                float(np.linalg.norm(deep["position"] - vertices[deep_groups[0]], axis=1).min() * 1000.0)
+                if deep is not None and deep_groups
+                else np.nan
+            )
+            mapped_metrics = external_full_head_metrics(compact_source, true_source, vertices, true_groups=groups)
+            centroid = _component_centroid_dle(
+                compact_source,
+                method_mask,
+                vertices,
+                groups,
+                n_surf,
+                vert_conn,
+                deep_position=deep["position"] if deep is not None else None,
+            )
+            layerwise_dle = _layerwise_peak_dle(
+                compact_source,
+                method_mask,
+                vertices,
+                groups,
+                n_surf,
+                vert_conn,
+                deep_position=deep["position"] if deep is not None else None,
+            )
+            rows.append(
+                {
+                    "case_id": job_dir.name,
+                    "scenario": job_dir.name.rsplit("_", 1)[0],
+                    "method": method,
+                    "auc": an_auc_from_cortex(true_source, compact_source, cortex, groups),
+                    "rmse": mapped_metrics["rmse"],
+                    "surface_sd_mm": surface_sd,
+                    "deep_sd_mm": deep_sd,
+                    "dle_mm": dle_mm,
+                    **layerwise_dle,
+                    **centroid,
+                    "active_count": int(predicted_mask.sum()),
+                    "deep_grid": deep["grid"] if deep is not None else "none",
+                    "eeg_drop": deep["eeg_drop"] if deep is not None else np.nan,
+                    "meg_drop": deep["meg_drop"] if deep is not None else np.nan,
+                }
+            )
+            result_root.joinpath("sources").mkdir(parents=True, exist_ok=True)
+            np.savez_compressed(
+                result_root / "sources" / f"{job_dir.name}.npz",
+                S=compact_source,
+                region_mask=method_mask,
+                deep_position=np.asarray(deep["position"]) if deep is not None else np.empty((0, 3)),
+            )
+        print("V14" if include_v14 else "V11", job_dir.name, flush=True)
+
     summary_metrics = (
         "dle_mm",
         "surface_dle_mm",
@@ -977,18 +986,22 @@ def summarize_v11() -> None:
                 values = [float(row[metric]) for row in items if np.isfinite(float(row[metric]))]
                 summary[metric] = float(np.mean(values)) if values else np.nan
             summary_rows.append(summary)
-    with (V11_ROOT / "layerwise_dle_summary.csv").open("w", newline="", encoding="utf-8-sig") as handle:
-        writer = csv.DictWriter(handle, fieldnames=list(summary_rows[0]))
-        writer.writeheader()
-        writer.writerows(summary_rows)
     spacing_rows = [
         {"layer": "surface", "coarse_mm": 5.065213849225115, "refined_mm": float(refined["surface_spacing_mm"][0])},
         {"layer": "deep", "coarse_mm": 9.999999399353555, "refined_mm": float(refined["deep_spacing_mm"][0])},
     ]
-    with (V11_ROOT / "grid_resolution.csv").open("w", newline="", encoding="utf-8-sig") as handle:
-        writer = csv.DictWriter(handle, fieldnames=list(spacing_rows[0]))
-        writer.writeheader()
-        writer.writerows(spacing_rows)
+    result_roots = (V14_ROOT,) if include_v14 else (V11_ROOT,)
+    for result_root in result_roots:
+        result_root.mkdir(parents=True, exist_ok=True)
+        for filename, output_rows in (
+            ("metrics.csv", rows),
+            ("layerwise_dle_summary.csv", summary_rows),
+            ("grid_resolution.csv", spacing_rows),
+        ):
+            with (result_root / filename).open("w", newline="", encoding="utf-8-sig") as handle:
+                writer = csv.DictWriter(handle, fieldnames=list(output_rows[0]))
+                writer.writeheader()
+                writer.writerows(output_rows)
 
 
 def plot_waveforms(limit: int | None = None) -> None:
@@ -1046,6 +1059,8 @@ def main() -> None:
         plot_waveforms()
     elif command == "v11":
         summarize_v11()
+    elif command == "v14":
+        summarize_v11(include_v14=True)
     else:
         raise SystemExit(f"unknown command: {command}")
 

@@ -16,6 +16,7 @@ from protected_multilayer import (
     component_refit_select_v7_tbf_refit,
     component_refit_select_v8_protected_sisses,
     component_refit_select_v9_layerwise_sisses,
+    residual_guided_surface_proximal_system,
     component_refit_select,
     compactness_penalty_weights,
     evidence_aware_compact_mask,
@@ -659,6 +660,30 @@ class ProtectedMultilayerTests(unittest.TestCase):
         self.assertAlmostEqual(result["deep_dle_mm"], 0.0)
         self.assertEqual(result["surface_hit_rate_10mm"], 1.0)
         self.assertEqual(result["deep_hit_rate_10mm"], 1.0)
+
+    def test_surface_proximal_refine_moves_peak_and_preserves_deep(self):
+        wave = np.zeros(240)
+        wave[200:] = np.sin(np.linspace(0, 2 * np.pi, 40))
+        source = np.vstack([1.5 * wave, wave, 0.5 * wave, 0.2 * wave])
+        leadfield = np.eye(4)
+        data = np.zeros_like(source)
+        data[1] = wave
+        data[3] = source[3]
+        adjacency = np.eye(4)
+        adjacency[0, 1] = adjacency[1, 0] = 1
+        adjacency[1, 2] = adjacency[2, 1] = 1
+        refined = residual_guided_surface_proximal_system(
+            data,
+            leadfield,
+            source,
+            np.ones(4, dtype=bool),
+            adjacency,
+            3,
+            compactness=1.0,
+            local_hops=0,
+        )
+        self.assertEqual(np.argmax(source_amplitude(refined[:3])), 1)
+        np.testing.assert_allclose(refined[3], source[3])
 
 
 if __name__ == "__main__":

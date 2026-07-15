@@ -21,17 +21,19 @@ if str(ROOT) not in sys.path:
 from pipelines.sisses_direct_utils import best_estimated_waveform, group_waveform, true_source_groups
 from visualization.visualize_modality_comparison import dominant_truth_hemi, load_surface_context
 from visualization.visualize_spatial_fused_cortical import (
+    ACTIVATION_CMAP,
     load_anatomical_context,
     render_surface_view,
     source_to_continuous_surface,
 )
 from visualization.visualize_spatial_fused_mri import draw_slice, plane_image, pos_to_vox
 from protected_multilayer import DATA_ROOT, OUT_ROOT, SCENARIOS, load_mat, load_source, source_amplitude, threshold_mask
-from validation_batch import VAL_DATA, VAL_RUNS, V11_ROOT
+from validation_batch import VAL_DATA, VAL_RUNS, V11_ROOT, V14_ROOT
 
 FIG_ROOT = OUT_ROOT / "figures"
 V11_CASES = ("deep_00", "surface_04", "mixed_04", "mixed2_02")
 V11_DEEP_CASES = ("deep_00", "mixed_04", "mixed2_02")
+V14_CASES = ("surface_00", "mixed_02", "mixed2_00")
 
 
 def load_npz_source(path: Path) -> np.ndarray:
@@ -117,6 +119,49 @@ def render_deep_activation(truth: dict, source: np.ndarray, anatomical: dict) ->
         [0.0, 0.0, 1.0],
     ]
     plotter.camera.zoom(1.18)
+    image = plotter.screenshot(return_img=True)
+    plotter.close()
+    return image
+
+
+def render_surface_medial(
+    lh_values: np.ndarray,
+    rh_values: np.ndarray,
+    context: dict,
+    hemi: str,
+) -> np.ndarray:
+    info = context[hemi]
+    activation = lh_values if hemi == "lh" else rh_values
+    mesh = pv.PolyData(info["vertices"], info["face_array"])
+    mesh.point_data["curvature"] = info["curvature"]
+
+    plotter = pv.Plotter(off_screen=True, window_size=(760, 590))
+    plotter.set_background("black")
+    plotter.enable_anti_aliasing("ssaa")
+    plotter.add_mesh(
+        mesh,
+        scalars="curvature",
+        cmap=["#666666", "#dedede"],
+        clim=(-1, 1),
+        smooth_shading=True,
+        show_scalar_bar=False,
+    )
+    overlay = mesh.copy()
+    overlay.point_data["activation"] = activation
+    plotter.add_mesh(
+        overlay,
+        scalars="activation",
+        cmap=ACTIVATION_CMAP,
+        clim=(0, 1),
+        opacity=np.where(activation >= 0.035, 0.32 + 0.68 * activation, 0.0),
+        smooth_shading=True,
+        show_scalar_bar=False,
+    )
+    center = info["vertices"].mean(axis=0)
+    span = float(np.ptp(info["vertices"], axis=0).max())
+    direction = -1.0 if hemi == "rh" else 1.0
+    plotter.camera_position = [center + np.array([direction * 2.7 * span, 0.0, 0.0]), center, [0.0, 0.0, 1.0]]
+    plotter.camera.zoom(1.17)
     image = plotter.screenshot(return_img=True)
     plotter.close()
     return image
@@ -322,6 +367,87 @@ def draw_v11_waveforms() -> None:
         plt.close(fig)
 
 
+def draw_v14_localization() -> None:
+    pv.global_theme.allow_empty_mesh = True
+    surface_context = load_surface_context()
+    anatomical_context = load_anatomical_context()
+    for case_id in V14_CASES:
+        truth = load_mat(VAL_DATA / case_id / "s_true.mat")
+        with np.load(V11_ROOT / "sources" / f"{case_id}.npz") as saved:
+            v11 = np.asarray(saved["S"], dtype=float) * np.asarray(saved["region_mask"], dtype=bool)[:, None]
+        with np.load(V14_ROOT / "sources" / f"{case_id}.npz") as saved:
+            v14 = np.asarray(saved["S"], dtype=float) * np.asarray(saved["region_mask"], dtype=bool)[:, None]
+        rows = (
+            ("Ground truth", np.asarray(truth["s_true"], dtype=float)),
+            ("V11 compact + refined", v11),
+            ("V14 local evidence", v14),
+        )
+        lateral_hemi = dominant_truth_hemi(truth, surface_context)
+        fig, axes = plt.subplots(3, 4, figsize=(18.5, 10.5), facecolor="white")
+        for row, (label, source) in enumerate(rows):
+            lh, rh = source_to_continuous_surface(source, surface_context, smoothing_steps=5)
+            images = (
+                render_surface_view(lh, rh, surface_context, "ventral", lateral_hemi),
+                render_surface_view(lh, rh, surface_context, "lateral", lateral_hemi),
+                render_surface_medial(lh, rh, surface_context, lateral_hemi),
+                render_deep_activation(truth, source, anatomical_context),
+            )
+            for column, image in enumerate(images):
+                axes[row, column].imshow(image)
+                axes[row, column].set_axis_off()
+            axes[row, 0].text(
+                -0.03,
+                0.5,
+                label,
+                rotation=90,
+                va="center",
+                ha="right",
+                transform=axes[row, 0].transAxes,
+                fontsize=12,
+                fontweight="bold",
+            )
+        axes[0, 0].set_title("Inflated ventral", fontsize=13)
+        axes[0, 1].set_title(f"Inflated {lateral_hemi.upper()} lateral", fontsize=13)
+        axes[0, 2].set_title(f"Inflated {lateral_hemi.upper()} medial", fontsize=13)
+        axes[0, 3].set_title("Deep activation", fontsize=13)
+        fig.suptitle(f"V14 residual-guided surface localization: {case_id}", fontsize=15, y=0.995)
+        fig.subplots_adjust(left=0.085, right=0.995, top=0.91, bottom=0.01, wspace=0.02, hspace=0.035)
+        fig.savefig(V14_ROOT / f"localization_{case_id}.png", dpi=180, bbox_inches="tight")
+        plt.close(fig)
+
+
+def draw_v14_waveforms() -> None:
+    for case_id in V14_CASES:
+        truth = load_mat(VAL_DATA / case_id / "s_true.mat")
+        true_source = np.asarray(truth["s_true"], dtype=float)
+        with np.load(V11_ROOT / "sources" / f"{case_id}.npz") as saved:
+            v11 = np.asarray(saved["S"], dtype=float) * np.asarray(saved["region_mask"], dtype=bool)[:, None]
+        with np.load(V14_ROOT / "sources" / f"{case_id}.npz") as saved:
+            v14 = np.asarray(saved["S"], dtype=float) * np.asarray(saved["region_mask"], dtype=bool)[:, None]
+        groups = true_source_groups(truth)
+        times = np.asarray(truth["times"], dtype=float).ravel()
+        fig, axes = plt.subplots(len(groups), 1, figsize=(8.4, 2.35 * len(groups)), squeeze=False)
+        for row, group in enumerate(groups):
+            truth_wave = group_waveform(true_source, group)
+            v11_index, v11_wave = best_estimated_waveform(v11, group)
+            v14_index, v14_wave = best_estimated_waveform(v14, group)
+            ax = axes[row, 0]
+            ax.plot(times, normalize(truth_wave), color="black", linewidth=2.0, label="truth")
+            ax.plot(times, normalize(v11_wave), color="#0072b2", linewidth=1.3, label=f"V11 {v11_index + 1}")
+            ax.plot(times, normalize(v14_wave), color="#d55e00", linewidth=1.5, linestyle="--", label=f"V14 {v14_index + 1}")
+            ax.axvline(times[min(200, times.size - 1)], color="0.75", linewidth=1.0)
+            ax.set_ylim(-1.15, 1.15)
+            ax.set_ylabel(f"group {row + 1}")
+            ax.spines[["top", "right"]].set_visible(False)
+            if row == 0:
+                ax.legend(frameon=False, loc="upper right")
+        axes[-1, 0].set_xlabel("Time (s)")
+        fig.suptitle(f"V14 source waveform comparison: {case_id}", fontsize=13)
+        fig.tight_layout()
+        fig.savefig(V14_ROOT / f"waveforms_{case_id}.png", dpi=180)
+        plt.close(fig)
+
+
 def draw_waveforms() -> None:
     out_dir = FIG_ROOT / "waveforms"
     out_dir.mkdir(parents=True, exist_ok=True)
@@ -380,6 +506,11 @@ def draw_waveforms() -> None:
 
 
 def main() -> None:
+    if len(sys.argv) > 1 and sys.argv[1] == "v14":
+        draw_v14_localization()
+        draw_v14_waveforms()
+        print("Saved:", V14_ROOT)
+        return
     if len(sys.argv) > 1 and sys.argv[1] == "v11":
         draw_v11_localization()
         draw_v11_deep_multiview()
