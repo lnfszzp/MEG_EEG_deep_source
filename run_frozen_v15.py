@@ -34,7 +34,10 @@ from protocol import load_shared, simulate_case
 from refined_grid import refined_deep_evidence
 
 
-METHODS = ("V14-common-grid", "V15-support-rescue")
+METHODS = ("V14-common-grid", "V15-support-rescue", "V16-evidence-rescue")
+V16_JOINT_DEEP_EXCESS = float(os.environ.get("V16_JOINT_DEEP_EXCESS", "0.06"))
+V16_MODALITY_FLOOR = float(os.environ.get("V16_MODALITY_FLOOR", "0.0"))
+V16_SURFACE_EVIDENCE_POWER = float(os.environ.get("V16_SURFACE_EVIDENCE_POWER", "2.0"))
 FIELDS = (
     "panel", "case_id", "scenario", "snr_db", "location", "method", "status", "error",
     "elapsed_sec", "support_count", "deep_evidence", "eeg_evidence", "meg_evidence",
@@ -168,10 +171,23 @@ def _score_case(case: dict) -> list[dict]:
             shared["adjacency"],
             int(shared["n_surf"]),
         )
+        middle = time.perf_counter()
+        v16_source, v16_mask, v16_deep = protected.component_refit_select_v16_evidence_rescue_from_v11(
+            eeg,
+            meg,
+            v11,
+            range_mask,
+            shared["adjacency"],
+            int(shared["n_surf"]),
+            joint_deep_excess=V16_JOINT_DEEP_EXCESS,
+            modality_floor=V16_MODALITY_FLOOR,
+            surface_evidence_power=V16_SURFACE_EVIDENCE_POWER,
+        )
         finished = time.perf_counter()
         return [
             _row(case, METHODS[0], old_source, old_mask, truth, groups, old_deep, split - started),
-            _row(case, METHODS[1], new_source, new_mask, truth, groups, new_deep, finished - split),
+            _row(case, METHODS[1], new_source, new_mask, truth, groups, new_deep, middle - split),
+            _row(case, METHODS[2], v16_source, v16_mask, truth, groups, v16_deep, finished - middle),
         ]
     except Exception as exc:
         return [
@@ -320,11 +336,11 @@ def _cell_summaries(rows: list[dict], vertices: np.ndarray) -> list[dict]:
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Paired frozen V14/V15 benchmark")
+    parser = argparse.ArgumentParser(description="Frozen V14/V15/V16 benchmark")
     parser.add_argument("--panel", choices=("dev", "test"), required=True)
     parser.add_argument("--workers", type=int, default=max(1, min(4, os.cpu_count() or 1)))
     parser.add_argument("--limit", type=int)
-    parser.add_argument("--output", type=Path, default=ROOT / "results" / "v15_frozen")
+    parser.add_argument("--output", type=Path, default=ROOT / "results" / "v16_frozen")
     args = parser.parse_args()
 
     manifest = json.loads(
@@ -376,6 +392,9 @@ def main() -> None:
         "surface_deep_cross_edges": 0,
         "v15_surface_seed": "V11 broad 0.10 range; no 0.50 post-mask",
         "v15_deep_scan": "all 15 deep points; active-minus-baseline; both modalities >= 0.02",
+        "v16_joint_deep_excess": V16_JOINT_DEEP_EXCESS,
+        "v16_modality_floor": V16_MODALITY_FLOOR,
+        "v16_surface_evidence_power": V16_SURFACE_EVIDENCE_POWER,
     }
     (args.output / f"{args.panel}_metadata.json").write_text(
         json.dumps(metadata, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"

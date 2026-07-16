@@ -8,6 +8,7 @@ import numpy as np
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from protected_multilayer import (
+    active_surface_component_evidence,
     active_residual_scores,
     adaptive_sisses_threshold,
     build_candidate_mask,
@@ -19,6 +20,7 @@ from protected_multilayer import (
     component_refit_select_v8_protected_sisses,
     component_refit_select_v9_layerwise_sisses,
     component_refit_select_v15_support_rescue,
+    component_refit_select_v16_evidence_rescue_from_v11,
     residual_guided_surface_proximal_system,
     component_refit_select,
     compactness_penalty_weights,
@@ -725,6 +727,52 @@ class ProtectedMultilayerTests(unittest.TestCase):
         np.testing.assert_array_equal(mask, broad)
         np.testing.assert_array_equal(captured["mask"], broad)
         np.testing.assert_array_equal(fitted, source * broad[:, None])
+
+    def test_active_surface_evidence_prefers_response_specific_component(self):
+        source = np.zeros((2, 240))
+        source[0, 200:] = 1.0
+        source[1] = 1.0
+        leadfield = np.eye(2)
+        data = leadfield @ source
+        scores = active_surface_component_evidence(
+            data,
+            leadfield,
+            source,
+            [np.array([0]), np.array([1])],
+        )
+        self.assertGreater(scores[0], scores[1])
+
+    def test_v16_accepts_joint_deep_evidence_when_one_modality_is_weak(self):
+        source = np.arange(12, dtype=float).reshape(3, 4)
+        mask = np.array([True, False, False])
+        candidate = {
+            "index": 2,
+            "timecourse": np.ones(4),
+            "eeg_excess": 0.07,
+            "meg_excess": 0.0,
+            "joint_excess": 0.07,
+        }
+
+        def finish(_eeg, _meg, seeded, selected, _conn, _n_surf):
+            return seeded, selected
+
+        def passthrough(_b, _l, fitted, *_args, **_kwargs):
+            return fitted
+
+        with (
+            patch("protected_multilayer.residual_deep_candidate", return_value=candidate),
+            patch("protected_multilayer.component_refit_select_v14_local_evidence", side_effect=finish),
+            patch("protected_multilayer.whitened_joint_system", return_value=(np.zeros((1, 4)), np.zeros((1, 3)))),
+            patch("protected_multilayer.active_component_nnls_system", side_effect=passthrough),
+            patch("protected_multilayer.evidence_reweight_surface_components", side_effect=passthrough),
+        ):
+            fitted, selected, deep = component_refit_select_v16_evidence_rescue_from_v11(
+                {}, {}, source, mask, np.eye(3), 2
+            )
+
+        self.assertIs(deep, candidate)
+        self.assertTrue(selected[2])
+        np.testing.assert_array_equal(fitted[2], np.ones(4))
 
 
 if __name__ == "__main__":

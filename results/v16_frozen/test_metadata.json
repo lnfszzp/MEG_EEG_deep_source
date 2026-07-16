@@ -1,0 +1,11 @@
+{
+  "panel": "test",
+  "cases": 1110,
+  "auc": "An_cal_AUC(threshold=0.01), block-diagonal surface/deep graph",
+  "surface_deep_cross_edges": 0,
+  "v15_surface_seed": "V11 broad 0.10 range; no 0.50 post-mask",
+  "v15_deep_scan": "all 15 deep points; active-minus-baseline; both modalities >= 0.02",
+  "v16_joint_deep_excess": 0.06,
+  "v16_modality_floor": 0.0,
+  "v16_surface_evidence_power": 2.0
+}

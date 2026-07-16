@@ -32,3 +32,12 @@ results/**
 !results/v14/*.png
 !results/v15_frozen/
 !results/v15_frozen/**
+!results/v16_frozen/
+!results/v16_frozen/dev_scores.csv
+!results/v16_frozen/dev_summary.csv
+!results/v16_frozen/dev_by_cell.csv
+!results/v16_frozen/dev_metadata.json
+!results/v16_frozen/test_scores.csv
+!results/v16_frozen/test_summary.csv
+!results/v16_frozen/test_by_cell.csv
+!results/v16_frozen/test_metadata.json

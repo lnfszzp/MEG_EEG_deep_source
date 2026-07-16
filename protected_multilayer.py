@@ -408,16 +408,15 @@ def active_residual_scores(
     return np.maximum(active - baseline, 0.0) / denominator
 
 
-def active_residual_deep_evidence(
+def residual_deep_candidate(
     eeg: dict,
     meg: dict,
     surface_source: np.ndarray,
     n_surf: int,
     *,
-    min_modality_excess: float = 0.02,
     noise_samples: int = NOISE_SAMPLES,
 ) -> dict | None:
-    """Select one full-grid deep point only when active evidence exists in both modalities."""
+    """Return the strongest cross-modal deep candidate before applying a gate."""
     surface_source = np.asarray(surface_source, dtype=float)
     systems = []
     scores = []
@@ -446,9 +445,6 @@ def active_residual_deep_evidence(
             after = float(np.linalg.norm(residual[:, window] - column @ coefficient[:, window], "fro") ** 2)
             drops.append(1.0 - after / max(before, 1e-12))
         excess.append(drops[1] - drops[0])
-    if min(excess) < min_modality_excess:
-        return None
-
     residual = np.vstack([item[0] for item in systems])
     column = np.concatenate([item[1][:, deep_id] for item in systems])[:, None]
     timecourse = ((column.T @ residual) / (float((column.T @ column)[0, 0]) + 1e-12)).ravel()
@@ -457,7 +453,30 @@ def active_residual_deep_evidence(
         "timecourse": timecourse,
         "eeg_excess": float(excess[0]),
         "meg_excess": float(excess[1]),
+        "joint_excess": float(sum(excess)),
     }
+
+
+def active_residual_deep_evidence(
+    eeg: dict,
+    meg: dict,
+    surface_source: np.ndarray,
+    n_surf: int,
+    *,
+    min_modality_excess: float = 0.02,
+    noise_samples: int = NOISE_SAMPLES,
+) -> dict | None:
+    """Select one full-grid deep point only when both modalities pass the gate."""
+    candidate = residual_deep_candidate(
+        eeg,
+        meg,
+        surface_source,
+        n_surf,
+        noise_samples=noise_samples,
+    )
+    if candidate is None or min(candidate["eeg_excess"], candidate["meg_excess"]) < min_modality_excess:
+        return None
+    return candidate
 
 
 def residual_deep_timecourse(
@@ -1624,6 +1643,102 @@ def residual_guided_surface_proximal_system(
     return result
 
 
+def active_component_nnls_system(
+    b: np.ndarray,
+    l: np.ndarray,
+    source: np.ndarray,
+    mask: np.ndarray,
+    vert_conn: np.ndarray,
+    n_surf: int,
+    *,
+    noise_samples: int = NOISE_SAMPLES,
+) -> np.ndarray:
+    """Refit component amplitudes on the response window while preserving waveforms."""
+    source = np.asarray(source, dtype=float)
+    mask = np.asarray(mask, dtype=bool).ravel()
+    result = source * mask[:, None]
+    components = connected_components(mask[:n_surf], np.asarray(vert_conn != 0)[:n_surf, :n_surf])
+    components += [np.array([idx], dtype=int) for idx in np.flatnonzero(mask[n_surf:]) + n_surf]
+    if not components or not 0 < noise_samples < b.shape[1]:
+        return result
+    active = slice(noise_samples, None)
+    contributions = np.column_stack(
+        [(l[:, component] @ result[component])[:, active].ravel() for component in components]
+    )
+    scales = nnls(contributions, np.asarray(b)[:, active].ravel())[0]
+    for component, scale in zip(components, scales):
+        result[component] *= scale
+    return result
+
+
+def active_surface_component_evidence(
+    b: np.ndarray,
+    l: np.ndarray,
+    source: np.ndarray,
+    components: list[np.ndarray],
+    *,
+    noise_samples: int = NOISE_SAMPLES,
+) -> np.ndarray:
+    """Measure each component's active-window residual drop above its baseline drop."""
+    source = np.asarray(source, dtype=float)
+    full_residual = np.asarray(b, dtype=float) - np.asarray(l, dtype=float) @ source
+    scores = []
+    for component in components:
+        contribution = l[:, component] @ source[component]
+        drops = []
+        for window in (slice(0, noise_samples), slice(noise_samples, None)):
+            full_rss = float(np.linalg.norm(full_residual[:, window], "fro") ** 2)
+            without_rss = float(np.linalg.norm(full_residual[:, window] + contribution[:, window], "fro") ** 2)
+            drops.append((without_rss - full_rss) / max(without_rss, 1e-12))
+        scores.append(max(drops[1] - drops[0], 0.0))
+    return np.asarray(scores, dtype=float)
+
+
+def evidence_reweight_surface_components(
+    b: np.ndarray,
+    l: np.ndarray,
+    source: np.ndarray,
+    mask: np.ndarray,
+    vert_conn: np.ndarray,
+    n_surf: int,
+    *,
+    evidence_power: float = 2.0,
+    noise_samples: int = NOISE_SAMPLES,
+) -> np.ndarray:
+    """Make surface peak energy follow active-minus-baseline component evidence."""
+    result = np.asarray(source, dtype=float) * np.asarray(mask, dtype=bool)[:, None]
+    components = connected_components(
+        np.asarray(mask, dtype=bool)[:n_surf],
+        np.asarray(vert_conn != 0)[:n_surf, :n_surf],
+    )
+    if not components:
+        return result
+    scores = active_surface_component_evidence(
+        b,
+        l,
+        result,
+        components,
+        noise_samples=noise_samples,
+    )
+    score_peak = float(scores.max(initial=0.0))
+    if score_peak <= 0:
+        return result
+    active = slice(noise_samples, None)
+    old_norm = float(np.linalg.norm(result[:n_surf, active]))
+    for component, score in zip(components, scores):
+        vertex_energy = np.sum(result[component, active] ** 2, axis=1)
+        current_peak = float(vertex_energy.max(initial=0.0))
+        if current_peak <= 0 or score <= 0:
+            result[component] = 0.0
+            continue
+        target_peak = (score / score_peak) ** evidence_power
+        result[component] *= np.sqrt(target_peak / current_peak)
+    new_norm = float(np.linalg.norm(result[:n_surf, active]))
+    if old_norm > 0 and new_norm > 0:
+        result[:n_surf] *= old_norm / new_norm
+    return result
+
+
 def component_refit_select_v14_local_evidence(
     eeg: dict,
     meg: dict,
@@ -1713,6 +1828,57 @@ def component_refit_select_v15_from_v11(
         mask,
         vert_conn,
         n_surf,
+    )
+    return fitted, final_mask, deep
+
+
+def component_refit_select_v16_evidence_rescue_from_v11(
+    eeg: dict,
+    meg: dict,
+    v11: np.ndarray,
+    range_mask: np.ndarray,
+    vert_conn: np.ndarray,
+    n_surf: int,
+    *,
+    strong_modality_excess: float = 0.02,
+    joint_deep_excess: float = 0.06,
+    modality_floor: float = 0.0,
+    surface_evidence_power: float = 2.0,
+) -> tuple[np.ndarray, np.ndarray, dict | None]:
+    """Rescue cross-modal deep evidence and rank surface components by residual evidence."""
+    mask = np.asarray(range_mask, dtype=bool).copy()
+    mask[n_surf:] = False
+    seeded = np.asarray(v11, dtype=float) * mask[:, None]
+    candidate = residual_deep_candidate(eeg, meg, v11, n_surf)
+    deep = None
+    if candidate is not None:
+        minimum = min(candidate["eeg_excess"], candidate["meg_excess"])
+        if minimum >= strong_modality_excess or (
+            candidate["joint_excess"] >= joint_deep_excess and minimum >= modality_floor
+        ):
+            deep = candidate
+            index = int(deep["index"])
+            seeded[index] = np.asarray(deep["timecourse"], dtype=float)
+            mask[index] = True
+
+    fitted, final_mask = component_refit_select_v14_local_evidence(
+        eeg,
+        meg,
+        seeded,
+        mask,
+        vert_conn,
+        n_surf,
+    )
+    b, l = whitened_joint_system(eeg, meg)
+    fitted = active_component_nnls_system(b, l, fitted, final_mask, vert_conn, n_surf)
+    fitted = evidence_reweight_surface_components(
+        b,
+        l,
+        fitted,
+        final_mask,
+        vert_conn,
+        n_surf,
+        evidence_power=surface_evidence_power,
     )
     return fitted, final_mask, deep
 
