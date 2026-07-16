@@ -1,4 +1,5 @@
 import unittest
+from unittest.mock import patch
 from pathlib import Path
 import sys
 
@@ -7,6 +8,7 @@ import numpy as np
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from protected_multilayer import (
+    active_residual_scores,
     adaptive_sisses_threshold,
     build_candidate_mask,
     component_refit_select_v3,
@@ -16,6 +18,7 @@ from protected_multilayer import (
     component_refit_select_v7_tbf_refit,
     component_refit_select_v8_protected_sisses,
     component_refit_select_v9_layerwise_sisses,
+    component_refit_select_v15_support_rescue,
     residual_guided_surface_proximal_system,
     component_refit_select,
     compactness_penalty_weights,
@@ -40,10 +43,13 @@ from refined_grid import refined_deep_evidence
 
 class ProtectedMultilayerTests(unittest.TestCase):
     def test_auc_metric_uses_requested_function_and_threshold(self):
-        from auc_metric import AUC_THRESHOLD, An_cal_AUC
+        from auc_metric import AUC_THRESHOLD, An_cal_AUC, auc_cortex
 
         self.assertEqual(AUC_THRESHOLD, 0.01)
         self.assertEqual(Path(An_cal_AUC.__code__.co_filename), Path(r"F:\PycharmProjects\meg\function\An_cal_AUC.py"))
+        graph = auc_cortex(np.arange(18)[:, None], np.eye(18), 3)["Faces"]
+        self.assertEqual(graph[:3, 3:].nnz, 0)
+        self.assertEqual(graph[3:, :3].nnz, 0)
 
     def test_candidate_mask_uses_meg_surface_and_joint_deep(self):
         n_surf = 6
@@ -196,6 +202,14 @@ class ProtectedMultilayerTests(unittest.TestCase):
         )
         scores = residual_deep_scores(residual, leadfield, n_surf=2)
         self.assertGreater(scores[0], scores[1])
+
+    def test_active_residual_scores_subtracts_baseline_noise(self):
+        residual = np.zeros((2, 240))
+        residual[0, :200] = 3.0
+        residual[1, 200:] = 2.0
+        scores = active_residual_scores(residual, np.eye(2))
+        self.assertEqual(scores[0], 0.0)
+        self.assertAlmostEqual(scores[1], 4.0)
 
     def test_residual_deep_timecourse_recovers_projection(self):
         wave = np.array([1.0, -2.0, 3.0])
@@ -684,6 +698,33 @@ class ProtectedMultilayerTests(unittest.TestCase):
         )
         self.assertEqual(np.argmax(source_amplitude(refined[:3])), 1)
         np.testing.assert_allclose(refined[3], source[3])
+
+    def test_v15_uses_v11_broad_range_without_half_peak_mask(self):
+        source = np.arange(12, dtype=float).reshape(3, 4)
+        broad = np.array([True, True, False])
+        captured = {}
+
+        def finish(_eeg, _meg, seeded, mask, _conn, _n_surf):
+            captured["seeded"] = seeded.copy()
+            captured["mask"] = mask.copy()
+            return seeded, mask
+
+        with (
+            patch(
+                "protected_multilayer.component_refit_select_v11_compactness_sisses",
+                return_value=(source, broad, broad),
+            ),
+            patch("protected_multilayer.active_residual_deep_evidence", return_value=None),
+            patch("protected_multilayer.component_refit_select_v14_local_evidence", side_effect=finish),
+        ):
+            fitted, mask, deep = component_refit_select_v15_support_rescue(
+                {}, {}, source, np.eye(3), 2, np.zeros((3, 3))
+            )
+
+        self.assertIsNone(deep)
+        np.testing.assert_array_equal(mask, broad)
+        np.testing.assert_array_equal(captured["mask"], broad)
+        np.testing.assert_array_equal(fitted, source * broad[:, None])
 
 
 if __name__ == "__main__":

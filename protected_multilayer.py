@@ -387,6 +387,79 @@ def residual_deep_scores(
     return numerator / denominator
 
 
+def active_residual_scores(
+    residual: np.ndarray,
+    leadfield: np.ndarray,
+    *,
+    noise_samples: int = NOISE_SAMPLES,
+    eps: float = 1e-12,
+) -> np.ndarray:
+    """Matched-filter power added in the active window above baseline."""
+    residual = np.asarray(residual, dtype=float)
+    leadfield = np.asarray(leadfield, dtype=float)
+    if residual.ndim != 2 or leadfield.ndim != 2 or residual.shape[0] != leadfield.shape[0]:
+        raise ValueError("residual and leadfield must share the channel axis")
+    if not 0 < noise_samples < residual.shape[1]:
+        raise ValueError("noise_samples must split baseline and active samples")
+    denominator = np.sum(leadfield**2, axis=0) + eps
+    projection = leadfield.T @ residual
+    baseline = np.mean(projection[:, :noise_samples] ** 2, axis=1)
+    active = np.mean(projection[:, noise_samples:] ** 2, axis=1)
+    return np.maximum(active - baseline, 0.0) / denominator
+
+
+def active_residual_deep_evidence(
+    eeg: dict,
+    meg: dict,
+    surface_source: np.ndarray,
+    n_surf: int,
+    *,
+    min_modality_excess: float = 0.02,
+    noise_samples: int = NOISE_SAMPLES,
+) -> dict | None:
+    """Select one full-grid deep point only when active evidence exists in both modalities."""
+    surface_source = np.asarray(surface_source, dtype=float)
+    systems = []
+    scores = []
+    for modality in (eeg, meg):
+        data = np.asarray(modality["F"], dtype=float)
+        gain = np.asarray(modality["Gain"], dtype=float)
+        white = whitening_matrix(data, noise_samples)
+        white_data = white @ data
+        white_gain = white @ gain
+        residual = white_data - white_gain[:, :n_surf] @ surface_source[:n_surf]
+        deep_gain = white_gain[:, n_surf:]
+        systems.append((residual, deep_gain))
+        scores.append(active_residual_scores(residual, deep_gain, noise_samples=noise_samples))
+
+    if not scores[0].size:
+        return None
+    combined = sum(score / max(float(score.max(initial=0.0)), 1e-12) for score in scores)
+    deep_id = int(np.argmax(combined))
+    excess = []
+    for residual, deep_gain in systems:
+        column = deep_gain[:, deep_id, None]
+        coefficient = (column.T @ residual) / (float((column.T @ column)[0, 0]) + 1e-12)
+        drops = []
+        for window in (slice(0, noise_samples), slice(noise_samples, None)):
+            before = float(np.linalg.norm(residual[:, window], "fro") ** 2)
+            after = float(np.linalg.norm(residual[:, window] - column @ coefficient[:, window], "fro") ** 2)
+            drops.append(1.0 - after / max(before, 1e-12))
+        excess.append(drops[1] - drops[0])
+    if min(excess) < min_modality_excess:
+        return None
+
+    residual = np.vstack([item[0] for item in systems])
+    column = np.concatenate([item[1][:, deep_id] for item in systems])[:, None]
+    timecourse = ((column.T @ residual) / (float((column.T @ column)[0, 0]) + 1e-12)).ravel()
+    return {
+        "index": n_surf + deep_id,
+        "timecourse": timecourse,
+        "eeg_excess": float(excess[0]),
+        "meg_excess": float(excess[1]),
+    }
+
+
 def residual_deep_timecourse(
     residual: np.ndarray,
     leadfield: np.ndarray,
@@ -1572,6 +1645,76 @@ def component_refit_select_v14_local_evidence(
         compactness=compactness,
     )
     return fitted, np.asarray(mask, dtype=bool).copy()
+
+
+def component_refit_select_v15_support_rescue(
+    eeg: dict,
+    meg: dict,
+    sisses: np.ndarray,
+    vert_conn: np.ndarray,
+    n_surf: int,
+    src_vertices: np.ndarray,
+    *,
+    min_deep_excess: float = 0.02,
+) -> tuple[np.ndarray, np.ndarray, dict | None]:
+    """Use V11's broad surface range and rescan the complete deep block."""
+    v11, range_mask, _candidate = component_refit_select_v11_compactness_sisses(
+        eeg,
+        meg,
+        sisses,
+        vert_conn,
+        n_surf,
+        src_vertices,
+        surface_compactness=0.10,
+        sigma_surface_component=0.10,
+        deep_compactness=0.50,
+        return_candidate=True,
+    )
+    return component_refit_select_v15_from_v11(
+        eeg,
+        meg,
+        v11,
+        range_mask,
+        vert_conn,
+        n_surf,
+        min_deep_excess=min_deep_excess,
+    )
+
+
+def component_refit_select_v15_from_v11(
+    eeg: dict,
+    meg: dict,
+    v11: np.ndarray,
+    range_mask: np.ndarray,
+    vert_conn: np.ndarray,
+    n_surf: int,
+    *,
+    min_deep_excess: float = 0.02,
+) -> tuple[np.ndarray, np.ndarray, dict | None]:
+    """Build V15 from one cached V11 solve for paired benchmarks."""
+    mask = np.asarray(range_mask, dtype=bool).copy()
+    mask[n_surf:] = False
+    seeded = np.asarray(v11, dtype=float) * mask[:, None]
+    deep = active_residual_deep_evidence(
+        eeg,
+        meg,
+        v11,
+        n_surf,
+        min_modality_excess=min_deep_excess,
+    )
+    if deep is not None:
+        index = int(deep["index"])
+        seeded[index] = np.asarray(deep["timecourse"], dtype=float)
+        mask[index] = True
+    fitted, final_mask = component_refit_select_v14_local_evidence(
+        eeg,
+        meg,
+        seeded,
+        mask,
+        vert_conn,
+        n_surf,
+    )
+    return fitted, final_mask, deep
 
 
 def metric_row(scenario: str, method: str, source: np.ndarray, truth: dict, mask: np.ndarray, cortex: dict | None = None) -> dict:

@@ -69,7 +69,34 @@ def _install_common() -> None:
     sys.modules["_common"] = common
 
 
-def _load_an_cal_auc():
+def _safe_grow_parcels(A, seeds, banned, q_len, count=50):
+    """Run the requested parcel growth on source blocks smaller than 50 seeds."""
+    seeds = list(seeds)
+    if not seeds:
+        raise ValueError("An_cal_AUC has no parcel seed in this source block")
+    parcels = []
+    for index in range(count):
+        cursor = index
+        parcel = np.array([seeds[cursor % len(seeds)]], dtype=int)
+        stalled = 0
+        while len(parcel) <= q_len:
+            adjacent = np.unique(A[parcel].nonzero()[1])
+            allowed = np.setdiff1d(adjacent, banned, assume_unique=False)
+            grown = np.unique(np.r_[parcel, allowed])
+            if allowed.size and grown.size > parcel.size:
+                parcel = grown
+                stalled = 0
+                continue
+            cursor += 1
+            stalled += 1
+            if stalled >= len(seeds):
+                raise ValueError("An_cal_AUC cannot grow a parcel inside this source block")
+            parcel = np.array([seeds[cursor % len(seeds)]], dtype=int)
+        parcels.append(parcel)
+    return parcels
+
+
+def _load_an_cal_auc_module():
     _install_common()
     if str(AUC_METRICS_DIR) not in sys.path:
         sys.path.append(str(AUC_METRICS_DIR))
@@ -78,15 +105,19 @@ def _load_an_cal_auc():
         raise ImportError(f"Cannot load {AUC_METRICS_DIR / 'An_cal_AUC.py'}")
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
-    return module.An_cal_AUC
+    module._grow_parcels = _safe_grow_parcels
+    return module
 
 
-An_cal_AUC = _load_an_cal_auc()
+_an_cal_auc_module = _load_an_cal_auc_module()
+An_cal_AUC = _an_cal_auc_module.An_cal_AUC
 
 
 def auc_cortex(vertices_m: np.ndarray, vert_conn: np.ndarray, n_surf: int) -> dict:
     vertices = np.asarray(vertices_m, dtype=float)
     adjacency = sparse.lil_matrix(np.asarray(vert_conn) != 0, dtype=np.uint8)
+    adjacency[:n_surf, n_surf:] = 0
+    adjacency[n_surf:, :n_surf] = 0
 
     # An_cal_AUC assumes a locally connected mesh; fill source-space holes
     # left by forward-model mindist filtering with geometric surface neighbors.
@@ -96,11 +127,14 @@ def auc_cortex(vertices_m: np.ndarray, vert_conn: np.ndarray, n_surf: int) -> di
             adjacency[idx, local] = 1
             adjacency[local, idx] = 1
 
-    # Deep points are not part of the cortical mesh. Give only deep rows a
-    # directed kNN escape route so An_cal_AUC can form close/far parcels.
-    for idx in range(int(n_surf), vertices.shape[0]):
-        dist = np.linalg.norm(vertices - vertices[idx], axis=1)
-        adjacency[idx, np.argsort(dist)[1:21]] = 1
+    n_deep = vertices.shape[0] - int(n_surf)
+    if n_deep > 1 and not adjacency[n_surf:, n_surf:].nnz:
+        neighbors = cKDTree(vertices[n_surf:]).query(vertices[n_surf:], k=min(7, n_deep))[1]
+        for local_idx, local in enumerate(neighbors):
+            index = n_surf + local_idx
+            deep_neighbors = n_surf + np.asarray(local, dtype=int)
+            adjacency[index, deep_neighbors] = 1
+            adjacency[deep_neighbors, index] = 1
     return {"Vertices": vertices, "Faces": adjacency.tocsr()}
 
 
