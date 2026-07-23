@@ -41,3 +41,10 @@ results/**
 !results/v16_frozen/test_summary.csv
 !results/v16_frozen/test_by_cell.csv
 !results/v16_frozen/test_metadata.json
+!results/v18_no_oracle/
+!results/v18_no_oracle/dev_summary.csv
+!results/v18_no_oracle/dev_by_cell.csv
+!results/v18_no_oracle/dev_metadata.json
+!results/v18_no_oracle/test_summary.csv
+!results/v18_no_oracle/test_by_cell.csv
+!results/v18_no_oracle/test_metadata.json

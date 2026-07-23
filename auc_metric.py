@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import importlib.util
+import os
 from pathlib import Path
 import sys
 import types
@@ -11,7 +12,12 @@ from scipy.spatial import cKDTree
 
 
 AUC_THRESHOLD = 0.01
-AUC_METRICS_DIR = Path(r"F:\PycharmProjects\meg\function")
+AUC_METRICS_DIR = Path(
+    os.environ.get(
+        "SOURCE_METRICS_PATH",
+        r"F:\博士\工作＆汇报\源定位\评估指标\python_functions",
+    )
+)
 
 
 def _as_source_matrix(source: np.ndarray) -> np.ndarray:

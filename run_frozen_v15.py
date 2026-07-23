@@ -234,10 +234,12 @@ def _macro(rows: list[dict], field: str, scenarios: set[str], penalty: float | N
     return float(np.mean(cells)) if cells else np.nan
 
 
-def _summaries(rows: list[dict], vertices: np.ndarray) -> list[dict]:
+def _summaries(
+    rows: list[dict], vertices: np.ndarray, methods: tuple[str, ...] = METHODS
+) -> list[dict]:
     penalty = float(np.linalg.norm(np.ptp(vertices, axis=0)) * 1000.0)
     result = []
-    for method in METHODS:
+    for method in methods:
         selected = [row for row in rows if row["method"] == method and row["status"] == "ok"]
         positives = [row for row in selected if int(float(row["has_deep_true"]))]
         negatives = [row for row in selected if not int(float(row["has_deep_true"]))]
@@ -288,10 +290,12 @@ def _summaries(rows: list[dict], vertices: np.ndarray) -> list[dict]:
     return result
 
 
-def _cell_summaries(rows: list[dict], vertices: np.ndarray) -> list[dict]:
+def _cell_summaries(
+    rows: list[dict], vertices: np.ndarray, methods: tuple[str, ...] = METHODS
+) -> list[dict]:
     penalty = float(np.linalg.norm(np.ptp(vertices, axis=0)) * 1000.0)
     result = []
-    for method in METHODS:
+    for method in methods:
         for scenario in sorted(SURFACE_SCENARIOS | DEEP_SCENARIOS):
             for snr in (0, 10, 20):
                 selected = [

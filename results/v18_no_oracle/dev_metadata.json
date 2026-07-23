@@ -1,0 +1,10 @@
+{
+  "panel": "dev",
+  "cases": 185,
+  "fractions": [
+    0.25
+  ],
+  "extent": "raw SISSES surface estimate scaled to a fraction of the V17 active surface peak",
+  "deep_branch": "unchanged V16 evidence rescue",
+  "simulator_private_helpers": []
+}

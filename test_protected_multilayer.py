@@ -10,6 +10,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 from protected_multilayer import (
     active_surface_component_evidence,
     active_residual_scores,
+    add_scaled_surface_extent,
     adaptive_sisses_threshold,
     build_candidate_mask,
     component_refit_select_v3,
@@ -21,6 +22,7 @@ from protected_multilayer import (
     component_refit_select_v9_layerwise_sisses,
     component_refit_select_v15_support_rescue,
     component_refit_select_v16_evidence_rescue_from_v11,
+    connected_euclidean_surface_kernels,
     residual_guided_surface_proximal_system,
     component_refit_select,
     compactness_penalty_weights,
@@ -34,6 +36,7 @@ from protected_multilayer import (
     sisses_style_refit_system,
     protected_sisses_admm_refit_system,
     layerwise_sisses_admm_refit_system,
+    multiscale_surface_point_refit_system,
     shrink_surface_core,
     source_amplitude,
     tbf_ridge_refit_system,
@@ -45,10 +48,10 @@ from refined_grid import refined_deep_evidence
 
 class ProtectedMultilayerTests(unittest.TestCase):
     def test_auc_metric_uses_requested_function_and_threshold(self):
-        from auc_metric import AUC_THRESHOLD, An_cal_AUC, auc_cortex
+        from auc_metric import AUC_METRICS_DIR, AUC_THRESHOLD, An_cal_AUC, auc_cortex
 
         self.assertEqual(AUC_THRESHOLD, 0.01)
-        self.assertEqual(Path(An_cal_AUC.__code__.co_filename), Path(r"F:\PycharmProjects\meg\function\An_cal_AUC.py"))
+        self.assertEqual(Path(An_cal_AUC.__code__.co_filename), AUC_METRICS_DIR / "An_cal_AUC.py")
         graph = auc_cortex(np.arange(18)[:, None], np.eye(18), 3)["Faces"]
         self.assertEqual(graph[:3, 3:].nnz, 0)
         self.assertEqual(graph[3:, :3].nnz, 0)
@@ -163,6 +166,129 @@ class ProtectedMultilayerTests(unittest.TestCase):
         allowed = np.ones(6, dtype=bool)
         mask = graph_hop_mask(2, adjacency, allowed, hops=2)
         self.assertEqual(np.flatnonzero(mask).tolist(), [0, 1, 2, 3, 4])
+
+    def test_physical_kernel_has_no_fixed_hop_limit_and_does_not_cross_mesh(self):
+        vertices = np.array(
+            [[0.000, 0, 0], [0.001, 0, 0], [0.002, 0, 0], [0.003, 0, 0], [0.0015, 0.0001, 0]]
+        )
+        adjacency = np.eye(5)
+        for left, right in ((0, 1), (1, 2), (2, 3)):
+            adjacency[left, right] = adjacency[right, left] = 1
+        kernels = connected_euclidean_surface_kernels(
+            vertices,
+            adjacency,
+            5,
+            scales_mm=(2.0,),
+        )
+        self.assertEqual(kernels[0][1].getcol(0).indices.tolist(), [0, 1, 2, 3])
+
+    def test_multiscale_surface_refit_selects_observed_center(self):
+        leadfield = np.eye(3)
+        truth = np.zeros((3, 6))
+        truth[1, 2:] = 1.0
+        kernels = connected_euclidean_surface_kernels(
+            np.arange(3)[:, None] * 0.001,
+            np.eye(3),
+            3,
+            scales_mm=(0.0,),
+        )
+        fitted, mask, details = multiscale_surface_point_refit_system(
+            leadfield @ truth,
+            leadfield,
+            np.zeros_like(truth),
+            np.zeros(3, dtype=bool),
+            3,
+            kernels,
+            max_sources=1,
+            min_active_excess=0.01,
+            noise_samples=2,
+        )
+        self.assertEqual(details["centers"], [1])
+        self.assertTrue(mask[1])
+        self.assertGreater(np.linalg.norm(fitted[1]), 0.0)
+
+    def test_multiscale_surface_refit_rejects_duplicate_timecourse(self):
+        leadfield = np.eye(2)
+        truth = np.zeros((2, 6))
+        truth[:, 2:] = np.array([1.0, -1.0, 1.0, -1.0])
+        kernels = connected_euclidean_surface_kernels(
+            np.arange(2)[:, None] * 0.001,
+            np.eye(2),
+            2,
+            scales_mm=(0.0,),
+        )
+        _, mask, details = multiscale_surface_point_refit_system(
+            leadfield @ truth,
+            leadfield,
+            np.zeros_like(truth),
+            np.zeros(2, dtype=bool),
+            2,
+            kernels,
+            min_active_excess=0.01,
+            additional_min_active_excess=0.01,
+            additional_excess_ratio=0.0,
+            noise_samples=2,
+        )
+        self.assertEqual(len(details["centers"]), 1)
+        self.assertEqual(int(mask.sum()), 1)
+
+    def test_multiscale_surface_refit_uses_residual_to_recover_three_sources(self):
+        truth = np.zeros((3, 6))
+        truth[:, 2:5] = np.eye(3)
+        kernels = connected_euclidean_surface_kernels(
+            np.arange(3)[:, None] * 0.001,
+            np.eye(3),
+            3,
+            scales_mm=(0.0,),
+        )
+        _, _, details = multiscale_surface_point_refit_system(
+            truth,
+            np.eye(3),
+            np.zeros_like(truth),
+            np.zeros(3, dtype=bool),
+            3,
+            kernels,
+            noise_samples=2,
+        )
+        self.assertEqual(set(details["centers"]), {0, 1, 2})
+
+    def test_multiscale_surface_refit_outputs_weak_physical_halo(self):
+        vertices = np.arange(3)[:, None] * 0.001
+        adjacency = np.eye(3)
+        adjacency[0, 1] = adjacency[1, 0] = 1
+        adjacency[1, 2] = adjacency[2, 1] = 1
+        kernels = connected_euclidean_surface_kernels(
+            vertices,
+            adjacency,
+            3,
+            scales_mm=(2.0,),
+        )
+        truth = np.zeros((3, 6))
+        truth[1, 2:] = np.array([1.0, -1.0, 1.0, -1.0])
+        fitted, mask, details = multiscale_surface_point_refit_system(
+            truth,
+            np.eye(3),
+            np.zeros_like(truth),
+            np.zeros(3, dtype=bool),
+            3,
+            kernels,
+            max_sources=1,
+            min_active_excess=0.01,
+            noise_samples=2,
+        )
+        center = details["centers"][0]
+        self.assertGreater(int(mask.sum()), 1)
+        self.assertGreater(np.linalg.norm(fitted[center]), np.linalg.norm(fitted[0]))
+
+    def test_scaled_surface_extent_preserves_deep_and_scales_surface_peak(self):
+        primary = np.zeros((4, 6))
+        extent = np.zeros_like(primary)
+        primary[1, 2:] = 2.0
+        primary[3, 2:] = 3.0
+        extent[0, 2:] = 4.0
+        result = add_scaled_surface_extent(primary, extent, 3, 0.05, noise_samples=2)
+        self.assertTrue(np.array_equal(result[3], primary[3]))
+        self.assertAlmostEqual(np.linalg.norm(result[0, 2:]), 0.05 * np.linalg.norm(primary[1, 2:]))
 
     def test_component_refit_v3_can_relocate_deep_neighbor(self):
         t = np.linspace(0, 1, 24)

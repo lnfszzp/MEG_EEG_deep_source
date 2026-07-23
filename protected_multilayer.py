@@ -8,7 +8,9 @@ import sys
 import h5py
 import numpy as np
 import scipy.io as sio
+from scipy import sparse
 from scipy.optimize import nnls
+from scipy.spatial import cKDTree
 
 ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
@@ -259,6 +261,208 @@ def whitened_joint_system(eeg: dict, meg: dict) -> tuple[np.ndarray, np.ndarray]
     b = np.vstack([eeg_w @ np.asarray(eeg["F"], dtype=float), meg_w @ np.asarray(meg["F"], dtype=float)])
     l = np.vstack([eeg_w @ np.asarray(eeg["Gain"], dtype=float), meg_w @ np.asarray(meg["Gain"], dtype=float)])
     return b, l
+
+
+def connected_euclidean_surface_kernels(
+    src_vertices: np.ndarray,
+    vert_conn: np.ndarray,
+    n_surf: int,
+    *,
+    scales_mm: tuple[float, ...] = (0.0, 4.0, 7.0),
+    radius_sigma: float = 2.0,
+) -> tuple[tuple[float, sparse.csc_matrix], ...]:
+    """Build continuous physical-scale kernels without a fixed graph-hop extent."""
+    xyz = np.asarray(src_vertices, dtype=float)[:n_surf]
+    adjacency = np.asarray(vert_conn != 0)[:n_surf, :n_surf]
+    tree = cKDTree(xyz)
+    kernels = []
+    for scale_mm in scales_mm:
+        scale_mm = float(scale_mm)
+        if scale_mm < 0:
+            raise ValueError("surface scales must be non-negative")
+        if scale_mm == 0:
+            kernels.append((scale_mm, sparse.eye(n_surf, format="csc")))
+            continue
+        rows, cols, values = [], [], []
+        for center, nearby in enumerate(
+            tree.query_ball_point(xyz, radius_sigma * scale_mm / 1000.0)
+        ):
+            allowed = np.zeros(n_surf, dtype=bool)
+            allowed[np.asarray(nearby, dtype=int)] = True
+            seen = np.zeros(n_surf, dtype=bool)
+            seen[center] = True
+            queue: deque[int] = deque([center])
+            connected = []
+            while queue:
+                item = queue.popleft()
+                connected.append(item)
+                neighbors = np.flatnonzero(adjacency[item] & allowed & ~seen)
+                seen[neighbors] = True
+                queue.extend(int(index) for index in neighbors)
+            connected = np.asarray(connected, dtype=int)
+            distance_mm = np.linalg.norm(xyz[connected] - xyz[center], axis=1) * 1000.0
+            weight = np.exp(-0.5 * (distance_mm / scale_mm) ** 2)
+            weight /= max(float(np.linalg.norm(weight)), 1e-30)
+            rows.extend(connected.tolist())
+            cols.extend([center] * connected.size)
+            values.extend(weight.tolist())
+        kernels.append(
+            (
+                scale_mm,
+                sparse.csc_matrix((values, (rows, cols)), shape=(n_surf, n_surf)),
+            )
+        )
+    return tuple(kernels)
+
+
+def multiscale_surface_point_refit_system(
+    b: np.ndarray,
+    l: np.ndarray,
+    source: np.ndarray,
+    mask: np.ndarray,
+    n_surf: int,
+    kernels: tuple[tuple[float, sparse.csc_matrix], ...],
+    *,
+    max_sources: int | None = None,
+    min_active_excess: float = 0.08,
+    additional_min_active_excess: float = 0.10,
+    additional_excess_ratio: float = 0.15,
+    max_template_correlation: float = 0.98,
+    max_timecourse_correlation: float = 0.98,
+    output_halo_fraction: float = 0.15,
+    noise_samples: int = NOISE_SAMPLES,
+) -> tuple[np.ndarray, np.ndarray, dict]:
+    """Localize surface sources from residual evidence without a fixed source count."""
+    b = np.asarray(b, dtype=float)
+    l = np.asarray(l, dtype=float)
+    source = np.asarray(source, dtype=float)
+    mask = np.asarray(mask, dtype=bool).ravel()
+    if not 0.0 <= output_halo_fraction <= 1.0:
+        raise ValueError("output_halo_fraction must be between zero and one")
+    result = np.zeros_like(source)
+    final_mask = np.zeros_like(mask)
+    deep = np.flatnonzero(mask[n_surf:]) + n_surf
+    if deep.size:
+        result[deep] = source[deep]
+        final_mask[deep] = True
+    target = b - (l[:, deep] @ source[deep] if deep.size else 0.0)
+    templates = [
+        (float(scale_mm), np.asarray(l[:, :n_surf] @ kernel), kernel)
+        for scale_mm, kernel in kernels
+    ]
+    residual = target.copy()
+    selected: list[tuple[int, float, float, np.ndarray, sparse.csc_matrix]] = []
+    timecourse_correlations: list[float] = []
+    design = np.empty((b.shape[0], 0))
+    coefficients = np.empty((0, b.shape[1]))
+    while max_sources is None or len(selected) < max_sources:
+        best = None
+        for scale_mm, gain, kernel in templates:
+            scores = active_residual_scores(
+                residual,
+                gain,
+                noise_samples=noise_samples,
+            )
+            gain_norm = np.maximum(np.linalg.norm(gain, axis=0), 1e-30)
+            for _center, _scale, _excess, old_column, _kernel in selected:
+                correlation = np.abs(gain.T @ old_column) / (
+                    gain_norm * max(float(np.linalg.norm(old_column)), 1e-30)
+                )
+                scores[correlation >= max_template_correlation] = -np.inf
+            center = int(np.argmax(scores))
+            column = gain[:, center : center + 1]
+            coefficient = (column.T @ residual) / (
+                float((column.T @ column)[0, 0]) + 1e-30
+            )
+            drops = []
+            for window in (slice(0, noise_samples), slice(noise_samples, None)):
+                before = float(np.linalg.norm(residual[:, window], "fro") ** 2)
+                after = float(
+                    np.linalg.norm(
+                        residual[:, window] - column @ coefficient[:, window],
+                        "fro",
+                    )
+                    ** 2
+                )
+                drops.append(1.0 - after / before if before > 1e-30 else 0.0)
+            excess = drops[1] - drops[0]
+            candidate = (float(excess), center, scale_mm, column[:, 0], kernel)
+            if best is None or candidate[0] > best[0]:
+                best = candidate
+        if best is None or best[0] < min_active_excess:
+            break
+        if selected and (
+            best[0] < additional_min_active_excess
+            or best[0] < additional_excess_ratio * selected[0][2]
+        ):
+            break
+        excess, center, scale_mm, column, kernel = best
+        trial_design = np.column_stack([*[item[3] for item in selected], column])
+        trial_coefficients = np.linalg.lstsq(trial_design, target, rcond=None)[0]
+        active_coefficients = trial_coefficients[:, noise_samples:].copy()
+        active_coefficients -= active_coefficients.mean(axis=1, keepdims=True)
+        correlation = 0.0
+        if selected:
+            norms = np.linalg.norm(active_coefficients, axis=1)
+            correlation = max(
+                abs(float(active_coefficients[-1] @ active_coefficients[row]))
+                / max(float(norms[-1] * norms[row]), 1e-30)
+                for row in range(len(selected))
+            )
+            if correlation >= max_timecourse_correlation:
+                break
+        selected.append((center, scale_mm, excess, column, kernel))
+        timecourse_correlations.append(correlation)
+        design = trial_design
+        coefficients = trial_coefficients
+        residual = target - design @ coefficients
+
+    if selected:
+        active_norm = np.linalg.norm(coefficients[:, noise_samples:], axis=1)
+        old_norm = float(np.linalg.norm(coefficients[:, noise_samples:]))
+        evidence = np.asarray([item[2] for item in selected])
+        coefficients *= (evidence / np.maximum(active_norm, 1e-30))[:, None]
+        new_norm = float(np.linalg.norm(coefficients[:, noise_samples:]))
+        if old_norm > 0 and new_norm > 0:
+            coefficients *= old_norm / new_norm
+
+    for row, (center, _scale, _excess, _column, kernel) in enumerate(selected):
+        spatial = output_halo_fraction * kernel.getcol(center).toarray().ravel()
+        spatial[center] += 1.0 - output_halo_fraction
+        support = np.flatnonzero(spatial)
+        result[support] += spatial[support, None] * coefficients[row]
+        final_mask[support] = True
+
+    return result, final_mask, {
+        "centers": [item[0] for item in selected],
+        "scales_mm": [item[1] for item in selected],
+        "active_excess": [item[2] for item in selected],
+        "timecourse_correlations": timecourse_correlations,
+        "output_halo_fraction": float(output_halo_fraction),
+    }
+
+
+def add_scaled_surface_extent(
+    primary: np.ndarray,
+    extent: np.ndarray,
+    n_surf: int,
+    fraction: float,
+    *,
+    noise_samples: int = NOISE_SAMPLES,
+) -> np.ndarray:
+    """Add a data-derived surface extent whose peak is a fraction of the sparse peak."""
+    primary = np.asarray(primary, dtype=float)
+    extent = np.asarray(extent, dtype=float)
+    if primary.shape != extent.shape or primary.ndim != 2:
+        raise ValueError("primary and extent must be source matrices with the same shape")
+    if not 0.0 <= fraction <= 1.0 or not 0 < noise_samples < primary.shape[1]:
+        raise ValueError("fraction and noise_samples are outside their valid ranges")
+    result = primary.copy()
+    primary_peak = float(np.linalg.norm(primary[:n_surf, noise_samples:], axis=1).max(initial=0.0))
+    extent_peak = float(np.linalg.norm(extent[:n_surf, noise_samples:], axis=1).max(initial=0.0))
+    if primary_peak > 0 and extent_peak > 0:
+        result[:n_surf] += fraction * primary_peak / extent_peak * extent[:n_surf]
+    return result
 
 
 def ridge_refit(eeg: dict, meg: dict, support: np.ndarray, *, ridge_fraction: float = 1e-3) -> np.ndarray:
