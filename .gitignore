@@ -20,6 +20,16 @@ results/dev_matrix/**
 !results/dev_matrix/**/metadata.json
 !results/dev_matrix/**/rows.csv
 !results/dev_matrix/**/summary*.csv
+!results/dev_experiments/
+results/dev_experiments/**
+!results/dev_experiments/**/
+!results/dev_experiments/**/manifest.json
+!results/dev_experiments/**/manifest.json.sha256
+!results/dev_experiments/**/metadata.json
+!results/dev_experiments/**/rows.csv
+!results/dev_experiments/**/*.csv
+!results/dev_experiments/**/*.json
+!results/dev_experiments/**/*.md
 !results/metrics.csv
 !results/position_validation/
 !results/position_validation/metrics.csv
