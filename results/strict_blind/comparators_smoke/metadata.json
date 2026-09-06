@@ -1,0 +1,34 @@
+{
+  "manifest": "D:\\博士\\工作＆汇报\\源定位\\新建文件夹\\results\\strict_blind\\manifest.json",
+  "manifest_sha256": "3eda43e22ce70a17b4659658742aade66053ff7943140638868281e166a0bd76",
+  "input_root": "D:\\oaster_strict_blind_sisses\\matlab_input",
+  "geometry_reference": "D:\\博士\\工作＆汇报\\源定位\\codex\\roi_deep_multimethod_comparison\\generated\\deep_plus_two_surface\\sub_EEG.mat",
+  "methods": [
+    "MNE",
+    "dSPM",
+    "sLORETA",
+    "eLORETA",
+    "LCMV",
+    "Dipole fitting (grid)",
+    "RAP-MUSIC"
+  ],
+  "adapter": "benchmark.methods after joint_whiten",
+  "observations": "archived F_EEG/F_MEG; never regenerated",
+  "truth": "benchmark.protocol.truth_for_case; scoring only",
+  "checkpoint": "one atomic CSV per immutable input chunk and method",
+  "metrics": "raw/corrected AUC, RMSE, layer SD/DLE, deep balanced accuracy",
+  "chunk_count": 454,
+  "start_chunk": 0,
+  "limit_chunks": 1,
+  "workers": 4,
+  "blas_threads": {
+    "OMP_NUM_THREADS": "1",
+    "MKL_NUM_THREADS": "1",
+    "OPENBLAS_NUM_THREADS": "1"
+  },
+  "cross_chunk_fingerprints_sha256": {
+    "Gain_EEG": "3db331bddf2c571a0750a99ba37730937ee41e43e4e1e903e86f6e2704c86180",
+    "Gain_MEG": "8ea9dc6ad94f39f34dd16d4500e27abe9ded6415bca168a29bba3caeaa142188",
+    "VertConn": "4c2c8c18fe63db31b2561db0181c8fcf387f45a17b0b2d73c07bd0fad647b039"
+  }
+}
