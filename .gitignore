@@ -12,6 +12,14 @@ results/strict_blind/**
 !results/strict_blind/**/summary*.csv
 !results/strict_blind/**/metadata.json
 !results/strict_blind/**/completion.json
+!results/dev_matrix/
+results/dev_matrix/**
+!results/dev_matrix/**/
+!results/dev_matrix/**/manifest.json
+!results/dev_matrix/**/manifest.json.sha256
+!results/dev_matrix/**/metadata.json
+!results/dev_matrix/**/rows.csv
+!results/dev_matrix/**/summary*.csv
 !results/metrics.csv
 !results/position_validation/
 !results/position_validation/metrics.csv
