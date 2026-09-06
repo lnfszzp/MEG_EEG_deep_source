@@ -16,58 +16,60 @@
 | LCMV | `benchmark/methods.py::lcmv` | joint EEG+MEG |
 | Dipole fitting (grid) | `benchmark/methods.py::dipole_fit` | joint EEG+MEG |
 | RAP-MUSIC | `benchmark/methods.py::rap_music` | joint EEG+MEG |
-| OASTER | `run_oaster.py::_score_case` | joint EEG+MEG |
-| SISSES | `benchmark/matlab_adapters.m` | joint EEG+MEG |
+| OASTER | `candidates/oaster_rebuilt.py::reconstruct` | archived joint EEG+MEG |
+| SISSES | preserved `D:\oaster_strict_blind_sisses\scores.csv` | archived joint EEG+MEG |
 | ConvDip | `benchmark/train_convdip.py` | EEG-only and cortex-only; deep output unsupported, so excluded from the joint/deep strict-blind ranking |
 
-No algorithm was reimplemented in the matrix runners.
+The maintained strict runners read the archived observations directly. The
+historical reconstructed runners named below were replaced by thin aliases;
+they no longer depend on the unrecovered `run_oaster.py`,
+`run_oaster_snr_matrix.py`, or `run_snr_robustness.py` modules.
 
 ## Smoke result
 
-The first strict-blind case (`strict-blind-00000-surface_only-eeg-10-meg-10`) was run only.
+The first immutable 20-case chunk was used for smoke checks only.
 
-- Python7 + OASTER: 8/8 successful rows.
-- SISSES: MATLAB output and metric row successful.
-- Re-running Python/OASTER took 1.34 s and skipped the completed pair part.
-- Re-running SISSES reported `skip strict_00000_00001` and skipped its completed score row.
-- `EEG`, `MEG`, `Gain_EEG` and `Gain_MEG` in the SISSES MATLAB chunk were each exactly array-equal to the arrays generated from the same manifest row for Python/OASTER.
-- Array byte hashes were respectively `cee3bc45…3f26`, `3a749c73…5aed`, `68222ce6…76c8`, and `eaaaa3c6…54fb`.
-- All estimates were scored by `benchmark/metrics.py::evaluate_estimate` through the existing `run_frozen_v15._row`/benchmark adapter.
-- Relevant tests: `2 passed` (`benchmark/test_methods.py`, `test_run_oaster.py`).
+- OASTER: 20/20 successful rows.
+- Seven Python comparators: 140/140 successful rows.
+- Both runners consumed archived `F_EEG`/`F_MEG`; observations were not regenerated.
+- The frozen manifest, embedded case IDs, format version, and all 454 input chunk
+  boundaries passed the read-only archive verifier.
+- Re-running a valid part skips reconstruction after revalidating its metadata.
 
 ## Commands
 
-Python7 + OASTER smoke:
+OASTER smoke (one archived 20-case chunk):
 
 ```powershell
-python run_snr_comparators_matrix.py --manifest results\strict_blind\manifest.json --output results\strict_blind\smoke_python_oaster --limit-pairs 1 --limit-cases 1 --workers 1
+python run_strict_oaster.py --input-root D:\oaster_strict_blind_sisses\matlab_input --data-root $env:SOURCE_DATA_ROOT --output results\strict_blind\oaster_rebuilt_smoke --limit-chunks 1 --workers 1
 ```
 
-Python7 + OASTER full matrix (not started):
+OASTER full matrix:
 
 ```powershell
-python run_snr_comparators_matrix.py --manifest results\strict_blind\manifest.json --output results\strict_blind\python_oaster --workers 4
+python run_strict_oaster.py --input-root D:\oaster_strict_blind_sisses\matlab_input --data-root $env:SOURCE_DATA_ROOT --output results\strict_blind\oaster_rebuilt --workers 4
 ```
 
-It atomically replaces one CSV per SNR pair. Re-running skips every valid 185-case pair. `--start-pair`, `--limit-pairs` and `--limit-cases` support serial shards and smoke runs. A final unbounded invocation skips completed parts and assembles `rows.csv` only after all 49 parts validate.
+Seven Python comparators use the same options through
+`run_strict_comparators.py`. Both runners atomically checkpoint one CSV per
+immutable input chunk; `--start-chunk` and `--limit-chunks` support shards and
+smoke runs. A final unbounded invocation validates all chunks before assembly.
 
-SISSES smoke:
+Verify the preserved SISSES inputs without scanning the 315 GB output tree:
 
 ```powershell
-python run_strict_blind_sisses.py prepare --manifest results\strict_blind\manifest.json --output results\strict_blind\smoke_sisses --limit-pairs 1 --limit-cases 1 --chunk-size 1
-python run_strict_blind_sisses.py matlab --output results\strict_blind\smoke_sisses --workers 1
-python run_strict_blind_sisses.py score --manifest results\strict_blind\manifest.json --output results\strict_blind\smoke_sisses --limit-pairs 1 --limit-cases 1 --workers 1
+python run_strict_blind_sisses.py verify --archive D:\oaster_strict_blind_sisses
 ```
 
-SISSES full matrix (not started):
+Validate and summarize the preserved SISSES score table:
 
 ```powershell
-python run_strict_blind_sisses.py prepare --manifest results\strict_blind\manifest.json --output results\strict_blind\sisses --chunk-size 20
-python run_strict_blind_sisses.py matlab --output results\strict_blind\sisses --workers 4
-python run_strict_blind_sisses.py score --manifest results\strict_blind\manifest.json --output results\strict_blind\sisses --workers 4
+python run_strict_blind_sisses.py summarize --archive D:\oaster_strict_blind_sisses --data-root $env:SOURCE_DATA_ROOT --output results\strict_blind\sisses_preserved
 ```
 
-Preparation validates and skips existing chunks. MATLAB skips complete chunks; an interrupted partial chunk is rerun. Scoring checkpoints atomically after each case.
+This entry point never regenerates observations, invokes MATLAB, or writes
+inside the archive. Re-running SISSES would require an external licensed
+checkout plus a separately reviewed adapter, which are not bundled.
 
 ## Measured cost
 

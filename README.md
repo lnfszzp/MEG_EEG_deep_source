@@ -17,7 +17,9 @@
 - `protected_multilayer.py`、`run_frozen_v15.py`–`run_frozen_v18.py`：PPT 算法演进和冻结评估。
 - `candidates/oaster_rebuilt.py`：恢复的 observation-only OASTER 核心。
 - `benchmark/methods.py`：MNE、dSPM、sLORETA、eLORETA、LCMV、网格偶极子拟合和 RAP-MUSIC 的统一数值实现。
-- `run_strict_blind_sisses.py`：外部 SISSES 的 MATLAB 适配器；第三方 SISSES 源码因上游未提供许可证，不复制进本仓库。
+- `run_oaster_dev_matrix.py`：开发集 EEG×MEG 信噪比矩阵；`run_oaster_benchmark.py` 是旧命令名的兼容入口。
+- `run_strict_oaster.py`、`run_strict_comparators.py`：直接读取冻结观测的 OASTER 与七种 Python 对比方法；`run_snr_comparators_matrix.py` 是后者的旧命令名兼容入口。
+- `run_strict_blind_sisses.py`：只读核验与汇总现存 SISSES 归档，不再生成观测或调用 MATLAB。
 - `visualization/`、`plot_results.py`：皮层、MRI、波形和指标图。
 
 ## 环境与数据
@@ -41,12 +43,15 @@ python generate_strict_blind_manifest.py generate --data-root $env:SOURCE_DATA_R
 python generate_strict_blind_manifest.py self-check --data-root $env:SOURCE_DATA_ROOT --sample-path 'D:\mne_data\MNE-sample-data'
 ```
 
-SISSES 仅通过外部路径调用：
+现存 SISSES 归档只读核验与汇总：
 
 ```powershell
-$env:SISSES_ROOT='D:\博士\工作＆汇报\源定位\李文\SISSES-code-for-MEG-main\SISSES-code-for-MEG-main\SISSES\SISSES'
-$env:SISSES_PATCH_ROOT='D:\博士\工作＆汇报\源定位\codex\sisses_diagnosis\patched'
+$env:STRICT_SISSES_ARCHIVE='D:\oaster_strict_blind_sisses'
+python run_strict_blind_sisses.py verify
+python run_strict_blind_sisses.py summarize --data-root $env:SOURCE_DATA_ROOT
 ```
+
+第三方 SISSES 源码和可复现的 MATLAB 执行适配器均未随本仓库保存，因此该入口不会重新运行 SISSES，也不会写入或覆盖冻结归档。
 
 ## 检查
 
