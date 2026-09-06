@@ -1,0 +1,15 @@
+{
+  "status": "complete",
+  "rows": 9065,
+  "cells": 196,
+  "conditions": 49,
+  "source_configurations_per_condition": 185,
+  "off_diagonal_parts": 42,
+  "all_rows_ok": true,
+  "unique_key": "source_case_id,eeg_snr_db,meg_snr_db",
+  "sha256": {
+    "rows.csv": "8bc39c1410bc5d91877bf9c7596fd37dd6e2da9e593426d768138494ea30632b",
+    "by_cell.csv": "2f7e0c1d0b8d48b77ccdcf1eb4c148707fb0c8956bf2e7be1c114e64e6be99f0",
+    "summary.csv": "94f1c867c999684f13e723e2ceef699dde8cfb3c40a54d570d2104fce246dd07"
+  }
+}

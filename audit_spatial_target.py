@@ -10,30 +10,16 @@ import argparse
 import json
 import os
 from pathlib import Path
-import sys
 
 import numpy as np
 from scipy.spatial import cKDTree
 
 
 ROOT = Path(__file__).resolve().parent
-BENCHMARK_ROOT = Path(os.environ.get("V15_BENCHMARK_ROOT", ROOT.parent / "benchmark"))
-if str(BENCHMARK_ROOT) not in sys.path:
-    sys.path.insert(0, str(BENCHMARK_ROOT))
+BENCHMARK_ROOT = Path(os.environ.get("V15_BENCHMARK_ROOT", ROOT / "benchmark"))
 
-from protocol import _surface_patch, load_shared  # noqa: E402
-
-METRICS_DIR = Path(
-    os.environ.get(
-        "SOURCE_METRICS_PATH",
-        r"F:\博士\工作＆汇报\源定位\评估指标\python_functions",
-    )
-)
-if str(METRICS_DIR) not in sys.path:
-    sys.path.insert(0, str(METRICS_DIR))
-
-from DLE_an import DLE_an  # noqa: E402
-from SD import SD  # noqa: E402
+from benchmark.protocol import _surface_patch, load_shared
+from metrics.user_metrics import DLE_an, SD  # noqa: E402
 
 
 def audit(panel: str) -> dict:
@@ -55,7 +41,9 @@ def audit(panel: str) -> dict:
         source = np.zeros((n_surf, 1), dtype=float)
         source[group, 0] = weights
         centroid = vertices[group].mean(axis=0)
-        exact_truth_dle.append(float(DLE_an(source, [group + 1], vertices[:n_surf]) * 1000.0))
+        exact_truth_dle.append(
+            float(DLE_an(source, [group + 1], vertices[:n_surf], index_base=1) * 1000.0)
+        )
         exact_truth_sd.append(float(SD(source, vertices[group], vertices[:n_surf], 0.0) * 1000.0))
         best_grid_dle.append(float(tree.query(centroid)[0] * 1000.0))
 

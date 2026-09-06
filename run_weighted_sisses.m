@@ -1,13 +1,19 @@
 clear; clc;
 
 this_dir = fileparts(mfilename('fullpath'));
-project_root = fileparts(this_dir);
-data_root = fullfile(project_root, 'generated');
+project_root = this_dir;
+data_root = getenv('SOURCE_DATA_ROOT');
+if isempty(data_root)
+    data_root = fullfile(project_root, 'generated');
+end
 run_root = fullfile(this_dir, 'results', 'sisses_runs');
 out_root = fullfile(this_dir, 'results', 'weighted_sisses');
 
-patched_dir = fullfile(fileparts(project_root), 'sisses_diagnosis', 'patched');
-original_sisses_dir = 'F:\博士\工作＆汇报\源定位\李文\SISSES-code-for-MEG-main\SISSES-code-for-MEG-main\SISSES\SISSES';
+patched_dir = getenv('SISSES_PATCH_ROOT');
+original_sisses_dir = getenv('SISSES_ROOT');
+if isempty(patched_dir) || isempty(original_sisses_dir)
+    error('Set SISSES_PATCH_ROOT and SISSES_ROOT before running this adapter.');
+end
 addpath(patched_dir);
 addpath(original_sisses_dir);
 

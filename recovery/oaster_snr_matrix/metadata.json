@@ -1,0 +1,16 @@
+{
+  "method": "OASTER",
+  "long_name": "Observation-Adaptive Spatiotemporal Evidence Reconstruction",
+  "protocol": "historical development SNR matrix; not the later strict-blind center split",
+  "cases": 9065,
+  "source_configurations": 185,
+  "eeg_snr_levels_db": [-10, -5, 0, 5, 10, 15, 20],
+  "meg_snr_levels_db": [-10, -5, 0, 5, 10, 15, 20],
+  "conditions": 49,
+  "recovery": {
+    "summary_csv": "49 data rows recovered complete from local Codex transcript database; bytes are reconstructed, not the lost original file",
+    "case_rows": "not recovered",
+    "recovered_summary_sha256": "3e7261bac5ec61050192327c81f345de5045188e0de43f4ef1e68f6368646b55",
+    "lost_original_sha256_recorded_in_completion": "94f1c867c999684f13e723e2ceef699dde8cfb3c40a54d570d2104fce246dd07"
+  }
+}

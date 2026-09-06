@@ -161,8 +161,7 @@ def refined_sd_dle(
     true_groups: list[np.ndarray],
 ) -> tuple[float, float]:
     """Use the requested SD/DLE functions when estimate and truth grids differ."""
-    from DLE_an import DLE_an
-    from SD import SD
+    from metrics.user_metrics import DLE_an, SD
 
     used = np.asarray(source, dtype=float) * np.asarray(mask, dtype=bool)[:, None]
     truth_vertices = np.asarray(truth_vertices, dtype=float)
@@ -177,7 +176,7 @@ def refined_sd_dle(
         size = np.asarray(group).size
         groups_1based.append(np.arange(start, start + size) + 1)
         start += size
-    dle_mm = float(DLE_an(padded, groups_1based, positions) * 1000.0)
+    dle_mm = float(DLE_an(padded, groups_1based, positions, index_base=1) * 1000.0)
     return sd_mm, dle_mm
 
 

@@ -16,21 +16,15 @@ import numpy as np
 import scipy.io as sio
 
 ROOT = Path(__file__).resolve().parent
-BENCHMARK_ROOT = Path(os.environ.get("V15_BENCHMARK_ROOT", ROOT.parent / "benchmark"))
-PARENT_ROOT = Path(
-    os.environ.get(
-        "V15_PARENT_ROOT",
-        r"F:\博士\工作＆汇报\源定位\codex\roi_deep_multimethod_comparison",
-    )
-)
-for _path in (BENCHMARK_ROOT, PARENT_ROOT):
-    if str(_path) not in sys.path:
-        sys.path.insert(0, str(_path))
+BENCHMARK_ROOT = Path(os.environ.get("V15_BENCHMARK_ROOT", ROOT / "benchmark"))
+PARENT_ROOT = Path(os.environ.get("V15_PARENT_ROOT", ROOT))
+if str(PARENT_ROOT) not in sys.path:
+    sys.path.append(str(PARENT_ROOT))
 
 import auc_metric
-import metrics as benchmark_metrics
+from benchmark import metrics as benchmark_metrics
+from benchmark.protocol import load_shared, simulate_case
 import protected_multilayer as protected
-from protocol import load_shared, simulate_case
 from refined_grid import refined_deep_evidence
 
 
@@ -72,7 +66,6 @@ def _file_map(panel: str) -> dict[str, str]:
 
 
 def _init_worker(files: dict[str, str]) -> None:
-    benchmark_metrics._an_cal_auc_module._grow_parcels = auc_metric._safe_grow_parcels
     shared = load_shared()
     _WORK.update(
         shared=shared,

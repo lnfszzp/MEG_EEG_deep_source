@@ -15,7 +15,7 @@ import numpy as np
 import scipy.io as sio
 from scipy.optimize import linear_sum_assignment
 
-ROOT = Path(__file__).resolve().parents[1]
+ROOT = Path(__file__).resolve().parent
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
@@ -226,7 +226,7 @@ def _layerwise_peak_dle(
         )
         if component_count < len(layer_groups) or not np.any(np.sum(layer_source * layer_source, axis=1) > 0):
             return np.nan, float(hit)
-        return float(DLE_an(layer_source, local_groups, layer_positions) * 1000.0), float(hit)
+        return float(DLE_an(layer_source, local_groups, layer_positions, index_base=1) * 1000.0), float(hit)
 
     surface_dle, surface_hit = evaluate("surface")
     deep_dle, deep_hit = evaluate("deep")

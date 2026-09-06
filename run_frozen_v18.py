@@ -13,7 +13,7 @@ import numpy as np
 import protected_multilayer as protected
 import run_frozen_v15 as frozen
 import run_frozen_v17 as v17
-from protocol import simulate_case
+from benchmark.protocol import simulate_case
 
 
 ROOT = Path(__file__).resolve().parent

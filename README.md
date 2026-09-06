@@ -1,0 +1,58 @@
+# 联合 EEG–MEG 深浅层源定位恢复工程
+
+本目录恢复了 PPT 对应的 V18 多层 SISSES 后处理、原始仿真、用户指标、经典对比方法和严格 EEG×MEG 信噪比协议。当前开发中的无 SISSES 主算法为 OASTER（Observation-Adaptive Spatiotemporal Evidence Reconstruction）。
+
+## 已确认的恢复边界
+
+- V4–V18 来自 Git 仓库历史；PPT 的最终表格与 V18 结果一致。V18 流程为：模态内基线白化、联合候选、深层残差救援、0/4/7 mm 表层模板重拟合，以及 25% 弱表层范围校正。
+- `metrics/user_metrics/` 保留 `An_auc`、SD、DLE、RMSE 接口。历史 `An_roc` 对并列分数顺序敏感；现在 `auc_tie_corrected` 使用并列秩修正，`auc` 仍保留历史 parcel-AUC 口径，便于复核旧表。
+- OASTER 的投影证据、谱滤波、谱证据和缩放融合来自恢复出的精确代码片段；EBIC 选择循环由精确的 GCV 实验版本还原。只有 `_temporal_basis` 的原函数正文未保存，它按同一实验中留下的基线谱边缘公式重建，代码中已明确标注。
+- 严格盲测清单为 49 个 `(EEG SNR, MEG SNR)` 组合 × 185 个源配置，共 9,065 例；冻结 SHA-256 为 `3eda43e22ce70a17b4659658742aade66053ff7943140638868281e166a0bd76`。
+
+## 目录
+
+- `pipelines/generate_datasets.py`：MNE sample 数据上的四类深浅层仿真。
+- `benchmark/protocol.py`：开发集、确认集和逐例仿真；`truth_for_case` 可在不重生噪声的情况下恢复冻结真值。
+- `generate_protocol_manifests.py`、`generate_strict_blind_manifest.py`：带哈希校验的清单生成。
+- `protected_multilayer.py`、`run_frozen_v15.py`–`run_frozen_v18.py`：PPT 算法演进和冻结评估。
+- `candidates/oaster_rebuilt.py`：恢复的 observation-only OASTER 核心。
+- `benchmark/methods.py`：MNE、dSPM、sLORETA、eLORETA、LCMV、网格偶极子拟合和 RAP-MUSIC 的统一数值实现。
+- `run_strict_blind_sisses.py`：外部 SISSES 的 MATLAB 适配器；第三方 SISSES 源码因上游未提供许可证，不复制进本仓库。
+- `visualization/`、`plot_results.py`：皮层、MRI、波形和指标图。
+
+## 环境与数据
+
+```powershell
+python -m pip install -r requirements.txt
+python pipelines\generate_datasets.py
+```
+
+若复用已有仿真数据：
+
+```powershell
+$env:SOURCE_DATA_ROOT='D:\博士\工作＆汇报\源定位\codex\roi_deep_multimethod_comparison\generated'
+```
+
+生成并核验三个冻结清单：
+
+```powershell
+python generate_protocol_manifests.py --data-root $env:SOURCE_DATA_ROOT --sample-path 'D:\mne_data\MNE-sample-data'
+python generate_strict_blind_manifest.py generate --data-root $env:SOURCE_DATA_ROOT --sample-path 'D:\mne_data\MNE-sample-data'
+python generate_strict_blind_manifest.py self-check --data-root $env:SOURCE_DATA_ROOT --sample-path 'D:\mne_data\MNE-sample-data'
+```
+
+SISSES 仅通过外部路径调用：
+
+```powershell
+$env:SISSES_ROOT='D:\博士\工作＆汇报\源定位\李文\SISSES-code-for-MEG-main\SISSES-code-for-MEG-main\SISSES\SISSES'
+$env:SISSES_PATCH_ROOT='D:\博士\工作＆汇报\源定位\codex\sisses_diagnosis\patched'
+```
+
+## 检查
+
+```powershell
+python -m unittest discover -s tests -p 'test_*.py' -v
+python -m unittest -v test_protected_multilayer.py
+```
+
+V18 的 1,110 例确认集场景宏平均 AUC 为 `0.900910`，但 0 dB 混合源仍低于 0.90，因此不能把总体均值解释为所有条件达标。严格 SISSES 旧结果的 corrected AUC 为 `0.960941`，仍有 4/49 个低信噪比组合低于 0.90。最终 OASTER 严格矩阵结果会以同一清单、同一指标同时报告场景宏平均和病例加权平均；不会以改指标口径来“达到”目标。

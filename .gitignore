@@ -1,8 +1,17 @@
 __pycache__/
 *.pyc
+.pytest_cache/
 *.zip
 results/**
 !results/
+!results/strict_blind/
+results/strict_blind/**
+!results/strict_blind/**/
+!results/strict_blind/manifest.json
+!results/strict_blind/manifest.json.sha256
+!results/strict_blind/**/summary*.csv
+!results/strict_blind/**/metadata.json
+!results/strict_blind/**/completion.json
 !results/metrics.csv
 !results/position_validation/
 !results/position_validation/metrics.csv
