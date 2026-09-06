@@ -54,10 +54,10 @@ J_{18,\mathrm{deep}} = J_{17,\mathrm{deep}}
 ## 复现
 
 ```powershell
-$env:PYTHONPATH='F:\博士\工作＆汇报\源定位\codex\roi_deep_multimethod_comparison'
-python -m unittest -q
+$env:SOURCE_DATA_ROOT='D:\博士\工作＆汇报\源定位\codex\roi_deep_multimethod_comparison\generated'
+python -m pytest -q
 python run_frozen_v18.py --panel dev --workers 4
 python run_frozen_v18.py --panel test --workers 4
 ```
 
-正式机器可读结果位于 `results/v18_no_oracle`。
+上述 V18 入口还需要 `benchmark/results/scores.csv` 及其索引的历史逐例 SISSES 源估计；这些输入当前未恢复，所以命令会明确停止，不能据此声称可从零重跑。正式机器可读历史结果位于 `results/v18_no_oracle`。

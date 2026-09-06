@@ -88,6 +88,26 @@ class BenchmarkRecoveryTest(unittest.TestCase):
             "3eda43e22ce70a17b4659658742aade66053ff7943140638868281e166a0bd76",
         )
 
+    def test_manifest_digest_mismatch_never_overwrites_existing_files(self):
+        with self.subTest("frozen output is unchanged"):
+            from tempfile import TemporaryDirectory
+
+            with TemporaryDirectory() as directory:
+                path = Path(directory) / "manifest.json"
+                sidecar = path.with_suffix(".json.sha256")
+                path.write_text("preserved\n", encoding="utf-8")
+                sidecar.write_text("preserved checksum\n", encoding="ascii")
+                with self.assertRaisesRegex(RuntimeError, "refusing to overwrite"):
+                    protocol.save_manifest(
+                        path,
+                        [{"case_id": "new"}],
+                        expected_digest="0" * 64,
+                    )
+                self.assertEqual(path.read_text(encoding="utf-8"), "preserved\n")
+                self.assertEqual(
+                    sidecar.read_text(encoding="ascii"), "preserved checksum\n"
+                )
+
 
 if __name__ == "__main__":
     unittest.main()

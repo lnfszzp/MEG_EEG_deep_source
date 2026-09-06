@@ -30,9 +30,11 @@ def main() -> None:
     }
     split = build_split(load_shared(**kwargs))
     for panel in ("dev", "test"):
-        digest = save_manifest(args.output / f"{panel}_manifest.json", make_manifest(split, panel))
-        if digest != EXPECTED[panel]:
-            raise RuntimeError(f"{panel} manifest drifted: {digest}")
+        digest = save_manifest(
+            args.output / f"{panel}_manifest.json",
+            make_manifest(split, panel),
+            expected_digest=EXPECTED[panel],
+        )
         print(f"{panel}: {digest}")
 
 

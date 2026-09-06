@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import csv
+import hashlib
 from pathlib import Path
 
 import pytest
@@ -21,5 +22,8 @@ def test_load_rows_rejects_score_order(monkeypatch, tmp_path: Path) -> None:
         writer = csv.DictWriter(stream, fieldnames=["case_id", "status"])
         writer.writeheader()
         writer.writerow({"case_id": "wrong", "status": "ok"})
+    monkeypatch.setattr(
+        summary, "EXPECTED_SCORES_SHA256", hashlib.sha256(scores.read_bytes()).hexdigest()
+    )
     with pytest.raises(RuntimeError, match="frozen manifest"):
         summary.load_rows(scores, tmp_path / "manifest.json")

@@ -10,9 +10,12 @@ from __future__ import annotations
 import argparse
 import csv
 import hashlib
+import importlib.metadata
 import json
 import os
+import platform
 import re
+import subprocess
 import tempfile
 import time
 from collections import defaultdict
@@ -508,6 +511,37 @@ def _write_completion(
     os.replace(temporary, path)
 
 
+def _provenance(files: dict[str, str | Path]) -> dict:
+    """Record the exact code and numerical environment used for a final merge."""
+    packages = ("numpy", "scipy", "h5py", "matplotlib", "mne", "nibabel")
+    versions = {}
+    for package in packages:
+        try:
+            versions[package] = importlib.metadata.version(package)
+        except importlib.metadata.PackageNotFoundError:
+            versions[package] = None
+    try:
+        commit = subprocess.run(
+            ("git", "rev-parse", "HEAD"),
+            cwd=ROOT,
+            check=True,
+            capture_output=True,
+            text=True,
+        ).stdout.strip()
+    except (OSError, subprocess.SubprocessError):
+        commit = None
+    return {
+        "git_commit_at_merge": commit,
+        "python": platform.python_version(),
+        "packages": versions,
+        "code_sha256": {
+            name: hashlib.sha256(Path(path).read_bytes()).hexdigest()
+            for name, path in files.items()
+        },
+        "bitwise_cross_environment_reproducibility_claimed": False,
+    }
+
+
 def _valid_part(
     rows: list[dict], spec: Chunk, cases: list[dict], manifest_sha256: str
 ) -> bool:
@@ -698,6 +732,13 @@ def _metadata(
         "limit_chunks": limit_chunks,
         "workers": workers,
         "cross_chunk_fingerprints_sha256": reference_fingerprints,
+        "provenance": _provenance(
+            {
+                "strict_runner": __file__,
+                "oaster_algorithm": oaster.__file__,
+                "metrics": benchmark_metrics.__file__,
+            }
+        ),
     }
     path = output / "metadata.json"
     temporary = path.with_name(path.name + ".tmp")
@@ -708,7 +749,7 @@ def _metadata(
 def run(
     manifest_path: Path = DEFAULT_MANIFEST,
     input_root: Path = DEFAULT_INPUT_ROOT,
-    data_root: Path = ROOT,
+    data_root: Path = protocol.DEFAULT_DATA_ROOT,
     output: Path = DEFAULT_OUTPUT,
     *,
     workers: int = 1,
@@ -832,7 +873,7 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--manifest", type=Path, default=DEFAULT_MANIFEST)
     parser.add_argument("--input-root", type=Path, default=DEFAULT_INPUT_ROOT)
-    parser.add_argument("--data-root", type=Path, default=ROOT)
+    parser.add_argument("--data-root", type=Path, default=protocol.DEFAULT_DATA_ROOT)
     parser.add_argument("--output", type=Path, default=DEFAULT_OUTPUT)
     parser.add_argument("--workers", type=int, default=max(1, min(4, os.cpu_count() or 1)))
     parser.add_argument("--start-chunk", type=int, default=0)

@@ -167,6 +167,9 @@ def test_direct_chunk_run_checkpoints_and_summarizes(tmp_path, monkeypatch) -> N
         "method_count": 1,
         "methods": [runner.METHOD],
     }
+    metadata = json.loads((output / "metadata.json").read_text(encoding="utf-8"))
+    assert len(metadata["provenance"]["code_sha256"]["oaster_algorithm"]) == 64
+    assert metadata["provenance"]["packages"]["numpy"]
 
     # A valid checkpoint is verified against its source chunk but not recomputed.
     runner.run(manifest, input_root, data_root / "generated", output, workers=1)

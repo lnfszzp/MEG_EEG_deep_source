@@ -5,6 +5,7 @@ from __future__ import annotations
 import hashlib
 import json
 import os
+import tempfile
 from pathlib import Path
 from typing import TYPE_CHECKING
 
@@ -491,14 +492,35 @@ def simulate_case(shared: dict, case: dict) -> tuple[np.ndarray, np.ndarray, np.
     return eeg, meg, truth, groups, meta
 
 
-def save_manifest(path: str | Path, manifest: list[dict]) -> str:
-    """Write canonical JSON plus a standard SHA256 sidecar and return the digest."""
+def save_manifest(
+    path: str | Path,
+    manifest: list[dict],
+    *,
+    expected_digest: str | None = None,
+) -> str:
+    """Atomically write canonical JSON after optional frozen-digest validation."""
     path = Path(path)
-    path.parent.mkdir(parents=True, exist_ok=True)
     payload = (json.dumps(manifest, ensure_ascii=False, sort_keys=True, separators=(",", ":")) + "\n").encode()
-    path.write_bytes(payload)
     digest = hashlib.sha256(payload).hexdigest()
-    path.with_suffix(path.suffix + ".sha256").write_text(
-        f"{digest}  {path.name}\n", encoding="ascii"
-    )
+    if expected_digest is not None and digest != expected_digest:
+        raise RuntimeError(
+            f"refusing to overwrite frozen manifest: expected {expected_digest}, got {digest}"
+        )
+    path.parent.mkdir(parents=True, exist_ok=True)
+    sidecar = path.with_suffix(path.suffix + ".sha256")
+    temporary_paths: list[Path] = []
+    try:
+        with tempfile.NamedTemporaryFile(dir=path.parent, delete=False) as stream:
+            stream.write(payload)
+            temporary_paths.append(Path(stream.name))
+        with tempfile.NamedTemporaryFile(
+            mode="w", encoding="ascii", dir=path.parent, delete=False
+        ) as stream:
+            stream.write(f"{digest}  {path.name}\n")
+            temporary_paths.append(Path(stream.name))
+        os.replace(temporary_paths[0], path)
+        os.replace(temporary_paths[1], sidecar)
+    finally:
+        for temporary in temporary_paths:
+            temporary.unlink(missing_ok=True)
     return digest

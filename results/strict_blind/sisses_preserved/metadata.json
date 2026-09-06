@@ -1,9 +1,11 @@
 {
   "method": "SISSES",
   "source_scores": "D:\\oaster_strict_blind_sisses\\scores.csv",
+  "source_scores_sha256": "db37c46a2476e4b440117825ba89b181a92f0f50b1402c41fa0d3b10102940d7",
   "manifest": "D:\\博士\\工作＆汇报\\源定位\\新建文件夹\\results\\strict_blind\\manifest.json",
   "manifest_sha256": "3eda43e22ce70a17b4659658742aade66053ff7943140638868281e166a0bd76",
   "case_count": 9065,
   "aggregation": "identical to run_strict_oaster.py",
-  "scores_copied": false
+  "scores_copied": false,
+  "metric_provenance": "summarized preserved scores.csv; metrics were not recomputed from the 315 GB archived source-estimate MAT files"
 }

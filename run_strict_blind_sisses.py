@@ -21,7 +21,7 @@ ROOT = Path(__file__).resolve().parent
 DEFAULT_ARCHIVE = Path(
     os.environ.get("STRICT_SISSES_ARCHIVE", r"D:\oaster_strict_blind_sisses")
 )
-DEFAULT_DATA_ROOT = Path(os.environ.get("SOURCE_DATA_ROOT", ROOT))
+DEFAULT_DATA_ROOT = verification.protocol.DEFAULT_DATA_ROOT
 
 
 def _parser() -> argparse.ArgumentParser:

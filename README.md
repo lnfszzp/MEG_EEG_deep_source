@@ -37,12 +37,28 @@ python pipelines\generate_datasets.py
 $env:SOURCE_DATA_ROOT='D:\博士\工作＆汇报\源定位\codex\roi_deep_multimethod_comparison\generated'
 ```
 
-生成并核验三个冻结清单：
+按确定性协议重生成并核验开发/确认清单，再只读核验严格清单：
 
 ```powershell
 python generate_protocol_manifests.py --data-root $env:SOURCE_DATA_ROOT --sample-path 'D:\mne_data\MNE-sample-data'
-python generate_strict_blind_manifest.py generate --data-root $env:SOURCE_DATA_ROOT --sample-path 'D:\mne_data\MNE-sample-data'
 python generate_strict_blind_manifest.py self-check --data-root $env:SOURCE_DATA_ROOT --sample-path 'D:\mne_data\MNE-sample-data'
+```
+
+两个生成器都会在写入前校验预期哈希，漂移时拒绝覆盖；审计严格清单生成确定性时，应给 `generate` 指定一个新的 `--output` 路径，不要覆盖冻结入口。
+
+开发矩阵、最终严格盲测和七种对比方法：
+
+```powershell
+python run_oaster_dev_matrix.py --data-root $env:SOURCE_DATA_ROOT --sample-path 'D:\mne_data\MNE-sample-data' --cases-per-scenario 5 --workers 4 --output results\dev_matrix\v19_oaster_rebuilt_baseline_5
+python run_strict_oaster.py --input-root 'D:\oaster_strict_blind_sisses\matlab_input' --data-root $env:SOURCE_DATA_ROOT --workers 4 --output results\strict_blind\oaster_v19_final
+python run_strict_comparators.py --input-root 'D:\oaster_strict_blind_sisses\matlab_input' --data-root $env:SOURCE_DATA_ROOT --workers 4 --output results\strict_blind\comparators_final
+```
+
+两个严格入口逐块原子保存 checkpoint，可安全重复同一命令续跑；只有全量行数、零错误和清单哈希验证成功后才生成 `completion.json`。每个算法版本必须使用新的输出目录；代码改变后若故意复用旧目录，必须加 `--force`。最终 `metadata.json` 记录 Git commit、算法/指标文件 SHA-256 和本次数值环境，但不承诺跨线性代数环境逐位一致。信噪比热图和单例源定位图：
+
+```powershell
+python plot_snr_matrix.py --input 'OASTER=results\strict_blind\oaster_v19_final\summary_by_snr_pair_scenario_macro.csv' --input 'SISSES=results\strict_blind\sisses_preserved\summary_by_snr_pair_scenario_macro.csv' --input 'Python=results\strict_blind\comparators_final\summary_by_snr_pair_scenario_macro.csv' --metric auc_tie_corrected --output results\strict_blind\figures\auc_matrix.png
+python plot_strict_case.py --case-number 0 --input-root 'D:\oaster_strict_blind_sisses\matlab_input' --data-root $env:SOURCE_DATA_ROOT --output results\strict_blind\figures\strict_case_00000.png
 ```
 
 现存 SISSES 归档只读核验与汇总：
@@ -58,8 +74,7 @@ python run_strict_blind_sisses.py summarize --data-root $env:SOURCE_DATA_ROOT
 ## 检查
 
 ```powershell
-python -m unittest discover -s tests -p 'test_*.py' -v
-python -m unittest -v test_protected_multilayer.py
+python -m pytest -q
 ```
 
 V18 的 1,110 例确认集场景宏平均 AUC 为 `0.900910`，但 0 dB 混合源仍低于 0.90，因此不能把总体均值解释为所有条件达标。严格 SISSES 旧结果的 corrected AUC 为 `0.960941`，仍有 4/49 个低信噪比组合低于 0.90。最终 OASTER 严格矩阵结果会以同一清单、同一指标同时报告场景宏平均和病例加权平均；不会以改指标口径来“达到”目标。

@@ -206,7 +206,8 @@ def generate(
 ) -> str:
     shared = _load_shared(data_root, sample_path)
     manifest = make_manifest(shared)
-    digest = protocol.save_manifest(path, manifest)
+    _check(shared, manifest, EXPECTED_SHA256)
+    digest = protocol.save_manifest(path, manifest, expected_digest=EXPECTED_SHA256)
     _check(shared, manifest, digest)
     return digest
 

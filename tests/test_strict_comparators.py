@@ -181,6 +181,9 @@ def _check_dispatch_checkpoint_resume_and_method_grouping():
             "method_count": len(runner.METHODS),
             "methods": list(runner.METHODS),
         }
+        metadata = json.loads((output / "metadata.json").read_text(encoding="utf-8"))
+        assert metadata["fixed_parameters"]["minimum_norm_family"]["lambda2"] == 1 / 9
+        assert len(metadata["provenance"]["code_sha256"]["comparator_algorithms"]) == 64
 
 
 class StrictComparatorsTest(unittest.TestCase):

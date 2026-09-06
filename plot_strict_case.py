@@ -306,7 +306,7 @@ def render_case(loaded: dict, estimate: np.ndarray, output: Path, source: str) -
 def plot_case(
     manifest_path: Path = strict.DEFAULT_MANIFEST,
     input_root: Path = strict.DEFAULT_INPUT_ROOT,
-    data_root: Path = ROOT,
+    data_root: Path = strict.protocol.DEFAULT_DATA_ROOT,
     *,
     case_id: str | None = None,
     case_number: int | None = None,
@@ -351,7 +351,9 @@ def main() -> None:
     selector.add_argument("--case-number", type=int)
     parser.add_argument("--manifest", type=Path, default=strict.DEFAULT_MANIFEST)
     parser.add_argument("--input-root", type=Path, default=strict.DEFAULT_INPUT_ROOT)
-    parser.add_argument("--data-root", type=Path, default=ROOT)
+    parser.add_argument(
+        "--data-root", type=Path, default=strict.protocol.DEFAULT_DATA_ROOT
+    )
     parser.add_argument(
         "--estimate",
         type=Path,

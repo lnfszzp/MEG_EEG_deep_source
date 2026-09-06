@@ -319,6 +319,22 @@ def _metadata(
         "geometry_reference": str(geometry["path"].resolve()),
         "methods": methods,
         "adapter": "benchmark.methods after joint_whiten",
+        "implementation_scope": (
+            "repository fixed-grid numerical implementations; not asserted to be "
+            "value-identical to third-party package defaults"
+        ),
+        "fixed_parameters": {
+            "minimum_norm_family": {
+                "lambda2": 1.0 / 9.0,
+                "depth": 0.8,
+                "depth_limit": 10.0,
+                "eloreta_max_iter": 20,
+                "eloreta_tolerance": 1e-6,
+            },
+            "lcmv": {"reg": 0.05},
+            "dipole_fit": {"max_dipoles": 3, "max_temporal_rank": 12},
+            "rap_music": {"max_sources": 3, "max_temporal_rank": 12},
+        },
         "observations": "archived F_EEG/F_MEG; never regenerated",
         "truth": "benchmark.protocol.truth_for_case; scoring only",
         "checkpoint": "one atomic CSV per immutable input chunk and method",
@@ -329,6 +345,13 @@ def _metadata(
         "workers": workers,
         "blas_threads": {name: os.environ.get(name) for name in ("OMP_NUM_THREADS", "MKL_NUM_THREADS", "OPENBLAS_NUM_THREADS")},
         "cross_chunk_fingerprints_sha256": fingerprints,
+        "provenance": archive._provenance(
+            {
+                "strict_runner": __file__,
+                "comparator_algorithms": comparator_methods.__file__,
+                "metrics": benchmark_metrics.__file__,
+            }
+        ),
     }
     path, temporary = output / "metadata.json", output / "metadata.json.tmp"
     temporary.write_text(
@@ -340,7 +363,7 @@ def _metadata(
 def run(
     manifest_path: Path = archive.DEFAULT_MANIFEST,
     input_root: Path = archive.DEFAULT_INPUT_ROOT,
-    data_root: Path = archive.ROOT,
+    data_root: Path = archive.protocol.DEFAULT_DATA_ROOT,
     output: Path = DEFAULT_OUTPUT,
     *,
     methods: tuple[str, ...] | list[str] = METHODS,
@@ -474,7 +497,9 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--manifest", type=Path, default=archive.DEFAULT_MANIFEST)
     parser.add_argument("--input-root", type=Path, default=archive.DEFAULT_INPUT_ROOT)
-    parser.add_argument("--data-root", type=Path, default=archive.ROOT)
+    parser.add_argument(
+        "--data-root", type=Path, default=archive.protocol.DEFAULT_DATA_ROOT
+    )
     parser.add_argument("--output", type=Path, default=DEFAULT_OUTPUT)
     parser.add_argument("--methods", nargs="+", choices=METHODS, default=METHODS)
     parser.add_argument("--workers", type=int, default=max(1, min(4, os.cpu_count() or 1)))
