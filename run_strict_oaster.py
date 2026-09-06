@@ -473,6 +473,41 @@ def _atomic_csv(path: Path, rows: list[dict], fields: Iterable[str]) -> None:
             temporary.unlink()
 
 
+def _write_completion(
+    output: Path,
+    rows: list[dict],
+    *,
+    expected_row_count: int,
+    manifest_sha256: str,
+    chunk_count: int,
+    methods: Iterable[str],
+) -> None:
+    """Atomically mark a fully validated run complete."""
+    failed = sum(row.get("status") != "ok" for row in rows)
+    if len(rows) != expected_row_count or failed:
+        raise RuntimeError(
+            f"refusing completion marker: rows={len(rows)}/{expected_row_count}, "
+            f"errors={failed}"
+        )
+    method_names = list(methods)
+    payload = {
+        "status": "complete",
+        "row_count": len(rows),
+        "expected_row_count": expected_row_count,
+        "error_count": failed,
+        "manifest_sha256": manifest_sha256,
+        "chunk_count": chunk_count,
+        "method_count": len(method_names),
+        "methods": method_names,
+    }
+    path = output / "completion.json"
+    temporary = path.with_name(path.name + ".tmp")
+    temporary.write_text(
+        json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
+    os.replace(temporary, path)
+
+
 def _valid_part(
     rows: list[dict], spec: Chunk, cases: list[dict], manifest_sha256: str
 ) -> bool:
@@ -707,6 +742,9 @@ def run(
     output = Path(output)
     parts = output / "parts"
     parts.mkdir(parents=True, exist_ok=True)
+    full_run = start_chunk == 0 and limit_chunks is None
+    if full_run:
+        (output / "completion.json").unlink(missing_ok=True)
     runtime = None
     for spec in selected:
         part_path = parts / f"{spec.path.stem}.csv"
@@ -755,7 +793,7 @@ def run(
             raise RuntimeError(f"invalid checkpoint produced for {spec.path.name}")
         print(f"chunk {spec.index}: scored {len(rows)} cases", flush=True)
 
-    full_run = start_chunk == 0 and limit_chunks is None
+    combined = None
     if full_run:
         combined = []
         for spec in chunks:
@@ -779,6 +817,15 @@ def run(
         workers,
         reference_fingerprints,
     )
+    if full_run:
+        _write_completion(
+            output,
+            combined,
+            expected_row_count=len(cases),
+            manifest_sha256=manifest_sha256,
+            chunk_count=len(chunks),
+            methods=(METHOD,),
+        )
 
 
 def main() -> None:

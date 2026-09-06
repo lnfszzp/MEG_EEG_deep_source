@@ -1,4 +1,5 @@
 import csv
+import json
 import tempfile
 import unittest
 from collections import defaultdict
@@ -169,6 +170,17 @@ def _check_dispatch_checkpoint_resume_and_method_grouping():
             macro = list(csv.DictReader(stream))
         assert len(macro) == len(runner.METHODS)
         assert {row["deep_balanced_accuracy"] for row in macro} == {"1.0"}
+        completion = json.loads((output / "completion.json").read_text(encoding="utf-8"))
+        assert completion == {
+            "status": "complete",
+            "row_count": len(cases) * len(runner.METHODS),
+            "expected_row_count": len(cases) * len(runner.METHODS),
+            "error_count": 0,
+            "manifest_sha256": digest,
+            "chunk_count": 1,
+            "method_count": len(runner.METHODS),
+            "methods": list(runner.METHODS),
+        }
 
 
 class StrictComparatorsTest(unittest.TestCase):

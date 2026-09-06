@@ -4,7 +4,7 @@
 
 ## 已确认的恢复边界
 
-- V4–V18 来自 Git 仓库历史；PPT 的最终表格与 V18 结果一致。V18 流程为：模态内基线白化、联合候选、深层残差救援、0/4/7 mm 表层模板重拟合，以及 25% 弱表层范围校正。
+- V4–V18 来自 Git 仓库历史；除 PPT 中 AUC `0.909` 与仓库精确值 `0.900910` 不一致外，PPT 最终表格的其余数值与 V18 结果吻合。V18 流程为：模态内基线白化、联合候选、深层残差救援、0/4/7 mm 表层模板重拟合，以及 25% 弱表层范围校正。
 - `metrics/user_metrics/` 保留 `An_auc`、SD、DLE、RMSE 接口。历史 `An_roc` 对并列分数顺序敏感；现在 `auc_tie_corrected` 使用并列秩修正，`auc` 仍保留历史 parcel-AUC 口径，便于复核旧表。
 - OASTER 的投影证据、谱滤波、谱证据和缩放融合来自恢复出的精确代码片段；EBIC 选择循环由精确的 GCV 实验版本还原。只有 `_temporal_basis` 的原函数正文未保存，它按同一实验中留下的基线谱边缘公式重建，代码中已明确标注。
 - 严格盲测清单为 49 个 `(EEG SNR, MEG SNR)` 组合 × 185 个源配置，共 9,065 例；冻结 SHA-256 为 `3eda43e22ce70a17b4659658742aade66053ff7943140638868281e166a0bd76`。
@@ -21,6 +21,8 @@
 - `run_strict_oaster.py`、`run_strict_comparators.py`：直接读取冻结观测的 OASTER 与七种 Python 对比方法；`run_snr_comparators_matrix.py` 是后者的旧命令名兼容入口。
 - `run_strict_blind_sisses.py`：只读核验与汇总现存 SISSES 归档，不再生成观测或调用 MATLAB。
 - `visualization/`、`plot_results.py`：皮层、MRI、波形和指标图。
+
+历史 V15–V18 入口仍依赖当时 `benchmark/results/scores.csv` 所索引的逐例 SISSES 源估计；这些输入没有保存在 Git 历史或现存严格盲测归档中。因此仓库可以核对已提交的历史汇总、审查并在输入补齐后运行后处理链，但目前不能从零重跑 V15–V18。无需历史 SISSES 输入的 OASTER、七种 Python 对比方法、严格矩阵与绘图入口均可直接运行。
 
 ## 环境与数据
 

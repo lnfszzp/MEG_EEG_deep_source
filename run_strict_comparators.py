@@ -369,6 +369,9 @@ def run(
     output, input_root = Path(output), Path(input_root)
     parts = output / "parts"
     parts.mkdir(parents=True, exist_ok=True)
+    full_run = start_chunk == 0 and limit_chunks is None
+    if full_run:
+        (output / "completion.json").unlink(missing_ok=True)
     runtime = None
 
     for spec in selected:
@@ -427,7 +430,8 @@ def run(
             )
         print(f"chunk {spec.index}: scored {spec.case_count} cases x {len(pending)} methods", flush=True)
 
-    if start_chunk == 0 and limit_chunks is None:
+    combined = None
+    if full_run:
         combined = []
         for spec in chunks:
             for method in methods:
@@ -455,6 +459,15 @@ def run(
         limit_chunks,
         fingerprints,
     )
+    if full_run:
+        archive._write_completion(
+            output,
+            combined,
+            expected_row_count=len(cases) * len(methods),
+            manifest_sha256=manifest_sha256,
+            chunk_count=len(chunks),
+            methods=methods,
+        )
 
 
 def main() -> None:

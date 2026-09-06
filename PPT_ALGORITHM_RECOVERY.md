@@ -167,9 +167,9 @@ p_0=\max_{i\in\mathrm{surf}}\lVert\widehat J_{\mathrm{initial},i,\mathcal T_a}\r
 
 PPT 没有给出 \(\eta\)、\(\gamma\)、两个相关性阈值、模板迭代停止条件或零峰值时的处理。
 
-## 3. Git 中可复现的 V18
+## 3. Git 中可核对、输入补齐后可运行的 V18
 
-V18 的冻结入口是 [`run_frozen_v18.py`](run_frozen_v18.py)，对应历史提交 `5ab46b8`。它不是对第 2 节全部公式的单文件直译，而是从已保存的 SISSES 源估计开始，串联仓库中恢复的 V11、V16、V17 和 V18 阶段：
+V18 的冻结入口是 [`run_frozen_v18.py`](run_frozen_v18.py)，对应历史提交 `5ab46b8`。它不是对第 2 节全部公式的单文件直译，而是从 `benchmark/results/scores.csv` 索引的逐例 SISSES 源估计开始，串联仓库中恢复的 V11、V16、V17 和 V18 阶段。该索引和它指向的历史逐例源估计均未保存在当前 Git 历史或现存严格盲测归档中，所以现阶段可以核对已提交的机器可读汇总和审查后处理代码，但不能从零重跑 V18；补齐原输入后入口才可执行：
 
 1. **Git 恢复**：[`protected_multilayer.whitened_joint_system`](protected_multilayer.py) 分别用前 200 个基线样本白化 EEG/MEG，再以 `vstack` 构造联合数据和前向矩阵。
 2. **Git 恢复**：`component_refit_select_v11_compactness_sisses` 从原始 SISSES 结果构造候选范围，调用分层 ADMM 重拟合。表层和深层使用不同收缩项，时间基由 `tbf_selection` 从联合数据 SVD 取得。
@@ -198,7 +198,7 @@ J_{18,\mathrm{deep}}=J_{17,\mathrm{deep}}.
 | 固定深层、0/4/7 mm 表层模板、残差下降证据和相关性去重 | PPT 明示，Git 有可执行实现 |
 | 最终弱表层范围恢复、深层不变 | PPT 明示；Git V18 固定为原始 SISSES 表层估计的 25% 峰值比例 |
 
-因此，可复现的“V18”应特指上述 Git 运行链和冻结参数，不能把 PPT 中未给参数的完整数学草图宣称为已经逐字恢复的原实现。
+因此，“V18”应特指上述 Git 运行链、冻结参数和已经提交的历史结果，不能把 PPT 中未给参数的完整数学草图宣称为已经逐字恢复的原实现，也不能在缺失历史 SISSES 输入时宣称当前环境可从零复现。
 
 ## 4. OASTER 的恢复边界
 
@@ -248,7 +248,7 @@ PPT 第 8 页说明：连续指标使用 Wilcoxon 配对检验和 2,000 次 pair
 
 | 目的 | 入口 |
 |---|---|
-| 复现 V18 开发集／确认集 | [`run_frozen_v18.py`](run_frozen_v18.py) |
+| 核对 V18 历史结果；输入补齐后重跑 | [`run_frozen_v18.py`](run_frozen_v18.py)、[`results/v18_no_oracle`](results/v18_no_oracle) |
 | V18 核心白化、深层证据与多尺度表层模板 | [`protected_multilayer.py`](protected_multilayer.py) |
 | OASTER observation-only 核心 | [`candidates/oaster_rebuilt.py`](candidates/oaster_rebuilt.py) |
 | 开发集 EEG×MEG SNR 矩阵 | [`run_oaster_dev_matrix.py`](run_oaster_dev_matrix.py) |

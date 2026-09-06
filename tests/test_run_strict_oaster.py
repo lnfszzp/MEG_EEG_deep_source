@@ -156,6 +156,17 @@ def test_direct_chunk_run_checkpoints_and_summarizes(tmp_path, monkeypatch) -> N
     assert float(pair["surface_sd_mm"]) == 2.0
     assert float(pair["deep_dle_mm"]) == 5.0
     assert (output / "summary_by_snr_pair_scenario_macro.csv").exists()
+    completion = json.loads((output / "completion.json").read_text(encoding="utf-8"))
+    assert completion == {
+        "status": "complete",
+        "row_count": 2,
+        "expected_row_count": 2,
+        "error_count": 0,
+        "manifest_sha256": digest,
+        "chunk_count": 1,
+        "method_count": 1,
+        "methods": [runner.METHOD],
+    }
 
     # A valid checkpoint is verified against its source chunk but not recomputed.
     runner.run(manifest, input_root, data_root / "generated", output, workers=1)

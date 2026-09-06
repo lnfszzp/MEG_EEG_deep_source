@@ -18,7 +18,7 @@
 | RAP-MUSIC | `benchmark/methods.py::rap_music` | joint EEG+MEG |
 | OASTER | `candidates/oaster_rebuilt.py::reconstruct` | archived joint EEG+MEG |
 | SISSES | preserved `D:\oaster_strict_blind_sisses\scores.csv` | archived joint EEG+MEG |
-| ConvDip | `benchmark/train_convdip.py` | EEG-only and cortex-only; deep output unsupported, so excluded from the joint/deep strict-blind ranking |
+| ConvDip | no recovered runnable adapter | EEG-only and cortex-only; retraining code was not recovered and deep output is unsupported, so it is excluded from the joint/deep strict-blind ranking |
 
 The maintained strict runners read the archived observations directly. The
 historical reconstructed runners named below were replaced by thin aliases;
