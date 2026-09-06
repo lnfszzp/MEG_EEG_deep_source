@@ -1,0 +1,73 @@
+{
+  "manifest": "D:\\博士\\工作＆汇报\\源定位\\新建文件夹\\results\\strict_blind\\manifest.json",
+  "manifest_sha256": "3eda43e22ce70a17b4659658742aade66053ff7943140638868281e166a0bd76",
+  "input_root": "D:\\oaster_strict_blind_sisses\\matlab_input",
+  "geometry_reference": "D:\\博士\\工作＆汇报\\源定位\\codex\\roi_deep_multimethod_comparison\\generated\\deep_plus_two_surface\\sub_EEG.mat",
+  "methods": [
+    "MNE",
+    "dSPM",
+    "sLORETA",
+    "eLORETA",
+    "LCMV",
+    "Dipole fitting (grid)",
+    "RAP-MUSIC"
+  ],
+  "adapter": "benchmark.methods after joint_whiten",
+  "implementation_scope": "repository fixed-grid numerical implementations; not asserted to be value-identical to third-party package defaults",
+  "fixed_parameters": {
+    "minimum_norm_family": {
+      "lambda2": 0.1111111111111111,
+      "depth": 0.8,
+      "depth_limit": 10.0,
+      "eloreta_max_iter": 20,
+      "eloreta_tolerance": 1e-06
+    },
+    "lcmv": {
+      "reg": 0.05
+    },
+    "dipole_fit": {
+      "max_dipoles": 3,
+      "max_temporal_rank": 12
+    },
+    "rap_music": {
+      "max_sources": 3,
+      "max_temporal_rank": 12
+    }
+  },
+  "observations": "archived F_EEG/F_MEG; never regenerated",
+  "truth": "benchmark.protocol.truth_for_case; scoring only",
+  "checkpoint": "one atomic CSV per immutable input chunk and method",
+  "metrics": "raw/corrected AUC, RMSE, layer SD/DLE, deep balanced accuracy",
+  "chunk_count": 454,
+  "start_chunk": 0,
+  "limit_chunks": null,
+  "workers": 1,
+  "blas_threads": {
+    "OMP_NUM_THREADS": "1",
+    "MKL_NUM_THREADS": "1",
+    "OPENBLAS_NUM_THREADS": "1"
+  },
+  "cross_chunk_fingerprints_sha256": {
+    "Gain_EEG": "3db331bddf2c571a0750a99ba37730937ee41e43e4e1e903e86f6e2704c86180",
+    "Gain_MEG": "8ea9dc6ad94f39f34dd16d4500e27abe9ded6415bca168a29bba3caeaa142188",
+    "VertConn": "4c2c8c18fe63db31b2561db0181c8fcf387f45a17b0b2d73c07bd0fad647b039"
+  },
+  "provenance": {
+    "git_commit_at_merge": "1e928c2dd86cf757f927b58db7a7621726408fd4",
+    "python": "3.13.15",
+    "packages": {
+      "numpy": "2.5.2",
+      "scipy": "1.18.1",
+      "h5py": "3.16.0",
+      "matplotlib": "3.11.1",
+      "mne": "1.12.1",
+      "nibabel": "5.4.2"
+    },
+    "code_sha256": {
+      "strict_runner": "2e9c891078d675c200357c24b5af72361eca2c67517b6c8216cc489e1ec3045c",
+      "comparator_algorithms": "1625c67d91d20112d711a3d77de175ed0509c1acfa45c1561845f6761c307dcf",
+      "metrics": "d7d9f4194fecb2383d153094fe8e96b5eb3d82618f03e3e5c05840de32f5f41b"
+    },
+    "bitwise_cross_environment_reproducibility_claimed": false
+  }
+}

@@ -80,3 +80,4 @@ results/dev_experiments/**
 results/strict_blind/*_shards/
 !results/strict_blind/figures/oaster_vs_sisses_*.png
 !results/strict_blind/figures/oaster_case_*.png
+!results/strict_blind/figures/all_methods_*.png

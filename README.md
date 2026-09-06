@@ -1,13 +1,13 @@
 # 联合 EEG–MEG 深浅层源定位恢复工程
 
-本目录恢复了 PPT 对应的 V18 多层 SISSES 后处理、原始仿真、用户指标、经典对比方法和严格 EEG×MEG 信噪比协议。当前开发中的无 SISSES 主算法为 OASTER（Observation-Adaptive Spatiotemporal Evidence Reconstruction）。
+本目录恢复了 PPT 对应的 V18 多层 SISSES 后处理、原始仿真、用户指标、经典对比方法和冻结留出 EEG×MEG 信噪比协议（目录名保留为 `strict_blind`）。冻结候选 OASTER V19（Observation-Adaptive Spatiotemporal Evidence Reconstruction）及七种对比方法的 9,065 例留出矩阵均已完整运行并通过复核。
 
 ## 已确认的恢复边界
 
 - V4–V18 来自 Git 仓库历史；除 PPT 中 AUC `0.909` 与仓库精确值 `0.900910` 不一致外，PPT 最终表格的其余数值与 V18 结果吻合。V18 流程为：模态内基线白化、联合候选、深层残差救援、0/4/7 mm 表层模板重拟合，以及 25% 弱表层范围校正。
 - `metrics/user_metrics/` 保留 `An_auc`、SD、DLE、RMSE 接口。历史 `An_roc` 对并列分数顺序敏感；现在 `auc_tie_corrected` 使用并列秩修正，`auc` 仍保留历史 parcel-AUC 口径，便于复核旧表。
 - OASTER 的投影证据、谱滤波、谱证据和缩放融合来自恢复出的精确代码片段；EBIC 选择循环由精确的 GCV 实验版本还原。只有 `_temporal_basis` 的原函数正文未保存，它按同一实验中留下的基线谱边缘公式重建，代码中已明确标注。
-- 严格盲测清单为 49 个 `(EEG SNR, MEG SNR)` 组合 × 185 个源配置，共 9,065 例；冻结 SHA-256 为 `3eda43e22ce70a17b4659658742aade66053ff7943140638868281e166a0bd76`。
+- 冻结留出清单为 49 个 `(EEG SNR, MEG SNR)` 组合 × 185 个源配置，共 9,065 例；冻结 SHA-256 为 `3eda43e22ce70a17b4659658742aade66053ff7943140638868281e166a0bd76`。
 
 ## 目录
 
@@ -21,6 +21,7 @@
 - `run_strict_oaster.py`、`run_strict_comparators.py`：直接读取冻结观测的 OASTER 与七种 Python 对比方法；`run_snr_comparators_matrix.py` 是后者的旧命令名兼容入口。
 - `run_strict_blind_sisses.py`：只读核验与汇总现存 SISSES 归档，不再生成观测或调用 MATLAB。
 - `visualization/`、`plot_results.py`：皮层、MRI、波形和指标图。
+- `FINAL_RESULTS.md`：恢复证据、开发实验、严格矩阵、复现命令和解释边界的总报告。
 
 历史 V15–V18 入口仍依赖当时 `benchmark/results/scores.csv` 所索引的逐例 SISSES 源估计；这些输入没有保存在 Git 历史或现存严格盲测归档中。因此仓库可以核对已提交的历史汇总、审查并在输入补齐后运行后处理链，但目前不能从零重跑 V15–V18。无需历史 SISSES 输入的 OASTER、七种 Python 对比方法、严格矩阵与绘图入口均可直接运行。
 
@@ -46,7 +47,7 @@ python generate_strict_blind_manifest.py self-check --data-root $env:SOURCE_DATA
 
 两个生成器都会在写入前校验预期哈希，漂移时拒绝覆盖；审计严格清单生成确定性时，应给 `generate` 指定一个新的 `--output` 路径，不要覆盖冻结入口。
 
-开发矩阵、最终严格盲测和七种对比方法：
+开发矩阵、最终冻结留出评估和七种对比方法：
 
 ```powershell
 python run_oaster_dev_matrix.py --data-root $env:SOURCE_DATA_ROOT --sample-path 'D:\mne_data\MNE-sample-data' --cases-per-scenario 5 --workers 4 --output results\dev_matrix\v19_oaster_rebuilt_baseline_5
@@ -77,4 +78,4 @@ python run_strict_blind_sisses.py summarize --data-root $env:SOURCE_DATA_ROOT
 python -m pytest -q
 ```
 
-V18 的 1,110 例确认集场景宏平均 AUC 为 `0.900910`，但 0 dB 混合源仍低于 0.90，因此不能把总体均值解释为所有条件达标。严格 SISSES 旧结果的 corrected AUC 为 `0.960941`，仍有 4/49 个低信噪比组合低于 0.90。最终 OASTER 严格矩阵结果会以同一清单、同一指标同时报告场景宏平均和病例加权平均；不会以改指标口径来“达到”目标。
+V18 的 1,110 例确认集场景宏平均 AUC 为 `0.900910`，但 0 dB 混合源仍低于 0.90，因此不能把总体均值解释为所有条件达标。严格矩阵中，OASTER 的场景宏主 `An_auc` 平均 `0.968997`、最差 `0.955137`，49/49 个 SNR 对达到 0.90；SISSES 为 `0.965320`、最差 `0.834602`，46/49 达标。OASTER 的 196 个 SNR×场景单元有 191 个达标，逐例有 8,302/9,065 达标，所以同样不能把聚合结论写成“所有病例均超过 0.90”。完整九方法对比见 `FINAL_RESULTS.md` 和 `results/strict_blind/comparators_final/REPORT.md`。
