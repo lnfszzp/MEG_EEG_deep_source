@@ -1,0 +1,12 @@
+{
+  "status": "complete",
+  "row_count": 9065,
+  "expected_row_count": 9065,
+  "error_count": 0,
+  "manifest_sha256": "3eda43e22ce70a17b4659658742aade66053ff7943140638868281e166a0bd76",
+  "chunk_count": 454,
+  "method_count": 1,
+  "methods": [
+    "OASTER_rebuilt"
+  ]
+}

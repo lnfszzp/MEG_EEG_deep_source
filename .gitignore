@@ -12,6 +12,7 @@ results/strict_blind/**
 !results/strict_blind/**/summary*.csv
 !results/strict_blind/**/metadata.json
 !results/strict_blind/**/completion.json
+!results/strict_blind/**/REPORT.md
 !results/dev_matrix/
 results/dev_matrix/**
 !results/dev_matrix/**/
@@ -75,3 +76,7 @@ results/dev_experiments/**
 !results/v18_no_oracle/test_summary.csv
 !results/v18_no_oracle/test_by_cell.csv
 !results/v18_no_oracle/test_metadata.json
+# Local parallel-run checkpoints; only merged, validated summaries are versioned.
+results/strict_blind/*_shards/
+!results/strict_blind/figures/oaster_vs_sisses_*.png
+!results/strict_blind/figures/oaster_case_*.png
