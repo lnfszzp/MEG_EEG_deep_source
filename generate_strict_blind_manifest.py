@@ -83,7 +83,7 @@ def _base_configurations(shared: dict) -> list[dict]:
     n_surf = int(shared["n_surf"])
     n_deep = int(shared["n_deep"])
     if n_deep != 15:
-        raise ValueError("strict blind protocol expects the frozen 15-point deep grid")
+        raise ValueError("strict blind protocol expects the frozen 15-point non-cortical grid")
 
     base = []
     for location, row in enumerate(records):

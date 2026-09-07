@@ -1,5 +1,7 @@
 # V15 frozen benchmark
 
+> Anatomical correction: the frozen 15-point grid was intended to be thalamic, but a missing HEAD-to-MRI transform placed it near the brain stem, cerebellum and fourth ventricle. Historical “thalamic” wording below is not anatomically valid; see `SOURCE_SPACE_AUDIT.md`.
+
 ## Method
 
 `V15-support-rescue` makes two scoped changes to V14:

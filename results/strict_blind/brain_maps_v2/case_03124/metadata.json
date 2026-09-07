@@ -46,11 +46,12 @@
   ],
   "normalization": "per-method active-minus-baseline RMS, normalized to global peak",
   "display_threshold": 0.1,
-  "truth_overlay": "green rings and focus plus signs",
+  "truth_overlay": "green parcel rings and green star at each simulated source center",
   "anatomy": "D:\\mne_data\\MNE-sample-data",
   "observations": "immutable archived F_EEG/F_MEG; never regenerated",
   "sisses_archive_access": "read-only; output root is explicitly rejected inside archive",
   "case_metrics": "recomputed uniformly with the current benchmark.metrics scorer; primary AUC is auc_tie_corrected (An_auc)",
+  "deep_grid_warning": "the frozen 15-point grid was intended as thalamus but a legacy HEAD-to-MRI selection error places it near brain stem/cerebellum/fourth ventricle; see SOURCE_SPACE_AUDIT.md",
   "legacy_auc_note": "the preserved SISSES table used an older parcel-AUC aggregation for multi-source cases; do not substitute that historical auc column for the common-scoring value here",
   "oaster_diagnostics": {
     "temporal_rank": 9,

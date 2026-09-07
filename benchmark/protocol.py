@@ -1,4 +1,4 @@
-"""Frozen, deterministic simulation protocol for the full-head benchmark."""
+"""Frozen deterministic protocol for the full-cortex plus non-cortical benchmark."""
 
 from __future__ import annotations
 
@@ -246,7 +246,7 @@ def build_split(shared: dict) -> dict:
     deep_dev = [0, 3, 6, 9, 12]
     n_deep = int(shared["n_deep"])
     if n_deep != 15:
-        raise ValueError("the frozen coarse thalamic grid must contain 15 points")
+        raise ValueError("the frozen coarse non-cortical grid must contain 15 points")
     deep_test = [index for index in range(n_deep) if index not in deep_dev]
     return {
         "protocol": "full-head-coarse-v1",

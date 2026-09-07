@@ -20,6 +20,8 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 from matplotlib.cm import ScalarMappable
 from matplotlib.colors import Normalize
+from matplotlib.lines import Line2D
+from matplotlib.patches import Patch
 import mne
 from mne.transforms import apply_trans
 import nibabel as nib
@@ -55,6 +57,36 @@ METHOD_SLUGS = {
 PLANES = ("coronal", "sagittal", "axial")
 ESTIMATE_CMAP = "magma"
 TRUTH_COLOR = "#00E5A8"
+
+
+def _legend_handles() -> list:
+    return [
+        Line2D(
+            [0],
+            [0],
+            marker="*",
+            linestyle="none",
+            markerfacecolor=TRUTH_COLOR,
+            markeredgecolor="#07130F",
+            markersize=13,
+            label="Simulated source center",
+        ),
+        Line2D(
+            [0],
+            [0],
+            marker="o",
+            linestyle="none",
+            markerfacecolor="none",
+            markeredgecolor=TRUTH_COLOR,
+            markeredgewidth=1.8,
+            markersize=9,
+            label="Simulated source parcel",
+        ),
+        Patch(
+            facecolor=plt.get_cmap(ESTIMATE_CMAP)(0.72),
+            label="Estimated source energy",
+        ),
+    ]
 
 
 def _default_data_root() -> Path:
@@ -202,7 +234,7 @@ def _focuses(loaded: dict) -> list[tuple[str, int]]:
         for number, index in enumerate(case.get("surface_centers", []), start=1)
     ]
     if case.get("deep_index") is not None:
-        focuses.append(("Deep source", int(case["deep_index"])))
+        focuses.append(("Non-cortical source", int(case["deep_index"])))
     if not focuses:
         raise ValueError("strict case has no source focus")
     return focuses
@@ -287,19 +319,31 @@ def _draw_slice(
         ax.scatter(
             points[:, 0],
             points[:, 1],
-            s=34,
+            s=58,
+            facecolors="none",
+            edgecolors="#07130F",
+            linewidths=3.8,
+            zorder=6,
+        )
+        ax.scatter(
+            points[:, 0],
+            points[:, 1],
+            s=58,
             facecolors="none",
             edgecolors=TRUTH_COLOR,
-            linewidths=1.25,
+            linewidths=1.8,
+            zorder=7,
         )
     focus_xy = point_2d(center_voxel)
     ax.scatter(
         [focus_xy[0]],
         [focus_xy[1]],
-        s=70,
-        marker="+",
-        color=TRUTH_COLOR,
-        linewidths=1.8,
+        s=190,
+        marker="*",
+        facecolor=TRUTH_COLOR,
+        edgecolor="#07130F",
+        linewidths=1.4,
+        zorder=8,
     )
     ax.set_axis_off()
 
@@ -378,15 +422,29 @@ def render_method(
     )
     colorbar.set_label("Relative estimated source energy", color="#ECEEF4", fontsize=9)
     colorbar.ax.tick_params(colors="#ECEEF4", labelsize=8)
+    legend = fig.legend(
+        handles=_legend_handles(),
+        loc="upper center",
+        bbox_to_anchor=(0.5, 0.905),
+        ncol=3,
+        frameon=True,
+        fontsize=9,
+        handletextpad=0.6,
+        columnspacing=1.7,
+    )
+    legend.get_frame().set_facecolor("#151821")
+    legend.get_frame().set_edgecolor("#5D6372")
+    for text in legend.get_texts():
+        text.set_color("#F6F7FB")
     fig.text(
         0.995,
         0.008,
-        f"green rings/+ = truth; heat = estimate >= {relative_threshold:.0%} of method peak",
+        f"Each row is centered on one simulated source; heat shown >= {relative_threshold:.0%} of method peak",
         ha="right",
         color="#B8BBC6",
         fontsize=8,
     )
-    fig.subplots_adjust(left=0.055, right=0.94, top=0.89, bottom=0.03, wspace=0.025, hspace=0.035)
+    fig.subplots_adjust(left=0.055, right=0.94, top=0.855, bottom=0.03, wspace=0.025, hspace=0.035)
     output.parent.mkdir(parents=True, exist_ok=True)
     fig.savefig(output, dpi=dpi, facecolor=fig.get_facecolor(), bbox_inches="tight")
     plt.close(fig)
@@ -405,7 +463,17 @@ def render_montage(paths: list[tuple[str, Path]], output: Path, dpi: int) -> Pat
         fontweight="bold",
         y=0.995,
     )
-    fig.subplots_adjust(left=0.005, right=0.995, top=0.965, bottom=0.005, wspace=0.015, hspace=0.04)
+    fig.legend(
+        handles=_legend_handles(),
+        loc="upper center",
+        bbox_to_anchor=(0.5, 0.973),
+        ncol=3,
+        frameon=True,
+        fontsize=11,
+        handletextpad=0.7,
+        columnspacing=2.4,
+    )
+    fig.subplots_adjust(left=0.005, right=0.995, top=0.94, bottom=0.005, wspace=0.015, hspace=0.04)
     fig.savefig(output, dpi=dpi, facecolor="white", bbox_inches="tight")
     plt.close(fig)
     return output
@@ -475,11 +543,12 @@ def plot_brain_maps(
                 "methods": list(METHOD_ORDER),
                 "normalization": "per-method active-minus-baseline RMS, normalized to global peak",
                 "display_threshold": relative_threshold,
-                "truth_overlay": "green rings and focus plus signs",
+                "truth_overlay": "green parcel rings and green star at each simulated source center",
                 "anatomy": anatomy["sample_path"],
                 "observations": "immutable archived F_EEG/F_MEG; never regenerated",
                 "sisses_archive_access": "read-only; output root is explicitly rejected inside archive",
                 "case_metrics": "recomputed uniformly with the current benchmark.metrics scorer; primary AUC is auc_tie_corrected (An_auc)",
+                "deep_grid_warning": "the frozen 15-point grid was intended as thalamus but a legacy HEAD-to-MRI selection error places it near brain stem/cerebellum/fourth ventricle; see SOURCE_SPACE_AUDIT.md",
                 "legacy_auc_note": "the preserved SISSES table used an older parcel-AUC aggregation for multi-source cases; do not substitute that historical auc column for the common-scoring value here",
                 **provenance,
             },

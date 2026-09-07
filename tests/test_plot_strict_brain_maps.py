@@ -99,6 +99,11 @@ def test_method_brain_map_renders_truth_and_estimate(tmp_path: Path) -> None:
     )
 
     assert len(brain_maps.METHOD_ORDER) == 9
+    assert [handle.get_label() for handle in brain_maps._legend_handles()] == [
+        "Simulated source center",
+        "Simulated source parcel",
+        "Estimated source energy",
+    ]
     assert output.is_file() and output.stat().st_size > 10_000
 
 

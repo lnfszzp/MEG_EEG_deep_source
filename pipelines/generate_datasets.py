@@ -40,6 +40,14 @@ rng = np.random.RandomState(20260623)
 roi_name = "bilateral_thalamus"
 roi_label_ids = np.array([10, 49], dtype=np.int64)  # Left/Right-Thalamus-Proper
 
+# KNOWN ISSUE: the frozen generator queried aseg with HEAD-frame source_rr as if it
+# were MRI RAS, so its 15 saved points are not thalamic. Preserve only to reproduce
+# the historical data; use a new corrected protocol with HEAD->MRI before ROI lookup.
+warnings.warn(
+    "Legacy generator has a known HEAD/MRI ROI-selection error; see SOURCE_SPACE_AUDIT.md",
+    RuntimeWarning,
+)
+
 # 体积源空间分辨率。10 mm 下 sample 里丘脑候选点大约 16 个。
 deep_pos_mm = 10.0
 deep_neighbor_k = 4

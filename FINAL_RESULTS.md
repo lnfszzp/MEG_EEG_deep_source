@@ -4,6 +4,8 @@
 
 本仓库已恢复可审查的 PPT/V18 后处理链、原始仿真协议、用户指标、七种统一 Python 对比方法、EEG×MEG 独立信噪比开发矩阵、冻结留出矩阵入口和源定位绘图工具。当前冻结候选是 **OASTER V19**（Observation-Adaptive Spatiotemporal Evidence Reconstruction）。它只接收 EEG/MEG 观测、前向矩阵和源空间几何，不接收真实源、SNR 标签、真实源数量或仿真时间过程。
 
+> **解剖学更正：** 旧生成脚本在 `aseg` ROI 查询前漏做 HEAD→MRI 变换。冻结的 15 个所谓“丘脑点”实际为脑干/小脑/第四脑室附近的非皮层点，丘脑点为 0；所以本报告的 deep 结果只适用于该冻结非皮层网格。详见 `SOURCE_SPACE_AUDIT.md`。
+
 开发矩阵共有 980 例：7 个 EEG SNR × 7 个 MEG SNR × 4 个场景 × 每场景 5 个固定源配置。以用户优先指定的直接 `An_auc` 为主指标，即结果列 `auc_tie_corrected`：
 
 - 49/49 个 SNR 组合的场景宏平均均不低于 0.90，平均 `0.974974`，最差 `0.956545`。

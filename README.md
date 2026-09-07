@@ -2,6 +2,8 @@
 
 本目录恢复了 PPT 对应的 V18 多层 SISSES 后处理、原始仿真、用户指标、经典对比方法和冻结留出 EEG×MEG 信噪比协议（目录名保留为 `strict_blind`）。冻结候选 OASTER V19（Observation-Adaptive Spatiotemporal Evidence Reconstruction）及七种对比方法的 9,065 例留出矩阵均已完整运行并通过复核。
 
+> **源空间审计更正：** 皮层源覆盖双侧 68 个 `aparc` 分区；原计划的 15 个“丘脑点”因旧生成脚本遗漏 HEAD→MRI 变换，实际位于脑干、小脑和第四脑室附近，丘脑点为 0。现有 deep 指标不能解释为丘脑性能，详见 `SOURCE_SPACE_AUDIT.md`。
+
 ## 已确认的恢复边界
 
 - V4–V18 来自 Git 仓库历史；除 PPT 中 AUC `0.909` 与仓库精确值 `0.900910` 不一致外，PPT 最终表格的其余数值与 V18 结果吻合。V18 流程为：模态内基线白化、联合候选、深层残差救援、0/4/7 mm 表层模板重拟合，以及 25% 弱表层范围校正。
@@ -26,6 +28,7 @@
 - `plot_strict_brain_maps.py`：在同一 MNE sample T1 空间绘制九方法的逐方法和总览源定位图。
 - `FINAL_RESULTS.md`：恢复证据、开发实验、严格矩阵、复现命令和解释边界的总报告。
 - `VISUAL_STATISTICAL_REPORT.md`：新增指标图、统计结论、比较表和脑空间投影的集中索引。
+- `SOURCE_SPACE_AUDIT.md`：四类场景、完整 SNR 矩阵、表层覆盖及非皮层坐标问题的审计。
 
 历史 V15–V18 入口仍依赖当时 `benchmark/results/scores.csv` 所索引的逐例 SISSES 源估计；这些输入没有保存在 Git 历史或现存严格盲测归档中。因此仓库可以核对已提交的历史汇总、审查并在输入补齐后运行后处理链，但目前不能从零重跑 V15–V18。无需历史 SISSES 输入的 OASTER、七种 Python 对比方法、严格矩阵与绘图入口均可直接运行。
 
