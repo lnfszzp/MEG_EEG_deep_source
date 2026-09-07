@@ -2,6 +2,8 @@ __pycache__/
 *.pyc
 .pytest_cache/
 *.zip
+corrected_v2/generated/
+generated_corrected_v2/
 results/**
 !results/
 !results/strict_blind/
@@ -13,6 +15,16 @@ results/strict_blind/**
 !results/strict_blind/**/metadata.json
 !results/strict_blind/**/completion.json
 !results/strict_blind/**/REPORT.md
+!results/corrected_v2/
+results/corrected_v2/**
+!results/corrected_v2/**/
+!results/corrected_v2/strict_blind/manifest.json
+!results/corrected_v2/strict_blind/manifest.json.sha256
+!results/corrected_v2/strict_blind/**/summary*.csv
+!results/corrected_v2/strict_blind/**/metadata.json
+!results/corrected_v2/strict_blind/**/completion.json
+!results/corrected_v2/strict_blind/**/REPORT.md
+!results/corrected_v2/strict_blind/**/*.png
 !results/dev_matrix/
 results/dev_matrix/**
 !results/dev_matrix/**/

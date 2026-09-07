@@ -11,12 +11,14 @@
 # ============================================================
 
 from pathlib import Path
+import os
 import warnings
 
 import mne
 import nibabel as nib
 import numpy as np
 import scipy.io as sio
+from mne.io.constants import FIFF
 from scipy import sparse
 
 
@@ -27,7 +29,11 @@ mne.set_log_level("warning")
 # ==================== 1. 参数设置 ====================
 
 ROOT = Path(__file__).resolve().parents[1]
-OUT_ROOT = ROOT / "generated"
+OUT_ROOT = Path(
+    os.environ.get("CORRECTED_DATA_ROOT", ROOT / "generated_corrected_v2")
+).resolve()
+if OUT_ROOT == (ROOT / "generated").resolve():
+    raise RuntimeError("corrected-v2 must not overwrite the frozen legacy geometry")
 OUT_ROOT.mkdir(parents=True, exist_ok=True)
 
 subject = "sample"
@@ -39,14 +45,6 @@ rng = np.random.RandomState(20260623)
 # FreeSurfer aseg 标签：双侧丘脑
 roi_name = "bilateral_thalamus"
 roi_label_ids = np.array([10, 49], dtype=np.int64)  # Left/Right-Thalamus-Proper
-
-# KNOWN ISSUE: the frozen generator queried aseg with HEAD-frame source_rr as if it
-# were MRI RAS, so its 15 saved points are not thalamic. Preserve only to reproduce
-# the historical data; use a new corrected protocol with HEAD->MRI before ROI lookup.
-warnings.warn(
-    "Legacy generator has a known HEAD/MRI ROI-selection error; see SOURCE_SPACE_AUDIT.md",
-    RuntimeWarning,
-)
 
 # 体积源空间分辨率。10 mm 下 sample 里丘脑候选点大约 16 个。
 deep_pos_mm = 10.0
@@ -69,8 +67,8 @@ def awgn(signal, snr_db):
     return signal + noise
 
 
-def mri_pos_to_aseg_label(pos_m, aseg_data, vox2ras_tkr_inv):
-    pos_mm = np.asarray(pos_m) * 1000.0
+def mri_pos_to_aseg_label(pos_mri_m, aseg_data, vox2ras_tkr_inv):
+    pos_mm = np.asarray(pos_mri_m) * 1000.0
     vox = np.round((vox2ras_tkr_inv @ np.r_[pos_mm, 1.0])[:3]).astype(int)
     if np.any(vox < 0) or np.any(vox >= np.array(aseg_data.shape)):
         return 0
@@ -96,7 +94,8 @@ def save_dataset(out_dir, F_meg, F_eeg, gain_mixed_meg, gain_mixed_eeg,
                  gain_mixed_meg_3d, gain_mixed_eeg_3d, VertConn, src_vertices,
                  times, sfreq, s_true, s_true_deep, s_true_surface, true_deep_idx,
                  true_surface_indices, true_surface_patch_labels, true_surface_centers,
-                 has_deep_source, n_surf, n_deep, deep_rr, deep_orientations):
+                 has_deep_source, n_surf, n_deep, deep_rr, deep_rr_mri,
+                 deep_aseg_labels, deep_orientations):
     out_dir.mkdir(parents=True, exist_ok=True)
     common = {
         "VertConn": VertConn,
@@ -114,6 +113,8 @@ def save_dataset(out_dir, F_meg, F_eeg, gain_mixed_meg, gain_mixed_eeg,
         "true_surface_centers0": true_surface_centers.astype(np.int64)[np.newaxis, :],
         "true_surface_centers1": (true_surface_centers + 1).astype(np.int64)[np.newaxis, :],
         "deep_rr": deep_rr,
+        "deep_rr_mri": deep_rr_mri,
+        "deep_aseg_labels": deep_aseg_labels.astype(np.int64)[np.newaxis, :],
         "deep_orientations": deep_orientations,
         "src_vertices": src_vertices,
     }
@@ -148,6 +149,9 @@ def save_dataset(out_dir, F_meg, F_eeg, gain_mixed_meg, gain_mixed_eeg,
             "true_surface_patch_labels": true_surface_patch_labels.astype(np.int64)[np.newaxis, :],
             "true_surface_centers0": true_surface_centers.astype(np.int64)[np.newaxis, :],
             "true_surface_centers1": (true_surface_centers + 1).astype(np.int64)[np.newaxis, :],
+            "deep_rr": deep_rr,
+            "deep_rr_mri": deep_rr_mri,
+            "deep_aseg_labels": deep_aseg_labels.astype(np.int64)[np.newaxis, :],
         },
         do_compression=True,
     )
@@ -236,19 +240,40 @@ aseg = nib.load(str(aseg_file))
 aseg_data = np.asarray(aseg.get_fdata(), dtype=int)
 vox2ras_tkr_inv = np.linalg.inv(aseg.header.get_vox2ras_tkr())
 
-source_rr = fwd_vol_meg["source_rr"]
-labels = np.array([mri_pos_to_aseg_label(p, aseg_data, vox2ras_tkr_inv) for p in source_rr], dtype=int)
+source_rr_head = fwd_vol_meg["source_rr"]
+head_to_mri = mne.transforms.invert_transform(fwd_vol_meg["mri_head_t"])
+if (
+    int(head_to_mri["from"]) != int(FIFF.FIFFV_COORD_HEAD)
+    or int(head_to_mri["to"]) != int(FIFF.FIFFV_COORD_MRI)
+):
+    raise RuntimeError("volume forward does not provide a HEAD-to-MRI transform")
+source_rr_mri = mne.transforms.apply_trans(head_to_mri, source_rr_head)
+roundtrip = mne.transforms.apply_trans(fwd_vol_meg["mri_head_t"], source_rr_mri)
+if not np.allclose(roundtrip, source_rr_head, rtol=0.0, atol=1e-10):
+    raise RuntimeError("HEAD-to-MRI coordinate transform failed its round-trip check")
+labels = np.array(
+    [mri_pos_to_aseg_label(p, aseg_data, vox2ras_tkr_inv) for p in source_rr_mri],
+    dtype=int,
+)
 deep_sel = np.where(np.isin(labels, roi_label_ids))[0]
-deep_rr = source_rr[deep_sel]
+deep_rr = source_rr_head[deep_sel]
+deep_rr_mri = source_rr_mri[deep_sel]
 n_deep = len(deep_sel)
 
 if n_deep < 4:
     raise RuntimeError(f"ROI 候选点太少：{n_deep}")
+label_values, label_counts = np.unique(labels[deep_sel], return_counts=True)
+actual_label_counts = dict(zip(label_values.tolist(), label_counts.tolist()))
+if actual_label_counts != {10: 9, 49: 7}:
+    raise RuntimeError(
+        f"corrected-v2 requires the frozen 16-point thalamic grid; got {actual_label_counts}"
+    )
 
 print("volume candidate sources:", fwd_vol_meg["nsource"])
 print("ROI:", roi_name, "label ids:", roi_label_ids.tolist())
 print("selected ROI deep sources:", n_deep)
 print("selected labels:", labels[deep_sel].tolist())
+print("selected MRI RAS coordinates (m):", deep_rr_mri.tolist())
 
 
 # %%
@@ -432,6 +457,8 @@ for scenario, spec in scenario_specs.items():
         n_surf=n_surf,
         n_deep=n_deep,
         deep_rr=deep_rr,
+        deep_rr_mri=deep_rr_mri,
+        deep_aseg_labels=labels[deep_sel],
         deep_orientations=deep_orientations,
     )
     print("saved scenario:", scenario, "->", OUT_ROOT / scenario)

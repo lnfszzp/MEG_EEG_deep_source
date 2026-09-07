@@ -73,7 +73,9 @@ def _blind_centers(shared: dict) -> list[dict]:
     return result
 
 
-def _base_configurations(shared: dict) -> list[dict]:
+def _base_configurations(
+    shared: dict, *, id_prefix: str = "strict-blind"
+) -> list[dict]:
     records = _blind_centers(shared)
     vertices = np.asarray(shared["vertices"], dtype=float)
     left = [row["center"] for row in records if row["hemi"] == "lh"]
@@ -82,8 +84,8 @@ def _base_configurations(shared: dict) -> list[dict]:
     parcel_by_center = {row["center"]: row["parcel"] for row in records}
     n_surf = int(shared["n_surf"])
     n_deep = int(shared["n_deep"])
-    if n_deep != 15:
-        raise ValueError("strict blind protocol expects the frozen 15-point non-cortical grid")
+    if n_deep < 1:
+        raise ValueError("strict blind protocol requires at least one deep point")
 
     base = []
     for location, row in enumerate(records):
@@ -116,7 +118,7 @@ def _base_configurations(shared: dict) -> list[dict]:
         deep_local = case["deep_local"]
         multi = scenario in {"deep_plus_surface", "deep_plus_two_surface"}
         case.update(
-            configuration_id=f"strict-blind-source-{index:03d}-{scenario}",
+            configuration_id=f"{id_prefix}-source-{index:03d}-{scenario}",
             configuration_number=index,
             scenario_code=protocol.SCENARIO_CODES[scenario],
             deep_index=None if deep_local is None else n_surf + deep_local,
@@ -126,8 +128,14 @@ def _base_configurations(shared: dict) -> list[dict]:
     return base
 
 
-def make_manifest(shared: dict) -> list[dict]:
-    base = _base_configurations(shared)
+def make_manifest(
+    shared: dict,
+    *,
+    id_prefix: str = "strict-blind",
+    panel: str = "strict_blind",
+    seed_root: int = SEED_ROOT,
+) -> list[dict]:
+    base = _base_configurations(shared, id_prefix=id_prefix)
     manifest = []
     for pair_index, (eeg_snr, meg_snr) in enumerate(PAIRS):
         for configuration in base:
@@ -136,18 +144,18 @@ def make_manifest(shared: dict) -> list[dict]:
             scenario = case["scenario"]
             case.update(
                 case_id=(
-                    f"strict-blind-{number:05d}-{scenario}-"
+                    f"{id_prefix}-{number:05d}-{scenario}-"
                     f"eeg{eeg_snr:+03d}-meg{meg_snr:+03d}"
                 ),
                 case_number=number,
-                panel="strict_blind",
+                panel=panel,
                 source_case_id=case["configuration_id"],
                 pair_index=pair_index,
                 snr_db=eeg_snr,
                 eeg_snr_db=eeg_snr,
                 meg_snr_db=meg_snr,
                 seed=[
-                    SEED_ROOT,
+                    seed_root,
                     pair_index,
                     int(case["scenario_code"]),
                     int(case["configuration_number"]),
@@ -157,22 +165,46 @@ def make_manifest(shared: dict) -> list[dict]:
     return manifest
 
 
-def _check(shared: dict, manifest: list[dict], digest: str) -> None:
+def _manifest_digest(manifest: list[dict]) -> str:
+    payload = (
+        json.dumps(manifest, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
+        + "\n"
+    ).encode()
+    return hashlib.sha256(payload).hexdigest()
+
+
+def _check(
+    shared: dict,
+    manifest: list[dict],
+    digest: str,
+    *,
+    expected_digest: str | None = EXPECTED_SHA256,
+    id_prefix: str = "strict-blind",
+    panel: str = "strict_blind",
+    seed_root: int = SEED_ROOT,
+) -> None:
     old = _old_surface_centers()
     new = {int(center) for case in manifest for center in case["surface_centers"]}
     assert len(new) == 68 and not (new & old)
 
+    n_deep = int(shared["n_deep"])
+    expected_counts = dict(EXPECTED_CONFIG_COUNTS)
+    expected_counts["deep_only"] = n_deep
+    n_configurations = sum(expected_counts.values())
     by_source = {case["source_case_id"]: case for case in manifest}
-    assert len(by_source) == 185
-    assert Counter(case["scenario"] for case in by_source.values()) == EXPECTED_CONFIG_COUNTS
-    assert {case["deep_local"] for case in by_source.values() if case["deep_local"] is not None} == set(range(15))
+    assert len(by_source) == n_configurations
+    assert Counter(case["scenario"] for case in by_source.values()) == expected_counts
+    assert {case["deep_local"] for case in by_source.values() if case["deep_local"] is not None} == set(range(n_deep))
 
-    assert len(manifest) == 49 * 185
+    assert len(manifest) == len(PAIRS) * n_configurations
     assert len({case["case_id"] for case in manifest}) == len(manifest)
     assert len({tuple(case["seed"]) for case in manifest}) == len(manifest)
+    assert all(case["case_id"].startswith(f"{id_prefix}-") for case in manifest)
+    assert all(case["source_case_id"].startswith(f"{id_prefix}-source-") for case in manifest)
+    assert all(case["panel"] == panel and case["seed"][0] == seed_root for case in manifest)
     for pair_index, pair in enumerate(PAIRS):
         cell = [case for case in manifest if int(case["pair_index"]) == pair_index]
-        assert len(cell) == 185
+        assert len(cell) == n_configurations
         assert {(case["eeg_snr_db"], case["meg_snr_db"]) for case in cell} == {pair}
         assert all(case["seed"][1] == pair_index for case in cell)
 
@@ -186,7 +218,8 @@ def _check(shared: dict, manifest: list[dict], digest: str) -> None:
         assert center in set(map(int, parcels[parcel]))
         parcel_hits[parcel] += 1
     assert len(parcel_hits) == 68 and set(parcel_hits.values()) == {1}
-    assert digest == EXPECTED_SHA256
+    if expected_digest is not None:
+        assert digest == expected_digest
 
 
 def _load_shared(data_root: Path | None, sample_path: Path | None) -> dict:
@@ -203,12 +236,27 @@ def generate(
     *,
     data_root: Path | None = None,
     sample_path: Path | None = None,
+    expected_digest: str | None = EXPECTED_SHA256,
+    id_prefix: str = "strict-blind",
+    panel: str = "strict_blind",
+    seed_root: int = SEED_ROOT,
 ) -> str:
     shared = _load_shared(data_root, sample_path)
-    manifest = make_manifest(shared)
-    _check(shared, manifest, EXPECTED_SHA256)
-    digest = protocol.save_manifest(path, manifest, expected_digest=EXPECTED_SHA256)
-    _check(shared, manifest, digest)
+    manifest = make_manifest(
+        shared, id_prefix=id_prefix, panel=panel, seed_root=seed_root
+    )
+    candidate_digest = _manifest_digest(manifest)
+    _check(
+        shared, manifest, candidate_digest,
+        expected_digest=expected_digest, id_prefix=id_prefix, panel=panel,
+        seed_root=seed_root,
+    )
+    digest = protocol.save_manifest(path, manifest, expected_digest=expected_digest)
+    _check(
+        shared, manifest, digest,
+        expected_digest=expected_digest, id_prefix=id_prefix, panel=panel,
+        seed_root=seed_root,
+    )
     return digest
 
 
@@ -217,12 +265,20 @@ def self_check(
     *,
     data_root: Path | None = None,
     sample_path: Path | None = None,
+    expected_digest: str | None = EXPECTED_SHA256,
+    id_prefix: str = "strict-blind",
+    panel: str = "strict_blind",
+    seed_root: int = SEED_ROOT,
 ) -> str:
     shared = _load_shared(data_root, sample_path)
     payload = path.read_bytes()
     manifest = json.loads(payload)
     digest = hashlib.sha256(payload).hexdigest()
-    _check(shared, manifest, digest)
+    _check(
+        shared, manifest, digest,
+        expected_digest=expected_digest, id_prefix=id_prefix, panel=panel,
+        seed_root=seed_root,
+    )
     sidecar = path.with_suffix(path.suffix + ".sha256").read_text(encoding="ascii")
     assert sidecar == f"{digest}  {path.name}\n"
     print(f"strict blind manifest self-check passed: {digest}")

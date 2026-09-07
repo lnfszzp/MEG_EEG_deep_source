@@ -89,6 +89,9 @@ def load_shared(
             "sfreq",
             "n_surf",
             "n_deep",
+            "deep_rr",
+            "deep_rr_mri",
+            "deep_aseg_labels",
             "deep_orientations",
         ),
     )
@@ -128,20 +131,83 @@ def load_shared(
     )
     n_surf = int(np.asarray(eeg_mat["n_surf"]).ravel()[0])
     n_deep = int(np.asarray(eeg_mat["n_deep"]).ravel()[0])
+    n_sources = n_surf + n_deep
     gain_eeg = np.asarray(eeg_mat["Gain"], dtype=float)
     gain_meg = np.asarray(meg_mat["Gain"], dtype=float)
-    if gain_eeg.shape != (len(eeg_names), n_surf + n_deep):
-        raise ValueError("generated EEG gain and MNE channel/source order disagree")
-    if gain_meg.shape != (len(meg_names), n_surf + n_deep):
-        raise ValueError("generated MEG gain and MNE channel/source order disagree")
-
+    gain3d_eeg = np.asarray(eeg_mat["Gain3D"], dtype=float)
+    gain3d_meg = np.asarray(meg_mat["Gain3D"], dtype=float)
     vertices = np.asarray(eeg_mat["src_vertices"], dtype=float)
     adjacency = np.asarray(eeg_mat["VertConn"], dtype=np.uint8)
+    deep_orientations = np.asarray(eeg_mat["deep_orientations"], dtype=float)
+    if gain_eeg.shape != (len(eeg_names), n_sources):
+        raise ValueError("generated EEG gain and MNE channel/source order disagree")
+    if gain_meg.shape != (len(meg_names), n_sources):
+        raise ValueError("generated MEG gain and MNE channel/source order disagree")
+    expected_shapes = {
+        "EEG Gain3D": (len(eeg_names), n_sources, 3),
+        "MEG Gain3D": (len(meg_names), n_sources, 3),
+        "source vertices": (n_sources, 3),
+        "source adjacency": (n_sources, n_sources),
+        "deep orientations": (n_deep, 3),
+    }
+    actual_shapes = {
+        "EEG Gain3D": gain3d_eeg.shape,
+        "MEG Gain3D": gain3d_meg.shape,
+        "source vertices": vertices.shape,
+        "source adjacency": adjacency.shape,
+        "deep orientations": deep_orientations.shape,
+    }
+    for name, expected in expected_shapes.items():
+        if actual_shapes[name] != expected:
+            raise ValueError(f"generated {name} shape {actual_shapes[name]} != {expected}")
+
+    deep_rr = np.asarray(eeg_mat.get("deep_rr", vertices[n_surf:]), dtype=float)
+    if deep_rr.shape != (n_deep, 3) or not np.allclose(
+        vertices[n_surf:], deep_rr, rtol=0.0, atol=1e-12
+    ):
+        raise ValueError("deep HEAD coordinates disagree with the mixed source grid")
+    corrected_keys = {"deep_rr_mri", "deep_aseg_labels"}
+    present_corrected = corrected_keys & eeg_mat.keys()
+    if present_corrected and present_corrected != corrected_keys:
+        raise ValueError("corrected geometry metadata is incomplete")
+    deep_rr_mri = None
+    deep_aseg_labels = None
+    if present_corrected:
+        deep_rr_mri = np.asarray(eeg_mat["deep_rr_mri"], dtype=float)
+        deep_aseg_labels = np.asarray(eeg_mat["deep_aseg_labels"], dtype=int).ravel()
+        if deep_rr_mri.shape != (n_deep, 3):
+            raise ValueError("corrected MRI deep coordinates have the wrong shape")
+        if deep_aseg_labels.shape != (n_deep,) or not np.all(
+            np.isin(deep_aseg_labels, (10, 49))
+        ):
+            raise ValueError("corrected deep sources must all be bilateral thalamus")
+        head_to_mri = mne.read_trans(sample_dir / "sample_audvis_raw-trans.fif")
+        transformed = mne.transforms.apply_trans(head_to_mri, deep_rr)
+        if not np.allclose(transformed, deep_rr_mri, rtol=0.0, atol=1e-9):
+            raise ValueError("saved HEAD and MRI deep coordinates do not transform together")
+
+        import nibabel as nib
+
+        aseg = nib.load(str(sample_path / "subjects" / "sample" / "mri" / "aseg.mgz"))
+        voxels = np.rint(
+            mne.transforms.apply_trans(
+                np.linalg.inv(aseg.header.get_vox2ras_tkr()), deep_rr_mri * 1000.0
+            )
+        ).astype(int)
+        if np.any(voxels < 0) or np.any(voxels >= np.asarray(aseg.shape)):
+            raise ValueError("corrected MRI deep coordinates fall outside aseg")
+        actual_labels = np.asarray(aseg.dataobj)[tuple(voxels.T)].astype(int)
+        labels, counts = np.unique(actual_labels, return_counts=True)
+        if (
+            not np.array_equal(actual_labels, deep_aseg_labels)
+            or dict(zip(labels.tolist(), counts.tolist())) != {10: 9, 49: 7}
+        ):
+            raise ValueError("saved corrected deep labels disagree with aseg")
     return {
         "gain_eeg": gain_eeg,
         "gain_meg": gain_meg,
-        "gain3d_eeg": np.asarray(eeg_mat["Gain3D"], dtype=float),
-        "gain3d_meg": np.asarray(meg_mat["Gain3D"], dtype=float),
+        "gain3d_eeg": gain3d_eeg,
+        "gain3d_meg": gain3d_meg,
         "vertices": vertices,
         "adjacency": adjacency,
         "auc_cortex": _auc_cortex(vertices, adjacency, n_surf),
@@ -150,7 +216,10 @@ def load_shared(
         "active_start": ACTIVE_START,
         "n_surf": n_surf,
         "n_deep": n_deep,
-        "deep_orientations": np.asarray(eeg_mat["deep_orientations"], dtype=float),
+        "deep_rr": deep_rr,
+        "deep_rr_mri": deep_rr_mri,
+        "deep_aseg_labels": deep_aseg_labels,
+        "deep_orientations": deep_orientations,
         "noise_cov_eeg": cov_eeg,
         "noise_cov_meg": cov_meg,
         "noise_factor_eeg": _covariance_factor(cov_eeg),
@@ -243,13 +312,17 @@ def build_split(shared: dict) -> dict:
     dev_rh = [record["dev_center"] for record in records if record["hemi"] == "rh"]
     test_lh = [center for record in records if record["hemi"] == "lh" for center in record["test_centers"]]
     test_rh = [center for record in records if record["hemi"] == "rh" for center in record["test_centers"]]
-    deep_dev = [0, 3, 6, 9, 12]
     n_deep = int(shared["n_deep"])
-    if n_deep != 15:
-        raise ValueError("the frozen coarse non-cortical grid must contain 15 points")
+    if n_deep < 1:
+        raise ValueError("the mixed source grid must contain at least one deep point")
+    deep_dev = list(range(0, n_deep, 3))
     deep_test = [index for index in range(n_deep) if index not in deep_dev]
     return {
-        "protocol": "full-head-coarse-v1",
+        "protocol": (
+            "full-head-coarse-v2"
+            if shared.get("deep_rr_mri") is not None
+            else "full-head-coarse-v1"
+        ),
         "n_surf": int(shared["n_surf"]),
         "n_deep": n_deep,
         "parcels": records,
