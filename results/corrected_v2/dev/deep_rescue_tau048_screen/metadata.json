@@ -1,0 +1,38 @@
+{
+  "purpose": "development simulation only; strict archive/results were not read",
+  "base_manifest": "D:\\博士\\工作＆汇报\\源定位\\新建文件夹\\results\\corrected_v2\\dev\\base_manifest.json",
+  "base_manifest_sha256": "7d26e742646701b2f1176600edfedacef2ed7d26c976e8d7f74b57e1a5e59d45",
+  "matrix_manifest_sha256": "d0a9ba3bb4312153a95c8c9ee43fc843808c5c89dd68ed9a653a551a422252c3",
+  "data_root": "D:\\博士\\工作＆汇报\\源定位\\新建文件夹\\corrected_v2\\generated",
+  "seed_root": 20260906,
+  "levels_db": [
+    -10,
+    -5,
+    0,
+    5,
+    10,
+    15,
+    20
+  ],
+  "cases_per_scenario": 1,
+  "source_case_count": 196,
+  "metric_row_count": 784,
+  "workers": 2,
+  "wall_seconds": 472.13577019999866,
+  "methods": [
+    "OASTER_baseline",
+    "OASTER_deep_rescue_tau0",
+    "OASTER_deep_rescue_tau4",
+    "OASTER_deep_rescue_tau8"
+  ],
+  "tau_grid": [
+    0.0,
+    4.0,
+    8.0
+  ],
+  "deep_candidate_universe": 16,
+  "maximum_rescues": 1,
+  "spectral_fraction": 0.05,
+  "strict_results_used_for_tuning": false,
+  "design_recovery_approximation": "SVD column space of global fitted reduced sensor signal"
+}
