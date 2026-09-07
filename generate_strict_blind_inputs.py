@@ -174,18 +174,21 @@ def generate(
     written = resumed = 0
     clean_cache: dict[str, tuple[np.ndarray, np.ndarray]] = {}
     for spec in specs:
-        if spec.path.exists() and not force:
+        if spec.path.exists():
             try:
                 _load_valid_chunk(
                     spec, cases, manifest_sha256, geometry, fingerprints
                 )
             except Exception as exc:
-                raise RuntimeError(
-                    f"existing chunk is invalid; rerun with --force to replace it: {spec.path.name}"
-                ) from exc
-            resumed += 1
-            print(f"verified {spec.path.stem}", flush=True)
-            continue
+                if not force:
+                    raise RuntimeError(
+                        "existing chunk is invalid; rerun with --force to replace it: "
+                        f"{spec.path.name}"
+                    ) from exc
+            else:
+                resumed += 1
+                print(f"verified {spec.path.stem}", flush=True)
+                continue
         _write_chunk(
             spec,
             cases,
