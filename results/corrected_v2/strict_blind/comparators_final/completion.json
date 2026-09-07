@@ -1,0 +1,18 @@
+{
+  "status": "complete",
+  "row_count": 63798,
+  "expected_row_count": 63798,
+  "error_count": 0,
+  "manifest_sha256": "8147726ec34b548fba6f25fe6c05dd55933e4cf458c7c2cec94c31a9d7c5e60c",
+  "chunk_count": 456,
+  "method_count": 7,
+  "methods": [
+    "MNE",
+    "dSPM",
+    "sLORETA",
+    "eLORETA",
+    "LCMV",
+    "Dipole fitting (grid)",
+    "RAP-MUSIC"
+  ]
+}

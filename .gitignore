@@ -24,7 +24,11 @@ results/corrected_v2/**
 !results/corrected_v2/strict_blind/**/metadata.json
 !results/corrected_v2/strict_blind/**/completion.json
 !results/corrected_v2/strict_blind/**/REPORT.md
+!results/corrected_v2/strict_blind/FINAL_REPORT.md
 !results/corrected_v2/strict_blind/**/*.png
+!results/corrected_v2/strict_blind/figures_*/*.csv
+!results/corrected_v2/strict_blind/statistics_*/*.csv
+!results/corrected_v2/strict_blind/brain_maps_*/**/metrics.csv
 !results/corrected_v2/dev/
 !results/corrected_v2/dev/**/
 !results/corrected_v2/dev/base_manifest.json

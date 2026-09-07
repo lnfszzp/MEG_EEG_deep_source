@@ -1,5 +1,6 @@
-from pathlib import Path
+import csv
 import shutil
+from pathlib import Path
 
 import plot_strict_metrics as plotting
 
@@ -30,6 +31,19 @@ def test_missing_sisses_is_na_and_excluded(tmp_path: Path) -> None:
     sisses = next(row for row in availability if row["method"] == "SISSES")
     assert sisses["status"] == "N/A"
     assert sisses["included_in_comparison"] == "no"
+
+    table = plotting.write_method_comparison_table(
+        results, availability, tmp_path / "method_comparison_table.csv"
+    )
+    with table.open(encoding="utf-8-sig", newline="") as stream:
+        rows = list(csv.DictReader(stream))
+    assert [row["method"] for row in rows] == list(plotting.METHODS)
+    assert rows[0]["status"] == "complete"
+    assert rows[0]["snr_pair_count"] == "49"
+    assert float(rows[0]["auc_tie_corrected"]) > 0.0
+    sisses_row = next(row for row in rows if row["method"] == "SISSES")
+    assert sisses_row["status"] == "N/A"
+    assert sisses_row["auc_tie_corrected"] == "N/A"
 
 
 def test_oaster_v20_summary_is_preferred_over_v19(tmp_path: Path) -> None:

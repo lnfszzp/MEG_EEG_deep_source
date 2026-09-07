@@ -256,6 +256,37 @@ def write_statistics(results: dict[str, list[dict[str, float]]], output: Path) -
     return output
 
 
+def write_method_comparison_table(
+    results: dict[str, list[dict[str, float]]],
+    availability: list[dict[str, str]],
+    output: Path,
+) -> Path:
+    """Write one row per method with means over the 49 SNR pairs."""
+    output.parent.mkdir(parents=True, exist_ok=True)
+    fields = ("method", "status", "snr_pair_count", *METRICS)
+    status = {row["method"]: row["status"] for row in availability}
+    with output.open("w", encoding="utf-8-sig", newline="") as stream:
+        writer = csv.DictWriter(stream, fieldnames=fields)
+        writer.writeheader()
+        for method in METHODS:
+            method_rows = results.get(method)
+            row = {
+                "method": method,
+                "status": status.get(method, "N/A"),
+                "snr_pair_count": len(method_rows) if method_rows else 0,
+            }
+            row.update(
+                {
+                    metric: float(_values(results, method, metric).mean())
+                    if method_rows
+                    else "N/A"
+                    for metric in METRICS
+                }
+            )
+            writer.writerow(row)
+    return output
+
+
 def plot_metric_table(results: dict[str, list[dict[str, float]]], output: Path) -> Path:
     methods = tuple(results)
     missing = [method for method in METHODS if method not in results]
@@ -529,6 +560,9 @@ def generate(root: Path, output: Path) -> list[Path]:
     output = Path(output)
     return [
         write_availability(availability, output / "method_availability.csv"),
+        write_method_comparison_table(
+            results, availability, output / "method_comparison_table.csv"
+        ),
         write_statistics(results, output / "method_metric_statistics.csv"),
         plot_metric_table(results, output / "metric_mean_rank_heatmap.png"),
         plot_score_distributions(results, output / "auc_rmse_distributions.png"),

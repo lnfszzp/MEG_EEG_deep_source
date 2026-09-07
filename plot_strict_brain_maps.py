@@ -318,8 +318,13 @@ def _source_projection(
     return voxels.reshape(-1, 3), relative[keep]
 
 
-def _truth_voxels(loaded: dict, anatomy: dict) -> np.ndarray:
-    indices = np.unique(np.concatenate([np.asarray(group, dtype=int) for group in loaded["groups"]]))
+def _truth_voxels(loaded: dict, anatomy: dict, focus_index: int) -> np.ndarray:
+    indices = np.asarray([focus_index], dtype=int)
+    for group in loaded["groups"]:
+        candidate = np.asarray(group, dtype=int)
+        if np.any(candidate == focus_index):
+            indices = np.unique(candidate)
+            break
     positions = apply_trans(
         anatomy["head_to_mri"], loaded["geometry"]["vertices"][indices]
     )
@@ -424,7 +429,6 @@ def render_method(
     estimate_voxels, estimate_weights = _source_projection(
         estimate, loaded, anatomy, relative_threshold
     )
-    truth_voxels = _truth_voxels(loaded, anatomy)
     fig, axes = plt.subplots(
         len(focuses),
         len(PLANES),
@@ -434,6 +438,7 @@ def render_method(
     )
     for row, (focus_label, source_index) in enumerate(focuses):
         center = _focus_voxel(source_index, loaded, anatomy)
+        truth_voxels = _truth_voxels(loaded, anatomy, source_index)
         for column, plane in enumerate(PLANES):
             _draw_slice(
                 axes[row, column],

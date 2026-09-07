@@ -1,0 +1,10 @@
+﻿method,status,snr_pairs,source,included_in_comparison,detail
+OASTER,complete,49,results\corrected_v2\strict_blind\oaster_v20_final\summary_by_snr_pair_scenario_macro.csv,yes,
+SISSES,N/A,0,,no,summary_cases=0; expected_cases=9114; completion_ok=True
+dSPM,complete,49,results\corrected_v2\strict_blind\comparators_final\summary_by_snr_pair_scenario_macro.csv,yes,
+eLORETA,complete,49,results\corrected_v2\strict_blind\comparators_final\summary_by_snr_pair_scenario_macro.csv,yes,
+sLORETA,complete,49,results\corrected_v2\strict_blind\comparators_final\summary_by_snr_pair_scenario_macro.csv,yes,
+MNE,complete,49,results\corrected_v2\strict_blind\comparators_final\summary_by_snr_pair_scenario_macro.csv,yes,
+LCMV,complete,49,results\corrected_v2\strict_blind\comparators_final\summary_by_snr_pair_scenario_macro.csv,yes,
+RAP-MUSIC,complete,49,results\corrected_v2\strict_blind\comparators_final\summary_by_snr_pair_scenario_macro.csv,yes,
+Dipole fitting (grid),complete,49,results\corrected_v2\strict_blind\comparators_final\summary_by_snr_pair_scenario_macro.csv,yes,

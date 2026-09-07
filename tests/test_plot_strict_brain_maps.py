@@ -199,3 +199,14 @@ def test_slice_draws_truth_patch_ring_and_exact_center_star(monkeypatch) -> None
     assert star_style["facecolor"] == brain_maps.TRUTH_COLOR
     assert np.array_equal(star_args[0], [center[0]])
     assert np.array_equal(star_args[1], [center[1]])
+
+
+def test_truth_rings_are_limited_to_the_current_source() -> None:
+    loaded = {
+        "groups": [np.array([0, 1]), np.array([2])],
+        "geometry": {"vertices": np.eye(3)},
+    }
+    anatomy = {"head_to_mri": np.eye(4), "vox2ras_tkr": np.eye(4)}
+
+    assert brain_maps._truth_voxels(loaded, anatomy, 0).shape == (2, 3)
+    assert brain_maps._truth_voxels(loaded, anatomy, 2).shape == (1, 3)

@@ -1,0 +1,153 @@
+{
+  "results_root": "D:\\博士\\工作＆汇报\\源定位\\新建文件夹\\results\\corrected_v2\\strict_blind",
+  "analysis_unit": "49 paired EEG×MEG SNR cells; each value is a scenario macro-average",
+  "methods_included": [
+    "OASTER",
+    "dSPM",
+    "eLORETA",
+    "sLORETA",
+    "MNE",
+    "LCMV",
+    "RAP-MUSIC",
+    "Dipole fitting (grid)"
+  ],
+  "method_availability": [
+    {
+      "method": "OASTER",
+      "status": "complete",
+      "snr_pairs": "49",
+      "source": "results\\corrected_v2\\strict_blind\\oaster_v20_final\\summary_by_snr_pair_scenario_macro.csv",
+      "included_in_comparison": "yes",
+      "detail": ""
+    },
+    {
+      "method": "SISSES",
+      "status": "N/A",
+      "snr_pairs": "0",
+      "source": "",
+      "included_in_comparison": "no",
+      "detail": "summary_cases=0; expected_cases=9114; completion_ok=True"
+    },
+    {
+      "method": "dSPM",
+      "status": "complete",
+      "snr_pairs": "49",
+      "source": "results\\corrected_v2\\strict_blind\\comparators_final\\summary_by_snr_pair_scenario_macro.csv",
+      "included_in_comparison": "yes",
+      "detail": ""
+    },
+    {
+      "method": "eLORETA",
+      "status": "complete",
+      "snr_pairs": "49",
+      "source": "results\\corrected_v2\\strict_blind\\comparators_final\\summary_by_snr_pair_scenario_macro.csv",
+      "included_in_comparison": "yes",
+      "detail": ""
+    },
+    {
+      "method": "sLORETA",
+      "status": "complete",
+      "snr_pairs": "49",
+      "source": "results\\corrected_v2\\strict_blind\\comparators_final\\summary_by_snr_pair_scenario_macro.csv",
+      "included_in_comparison": "yes",
+      "detail": ""
+    },
+    {
+      "method": "MNE",
+      "status": "complete",
+      "snr_pairs": "49",
+      "source": "results\\corrected_v2\\strict_blind\\comparators_final\\summary_by_snr_pair_scenario_macro.csv",
+      "included_in_comparison": "yes",
+      "detail": ""
+    },
+    {
+      "method": "LCMV",
+      "status": "complete",
+      "snr_pairs": "49",
+      "source": "results\\corrected_v2\\strict_blind\\comparators_final\\summary_by_snr_pair_scenario_macro.csv",
+      "included_in_comparison": "yes",
+      "detail": ""
+    },
+    {
+      "method": "RAP-MUSIC",
+      "status": "complete",
+      "snr_pairs": "49",
+      "source": "results\\corrected_v2\\strict_blind\\comparators_final\\summary_by_snr_pair_scenario_macro.csv",
+      "included_in_comparison": "yes",
+      "detail": ""
+    },
+    {
+      "method": "Dipole fitting (grid)",
+      "status": "complete",
+      "snr_pairs": "49",
+      "source": "results\\corrected_v2\\strict_blind\\comparators_final\\summary_by_snr_pair_scenario_macro.csv",
+      "included_in_comparison": "yes",
+      "detail": ""
+    }
+  ],
+  "metrics": [
+    "auc_tie_corrected",
+    "auc",
+    "rmse",
+    "surface_sd_mm_penalized",
+    "surface_dle_mm_penalized",
+    "deep_sd_mm_penalized",
+    "deep_dle_mm_penalized",
+    "deep_sensitivity",
+    "deep_specificity",
+    "deep_balanced_accuracy"
+  ],
+  "bootstrap": {
+    "type": "paired nonparametric percentile bootstrap over SNR cells",
+    "resamples": 10000,
+    "seed": 20260907,
+    "confidence_level": 0.95
+  },
+  "tests": {
+    "omnibus": "Friedman test with Kendall's W; Holm correction across endpoints",
+    "pairwise": "two-sided paired Wilcoxon signed-rank; Holm correction over available OASTER contrasts within each endpoint",
+    "effect_size": "paired rank-biserial correlation; positive favors OASTER"
+  },
+  "scope_warning": "The 49 SNR cells are a fixed experimental grid, not an iid population sample.",
+  "localization_metrics": "Only miss-penalized layer SD/DLE enter inference.",
+  "source_summaries": [
+    {
+      "path": "results\\corrected_v2\\strict_blind\\comparators_final\\summary_by_snr_pair_scenario_macro.csv",
+      "sha256": "d83d8735256940c6726cd723e153a6792cb1c2ba4a860a8b861577d453136238"
+    },
+    {
+      "path": "results\\corrected_v2\\strict_blind\\oaster_v20_final\\summary_by_snr_pair_scenario_macro.csv",
+      "sha256": "28bd913f6f8e5e7895bacb718070c729abf30448e455747d37110fe0fb1efd7f"
+    }
+  ],
+  "raw_case_validation": {
+    "performed": true,
+    "case_ids_aligned": true,
+    "expected_case_count": 9114,
+    "files": {
+      "results\\corrected_v2\\strict_blind\\comparators_final\\rows.csv": {
+        "sha256": "8ecb3a05ee1611ddf7c5f250e727422282d85b27adf8fe83317a11d2e537f822",
+        "row_count": 63798,
+        "methods": [
+          "Dipole fitting (grid)",
+          "LCMV",
+          "MNE",
+          "RAP-MUSIC",
+          "dSPM",
+          "eLORETA",
+          "sLORETA"
+        ],
+        "status_errors": 0
+      },
+      "results\\corrected_v2\\strict_blind\\oaster_v20_final\\rows.csv": {
+        "sha256": "6bea34b7ddaee06bf1ed5cb6a83fc37fe40f783cf07d0aa2f572638b03cf7401",
+        "row_count": 9114,
+        "methods": [
+          "OASTER_rebuilt"
+        ],
+        "status_errors": 0
+      }
+    },
+    "missing_raw_inputs": []
+  }
+}

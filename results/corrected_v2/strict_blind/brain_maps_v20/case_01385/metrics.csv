@@ -1,0 +1,9 @@
+﻿case_id,method,auc,auc_tie_corrected,rmse,surface_sd_mm,deep_sd_mm,surface_dle_mm,deep_dle_mm,has_deep_true,deep_score,deep_peak_distance_mm,deep_detected,deep_false_positive,active_count
+corrected-v2-strict-blind-01385-deep_only-eeg-05-meg-10,OASTER V20,1.0,1.0,0.2715780327026472,nan,0.0,nan,0.0,1,1.0,0.0,1,0,18
+corrected-v2-strict-blind-01385-deep_only-eeg-05-meg-10,dSPM,0.95,0.9962731265805936,1.9809913654681204,nan,24.661616245446275,nan,0.0,1,0.9085976119559387,0.0,1,0,7514
+corrected-v2-strict-blind-01385-deep_only-eeg-05-meg-10,eLORETA,0.45,0.811260481831492,1.9827372990285979,nan,24.34843958906195,nan,0.0,1,0.7107325429318063,0.0,1,0,7462
+corrected-v2-strict-blind-01385-deep_only-eeg-05-meg-10,sLORETA,0.8,0.9761746306402236,1.969160495280815,nan,24.044146051580604,nan,0.0,1,0.7333290617417215,0.0,1,0,3007
+corrected-v2-strict-blind-01385-deep_only-eeg-05-meg-10,MNE,0.26,0.7417809130839876,1.9843122596638227,nan,26.820133487475047,nan,41.23105692695092,1,0.24042715233615186,24.494897464856813,0,0,163
+corrected-v2-strict-blind-01385-deep_only-eeg-05-meg-10,LCMV,1.0,0.9998668973778784,1.92078434835889,nan,19.65361422060166,nan,0.0,1,1.0,0.0,1,0,876
+corrected-v2-strict-blind-01385-deep_only-eeg-05-meg-10,RAP-MUSIC,1.0,1.0,0.6749369636755399,nan,0.0,nan,0.0,1,1.0,0.0,1,0,3
+corrected-v2-strict-blind-01385-deep_only-eeg-05-meg-10,Dipole fitting (grid),1.0,1.0,0.6641232858191243,nan,0.0,nan,0.0,1,1.0,0.0,1,0,3

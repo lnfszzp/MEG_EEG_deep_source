@@ -1,6 +1,6 @@
 # corrected-v2：源空间修复与严格盲测说明
 
-> 状态（2026-09-07）：源空间、严格盲测清单和输入归档已经冻结并通过完整性检查；最终 OASTER 与对比方法结果仍在计算/复核。本文件不提前填写或推断最终性能。
+> 状态（2026-09-07）：源空间、严格盲测清单和输入归档已经冻结并通过完整性检查；OASTER V20 的 9,114 个病例与七种 Python 对比方法的 63,798 行结果均已完成且零错误。完整结论见[最终报告](../results/corrected_v2/strict_blind/FINAL_REPORT.md)。
 
 ## 1. 为什么必须建立 corrected-v2
 
@@ -160,7 +160,7 @@ $strictRoot = Join-Path $repo 'results\corrected_v2\strict_blind'
 
 python .\run_strict_oaster.py `
   --manifest $manifest --input-root $archive --data-root $dataRoot `
-  --output (Join-Path $strictRoot 'oaster_v19_final') --workers 4
+  --output (Join-Path $strictRoot 'oaster_v20_final') --workers 4
 
 python .\run_strict_comparators.py `
   --manifest $manifest --input-root $archive --data-root $dataRoot `
@@ -173,20 +173,20 @@ python .\run_strict_comparators.py `
 
 ```powershell
 python .\plot_strict_metrics.py `
-  --root $strictRoot --output (Join-Path $strictRoot 'figures')
+  --root $strictRoot --output (Join-Path $strictRoot 'figures_v20')
 
 python .\analyze_strict_statistics.py `
-  --root $strictRoot --output (Join-Path $strictRoot 'statistics')
+  --root $strictRoot --output (Join-Path $strictRoot 'statistics_v20')
 
 python .\plot_strict_brain_maps.py `
   --manifest $manifest --input-root $archive --data-root $dataRoot `
   --results-root $strictRoot --sisses-mode skip `
   --eeg-snr-db 0 --meg-snr-db 0 `
   --scenario deep_plus_two_surface --location 13 `
-  --output-root (Join-Path $strictRoot 'brain_maps')
+  --output-root (Join-Path $strictRoot 'brain_maps_v20')
 ```
 
-脑空间图中，真值 patch 用绿色轮廓标出，精确仿真中心用绿色星号标出；估计结果应与这些真值标记在同一 MRI 空间中比较。
+修正几何的脑空间图位于 `results\corrected_v2\strict_blind\brain_maps_v20`。图中真值 patch 用绿色轮廓标出，精确仿真中心用绿色星号标出；估计结果与这些真值标记处于同一 MRI 空间。不要改用旧的 `results\strict_blind\brain_maps_v2`，后者属于错误的 legacy 深部几何。
 
 ## 8. 指标口径
 
@@ -195,16 +195,20 @@ python .\plot_strict_brain_maps.py `
 - 深部检测：同时报告敏感度、纯表层特异度及其 balanced accuracy。
 - 统计比较：只对完整、可比的方法做配对 bootstrap、Wilcoxon + Holm 校正、Friedman 检验与排名；N/A 方法不参与。
 
-## 9. 最终结果（待严格盲测完成后填写）
+## 9. 最终结果
 
-> **待填，不得用开发集、smoke test 或 legacy 结果替代。**
+严格盲测已完成：OASTER V20 为 `9,114/9,114`、零错误；七种 Python 对比方法合计 `63,798/63,798` 行、零错误。所有结果对应同一 corrected-v2 manifest SHA、456 个不可变输入 chunk 和修正后的双侧丘脑几何。
 
-- [ ] OASTER 最终版本、代码 SHA 与 `completion.json`
-- [ ] 7 种 Python 对比方法的完整 `completion.json`
-- [ ] 每方法总病例数、错误数与缺失数
-- [ ] 四场景 × 49 SNR 组合的 AUC / An_auc / SD / DLE 汇总
-- [ ] 表层与深层分层结果、最差 SNR 单元和置信区间
-- [ ] 配对统计检验与多重比较校正
-- [ ] 带仿真真值标记的代表性脑空间图
-- [ ] 明确记录 SISSES 为 N/A，不参与 corrected-v2 数值结论
+以每个 EEG×MEG SNR 区组内四场景等权宏平均为主口径，OASTER V20 的结果为：
 
+| 指标 | 结果 |
+|---|---:|
+| An_auc（49 区组均值） | 0.967424 |
+| An_auc（49 区组最小值） | 0.951656 |
+| raw / 原始 AUC | 0.924775 |
+| RMSE 历史字段（实际为平方相对误差） | 0.677792 |
+| 深部 balanced accuracy | 0.896459 |
+
+OASTER 的 An_auc 在 49 个 SNR 区组中相对每一种对比方法均为 `49/49` 胜出；次优 dSPM 的均值为 0.936026，OASTER 的配对优势为 +0.031398。需要保留的限制是：细分到单独场景×SNR 后，复杂的 `deep_plus_two_surface` 最差单元为 0.880359，因此不能声称 196 个细分单元全部超过 0.90。
+
+SISSES 仍为 N/A，不参与排名或统计检验。各方法完整指标表、置信区间、显著性检验、结果图和带真值标记的脑空间图见[最终报告](../results/corrected_v2/strict_blind/FINAL_REPORT.md)。

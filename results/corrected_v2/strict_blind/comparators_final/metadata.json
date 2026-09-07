@@ -1,0 +1,73 @@
+{
+  "manifest": "D:\\博士\\工作＆汇报\\源定位\\新建文件夹\\results\\corrected_v2\\strict_blind\\manifest.json",
+  "manifest_sha256": "8147726ec34b548fba6f25fe6c05dd55933e4cf458c7c2cec94c31a9d7c5e60c",
+  "input_root": "D:\\oaster_corrected_v2_sisses\\matlab_input",
+  "geometry_reference": "D:\\博士\\工作＆汇报\\源定位\\新建文件夹\\corrected_v2\\generated\\deep_plus_two_surface\\sub_EEG.mat",
+  "methods": [
+    "MNE",
+    "dSPM",
+    "sLORETA",
+    "eLORETA",
+    "LCMV",
+    "Dipole fitting (grid)",
+    "RAP-MUSIC"
+  ],
+  "adapter": "benchmark.methods after joint_whiten",
+  "implementation_scope": "repository fixed-grid numerical implementations; not asserted to be value-identical to third-party package defaults",
+  "fixed_parameters": {
+    "minimum_norm_family": {
+      "lambda2": 0.1111111111111111,
+      "depth": 0.8,
+      "depth_limit": 10.0,
+      "eloreta_max_iter": 20,
+      "eloreta_tolerance": 1e-06
+    },
+    "lcmv": {
+      "reg": 0.05
+    },
+    "dipole_fit": {
+      "max_dipoles": 3,
+      "max_temporal_rank": 12
+    },
+    "rap_music": {
+      "max_sources": 3,
+      "max_temporal_rank": 12
+    }
+  },
+  "observations": "archived F_EEG/F_MEG; never regenerated",
+  "truth": "benchmark.protocol.truth_for_case; scoring only",
+  "checkpoint": "one atomic CSV per immutable input chunk and method",
+  "metrics": "raw/corrected AUC, RMSE, layer SD/DLE, deep balanced accuracy",
+  "chunk_count": 456,
+  "start_chunk": 0,
+  "limit_chunks": null,
+  "workers": 1,
+  "blas_threads": {
+    "OMP_NUM_THREADS": "1",
+    "MKL_NUM_THREADS": "1",
+    "OPENBLAS_NUM_THREADS": "1"
+  },
+  "cross_chunk_fingerprints_sha256": {
+    "Gain_EEG": "36108ed1e6ce24f2a30027e2cd11884527be086ace54bb930ffe2f9069021f51",
+    "Gain_MEG": "74bb0117947bee5431a74b78728724b852dd3f845021fad65b863901219026fe",
+    "VertConn": "f5d524269d56d9e466543fb5c2430af0bbddec5f3bf3743b843937eef4760955"
+  },
+  "provenance": {
+    "git_commit_at_merge": "dbae813ead8bd350fb357b45a2aedba8e3e25888",
+    "python": "3.13.15",
+    "packages": {
+      "numpy": "2.5.2",
+      "scipy": "1.18.1",
+      "h5py": "3.16.0",
+      "matplotlib": "3.11.1",
+      "mne": "1.12.1",
+      "nibabel": "5.4.2"
+    },
+    "code_sha256": {
+      "strict_runner": "d3e7986430461081cd5f24cd973f3c4e68d2a49e7221afd0aa2342df3b3e81b5",
+      "comparator_algorithms": "1625c67d91d20112d711a3d77de175ed0509c1acfa45c1561845f6761c307dcf",
+      "metrics": "d7d9f4194fecb2383d153094fe8e96b5eb3d82618f03e3e5c05840de32f5f41b"
+    },
+    "bitwise_cross_environment_reproducibility_claimed": false
+  }
+}

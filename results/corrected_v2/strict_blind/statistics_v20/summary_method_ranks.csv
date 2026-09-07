@@ -1,0 +1,81 @@
+﻿metric,metric_label,method,mean_rank_1_is_best
+auc_tie_corrected,An_auc,OASTER,1.0
+auc_tie_corrected,An_auc,dSPM,2.8979591836734695
+auc_tie_corrected,An_auc,eLORETA,2.673469387755102
+auc_tie_corrected,An_auc,sLORETA,4.142857142857143
+auc_tie_corrected,An_auc,MNE,4.326530612244898
+auc_tie_corrected,An_auc,LCMV,5.959183673469388
+auc_tie_corrected,An_auc,RAP-MUSIC,7.0
+auc_tie_corrected,An_auc,Dipole fitting (grid),8.0
+auc,Parcel AUC,OASTER,1.0
+auc,Parcel AUC,dSPM,2.6122448979591835
+auc,Parcel AUC,eLORETA,3.2244897959183674
+auc,Parcel AUC,sLORETA,3.3877551020408165
+auc,Parcel AUC,MNE,5.489795918367347
+auc,Parcel AUC,LCMV,5.408163265306122
+auc,Parcel AUC,RAP-MUSIC,6.938775510204081
+auc,Parcel AUC,Dipole fitting (grid),7.938775510204081
+rmse,Squared relative error (historical RMSE field),OASTER,1.0
+rmse,Squared relative error (historical RMSE field),dSPM,5.3061224489795915
+rmse,Squared relative error (historical RMSE field),eLORETA,4.714285714285714
+rmse,Squared relative error (historical RMSE field),sLORETA,6.918367346938775
+rmse,Squared relative error (historical RMSE field),MNE,6.673469387755102
+rmse,Squared relative error (historical RMSE field),LCMV,6.387755102040816
+rmse,Squared relative error (historical RMSE field),RAP-MUSIC,2.0
+rmse,Squared relative error (historical RMSE field),Dipole fitting (grid),3.0
+surface_sd_mm_penalized,Surface penalized SD (mm),OASTER,1.0816326530612246
+surface_sd_mm_penalized,Surface penalized SD (mm),dSPM,4.795918367346939
+surface_sd_mm_penalized,Surface penalized SD (mm),eLORETA,5.081632653061225
+surface_sd_mm_penalized,Surface penalized SD (mm),sLORETA,6.3061224489795915
+surface_sd_mm_penalized,Surface penalized SD (mm),MNE,6.346938775510204
+surface_sd_mm_penalized,Surface penalized SD (mm),LCMV,7.469387755102041
+surface_sd_mm_penalized,Surface penalized SD (mm),RAP-MUSIC,1.9591836734693877
+surface_sd_mm_penalized,Surface penalized SD (mm),Dipole fitting (grid),2.9591836734693877
+surface_dle_mm_penalized,Surface penalized DLE (mm),OASTER,1.8571428571428572
+surface_dle_mm_penalized,Surface penalized DLE (mm),dSPM,5.36734693877551
+surface_dle_mm_penalized,Surface penalized DLE (mm),eLORETA,3.5510204081632653
+surface_dle_mm_penalized,Surface penalized DLE (mm),sLORETA,5.857142857142857
+surface_dle_mm_penalized,Surface penalized DLE (mm),MNE,6.795918367346939
+surface_dle_mm_penalized,Surface penalized DLE (mm),LCMV,7.816326530612245
+surface_dle_mm_penalized,Surface penalized DLE (mm),RAP-MUSIC,1.653061224489796
+surface_dle_mm_penalized,Surface penalized DLE (mm),Dipole fitting (grid),3.1020408163265305
+deep_sd_mm_penalized,Deep penalized SD (mm),OASTER,1.0
+deep_sd_mm_penalized,Deep penalized SD (mm),dSPM,3.4489795918367347
+deep_sd_mm_penalized,Deep penalized SD (mm),eLORETA,5.040816326530612
+deep_sd_mm_penalized,Deep penalized SD (mm),sLORETA,4.081632653061225
+deep_sd_mm_penalized,Deep penalized SD (mm),MNE,5.428571428571429
+deep_sd_mm_penalized,Deep penalized SD (mm),LCMV,2.0
+deep_sd_mm_penalized,Deep penalized SD (mm),RAP-MUSIC,7.020408163265306
+deep_sd_mm_penalized,Deep penalized SD (mm),Dipole fitting (grid),7.979591836734694
+deep_dle_mm_penalized,Deep penalized DLE (mm),OASTER,1.4285714285714286
+deep_dle_mm_penalized,Deep penalized DLE (mm),dSPM,4.6938775510204085
+deep_dle_mm_penalized,Deep penalized DLE (mm),eLORETA,3.5306122448979593
+deep_dle_mm_penalized,Deep penalized DLE (mm),sLORETA,3.836734693877551
+deep_dle_mm_penalized,Deep penalized DLE (mm),MNE,5.938775510204081
+deep_dle_mm_penalized,Deep penalized DLE (mm),LCMV,1.5714285714285714
+deep_dle_mm_penalized,Deep penalized DLE (mm),RAP-MUSIC,7.020408163265306
+deep_dle_mm_penalized,Deep penalized DLE (mm),Dipole fitting (grid),7.979591836734694
+deep_sensitivity,Deep sensitivity,OASTER,1.7346938775510203
+deep_sensitivity,Deep sensitivity,dSPM,5.540816326530612
+deep_sensitivity,Deep sensitivity,eLORETA,3.877551020408163
+deep_sensitivity,Deep sensitivity,sLORETA,3.9591836734693877
+deep_sensitivity,Deep sensitivity,MNE,7.755102040816326
+deep_sensitivity,Deep sensitivity,LCMV,2.5408163265306123
+deep_sensitivity,Deep sensitivity,RAP-MUSIC,4.020408163265306
+deep_sensitivity,Deep sensitivity,Dipole fitting (grid),6.571428571428571
+deep_specificity,Deep specificity,OASTER,2.7755102040816326
+deep_specificity,Deep specificity,dSPM,6.581632653061225
+deep_specificity,Deep specificity,eLORETA,6.091836734693878
+deep_specificity,Deep specificity,sLORETA,7.540816326530612
+deep_specificity,Deep specificity,MNE,4.76530612244898
+deep_specificity,Deep specificity,LCMV,4.408163265306122
+deep_specificity,Deep specificity,RAP-MUSIC,1.7857142857142858
+deep_specificity,Deep specificity,Dipole fitting (grid),2.0510204081632653
+deep_balanced_accuracy,Deep balanced accuracy,OASTER,1.030612244897959
+deep_balanced_accuracy,Deep balanced accuracy,dSPM,6.938775510204081
+deep_balanced_accuracy,Deep balanced accuracy,eLORETA,5.63265306122449
+deep_balanced_accuracy,Deep balanced accuracy,sLORETA,7.081632653061225
+deep_balanced_accuracy,Deep balanced accuracy,MNE,6.346938775510204
+deep_balanced_accuracy,Deep balanced accuracy,LCMV,3.183673469387755
+deep_balanced_accuracy,Deep balanced accuracy,RAP-MUSIC,2.3469387755102042
+deep_balanced_accuracy,Deep balanced accuracy,Dipole fitting (grid),3.438775510204082
