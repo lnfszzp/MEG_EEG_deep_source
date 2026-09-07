@@ -51,6 +51,7 @@ def verify_archive(
     input_dir: str | Path,
     *,
     expected_sha256: str = EXPECTED_SHA256,
+    expected_format: str = FORMAT_VERSION,
     chunk_size: int = 20,
     sample_cases: tuple[int, ...] | list[int] = (),
     data_root: str | Path | None = None,
@@ -59,8 +60,8 @@ def verify_archive(
 ) -> dict:
     """Validate chunk identity; optionally confirm truth/groups and archived SNR."""
     manifest_path, input_dir = Path(manifest_path), Path(input_dir)
-    if chunk_size < 1:
-        raise ValueError("chunk_size must be positive")
+    if chunk_size < 1 or not expected_format:
+        raise ValueError("chunk_size and expected_format must be non-empty/positive")
     digest = _sha256(manifest_path)
     if digest.lower() != expected_sha256.lower():
         raise ValueError(f"manifest SHA-256 mismatch: {digest}")
@@ -95,7 +96,7 @@ def verify_archive(
             raise ValueError(f"case_ids disagree with manifest: {path.name}")
         if str(metadata["manifest_sha256"]) != digest:
             raise ValueError(f"embedded manifest SHA-256 mismatch: {path.name}")
-        if str(metadata.get("format_version", "")) != FORMAT_VERSION:
+        if str(metadata.get("format_version", "")) != expected_format:
             raise ValueError(f"unexpected format_version: {path.name}")
         archived_ids += len(ids)
         locations.update({number: (path, number - start) for number in range(start, end)})
@@ -179,7 +180,7 @@ def verify_archive(
         "cases": len(manifest),
         "chunks": len(expected_files),
         "archived_case_ids": archived_ids,
-        "format_version": FORMAT_VERSION,
+        "format_version": expected_format,
         "sampled_cases": sorted(samples, key=lambda item: item["case_number"]),
         "output_tree_scanned": False,
     }
@@ -190,6 +191,7 @@ def main() -> None:
     parser.add_argument("--manifest", type=Path, default=Path(__file__).parent / "results" / "strict_blind" / "manifest.json")
     parser.add_argument("--input-dir", type=Path, required=True, help="Archive matlab_input directory")
     parser.add_argument("--expected-sha256", default=EXPECTED_SHA256)
+    parser.add_argument("--expected-format", default=FORMAT_VERSION)
     parser.add_argument("--chunk-size", type=int, default=20)
     parser.add_argument("--sample-cases", nargs="+", type=int, metavar="CASE_NUMBER")
     parser.add_argument("--data-root", type=Path)
@@ -200,6 +202,7 @@ def main() -> None:
             args.manifest,
             args.input_dir,
             expected_sha256=args.expected_sha256,
+            expected_format=args.expected_format,
             chunk_size=args.chunk_size,
             sample_cases=args.sample_cases or (),
             data_root=args.data_root,

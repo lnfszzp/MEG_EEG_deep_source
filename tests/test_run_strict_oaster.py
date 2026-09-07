@@ -203,3 +203,32 @@ def test_gain_is_checked_across_chunks(tmp_path, monkeypatch) -> None:
             start_chunk=1,
             limit_chunks=1,
         )
+
+
+def test_explicit_manifest_uses_its_sidecar_but_default_remains_frozen(
+    tmp_path, monkeypatch
+) -> None:
+    _cases, manifest, digest, _data_root, _input_root = _fixture(
+        tmp_path, [(0, 2)]
+    )
+    cases, actual = runner._load_manifest(manifest)
+    assert len(cases) == 2 and actual == digest
+
+    monkeypatch.setattr(runner, "DEFAULT_MANIFEST", manifest)
+    with pytest.raises(RuntimeError, match="strict manifest SHA-256 mismatch"):
+        runner._load_manifest(manifest)
+
+
+def test_explicit_manifest_requires_isolated_paths(tmp_path) -> None:
+    manifest = tmp_path / "corrected.json"
+    safe = tmp_path / "isolated"
+    checks = (
+        (safe, safe, runner.DEFAULT_OUTPUT),
+        (runner.DEFAULT_INPUT_ROOT, safe, safe),
+        (safe, runner.protocol.DEFAULT_DATA_ROOT, safe),
+    )
+    for input_root, data_root, output in checks:
+        with pytest.raises(ValueError, match="requires isolated explicit paths"):
+            runner._guard_explicit_manifest_paths(
+                manifest, input_root, data_root, output
+            )

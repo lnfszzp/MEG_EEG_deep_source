@@ -47,6 +47,7 @@ DEFAULT_INPUT_ROOT = Path(
 )
 DEFAULT_MANIFEST = ROOT / "results" / "strict_blind" / "manifest.json"
 DEFAULT_OUTPUT = ROOT / "results" / "strict_blind" / "oaster_rebuilt"
+LEGACY_RESULTS_ROOT = ROOT / "results" / "strict_blind"
 EXPECTED_MANIFEST_SHA256 = (
     "3eda43e22ce70a17b4659658742aade66053ff7943140638868281e166a0bd76"
 )
@@ -140,24 +141,52 @@ def _string_list(value: object) -> list[str]:
 
 
 def _load_manifest(path: Path) -> tuple[list[dict], str]:
+    path = Path(path)
     payload = path.read_bytes()
     digest = hashlib.sha256(payload).hexdigest()
-    if digest != EXPECTED_MANIFEST_SHA256:
+    is_legacy_default = path.resolve() == DEFAULT_MANIFEST.resolve()
+    if is_legacy_default and digest != EXPECTED_MANIFEST_SHA256:
         raise RuntimeError(
             f"strict manifest SHA-256 mismatch: expected "
             f"{EXPECTED_MANIFEST_SHA256}, got {digest}"
         )
     sidecar = path.with_suffix(path.suffix + ".sha256")
-    if not sidecar.exists() or sidecar.read_text(encoding="ascii").split()[0] != digest:
+    sidecar_fields = (
+        sidecar.read_text(encoding="ascii").split() if sidecar.exists() else []
+    )
+    if sidecar_fields[:2] != [digest, path.name]:
         raise RuntimeError(f"manifest sidecar checksum mismatch: {sidecar}")
     cases = json.loads(payload)
-    if not isinstance(cases, list) or len(cases) != EXPECTED_CASES:
+    if not isinstance(cases, list) or not cases:
+        raise RuntimeError("strict manifest must contain a non-empty case list")
+    if is_legacy_default and len(cases) != EXPECTED_CASES:
         raise RuntimeError(f"strict manifest must contain {EXPECTED_CASES} cases")
     numbers = [int(case["case_number"]) for case in cases]
     ids = [str(case["case_id"]) for case in cases]
     if numbers != list(range(len(cases))) or len(set(ids)) != len(ids):
         raise RuntimeError("manifest case_number order or case_id uniqueness is invalid")
     return cases, digest
+
+
+def _guard_explicit_manifest_paths(
+    manifest_path: Path, input_root: Path, data_root: Path, output: Path
+) -> None:
+    if Path(manifest_path).resolve() == DEFAULT_MANIFEST.resolve():
+        return
+    resolved_output = Path(output).resolve()
+    legacy_results = LEGACY_RESULTS_ROOT.resolve()
+    unsafe = []
+    if resolved_output == legacy_results or legacy_results in resolved_output.parents:
+        unsafe.append("legacy output tree")
+    if Path(input_root).resolve() == DEFAULT_INPUT_ROOT.resolve():
+        unsafe.append("legacy input archive")
+    if Path(data_root).resolve() == protocol.DEFAULT_DATA_ROOT.resolve():
+        unsafe.append("default legacy data root")
+    if unsafe:
+        raise ValueError(
+            "an explicit non-default manifest requires isolated explicit paths; "
+            + ", ".join(unsafe)
+        )
 
 
 def _discover_chunks(input_root: Path, case_count: int) -> list[Chunk]:
@@ -758,6 +787,7 @@ def run(
     force: bool = False,
 ) -> None:
     """Evaluate selected immutable chunks and merge only a complete run."""
+    _guard_explicit_manifest_paths(manifest_path, input_root, data_root, output)
     cases, manifest_sha256 = _load_manifest(Path(manifest_path))
     chunks = _discover_chunks(Path(input_root), len(cases))
     if workers < 1 or start_chunk < 0 or start_chunk >= len(chunks):

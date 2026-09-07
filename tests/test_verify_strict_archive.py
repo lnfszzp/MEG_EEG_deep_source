@@ -8,11 +8,12 @@ import numpy as np
 import scipy.io as sio
 
 from benchmark import protocol
-from verify_strict_archive import FORMAT_VERSION, verify_archive
+from verify_strict_archive import verify_archive
 
 
 class VerifyStrictArchiveTest(unittest.TestCase):
     def test_tiny_archive_including_truth_and_observed_snr(self):
+        expected_format = "strict-test-format-v3"
         shared = {
             "times": np.linspace(0.0, 0.219, 220),
             "active_start": protocol.ACTIVE_START,
@@ -64,7 +65,7 @@ class VerifyStrictArchiveTest(unittest.TestCase):
                         "Gain_MEG": shared["gain_meg"],
                         "case_ids": np.asarray([case["case_id"]], dtype=object)[:, None],
                         "manifest_sha256": digest,
-                        "format_version": FORMAT_VERSION,
+                        "format_version": expected_format,
                     },
                 )
 
@@ -72,6 +73,7 @@ class VerifyStrictArchiveTest(unittest.TestCase):
                 manifest_path,
                 input_dir,
                 expected_sha256=digest,
+                expected_format=expected_format,
                 chunk_size=1,
                 sample_cases=(0, 1),
                 shared=shared,
@@ -80,6 +82,7 @@ class VerifyStrictArchiveTest(unittest.TestCase):
         self.assertEqual(report["status"], "ok")
         self.assertEqual((report["chunks"], report["cases"], report["archived_case_ids"]), (2, 2, 2))
         self.assertFalse(report["output_tree_scanned"])
+        self.assertEqual(report["format_version"], expected_format)
         np.testing.assert_allclose(
             [row["eeg_snr_db"] for row in report["sampled_cases"]], [-10.0, 20.0], atol=1e-12
         )
