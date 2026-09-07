@@ -183,10 +183,10 @@ python .\plot_strict_brain_maps.py `
   --results-root $strictRoot --sisses-mode skip `
   --eeg-snr-db 0 --meg-snr-db 0 `
   --scenario deep_plus_two_surface --location 13 `
-  --output-root (Join-Path $strictRoot 'brain_maps_v20')
+  --output-root (Join-Path $strictRoot 'brain_maps_v20') --surface-maps
 ```
 
-修正几何的脑空间图位于 `results\corrected_v2\strict_blind\brain_maps_v20`。图中真值 patch 用绿色轮廓标出，精确仿真中心用绿色星号标出；估计结果与这些真值标记处于同一 MRI 空间。不要改用旧的 `results\strict_blind\brain_maps_v2`，后者属于错误的 legacy 深部几何。
+修正几何的脑空间图位于 `results\corrected_v2\strict_blind\brain_maps_v20`。默认生成 MRI 切片；`--surface-maps` 同时生成 MNE/PyVista 膨胀皮层的左右半球外侧/内侧四视图。MRI 图中真值 patch 用绿色轮廓、中心用绿色星号表示；皮层图中则用绿色轮廓和绿色球表示。丘脑真值不投影到皮层，纯深层或混合源的深部定位必须查看 MRI 图。不要改用旧的 `results\strict_blind\brain_maps_v2`，后者属于错误的 legacy 深部几何。
 
 ## 8. 指标口径
 

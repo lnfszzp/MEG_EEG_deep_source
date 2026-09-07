@@ -111,20 +111,22 @@ An_auc 的八方法 Friedman 检验为 `χ²(7) = 318.007`，跨指标 Holm 校�
 
 ## 7. 修正几何的脑空间图与仿真真值
 
-脑空间图位于 [`brain_maps_v20`](brain_maps_v20)，只使用 corrected-v2 的 `7,498` 个皮层点与经 `aseg` 标签 10/49 验证的 16 个双侧丘脑点。每个 montage 同时展示 OASTER V20 与七种 Python 对比方法：
+脑空间图位于 [`brain_maps_v20`](brain_maps_v20)，只使用 corrected-v2 的 `7,498` 个皮层点与经 `aseg` 标签 10/49 验证的 16 个双侧丘脑点。本节每个代表病例同时提供 MRI 切片 montage 和与示例代码一致的 MNE/PyVista 膨胀皮层 montage（左右半球的外侧与内侧视图），并展示 OASTER V20 与七种 Python 对比方法：
 
 - 绿色轮廓：仿真源 patch 的真实范围；
-- 绿色星号：每个仿真源的精确中心；
+- 绿色星号（MRI）或绿色球（皮层）：每个仿真源的精确中心；
 - 彩色估计：各方法的定位结果，按方法自身峰值归一化并以 0.1 阈值显示。
+
+皮层图只显示真实皮层量，并使用白底、`classic` 沟回底色、`inferno` 激活色和 10 步平滑。丘脑属于体源，不能诚实地画到 pial/inflated 皮层上；因此纯深层病例的皮层图只表示各方法的皮层泄漏，不画绿色深部真值，深部定位必须查看配套 MRI 图。
 
 四种协议场景的代表图：
 
-| 场景 | EEG/MEG SNR | 病例 | 全方法 MRI montage |
-|---|---:|---:|---|
-| `surface_only` | -10 / -5 dB | 186 | [case_00186](brain_maps_v20/case_00186/all_methods_brain_mri.png) |
-| `deep_only` | -5 / -10 dB | 1385 | [case_01385](brain_maps_v20/case_01385/all_methods_brain_mri.png) |
-| `deep_plus_surface` | 0 / 5 dB | 3264 | [case_03264](brain_maps_v20/case_03264/all_methods_brain_mri.png) |
-| `deep_plus_two_surface` | 10 / 20 dB | 6489 | [case_06489](brain_maps_v20/case_06489/all_methods_brain_mri.png) |
+| 场景 | EEG/MEG SNR | 病例 | MRI montage | 膨胀皮层 montage |
+|---|---:|---:|---|---|
+| `surface_only` | -10 / -5 dB | 186 | [MRI](brain_maps_v20/case_00186/all_methods_brain_mri.png) | [surface](brain_maps_v20/case_00186/all_methods_brain_surface.png) |
+| `deep_only` | -5 / -10 dB | 1385 | [MRI](brain_maps_v20/case_01385/all_methods_brain_mri.png) | [surface leakage](brain_maps_v20/case_01385/all_methods_brain_surface.png) |
+| `deep_plus_surface` | 0 / 5 dB | 3264 | [MRI](brain_maps_v20/case_03264/all_methods_brain_mri.png) | [surface](brain_maps_v20/case_03264/all_methods_brain_surface.png) |
+| `deep_plus_two_surface` | 10 / 20 dB | 6489 | [MRI](brain_maps_v20/case_06489/all_methods_brain_mri.png) | [surface](brain_maps_v20/case_06489/all_methods_brain_surface.png) |
 
 ![纯表层源定位对比与真值](brain_maps_v20/case_00186/all_methods_brain_mri.png)
 
@@ -133,6 +135,10 @@ An_auc 的八方法 Friedman 检验为 `χ²(7) = 318.007`，跨指标 Holm 校�
 ![深层加单表层源定位对比与真值](brain_maps_v20/case_03264/all_methods_brain_mri.png)
 
 ![深层加双表层源定位对比与真值](brain_maps_v20/case_06489/all_methods_brain_mri.png)
+
+![纯表层 MNE 膨胀皮层对比与真值](brain_maps_v20/case_00186/all_methods_brain_surface.png)
+
+![深层加双表层 MNE 膨胀皮层对比与真值](brain_maps_v20/case_06489/all_methods_brain_surface.png)
 
 这些路径不得替换为 `results/strict_blind/brain_maps_v2`；旧目录使用的是错误的 legacy 深部几何。
 

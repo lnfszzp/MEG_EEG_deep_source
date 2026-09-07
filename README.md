@@ -25,7 +25,7 @@
 - `visualization/`、`plot_results.py`：皮层、MRI、波形和指标图。
 - `plot_strict_metrics.py`：九方法十指标的分布、森林图、鲁棒性曲线和 7×7 SNR 热图。
 - `analyze_strict_statistics.py`：49 个 SNR 配对区组的描述统计、bootstrap、Friedman/Wilcoxon、Holm 校正与效应量。
-- `plot_strict_brain_maps.py`：在同一 MNE sample T1 空间绘制九方法的逐方法和总览源定位图。
+- `plot_strict_brain_maps.py`：在同一 MNE sample 空间绘制各方法的 MRI 切片图；加 `--surface-maps` 可同时生成 MNE/PyVista 膨胀皮层外侧/内侧四视图。
 - `FINAL_RESULTS.md`：恢复证据、开发实验、严格矩阵、复现命令和解释边界的总报告。
 - `VISUAL_STATISTICAL_REPORT.md`：新增指标图、统计结论、比较表和脑空间投影的集中索引。
 - `SOURCE_SPACE_AUDIT.md`：四类场景、完整 SNR 矩阵、表层覆盖及非皮层坐标问题的审计。
@@ -76,7 +76,10 @@ python plot_strict_metrics.py
 python analyze_strict_statistics.py
 python plot_strict_brain_maps.py --case-number 3124
 python plot_strict_brain_maps.py --case-number 92
+python plot_strict_brain_maps.py --manifest results\corrected_v2\strict_blind\manifest.json --input-root 'D:\oaster_corrected_v2_sisses\matlab_input' --data-root corrected_v2\generated --results-root results\corrected_v2\strict_blind --sisses-mode skip --case-number 6489 --output-root results\corrected_v2\strict_blind\brain_maps_v20 --surface-maps
 ```
+
+表层图使用白底、`classic` 沟回底色、`inferno` 激活色和 10 步平滑；绿色轮廓与球分别表示仿真表层 patch 和中心。深部源不会被错误投影到皮层，必须结合命令同时生成的 MRI 切片图查看。表层批量渲染还需要 `pyvistaqt` 与 `PyQt6`（已列入 `requirements.txt`）。
 
 结果索引见 `VISUAL_STATISTICAL_REPORT.md`；完整方法比较工作簿位于 `outputs/01a0747c-f942-7dc2-b982-f01e067136c6/strict_benchmark_method_comparison.xlsx`。
 

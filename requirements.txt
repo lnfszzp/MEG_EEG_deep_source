@@ -5,4 +5,6 @@ matplotlib>=3.9
 mne>=1.10
 nibabel>=5.3
 pyvista>=0.44
+pyvistaqt>=0.11
+PyQt6>=6.7
 pytest>=8

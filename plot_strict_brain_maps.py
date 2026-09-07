@@ -283,6 +283,83 @@ def load_anatomy(sample_path: Path) -> dict:
     }
 
 
+def _validate_surface_source_space(geometry: dict, src, subjects_dir: Path) -> dict:
+    """Match corrected source indices to the two FreeSurfer hemispheres."""
+    if geometry.get("deep_aseg_labels") is None:
+        raise ValueError("surface maps require corrected geometry with anatomical deep labels")
+    if len(src) != 2:
+        raise ValueError("surface forward must contain exactly left and right hemispheres")
+    vertices = tuple(np.asarray(part["vertno"], dtype=int).ravel() for part in src)
+    n_surf = int(geometry["n_surf"])
+    if sum(map(len, vertices)) != n_surf:
+        raise ValueError("surface forward source count disagrees with corrected geometry")
+    forward_positions = np.vstack(
+        [np.asarray(part["rr"], dtype=float)[vertno] for part, vertno in zip(src, vertices)]
+    )
+    geometry_positions = np.asarray(geometry["vertices"], dtype=float)[:n_surf]
+    if geometry_positions.shape != forward_positions.shape or not np.allclose(
+        geometry_positions, forward_positions, rtol=0.0, atol=1e-12
+    ):
+        raise ValueError("corrected geometry source order disagrees with the surface forward")
+    subjects = {str(part.get("subject_his_id", "")) for part in src}
+    if len(subjects) != 1 or not next(iter(subjects)):
+        raise ValueError("surface forward does not identify one FreeSurfer subject")
+    subject = subjects.pop()
+    for hemi in ("lh", "rh"):
+        if not (Path(subjects_dir) / subject / "surf" / f"{hemi}.pial").is_file():
+            raise FileNotFoundError(f"missing {hemi}.pial for subject {subject}")
+    return {
+        "subject": subject,
+        "subjects_dir": Path(subjects_dir),
+        "vertices": vertices,
+    }
+
+
+def load_surface_source_space(sample_path: Path, geometry: dict) -> dict:
+    sample_path = Path(sample_path)
+    forward_path = sample_path / "MEG" / "sample" / "sample_audvis-meg-eeg-oct-6-fwd.fif"
+    if not forward_path.is_file():
+        raise FileNotFoundError(f"MNE sample surface forward missing: {forward_path}")
+    forward = mne.read_forward_solution(forward_path, verbose="ERROR")
+    return _validate_surface_source_space(geometry, forward["src"], sample_path / "subjects")
+
+
+def _surface_truth_overlays(loaded: dict, surface: dict) -> list[dict]:
+    """Return cortical truth only; deep indices are deliberately discarded."""
+    n_surf = int(loaded["geometry"]["n_surf"])
+    left_count = len(surface["vertices"][0])
+
+    def mapped(index: int) -> tuple[str, int]:
+        if not 0 <= index < n_surf:
+            raise ValueError(f"surface truth index outside [0,{n_surf}): {index}")
+        hemi = 0 if index < left_count else 1
+        local = index if hemi == 0 else index - left_count
+        return ("lh", "rh")[hemi], int(surface["vertices"][hemi][local])
+
+    overlays = []
+    for number, center in enumerate(loaded["case"].get("surface_centers", []), start=1):
+        center = int(center)
+        indices = np.array([center], dtype=int)
+        for group in loaded["groups"]:
+            candidate = np.asarray(group, dtype=int).ravel()
+            if np.any(candidate == center):
+                indices = np.unique(candidate[(candidate >= 0) & (candidate < n_surf)])
+                break
+        center_hemi, center_vertex = mapped(center)
+        mapped_patch = [mapped(int(index)) for index in indices]
+        if any(hemi != center_hemi for hemi, _vertex in mapped_patch):
+            raise ValueError("one simulated surface patch crosses hemispheres")
+        overlays.append(
+            {
+                "name": f"simulated_surface_{number}",
+                "hemi": center_hemi,
+                "patch_vertices": np.asarray([vertex for _hemi, vertex in mapped_patch], dtype=int),
+                "center_vertex": center_vertex,
+            }
+        )
+    return overlays
+
+
 def _focuses(loaded: dict) -> list[tuple[str, int]]:
     case = loaded["case"]
     focuses = [
@@ -513,6 +590,78 @@ def render_method(
     return output
 
 
+def render_surface_method(
+    method: str,
+    estimate: np.ndarray,
+    loaded: dict,
+    surface: dict,
+    output: Path,
+) -> Path:
+    """Render cortical estimates and cortical truth on an inflated surface."""
+    active = np.arange(strict_plot.strict.protocol.ACTIVE_START, estimate.shape[1])
+    amplitude = benchmark_metrics.source_amplitude(estimate, active)
+    n_surf = int(loaded["geometry"]["n_surf"])
+    cortical = amplitude[:n_surf]
+    peak = float(cortical.max(initial=0.0))
+    relative = cortical / peak if peak > 0 else np.zeros_like(cortical)
+    stc = mne.SourceEstimate(
+        relative[:, np.newaxis],
+        vertices=list(surface["vertices"]),
+        tmin=0.0,
+        tstep=1.0,
+        subject=surface["subject"],
+    )
+    brain = None
+    try:
+        brain = stc.plot(
+            surface="inflated",
+            hemi="split",
+            colormap="inferno",
+            time_label=None,
+            smoothing_steps=10,
+            transparent=True,
+            subjects_dir=surface["subjects_dir"],
+            size=(1200, 800),
+            clim={
+                "kind": "value",
+                "lims": [0.10, 0.55, 1.0],
+            },
+            background="white",
+            foreground="black",
+            cortex="classic",
+            initial_time=0.0,
+            time_viewer=False,
+            show_traces=False,
+            views=("lateral", "medial"),
+            view_layout="horizontal",
+            backend="pyvistaqt",
+            brain_kwargs={"show": False, "theme": "light"},
+        )
+        overlays = _surface_truth_overlays(loaded, surface)
+        for overlay in overlays:
+            label = mne.Label(
+                overlay["patch_vertices"],
+                hemi=overlay["hemi"],
+                name=overlay["name"],
+                subject=surface["subject"],
+            )
+            brain.add_label(label, color=TRUTH_COLOR, alpha=0.9, borders=True)
+            brain.add_foci(
+                [overlay["center_vertex"]],
+                coords_as_verts=True,
+                hemi=overlay["hemi"],
+                scale_factor=0.7,
+                color=TRUTH_COLOR,
+                name=f"{overlay['name']}_center",
+            )
+        output.parent.mkdir(parents=True, exist_ok=True)
+        brain.save_image(str(output))
+    finally:
+        if brain is not None:
+            brain.close()
+    return output
+
+
 def render_montage(paths: list[tuple[str, Path]], output: Path, dpi: int) -> Path:
     columns = min(3, len(paths))
     rows = math.ceil(len(paths) / columns)
@@ -576,6 +725,7 @@ def plot_brain_maps(
     sisses_mode: str = "auto",
     relative_threshold: float = 0.10,
     dpi: int = 160,
+    surface_maps: bool = False,
 ) -> Path:
     if (
         case_id is None
@@ -609,10 +759,16 @@ def plot_brain_maps(
     )
     rows = evaluate_all(loaded, estimates)
     anatomy = load_anatomy(Path(sample_path))
+    surface = (
+        load_surface_source_space(Path(sample_path), loaded["geometry"])
+        if surface_maps
+        else None
+    )
     case = loaded["case"]
     case_dir = output_root / f"case_{int(case['case_number']):05d}"
     case_dir.mkdir(parents=True, exist_ok=True)
     rendered = []
+    rendered_surface = []
     by_method = {row["method"]: row for row in rows}
     for method in estimates:
         path = render_method(
@@ -626,7 +782,22 @@ def plot_brain_maps(
             dpi,
         )
         rendered.append((method, path))
+        if surface is not None:
+            surface_path = render_surface_method(
+                method,
+                estimates[method],
+                loaded,
+                surface,
+                case_dir / f"{METHOD_SLUGS[method]}_surface.png",
+            )
+            rendered_surface.append((method, surface_path))
     render_montage(rendered, case_dir / "all_methods_brain_mri.png", dpi)
+    if rendered_surface:
+        render_montage(
+            rendered_surface,
+            case_dir / "all_methods_brain_surface.png",
+            dpi,
+        )
     _write_metrics(case_dir / "metrics.csv", rows)
     (case_dir / "metadata.json").write_text(
         json.dumps(
@@ -637,6 +808,23 @@ def plot_brain_maps(
                 "normalization": "per-method active-minus-baseline RMS, normalized to global peak",
                 "display_threshold": relative_threshold,
                 "truth_overlay": "green parcel rings and green star at each simulated source center",
+                "surface_maps": surface_maps,
+                "surface_truth_overlay": (
+                    "green cortical patch outline and center sphere; deep sources are never projected"
+                    if surface_maps
+                    else "not requested"
+                ),
+                "surface_normalization": (
+                    "per-method cortical RMS amplitude divided by its cortical peak"
+                    if surface_maps
+                    else "not requested"
+                ),
+                "surface_rendering": (
+                    "inflated cortex; split hemispheres; lateral and medial views; "
+                    "classic cortex; inferno colormap; 10 smoothing steps"
+                    if surface_maps
+                    else "not requested"
+                ),
                 "anatomy": anatomy["sample_path"],
                 "observations": "immutable archived F_EEG/F_MEG; never regenerated",
                 "sisses_archive_access": "read-only; output root is explicitly rejected inside archive",
@@ -677,6 +865,11 @@ def main() -> None:
     parser.add_argument("--sisses-mode", choices=("auto", "require", "skip"), default="auto")
     parser.add_argument("--relative-threshold", type=float, default=0.10)
     parser.add_argument("--dpi", type=int, default=160)
+    parser.add_argument(
+        "--surface-maps",
+        action="store_true",
+        help="also render split-hemisphere inflated maps (requires the PyVistaQt backend)",
+    )
     args = parser.parse_args()
     output = plot_brain_maps(
         args.manifest,
@@ -695,6 +888,7 @@ def main() -> None:
         sisses_mode=args.sisses_mode,
         relative_threshold=args.relative_threshold,
         dpi=args.dpi,
+        surface_maps=args.surface_maps,
     )
     print(f"Saved brain maps: {output}")
 

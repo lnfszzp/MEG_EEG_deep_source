@@ -5,6 +5,7 @@ from pathlib import Path
 from types import SimpleNamespace
 
 import numpy as np
+import pytest
 import scipy.io as sio
 
 import plot_strict_brain_maps as brain_maps
@@ -210,3 +211,122 @@ def test_truth_rings_are_limited_to_the_current_source() -> None:
 
     assert brain_maps._truth_voxels(loaded, anatomy, 0).shape == (2, 3)
     assert brain_maps._truth_voxels(loaded, anatomy, 2).shape == (1, 3)
+
+
+def test_surface_forward_mapping_and_deep_truth_filter(tmp_path: Path) -> None:
+    subjects_dir = tmp_path / "subjects"
+    for hemi in ("lh", "rh"):
+        path = subjects_dir / "sample" / "surf" / f"{hemi}.pial"
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.touch()
+    left_rr = np.array([[0.0, 0.0, 0.0], [1.0, 0.0, 0.0], [2.0, 0.0, 0.0]])
+    right_rr = np.array([[0.0, 1.0, 0.0], [1.0, 1.0, 0.0], [2.0, 1.0, 0.0]])
+    src = [
+        {"vertno": np.array([1, 2]), "rr": left_rr, "subject_his_id": "sample"},
+        {"vertno": np.array([0, 2]), "rr": right_rr, "subject_his_id": "sample"},
+    ]
+    geometry = {
+        "n_surf": 4,
+        "vertices": np.vstack([left_rr[[1, 2]], right_rr[[0, 2]], [[0.0, 0.0, 1.0]]]),
+        "deep_aseg_labels": np.array([10]),
+    }
+
+    surface = brain_maps._validate_surface_source_space(geometry, src, subjects_dir)
+    overlays = brain_maps._surface_truth_overlays(
+        {
+            "case": {"surface_centers": [1, 2], "deep_index": 4},
+            "groups": [np.array([0, 1, 4]), np.array([2, 3]), np.array([4])],
+            "geometry": geometry,
+        },
+        surface,
+    )
+
+    assert [part.tolist() for part in surface["vertices"]] == [[1, 2], [0, 2]]
+    assert [(item["hemi"], item["center_vertex"]) for item in overlays] == [
+        ("lh", 2),
+        ("rh", 0),
+    ]
+    assert [item["patch_vertices"].tolist() for item in overlays] == [[1, 2], [0, 2]]
+    bad_geometry = {**geometry, "vertices": geometry["vertices"].copy()}
+    bad_geometry["vertices"][0, 0] += 1e-6
+    with pytest.raises(ValueError, match="source order"):
+        brain_maps._validate_surface_source_space(bad_geometry, src, subjects_dir)
+
+
+def test_surface_render_uses_mne_brain_without_projecting_deep_truth(
+    tmp_path: Path, monkeypatch
+) -> None:
+    calls = {"labels": [], "foci": []}
+
+    class Brain:
+        closed = False
+
+        def add_label(self, label, **kwargs):
+            calls["labels"].append((label, kwargs))
+
+        def add_foci(self, coords, **kwargs):
+            calls["foci"].append((list(coords), kwargs))
+
+        def save_image(self, filename):
+            Path(filename).write_bytes(b"surface")
+
+        def close(self):
+            self.closed = True
+
+    fake_brain = Brain()
+
+    def fake_plot(stc, **kwargs):
+        calls["stc"] = stc
+        calls["plot"] = kwargs
+        return fake_brain
+
+    monkeypatch.setattr(brain_maps.mne.SourceEstimate, "plot", fake_plot)
+    estimate = np.zeros((5, 220))
+    estimate[1, 200:] = 1.0
+    estimate[4, 200:] = 2.0
+    loaded = {
+        "case": {
+            "scenario": "deep_plus_surface",
+            "surface_centers": [1],
+            "deep_index": 4,
+            "eeg_snr_db": 0,
+            "meg_snr_db": 5,
+        },
+        "groups": [np.array([0, 1, 4]), np.array([4])],
+        "geometry": {"n_surf": 4},
+    }
+    surface = {
+        "subject": "sample",
+        "subjects_dir": tmp_path,
+        "vertices": (np.array([10, 11]), np.array([20, 21])),
+    }
+
+    output = brain_maps.render_surface_method(
+        "OASTER V20", estimate, loaded, surface, tmp_path / "surface.png"
+    )
+
+    assert output.read_bytes() == b"surface"
+    assert calls["plot"]["surface"] == "inflated"
+    assert calls["plot"]["hemi"] == "split"
+    assert calls["plot"]["views"] == ("lateral", "medial")
+    assert calls["plot"]["view_layout"] == "horizontal"
+    assert calls["plot"]["colormap"] == "inferno"
+    assert calls["plot"]["background"] == "white"
+    assert calls["plot"]["cortex"] == "classic"
+    assert calls["plot"]["brain_kwargs"] == {"show": False, "theme": "light"}
+    assert calls["labels"][0][0].vertices.tolist() == [10, 11]
+    assert calls["foci"] == [
+        (
+            [11],
+            {
+                "coords_as_verts": True,
+                "hemi": "lh",
+                "scale_factor": 0.7,
+                "color": brain_maps.TRUTH_COLOR,
+                "name": "simulated_surface_1_center",
+            },
+        )
+    ]
+    assert calls["stc"].data.shape == (4, 1)
+    assert calls["stc"].data.max() == 1.0
+    assert fake_brain.closed
