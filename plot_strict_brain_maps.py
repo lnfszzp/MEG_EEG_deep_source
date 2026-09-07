@@ -45,12 +45,14 @@ DEFAULT_CASE_QUERY = (0, 0, "deep_plus_two_surface", 13)
 DEFAULT_SISSES_ROOT = Path(r"D:\oaster_strict_blind_sisses")
 DEFAULT_OUTPUT_ROOT = ROOT / "results" / "strict_blind" / "brain_maps_v2"
 DEFAULT_SAMPLE_PATH = Path(r"D:\mne_data\MNE-sample-data")
+OASTER_LABELS = ("OASTER V20", "OASTER V19")
 METHOD_ORDER = (
-    "OASTER V19",
+    OASTER_LABELS[0],
     "SISSES",
     *comparators.METHODS,
 )
 METHOD_SLUGS = {
+    "OASTER V20": "oaster_v20",
     "OASTER V19": "oaster_v19",
     "SISSES": "sisses",
     **comparators.METHOD_SLUGS,
@@ -92,11 +94,12 @@ def _legend_handles() -> list:
 
 def _default_data_root() -> Path:
     """Reuse the geometry path recorded by the completed strict run if present."""
-    metadata = ROOT / "results" / "strict_blind" / "oaster_v19_final" / "metadata.json"
-    if metadata.exists():
-        path = Path(json.loads(metadata.read_text(encoding="utf-8"))["geometry_reference"])
-        if path.exists():
-            return path.parents[1]
+    for directory in ("oaster_v20_final", "oaster_v19_final"):
+        metadata = ROOT / "results" / "strict_blind" / directory / "metadata.json"
+        if metadata.exists():
+            path = Path(json.loads(metadata.read_text(encoding="utf-8"))["geometry_reference"])
+            if path.exists():
+                return path.parents[1]
     return strict_plot.strict.protocol.DEFAULT_DATA_ROOT
 
 
@@ -156,7 +159,13 @@ def load_sisses_estimate(loaded: dict, sisses_root: Path) -> tuple[np.ndarray, P
 
 def _completed_method_order(results_root: Path) -> tuple[tuple[str, ...], list[dict[str, str]]]:
     results, availability = metric_plots.load_results_with_availability(results_root)
-    aliases = {"OASTER": "OASTER V19"}
+    oaster_source = next(
+        (Path(row["source"]).parent.name for row in availability if row["method"] == "OASTER"),
+        "",
+    )
+    aliases = {
+        "OASTER": "OASTER V20" if oaster_source == "oaster_v20_final" else "OASTER V19"
+    }
     return tuple(aliases.get(method, method) for method in results), availability
 
 
@@ -170,14 +179,16 @@ def reconstruct_all(
     """Reconstruct only requested methods; unavailable optional SISSES becomes N/A."""
     if sisses_mode not in {"auto", "require", "skip"}:
         raise ValueError("sisses_mode must be auto, require, or skip")
-    unknown = set(methods) - set(METHOD_ORDER)
-    if not methods or unknown:
+    unknown = set(methods) - (set(METHOD_ORDER) | set(OASTER_LABELS))
+    selected_oaster = tuple(method for method in methods if method in OASTER_LABELS)
+    if not methods or unknown or len(selected_oaster) > 1:
         raise ValueError(f"invalid method selection: {sorted(unknown)}")
 
     runtime = strict_plot.strict._runtime(loaded["geometry"], loaded["reference"])
     computed: dict[str, np.ndarray] = {}
     provenance: dict[str, object] = {}
-    if "OASTER V19" in methods:
+    if selected_oaster:
+        oaster_label = selected_oaster[0]
         estimate, diagnostics = strict_plot.strict.oaster.reconstruct(
             loaded["eeg"],
             loaded["meg"],
@@ -186,8 +197,9 @@ def reconstruct_all(
             loaded["geometry"]["n_surf"],
             runtime["kernels"],
         )
-        computed["OASTER V19"] = estimate
+        computed[oaster_label] = estimate
         provenance["oaster_diagnostics"] = {
+            "version_label": oaster_label,
             "temporal_rank": int(diagnostics["temporal_rank"]),
             "selected_templates": int(diagnostics["selected_templates"]),
         }

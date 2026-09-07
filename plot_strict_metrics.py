@@ -30,7 +30,13 @@ METHODS = (
 )
 SUMMARY_NAME = "summary_by_snr_pair_scenario_macro.csv"
 SUMMARY_DIRS = {
-    "OASTER": ("oaster_v19_final", "oaster_final", "oaster_rebuilt", "oaster"),
+    "OASTER": (
+        "oaster_v20_final",
+        "oaster_v19_final",
+        "oaster_final",
+        "oaster_rebuilt",
+        "oaster",
+    ),
     "SISSES": ("sisses_preserved", "sisses_final", "sisses"),
     "comparators": ("comparators_final", "comparators"),
 }

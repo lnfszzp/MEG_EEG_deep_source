@@ -30,3 +30,12 @@ def test_missing_sisses_is_na_and_excluded(tmp_path: Path) -> None:
     sisses = next(row for row in availability if row["method"] == "SISSES")
     assert sisses["status"] == "N/A"
     assert sisses["included_in_comparison"] == "no"
+
+
+def test_oaster_v20_summary_is_preferred_over_v19(tmp_path: Path) -> None:
+    for directory in ("oaster_v19_final", "oaster_v20_final"):
+        path = tmp_path / directory / plotting.SUMMARY_NAME
+        path.parent.mkdir()
+        path.touch()
+
+    assert plotting._find_summary(tmp_path, "OASTER").parent.name == "oaster_v20_final"
