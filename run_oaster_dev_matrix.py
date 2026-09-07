@@ -79,11 +79,18 @@ def _load_base_manifest(path: Path) -> tuple[list[dict], str]:
     if not sidecar.exists() or sidecar.read_text(encoding="ascii").split()[0] != digest:
         raise RuntimeError(f"development manifest checksum mismatch: {path}")
     cases = json.loads(payload)
-    if not isinstance(cases, list) or len(cases) != sum(EXPECTED_CONFIG_COUNTS.values()):
-        raise RuntimeError("development manifest must contain 185 base configurations")
+    if not isinstance(cases, list):
+        raise RuntimeError("development manifest must be a list")
     if [int(case["case_number"]) for case in cases] != list(range(len(cases))):
         raise RuntimeError("development base case_number order is invalid")
-    if Counter(case["scenario"] for case in cases) != Counter(EXPECTED_CONFIG_COUNTS):
+    counts = Counter(case["scenario"] for case in cases)
+    expected = Counter(EXPECTED_CONFIG_COUNTS)
+    expected["deep_only"] = counts["deep_only"]
+    if (
+        counts != expected
+        or counts["deep_only"] < 3
+        or counts["deep_only"] % 3
+    ):
         raise RuntimeError("development base scenario counts are invalid")
     if len({case["case_id"] for case in cases}) != len(cases):
         raise RuntimeError("development base case_id values are not unique")

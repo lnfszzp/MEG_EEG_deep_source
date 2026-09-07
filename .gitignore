@@ -25,6 +25,16 @@ results/corrected_v2/**
 !results/corrected_v2/strict_blind/**/completion.json
 !results/corrected_v2/strict_blind/**/REPORT.md
 !results/corrected_v2/strict_blind/**/*.png
+!results/corrected_v2/dev/
+!results/corrected_v2/dev/**/
+!results/corrected_v2/dev/base_manifest.json
+!results/corrected_v2/dev/base_manifest.json.sha256
+!results/corrected_v2/dev/**/manifest.json
+!results/corrected_v2/dev/**/manifest.json.sha256
+!results/corrected_v2/dev/**/metadata.json
+!results/corrected_v2/dev/**/summary*.csv
+!results/corrected_v2/dev/**/comparison*.csv
+!results/corrected_v2/dev/**/REPORT.md
 !results/dev_matrix/
 results/dev_matrix/**
 !results/dev_matrix/**/

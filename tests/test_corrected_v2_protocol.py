@@ -10,6 +10,7 @@ import pytest
 from benchmark import protocol
 import generate_corrected_v2_manifest as corrected
 import generate_strict_blind_manifest as strict
+import run_oaster_dev_matrix as dev_runner
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -50,9 +51,11 @@ def _strict_shared(n_deep: int) -> tuple[dict, list[dict]]:
     return {"vertices": vertices, "n_surf": 68, "n_deep": n_deep}, records
 
 
-def test_dynamic_deep_split_preserves_legacy() -> None:
-    legacy = protocol.build_split(_split_shared(15))
-    corrected_split = protocol.build_split(_split_shared(16, corrected_geometry=True))
+def test_dynamic_deep_split_preserves_legacy(tmp_path: Path) -> None:
+    legacy_shared = _split_shared(15)
+    corrected_shared = _split_shared(16, corrected_geometry=True)
+    legacy = protocol.build_split(legacy_shared)
+    corrected_split = protocol.build_split(corrected_shared)
 
     assert legacy["deep_dev_local"] == [0, 3, 6, 9, 12]
     assert legacy["deep_test_local"] == [1, 2, 4, 5, 7, 8, 10, 11, 13, 14]
@@ -60,6 +63,13 @@ def test_dynamic_deep_split_preserves_legacy() -> None:
     assert corrected_split["deep_dev_local"] == [0, 3, 6, 9, 12, 15]
     assert len(corrected_split["deep_test_local"]) == 10
     assert corrected_split["protocol"] == "full-head-coarse-v2"
+    legacy_manifest = protocol.make_manifest(legacy, panel="dev")
+    corrected_manifest = protocol.make_manifest(corrected_split, panel="dev")
+    assert len(legacy_manifest) == 185
+    assert len(corrected_manifest) == 188
+    path = tmp_path / "corrected_dev.json"
+    protocol.save_manifest(path, corrected_manifest)
+    assert len(dev_runner._load_base_manifest(path)[0]) == 188
 
 
 def test_strict_manifest_defaults_and_corrected_counts(

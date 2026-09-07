@@ -40,7 +40,17 @@ ROOT = Path(__file__).resolve().parent
 DEFAULT_OUTPUT = ROOT / "results" / "dev_experiments" / "deep_rescue_ebic"
 TAUS = (0.0, 2.0, 4.0)
 BASELINE = "OASTER_baseline"
-METHODS = (BASELINE, *(f"OASTER_deep_rescue_tau{int(tau)}" for tau in TAUS))
+
+
+def _method(tau: float) -> str:
+    return f"OASTER_deep_rescue_tau{float(tau):g}"
+
+
+def _methods(taus: tuple[float, ...]) -> tuple[str, ...]:
+    return (BASELINE, *(_method(tau) for tau in taus))
+
+
+METHODS = _methods(TAUS)
 ROW_FIELDS = (
     "base_manifest_sha256",
     "matrix_manifest_sha256",
@@ -175,6 +185,8 @@ def reconstruct_variants(
     gain_meg: np.ndarray,
     n_surf: int,
     kernels,
+    *,
+    taus: tuple[float, ...] = TAUS,
 ) -> tuple[dict[str, np.ndarray], dict]:
     """Share the expensive OASTER pass across baseline and all EBIC penalties."""
     kernels = tuple(kernels)
@@ -200,8 +212,8 @@ def reconstruct_variants(
     rescued = add_fn(primary + rescue, spectral, oaster.SPECTRAL_FRACTION)
     variants = {BASELINE: baseline}
     delta = float(rescue_diagnostics["ebic_delta_without_tau"])
-    for tau in TAUS:
-        variants[f"OASTER_deep_rescue_tau{int(tau)}"] = (
+    for tau in taus:
+        variants[_method(tau)] = (
             rescued if delta + tau < 0.0 else baseline
         )
     return variants, {
@@ -217,6 +229,7 @@ def _score_case(
     runtime: dict,
     base_sha: str,
     matrix_sha: str,
+    taus: tuple[float, ...] = TAUS,
 ) -> list[dict]:
     began = time.perf_counter()
     base = _base_row(case, base_sha, matrix_sha)
@@ -229,6 +242,7 @@ def _score_case(
             shared["gain_meg"],
             int(shared["n_surf"]),
             runtime["kernels"],
+            taus=taus,
         )
         actual = meta["actual_snr_db"]
         baseline_metrics = benchmark_metrics.evaluate_estimate(
@@ -241,14 +255,14 @@ def _score_case(
             shared["auc_cortex"],
         )
         accepted = {
-            tau: diagnostics["ebic_delta_without_tau"] + tau < 0.0 for tau in TAUS
+            tau: diagnostics["ebic_delta_without_tau"] + tau < 0.0 for tau in taus
         }
         rescued_metrics = None
         if any(accepted.values()):
             rescued_metrics = benchmark_metrics.evaluate_estimate(
                 next(
-                    estimates[f"OASTER_deep_rescue_tau{int(tau)}"]
-                    for tau in TAUS
+                    estimates[_method(tau)]
+                    for tau in taus
                     if accepted[tau]
                 ),
                 truth,
@@ -260,7 +274,7 @@ def _score_case(
             )
         elapsed = time.perf_counter() - began
         rows = []
-        for method in METHODS:
+        for method in _methods(taus):
             tau = None if method == BASELINE else float(method.rsplit("tau", 1)[1])
             use_rescue = tau is not None and accepted[tau]
             row = dict(base)
@@ -290,7 +304,7 @@ def _score_case(
     except Exception as exc:
         elapsed = time.perf_counter() - began
         rows = []
-        for method in METHODS:
+        for method in _methods(taus):
             row = dict(base)
             row.update(
                 actual_eeg_snr_db=np.nan,
@@ -325,13 +339,18 @@ def _float(row: dict, name: str) -> float:
         return math.nan
 
 
-def _method_summaries(rows: list[dict], output: Path, penalty_mm: float) -> list[dict]:
+def _method_summaries(
+    rows: list[dict],
+    output: Path,
+    penalty_mm: float,
+    methods: tuple[str, ...] = METHODS,
+) -> list[dict]:
     by_method: dict[str, list[dict]] = defaultdict(list)
     for row in rows:
         by_method[str(row["method"])].append(row)
     summary_rows = []
     comparison_rows = []
-    for method in METHODS:
+    for method in methods:
         selected = by_method[method]
         method_output = output / method
         method_output.mkdir(parents=True, exist_ok=True)
@@ -368,6 +387,8 @@ def _write_report(
     case_count: int,
     cases_per_scenario: int,
     elapsed: float,
+    methods: tuple[str, ...] = METHODS,
+    taus: tuple[float, ...] = TAUS,
 ) -> None:
     columns = (
         "method",
@@ -392,18 +413,18 @@ def _write_report(
         "",
         "## Rule",
         "",
-        r"From the global primary reduced residual $R$, recover the observable fitted-design column space $D$ by SVD. For each of the 15 deep gains $g_d$, form $h_d=(I-P_D)g_d$ and $\Delta_d=\|h_d^T R\|_2^2/\|h_d\|_2^2$. The best candidate is accepted when",
+        r"From the global primary reduced residual $R$, recover the observable fitted-design column space $D$ by SVD. For each deep gain $g_d$, form $h_d=(I-P_D)g_d$ and $\Delta_d=\|h_d^T R\|_2^2/\|h_d\|_2^2$. The best candidate is accepted when",
         "",
-        r"$$N\log(\mathrm{RSS}_{new}/\mathrm{RSS}_{old})+r\log N+2\log 15+\tau<0,$$",
+        r"$$N\log(\mathrm{RSS}_{new}/\mathrm{RSS}_{old})+r\log N+2\log p_d+\tau<0,$$",
         "",
-        r"where $r$ is the observed temporal rank and $\tau\in\{0,2,4\}$. At most one deep source is added. Its residual least-squares reduced time course is expanded through the observed temporal basis, then the unchanged 5% spectral evidence is fused.",
+        rf"where $r$ is the observed temporal rank, $p_d$ is the observed deep-candidate count, and $\tau\in\{{{','.join(f'{tau:g}' for tau in taus)}\}}$. At most one deep source is added. Its residual least-squares reduced time course is expanded through the observed temporal basis, then the unchanged 5% spectral evidence is fused.",
         "",
         "The global selector does not expose its design columns, so SVD of its fitted reduced sensor signal is an explicit observational approximation to that design. No truth, SNR label, or fixed true source count enters reconstruction.",
         "",
         "## Sample and runtime",
         "",
         f"- Source cases: {case_count} = 49 EEG×MEG SNR pairs × 4 scenarios × {cases_per_scenario} fixed development configurations.",
-        f"- Metric rows: {case_count * len(METHODS)} ({len(METHODS)} methods on identical observations).",
+        f"- Metric rows: {case_count * len(methods)} ({len(methods)} methods on identical observations).",
         f"- Wall time: {elapsed:.1f} s.",
         "",
         "## Key results",
@@ -439,9 +460,18 @@ def run(
     cases_per_scenario: int = 2,
     workers: int = 1,
     sample_path: Path | None = None,
+    taus: tuple[float, ...] = TAUS,
 ) -> list[dict]:
-    if workers < 1 or cases_per_scenario < 1:
-        raise ValueError("workers and cases_per_scenario must be positive")
+    taus = tuple(float(tau) for tau in taus)
+    methods = _methods(taus)
+    if (
+        workers < 1
+        or cases_per_scenario < 1
+        or not taus
+        or any(not math.isfinite(tau) or tau < 0.0 for tau in taus)
+        or len(set(methods)) != len(methods)
+    ):
+        raise ValueError("workers, cases_per_scenario and unique non-negative taus are required")
     base, base_sha = _load_base_manifest(Path(base_manifest))
     cases = make_matrix(base, cases_per_scenario=cases_per_scenario, diagonal=False)
     output = Path(output)
@@ -451,10 +481,10 @@ def run(
     if sample_path is not None:
         kwargs["sample_path"] = Path(sample_path)
     shared = protocol.load_shared(**kwargs)
-    if int(shared["n_deep"]) != 15:
-        raise RuntimeError("the experiment requires the frozen 15-point deep grid")
     runtime = _runtime(shared)
-    score = lambda case: _score_case(case, shared, runtime, base_sha, matrix_sha)
+    score = lambda case: _score_case(
+        case, shared, runtime, base_sha, matrix_sha, taus
+    )
     began = time.perf_counter()
     if workers == 1:
         batches = [score(case) for case in cases]
@@ -467,7 +497,7 @@ def run(
     failed = [row for row in rows if row["status"] != "ok"]
     if failed:
         raise RuntimeError(f"{len(failed)} metric rows failed; first={failed[0]['error']}")
-    summaries = _method_summaries(rows, output, runtime["penalty_mm"])
+    summaries = _method_summaries(rows, output, runtime["penalty_mm"], methods)
     metadata = {
         "purpose": "development simulation only; strict archive/results were not read",
         "base_manifest": str(Path(base_manifest).resolve()),
@@ -481,9 +511,9 @@ def run(
         "metric_row_count": len(rows),
         "workers": workers,
         "wall_seconds": elapsed,
-        "methods": list(METHODS),
-        "tau_grid": list(TAUS),
-        "deep_candidate_universe": 15,
+        "methods": list(methods),
+        "tau_grid": list(taus),
+        "deep_candidate_universe": int(shared["n_deep"]),
         "maximum_rescues": 1,
         "spectral_fraction": oaster.SPECTRAL_FRACTION,
         "strict_results_used_for_tuning": False,
@@ -492,7 +522,15 @@ def run(
     (output / "metadata.json").write_text(
         json.dumps(metadata, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
     )
-    _write_report(output, summaries, len(cases), cases_per_scenario, elapsed)
+    _write_report(
+        output,
+        summaries,
+        len(cases),
+        cases_per_scenario,
+        elapsed,
+        methods,
+        taus,
+    )
     return rows
 
 
@@ -504,7 +542,12 @@ def main() -> None:
     parser.add_argument("--output", type=Path, default=DEFAULT_OUTPUT)
     parser.add_argument("--cases-per-scenario", type=int, default=2)
     parser.add_argument("--workers", type=int, default=max(1, min(4, os.cpu_count() or 1)))
+    parser.add_argument("--taus", default=",".join(f"{tau:g}" for tau in TAUS))
     args = parser.parse_args()
+    try:
+        taus = tuple(float(value) for value in args.taus.split(","))
+    except ValueError:
+        parser.error("taus must be comma-separated non-negative numbers")
     run(
         args.base_manifest,
         args.data_root,
@@ -512,6 +555,7 @@ def main() -> None:
         cases_per_scenario=args.cases_per_scenario,
         workers=args.workers,
         sample_path=args.sample_path,
+        taus=taus,
     )
 
 

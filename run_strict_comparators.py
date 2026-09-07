@@ -5,6 +5,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import tempfile
 import time
 from collections import defaultdict
 from concurrent.futures import ThreadPoolExecutor
@@ -353,11 +354,18 @@ def _metadata(
             }
         ),
     }
-    path, temporary = output / "metadata.json", output / "metadata.json.tmp"
-    temporary.write_text(
-        json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
-    )
-    os.replace(temporary, path)
+    path = output / "metadata.json"
+    temporary = None
+    try:
+        with tempfile.NamedTemporaryFile(
+            mode="w", encoding="utf-8", dir=output, suffix=".metadata.tmp", delete=False
+        ) as stream:
+            stream.write(json.dumps(payload, ensure_ascii=False, indent=2) + "\n")
+            temporary = Path(stream.name)
+        os.replace(temporary, path)
+    finally:
+        if temporary is not None:
+            temporary.unlink(missing_ok=True)
 
 
 def run(
