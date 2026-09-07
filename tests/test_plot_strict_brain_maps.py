@@ -201,6 +201,33 @@ def test_slice_draws_truth_patch_ring_and_exact_center_star(monkeypatch) -> None
     assert np.array_equal(star_args[0], [center[0]])
     assert np.array_equal(star_args[1], [center[1]])
 
+    calls.clear()
+    brain_maps._draw_slice(
+        Axes(),
+        "axial",
+        center,
+        np.empty((0, 3)),
+        np.empty(0),
+        None,
+        np.zeros((8, 8, 8)),
+    )
+    assert calls == []
+
+
+def test_case_titles_are_human_readable_and_complete() -> None:
+    title = brain_maps._case_title(
+        {
+            "case_number": 3264,
+            "scenario": "deep_plus_surface",
+            "eeg_snr_db": 0,
+            "meg_snr_db": 5,
+        }
+    )
+    assert title == (
+        "Case 03264 | Thalamic + one cortical source | "
+        "EEG SNR +0 dB | MEG SNR +5 dB"
+    )
+
 
 def test_truth_rings_are_limited_to_the_current_source() -> None:
     loaded = {
@@ -256,10 +283,11 @@ def test_surface_forward_mapping_and_deep_truth_filter(tmp_path: Path) -> None:
 def test_surface_render_uses_mne_brain_without_projecting_deep_truth(
     tmp_path: Path, monkeypatch
 ) -> None:
-    calls = {"labels": [], "foci": []}
+    calls = {"labels": [], "foci": [], "plots": []}
 
     class Brain:
-        closed = False
+        def __init__(self):
+            self.closed = False
 
         def add_label(self, label, **kwargs):
             calls["labels"].append((label, kwargs))
@@ -267,18 +295,19 @@ def test_surface_render_uses_mne_brain_without_projecting_deep_truth(
         def add_foci(self, coords, **kwargs):
             calls["foci"].append((list(coords), kwargs))
 
-        def save_image(self, filename):
-            Path(filename).write_bytes(b"surface")
+        def screenshot(self, **kwargs):
+            calls["screenshot"] = kwargs
+            return np.full((20, 30, 3), 255, dtype=np.uint8)
 
         def close(self):
             self.closed = True
 
-    fake_brain = Brain()
-
     def fake_plot(stc, **kwargs):
         calls["stc"] = stc
         calls["plot"] = kwargs
-        return fake_brain
+        brain = Brain()
+        calls["plots"].append(brain)
+        return brain
 
     monkeypatch.setattr(brain_maps.mne.SourceEstimate, "plot", fake_plot)
     estimate = np.zeros((5, 220))
@@ -286,6 +315,7 @@ def test_surface_render_uses_mne_brain_without_projecting_deep_truth(
     estimate[4, 200:] = 2.0
     loaded = {
         "case": {
+            "case_number": 3264,
             "scenario": "deep_plus_surface",
             "surface_centers": [1],
             "deep_index": 4,
@@ -305,7 +335,7 @@ def test_surface_render_uses_mne_brain_without_projecting_deep_truth(
         "OASTER V20", estimate, loaded, surface, tmp_path / "surface.png"
     )
 
-    assert output.read_bytes() == b"surface"
+    assert output.is_file() and output.stat().st_size > 1_000
     assert calls["plot"]["surface"] == "inflated"
     assert calls["plot"]["hemi"] == "split"
     assert calls["plot"]["views"] == ("lateral", "medial")
@@ -314,6 +344,23 @@ def test_surface_render_uses_mne_brain_without_projecting_deep_truth(
     assert calls["plot"]["background"] == "white"
     assert calls["plot"]["cortex"] == "classic"
     assert calls["plot"]["brain_kwargs"] == {"show": False, "theme": "light"}
+    assert calls["labels"] == []
+    assert calls["foci"] == []
+    assert calls["screenshot"] == {"mode": "rgb", "time_viewer": False}
+    assert calls["stc"].data.shape == (4, 1)
+    assert calls["stc"].data.max() == 1.0
+    assert calls["plots"][0].closed
+
+    truth_output = brain_maps.render_surface_method(
+        "Simulated truth",
+        estimate,
+        loaded,
+        surface,
+        tmp_path / "simulation_truth_surface.png",
+        truth_overlay=True,
+    )
+
+    assert truth_output.is_file() and truth_output.stat().st_size > 1_000
     assert calls["labels"][0][0].vertices.tolist() == [10, 11]
     assert calls["foci"] == [
         (
@@ -327,6 +374,4 @@ def test_surface_render_uses_mne_brain_without_projecting_deep_truth(
             },
         )
     ]
-    assert calls["stc"].data.shape == (4, 1)
-    assert calls["stc"].data.max() == 1.0
-    assert fake_brain.closed
+    assert calls["plots"][1].closed

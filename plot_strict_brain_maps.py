@@ -60,36 +60,61 @@ METHOD_SLUGS = {
 PLANES = ("coronal", "sagittal", "axial")
 ESTIMATE_CMAP = "magma"
 TRUTH_COLOR = "#00E5A8"
+SCENARIO_LABELS = {
+    "surface_only": "Cortical surface only",
+    "deep_only": "Thalamic deep source only",
+    "deep_plus_surface": "Thalamic + one cortical source",
+    "deep_plus_two_surface": "Thalamic + two cortical sources",
+}
 
 
-def _legend_handles() -> list:
-    return [
-        Line2D(
-            [0],
-            [0],
-            marker="*",
-            linestyle="none",
-            markerfacecolor=TRUTH_COLOR,
-            markeredgecolor="#07130F",
-            markersize=13,
-            label="Simulated source center",
-        ),
-        Line2D(
-            [0],
-            [0],
-            marker="o",
-            linestyle="none",
-            markerfacecolor="none",
-            markeredgecolor=TRUTH_COLOR,
-            markeredgewidth=1.8,
-            markersize=9,
-            label="Simulated source parcel",
-        ),
+def _case_title(case: dict) -> str:
+    scenario = str(case["scenario"])
+    return (
+        f"Case {int(case['case_number']):05d} | "
+        f"{SCENARIO_LABELS.get(scenario, scenario.replace('_', ' ').title())} | "
+        f"EEG SNR {int(case['eeg_snr_db']):+d} dB | "
+        f"MEG SNR {int(case['meg_snr_db']):+d} dB"
+    )
+
+
+def _legend_handles(
+    include_truth: bool = True, energy_label: str = "Estimated source energy"
+) -> list:
+    handles = []
+    if include_truth:
+        handles.extend(
+            [
+                Line2D(
+                    [0],
+                    [0],
+                    marker="*",
+                    linestyle="none",
+                    markerfacecolor=TRUTH_COLOR,
+                    markeredgecolor="#07130F",
+                    markersize=13,
+                    label="Simulated source center",
+                ),
+                Line2D(
+                    [0],
+                    [0],
+                    marker="o",
+                    linestyle="none",
+                    markerfacecolor="none",
+                    markeredgecolor=TRUTH_COLOR,
+                    markeredgewidth=1.8,
+                    markersize=9,
+                    label="Simulated source parcel",
+                ),
+            ]
+        )
+    handles.append(
         Patch(
             facecolor=plt.get_cmap(ESTIMATE_CMAP)(0.72),
-            label="Estimated source energy",
-        ),
-    ]
+            label=energy_label,
+        )
+    )
+    return handles
 
 
 def _default_data_root() -> Path:
@@ -424,7 +449,7 @@ def _draw_slice(
     center_voxel: np.ndarray,
     estimate_voxels: np.ndarray,
     estimate_weights: np.ndarray,
-    truth_voxels: np.ndarray,
+    truth_voxels: np.ndarray | None,
     volume: np.ndarray,
 ) -> None:
     image, axis, index, point_2d = plane_image(volume, plane, center_voxel)
@@ -452,38 +477,39 @@ def _draw_slice(
             vmin=0.10,
             vmax=1.0,
         )
-    near = truth_voxels[np.abs(truth_voxels[:, axis] - index) <= 3.0]
-    if near.size:
-        points = np.asarray([point_2d(voxel) for voxel in near])
+    if truth_voxels is not None:
+        near = truth_voxels[np.abs(truth_voxels[:, axis] - index) <= 3.0]
+        if near.size:
+            points = np.asarray([point_2d(voxel) for voxel in near])
+            ax.scatter(
+                points[:, 0],
+                points[:, 1],
+                s=58,
+                facecolors="none",
+                edgecolors="#07130F",
+                linewidths=3.8,
+                zorder=6,
+            )
+            ax.scatter(
+                points[:, 0],
+                points[:, 1],
+                s=58,
+                facecolors="none",
+                edgecolors=TRUTH_COLOR,
+                linewidths=1.8,
+                zorder=7,
+            )
+        focus_xy = point_2d(center_voxel)
         ax.scatter(
-            points[:, 0],
-            points[:, 1],
-            s=58,
-            facecolors="none",
-            edgecolors="#07130F",
-            linewidths=3.8,
-            zorder=6,
+            [focus_xy[0]],
+            [focus_xy[1]],
+            s=190,
+            marker="*",
+            facecolor=TRUTH_COLOR,
+            edgecolor="#07130F",
+            linewidths=1.4,
+            zorder=8,
         )
-        ax.scatter(
-            points[:, 0],
-            points[:, 1],
-            s=58,
-            facecolors="none",
-            edgecolors=TRUTH_COLOR,
-            linewidths=1.8,
-            zorder=7,
-        )
-    focus_xy = point_2d(center_voxel)
-    ax.scatter(
-        [focus_xy[0]],
-        [focus_xy[1]],
-        s=190,
-        marker="*",
-        facecolor=TRUTH_COLOR,
-        edgecolor="#07130F",
-        linewidths=1.4,
-        zorder=8,
-    )
     ax.set_axis_off()
 
 
@@ -495,12 +521,14 @@ def _number(value: object, digits: int = 3) -> str:
 def render_method(
     method: str,
     estimate: np.ndarray,
-    metrics: dict,
+    metrics: dict | None,
     loaded: dict,
     anatomy: dict,
     output: Path,
     relative_threshold: float,
     dpi: int,
+    *,
+    truth_overlay: bool = False,
 ) -> Path:
     focuses = _focuses(loaded)
     estimate_voxels, estimate_weights = _source_projection(
@@ -515,7 +543,9 @@ def render_method(
     )
     for row, (focus_label, source_index) in enumerate(focuses):
         center = _focus_voxel(source_index, loaded, anatomy)
-        truth_voxels = _truth_voxels(loaded, anatomy, source_index)
+        truth_voxels = (
+            _truth_voxels(loaded, anatomy, source_index) if truth_overlay else None
+        )
         for column, plane in enumerate(PLANES):
             _draw_slice(
                 axes[row, column],
@@ -542,12 +572,16 @@ def render_method(
             fontsize=10,
         )
     case = loaded["case"]
+    metric_line = ""
+    if metrics is not None:
+        metric_line = (
+            f"\nAn_auc {_number(metrics['auc_tie_corrected'])}   "
+            f"RMSE {_number(metrics['rmse'])}   "
+            f"Surface DLE {_number(metrics['surface_dle_mm'], 1)} mm   "
+            f"Deep DLE {_number(metrics['deep_dle_mm'], 1)} mm"
+        )
     fig.suptitle(
-        f"{method}  |  {case['scenario']}  |  EEG {case['eeg_snr_db']:+d} dB, "
-        f"MEG {case['meg_snr_db']:+d} dB\n"
-        f"An_auc {_number(metrics['auc_tie_corrected'])}   RMSE {_number(metrics['rmse'])}   "
-        f"Surface DLE {_number(metrics['surface_dle_mm'], 1)} mm   "
-        f"Deep DLE {_number(metrics['deep_dle_mm'], 1)} mm",
+        f"{method}\n{_case_title(case)}{metric_line}",
         color="#F6F7FB",
         fontsize=13,
         y=0.995,
@@ -559,13 +593,14 @@ def render_method(
         pad=0.012,
         aspect=35,
     )
-    colorbar.set_label("Relative estimated source energy", color="#ECEEF4", fontsize=9)
+    energy_label = "Simulated source energy" if truth_overlay else "Estimated source energy"
+    colorbar.set_label(f"Relative {energy_label.lower()}", color="#ECEEF4", fontsize=9)
     colorbar.ax.tick_params(colors="#ECEEF4", labelsize=8)
     legend = fig.legend(
-        handles=_legend_handles(),
+        handles=_legend_handles(truth_overlay, energy_label),
         loc="upper center",
         bbox_to_anchor=(0.5, 0.905),
-        ncol=3,
+        ncol=3 if truth_overlay else 1,
         frameon=True,
         fontsize=9,
         handletextpad=0.6,
@@ -578,7 +613,8 @@ def render_method(
     fig.text(
         0.995,
         0.008,
-        f"Each row is centered on one simulated source; heat shown >= {relative_threshold:.0%} of method peak",
+        f"Heat shown >= {relative_threshold:.0%} of source-map peak; "
+        + ("green marks identify truth" if truth_overlay else "simulation truth is shown separately"),
         ha="right",
         color="#B8BBC6",
         fontsize=8,
@@ -596,8 +632,11 @@ def render_surface_method(
     loaded: dict,
     surface: dict,
     output: Path,
+    dpi: int = 160,
+    *,
+    truth_overlay: bool = False,
 ) -> Path:
-    """Render cortical estimates and cortical truth on an inflated surface."""
+    """Render either a cortical estimate or the separate simulation truth."""
     active = np.arange(strict_plot.strict.protocol.ACTIVE_START, estimate.shape[1])
     amplitude = benchmark_metrics.source_amplitude(estimate, active)
     n_surf = int(loaded["geometry"]["n_surf"])
@@ -637,7 +676,7 @@ def render_surface_method(
             backend="pyvistaqt",
             brain_kwargs={"show": False, "theme": "light"},
         )
-        overlays = _surface_truth_overlays(loaded, surface)
+        overlays = _surface_truth_overlays(loaded, surface) if truth_overlay else []
         for overlay in overlays:
             label = mne.Label(
                 overlay["patch_vertices"],
@@ -654,15 +693,38 @@ def render_surface_method(
                 color=TRUTH_COLOR,
                 name=f"{overlay['name']}_center",
             )
-        output.parent.mkdir(parents=True, exist_ok=True)
-        brain.save_image(str(output))
+        image = brain.screenshot(mode="rgb", time_viewer=False)
     finally:
         if brain is not None:
             brain.close()
+    case = loaded["case"]
+    notes = []
+    if truth_overlay and overlays:
+        notes.append("Green outline/sphere: simulated cortical patch/center.")
+    if not truth_overlay:
+        notes.append("Simulation truth is shown separately.")
+    if case.get("deep_index") is not None:
+        notes.append(
+            "No cortical truth; see MRI."
+            if truth_overlay and not overlays
+            else "Deep sources are not projected to cortex; see MRI."
+        )
+    fig, ax = plt.subplots(figsize=(12.0, 8.6), facecolor="white")
+    ax.imshow(image)
+    ax.set_axis_off()
+    fig.suptitle(f"{method}\n{_case_title(case)}", fontsize=15, fontweight="bold")
+    if notes:
+        fig.text(0.5, 0.015, " ".join(notes), ha="center", fontsize=10, color="#202020")
+    fig.subplots_adjust(left=0.005, right=0.995, top=0.91, bottom=0.045)
+    output.parent.mkdir(parents=True, exist_ok=True)
+    fig.savefig(output, dpi=dpi, facecolor="white", bbox_inches="tight")
+    plt.close(fig)
     return output
 
 
-def render_montage(paths: list[tuple[str, Path]], output: Path, dpi: int) -> Path:
+def render_montage(
+    paths: list[tuple[str, Path]], output: Path, dpi: int, title: str
+) -> Path:
     columns = min(3, len(paths))
     rows = math.ceil(len(paths) / columns)
     fig, axes = plt.subplots(
@@ -678,22 +740,7 @@ def render_montage(paths: list[tuple[str, Path]], output: Path, dpi: int) -> Pat
         ax.set_axis_off()
     for ax in axes.ravel()[len(paths) :]:
         ax.set_axis_off()
-    fig.suptitle(
-        f"{len(paths)}-method source localization on one EEG-MEG observation",
-        fontsize=18,
-        fontweight="bold",
-        y=0.995,
-    )
-    fig.legend(
-        handles=_legend_handles(),
-        loc="upper center",
-        bbox_to_anchor=(0.5, 0.973),
-        ncol=3,
-        frameon=True,
-        fontsize=11,
-        handletextpad=0.7,
-        columnspacing=2.4,
-    )
+    fig.suptitle(title, fontsize=18, fontweight="bold", y=0.995)
     fig.subplots_adjust(left=0.005, right=0.995, top=0.94, bottom=0.005, wspace=0.015, hspace=0.04)
     fig.savefig(output, dpi=dpi, facecolor="white", bbox_inches="tight")
     plt.close(fig)
@@ -770,6 +817,27 @@ def plot_brain_maps(
     rendered = []
     rendered_surface = []
     by_method = {row["method"]: row for row in rows}
+    render_method(
+        "Simulated truth",
+        loaded["truth"],
+        None,
+        loaded,
+        anatomy,
+        case_dir / "simulation_truth_mri.png",
+        relative_threshold,
+        dpi,
+        truth_overlay=True,
+    )
+    if surface is not None:
+        render_surface_method(
+            "Simulated truth",
+            loaded["truth"],
+            loaded,
+            surface,
+            case_dir / "simulation_truth_surface.png",
+            dpi,
+            truth_overlay=True,
+        )
     for method in estimates:
         path = render_method(
             method,
@@ -789,14 +857,21 @@ def plot_brain_maps(
                 loaded,
                 surface,
                 case_dir / f"{METHOD_SLUGS[method]}_surface.png",
+                dpi,
             )
             rendered_surface.append((method, surface_path))
-    render_montage(rendered, case_dir / "all_methods_brain_mri.png", dpi)
+    render_montage(
+        rendered,
+        case_dir / "all_methods_brain_mri.png",
+        dpi,
+        f"Algorithm estimates on MRI slices\n{_case_title(case)}",
+    )
     if rendered_surface:
         render_montage(
             rendered_surface,
             case_dir / "all_methods_brain_surface.png",
             dpi,
+            f"Algorithm estimates on cortical surfaces\n{_case_title(case)}",
         )
     _write_metrics(case_dir / "metrics.csv", rows)
     (case_dir / "metadata.json").write_text(
@@ -807,10 +882,14 @@ def plot_brain_maps(
                 "method_availability": availability,
                 "normalization": "per-method active-minus-baseline RMS, normalized to global peak",
                 "display_threshold": relative_threshold,
-                "truth_overlay": "green parcel rings and green star at each simulated source center",
+                "algorithm_truth_overlay": "none; simulation truth is stored in separate files",
+                "simulation_truth_mri": "simulation_truth_mri.png",
+                "simulation_truth_surface": (
+                    "simulation_truth_surface.png" if surface_maps else "not requested"
+                ),
                 "surface_maps": surface_maps,
                 "surface_truth_overlay": (
-                    "green cortical patch outline and center sphere; deep sources are never projected"
+                    "only simulation_truth_surface.png has green cortical truth marks; deep sources are never projected"
                     if surface_maps
                     else "not requested"
                 ),

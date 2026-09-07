@@ -79,7 +79,7 @@ python plot_strict_brain_maps.py --case-number 92
 python plot_strict_brain_maps.py --manifest results\corrected_v2\strict_blind\manifest.json --input-root 'D:\oaster_corrected_v2_sisses\matlab_input' --data-root corrected_v2\generated --results-root results\corrected_v2\strict_blind --sisses-mode skip --case-number 6489 --output-root results\corrected_v2\strict_blind\brain_maps_v20 --surface-maps
 ```
 
-表层图使用白底、`classic` 沟回底色、`inferno` 激活色和 10 步平滑；绿色轮廓与球分别表示仿真表层 patch 和中心。深部源不会被错误投影到皮层，必须结合命令同时生成的 MRI 切片图查看。表层批量渲染还需要 `pyvistaqt` 与 `PyQt6`（已列入 `requirements.txt`）。
+每个病例分别生成 `simulation_truth_mri.png` / `simulation_truth_surface.png` 仿真真值图，以及完全不叠加真值的算法 MRI / 皮层图；完整情形索引见 [`brain_maps_v20/INDEX.md`](results/corrected_v2/strict_blind/brain_maps_v20/INDEX.md)。表层图使用白底、`classic` 沟回底色、`inferno` 激活色和 10 步平滑；深部源不会被错误投影到皮层。表层批量渲染还需要 `pyvistaqt` 与 `PyQt6`（已列入 `requirements.txt`）。
 
 结果索引见 `VISUAL_STATISTICAL_REPORT.md`；完整方法比较工作簿位于 `outputs/01a0747c-f942-7dc2-b982-f01e067136c6/strict_benchmark_method_comparison.xlsx`。
 
