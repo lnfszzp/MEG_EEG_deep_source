@@ -119,3 +119,11 @@ def test_output_cannot_be_written_into_sisses_archive(tmp_path: Path) -> None:
         assert "outside" in str(error)
     else:
         raise AssertionError("archive output guard did not run")
+
+
+def test_corrected_deep_focus_is_labeled_thalamic() -> None:
+    loaded = {
+        "case": {"surface_centers": [], "deep_index": 2},
+        "geometry": {"deep_aseg_labels": np.array([10, 49])},
+    }
+    assert brain_maps._focuses(loaded) == [("Thalamic source", 2)]

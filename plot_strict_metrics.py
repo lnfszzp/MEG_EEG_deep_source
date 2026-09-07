@@ -1,9 +1,10 @@
-"""Create publication-style comparisons for all nine strict-blind methods."""
+"""Create publication-style comparisons for completed strict-blind methods."""
 
 from __future__ import annotations
 
 import argparse
 import csv
+import json
 from pathlib import Path
 from typing import Sequence
 
@@ -27,6 +28,12 @@ METHODS = (
     "RAP-MUSIC",
     "Dipole fitting (grid)",
 )
+SUMMARY_NAME = "summary_by_snr_pair_scenario_macro.csv"
+SUMMARY_DIRS = {
+    "OASTER": ("oaster_v19_final", "oaster_final", "oaster_rebuilt", "oaster"),
+    "SISSES": ("sisses_preserved", "sisses_final", "sisses"),
+    "comparators": ("comparators_final", "comparators"),
+}
 DISPLAY = {"Dipole fitting (grid)": "Dipole grid"}
 # Paul Tol's colour-blind-safe muted palette; symbols and labels also encode method.
 COLORS = dict(
@@ -83,6 +90,8 @@ def _read(path: Path, fixed_method: str | None) -> list[tuple[str, dict[str, flo
                 values = {key: float(row[key]) for key in METRICS}
                 values["eeg_snr_db"] = float(row["eeg_snr_db"])
                 values["meg_snr_db"] = float(row["meg_snr_db"])
+                if row.get("case_count", "").strip():
+                    values["case_count"] = float(row["case_count"])
             except (TypeError, ValueError) as exc:
                 raise ValueError(f"{path}:{line}: invalid numeric value") from exc
             if not all(np.isfinite(value) for value in values.values()):
@@ -91,26 +100,89 @@ def _read(path: Path, fixed_method: str | None) -> list[tuple[str, dict[str, flo
     return parsed
 
 
-def load_results(root: Path) -> dict[str, list[dict[str, float]]]:
-    """Load and validate the frozen scenario-macro 7x7 summaries."""
+def _find_summary(root: Path, kind: str) -> Path | None:
+    for directory in SUMMARY_DIRS[kind]:
+        path = root / directory / SUMMARY_NAME
+        if path.is_file():
+            return path
+    matches = sorted(
+        path
+        for path in root.glob(f"{kind.lower()}*/{SUMMARY_NAME}")
+        if "smoke" not in path.parent.name.lower() and "shard" not in path.parent.name.lower()
+    )
+    if len(matches) > 1:
+        raise ValueError(f"{root}: multiple {kind} summaries; use an unambiguous results root")
+    return matches[0] if matches else None
+
+
+def load_results_with_availability(
+    root: Path,
+) -> tuple[dict[str, list[dict[str, float]]], list[dict[str, str]]]:
+    """Load complete 7x7 summaries; unavailable/incomplete methods stay out of comparisons."""
     root = Path(root)
-    sources = (
-        (root / "oaster_v19_final/summary_by_snr_pair_scenario_macro.csv", "OASTER"),
-        (root / "sisses_preserved/summary_by_snr_pair_scenario_macro.csv", "SISSES"),
-        (root / "comparators_final/summary_by_snr_pair_scenario_macro.csv", None),
+    source_specs = (
+        (_find_summary(root, "OASTER"), "OASTER"),
+        (_find_summary(root, "SISSES"), "SISSES"),
+        (_find_summary(root, "comparators"), None),
     )
     rows = {method: [] for method in METHODS}
-    for path, fixed_method in sources:
+    paths: dict[str, Path] = {}
+    for path, fixed_method in source_specs:
+        if path is None:
+            continue
         for method, values in _read(path, fixed_method):
             rows[method].append(values)
+            paths[method] = path
 
     expected = {(eeg, meg) for eeg in SNR_LEVELS for meg in SNR_LEVELS}
+    manifest = root / "manifest.json"
+    expected_cases = len(json.loads(manifest.read_text(encoding="utf-8"))) if manifest.is_file() else None
+    completed: dict[str, list[dict[str, float]]] = {}
+    availability: list[dict[str, str]] = []
     for method, method_rows in rows.items():
         pairs = {(int(row["eeg_snr_db"]), int(row["meg_snr_db"])) for row in method_rows}
-        if len(method_rows) != 49 or pairs != expected:
-            raise ValueError(f"{method}: expected every 7x7 SNR pair exactly once")
-        method_rows.sort(key=lambda row: (row["eeg_snr_db"], row["meg_snr_db"]))
-    return rows
+        summarized_cases = (
+            sum(int(row.get("case_count", 0)) for row in method_rows)
+            if all("case_count" in row for row in method_rows)
+            else None
+        )
+        completion = paths.get(method, Path()).parent / "completion.json" if method in paths else None
+        completion_ok = True
+        if completion is not None and completion.is_file():
+            state = json.loads(completion.read_text(encoding="utf-8-sig"))
+            completion_ok = state.get("status") == "complete" and int(state.get("error_count", 0)) == 0
+        case_count_ok = (
+            expected_cases is None
+            or summarized_cases is None
+            or summarized_cases == expected_cases
+        )
+        complete = len(method_rows) == 49 and pairs == expected and completion_ok and case_count_ok
+        status = "complete" if complete else ("N/A" if not method_rows else "incomplete")
+        availability.append(
+            {
+                "method": method,
+                "status": status,
+                "snr_pairs": str(len(pairs)),
+                "source": str(paths.get(method, "")),
+                "included_in_comparison": "yes" if complete else "no",
+                "detail": (
+                    ""
+                    if complete
+                    else f"summary_cases={summarized_cases}; expected_cases={expected_cases}; completion_ok={completion_ok}"
+                ),
+            }
+        )
+        if complete:
+            method_rows.sort(key=lambda row: (row["eeg_snr_db"], row["meg_snr_db"]))
+            completed[method] = method_rows
+    if not completed:
+        raise ValueError(f"{root}: no method has a complete 7x7 SNR summary")
+    return completed, availability
+
+
+def load_results(root: Path) -> dict[str, list[dict[str, float]]]:
+    """Load completed scenario-macro summaries in canonical display order."""
+    return load_results_with_availability(root)[0]
 
 
 def _values(results: dict[str, list[dict[str, float]]], method: str, metric: str) -> np.ndarray:
@@ -156,7 +228,7 @@ def write_statistics(results: dict[str, list[dict[str, float]]], output: Path) -
     with output.open("w", encoding="utf-8", newline="") as stream:
         writer = csv.DictWriter(stream, fieldnames=fields)
         writer.writeheader()
-        for method in METHODS:
+        for method in results:
             for metric, (_, higher, _) in METRICS.items():
                 values = _values(results, method, metric)
                 q1, median, q3 = np.quantile(values, (0.25, 0.5, 0.75))
@@ -179,8 +251,10 @@ def write_statistics(results: dict[str, list[dict[str, float]]], output: Path) -
 
 
 def plot_metric_table(results: dict[str, list[dict[str, float]]], output: Path) -> Path:
+    methods = tuple(results)
+    missing = [method for method in METHODS if method not in results]
     keys = tuple(METRICS)
-    means = np.asarray([[_values(results, method, key).mean() for key in keys] for method in METHODS])
+    means = np.asarray([[_values(results, method, key).mean() for key in keys] for method in methods])
     scores = np.empty_like(means)
     for column, key in enumerate(keys):
         values = means[:, column]
@@ -191,9 +265,9 @@ def plot_metric_table(results: dict[str, list[dict[str, float]]], output: Path) 
     figure, axis = plt.subplots(figsize=(17, 6.2), layout="constrained")
     image = axis.imshow(scores, cmap="cividis", vmin=0, vmax=1, aspect="auto")
     axis.set_xticks(range(len(keys)), [METRICS[key][0] for key in keys], rotation=28, ha="right")
-    axis.set_yticks(range(len(METHODS)), [_name(method) for method in METHODS])
+    axis.set_yticks(range(len(methods)), [_name(method) for method in methods])
     axis.tick_params(length=0)
-    for row, method in enumerate(METHODS):
+    for row, method in enumerate(methods):
         for column, key in enumerate(keys):
             value = means[row, column]
             text = f"{value:.1f}" if METRICS[key][2] == "distance" else f"{value:.3f}"
@@ -207,7 +281,21 @@ def plot_metric_table(results: dict[str, list[dict[str, float]]], output: Path) 
                 fontweight="bold" if scores[row, column] == 1 else "normal",
                 color="white" if scores[row, column] < 0.52 else "#111111",
             )
-    axis.set_title("Nine-method metric comparison — scenario-macro mean over 49 SNR pairs", pad=14)
+    axis.set_title(
+        f"{len(methods)}-method metric comparison — scenario-macro mean over 49 SNR pairs",
+        pad=14,
+    )
+    if missing:
+        axis.text(
+            1.0,
+            1.02,
+            "N/A, excluded: " + ", ".join(map(_name, missing)),
+            transform=axis.transAxes,
+            ha="right",
+            va="bottom",
+            fontsize=8,
+            color="#666666",
+        )
     axis.set_xlabel(
         "Cells show original values; colour is rank-normalized within each metric. Spatial metrics are miss-penalized.",
         labelpad=12,
@@ -218,11 +306,12 @@ def plot_metric_table(results: dict[str, list[dict[str, float]]], output: Path) 
 
 
 def plot_score_distributions(results: dict[str, list[dict[str, float]]], output: Path) -> Path:
+    methods = tuple(results)
     keys = ("auc_tie_corrected", "auc", "rmse")
     figure, axes = plt.subplots(1, 3, figsize=(15.5, 6.2), sharey=True, layout="constrained")
-    positions = np.arange(len(METHODS))
+    positions = np.arange(len(methods))
     for axis, key in zip(axes, keys, strict=True):
-        distributions = [_values(results, method, key) for method in METHODS]
+        distributions = [_values(results, method, key) for method in methods]
         parts = axis.violinplot(
             distributions,
             positions=positions,
@@ -231,7 +320,7 @@ def plot_score_distributions(results: dict[str, list[dict[str, float]]], output:
             widths=0.72,
             points=80,
         )
-        for body, method in zip(parts["bodies"], METHODS, strict=True):
+        for body, method in zip(parts["bodies"], methods, strict=True):
             body.set_facecolor(COLORS[method])
             body.set_edgecolor("white")
             body.set_alpha(0.72)
@@ -243,7 +332,7 @@ def plot_score_distributions(results: dict[str, list[dict[str, float]]], output:
         axis.set_title(METRICS[key][0].replace("\n", " "))
         axis.grid(axis="x")
         axis.set_axisbelow(True)
-        axis.set_yticks(positions, [_name(method) for method in METHODS])
+        axis.set_yticks(positions, [_name(method) for method in methods])
         axis.invert_yaxis()
         if key in {"auc_tie_corrected", "auc"}:
             axis.axvline(0.9, color="#D55E00", linestyle="--", linewidth=1.2, label="0.90 target")
@@ -266,6 +355,7 @@ def plot_score_distributions(results: dict[str, list[dict[str, float]]], output:
 
 
 def plot_spatial_forest(results: dict[str, list[dict[str, float]]], output: Path) -> Path:
+    methods = tuple(results)
     keys = (
         "surface_sd_mm_penalized",
         "surface_dle_mm_penalized",
@@ -273,9 +363,9 @@ def plot_spatial_forest(results: dict[str, list[dict[str, float]]], output: Path
         "deep_dle_mm_penalized",
     )
     figure, axes = plt.subplots(2, 2, figsize=(13.5, 9.2), sharey=True, layout="constrained")
-    positions = np.arange(len(METHODS))
+    positions = np.arange(len(methods))
     for axis, key in zip(axes.flat, keys, strict=True):
-        for position, method in zip(positions, METHODS, strict=True):
+        for position, method in zip(positions, methods, strict=True):
             values = _values(results, method, key)
             low, q1, median, q3, high = np.quantile(values, (0, 0.25, 0.5, 0.75, 1))
             axis.hlines(position, low, high, color=COLORS[method], linewidth=1.2, alpha=0.42)
@@ -284,7 +374,7 @@ def plot_spatial_forest(results: dict[str, list[dict[str, float]]], output: Path
         axis.set_xscale("log")
         axis.set_title(METRICS[key][0])
         axis.set_xlabel("Distance (mm, log scale)")
-        axis.set_yticks(positions, [_name(method) for method in METHODS])
+        axis.set_yticks(positions, [_name(method) for method in methods])
         axis.grid(axis="x", which="both")
         axis.set_axisbelow(True)
     axes[0, 0].invert_yaxis()
@@ -303,14 +393,15 @@ def plot_spatial_forest(results: dict[str, list[dict[str, float]]], output: Path
 
 
 def plot_deep_detection(results: dict[str, list[dict[str, float]]], output: Path) -> Path:
+    methods = tuple(results)
     keys = ("deep_sensitivity", "deep_specificity", "deep_balanced_accuracy")
     colors = ("#0072B2", "#D55E00", "#009E73")
     markers = ("o", "s", "D")
     offsets = (-0.19, 0.0, 0.19)
-    positions = np.arange(len(METHODS))
+    positions = np.arange(len(methods))
     figure, axis = plt.subplots(figsize=(10.5, 6.5), layout="constrained")
     for key, color, marker, offset in zip(keys, colors, markers, offsets, strict=True):
-        for position, method in zip(positions, METHODS, strict=True):
+        for position, method in zip(positions, methods, strict=True):
             values = _values(results, method, key)
             q1, median, q3 = np.quantile(values, (0.25, 0.5, 0.75))
             axis.errorbar(
@@ -325,7 +416,7 @@ def plot_deep_detection(results: dict[str, list[dict[str, float]]], output: Path
             )
     axis.axvline(0.9, color="#555555", linestyle="--", linewidth=1, label="0.90 reference")
     axis.set_xlim(0, 1.01)
-    axis.set_yticks(positions, [_name(method) for method in METHODS])
+    axis.set_yticks(positions, [_name(method) for method in methods])
     axis.invert_yaxis()
     axis.set_xlabel("Score (median and IQR across 49 SNR pairs)")
     axis.set_title("Deep-source detection trade-off")
@@ -345,12 +436,13 @@ def plot_deep_detection(results: dict[str, list[dict[str, float]]], output: Path
 
 
 def plot_snr_robustness(results: dict[str, list[dict[str, float]]], output: Path) -> Path:
+    methods = tuple(results)
     figure, axes = plt.subplots(1, 2, figsize=(13.2, 5.4), sharey=True, layout="constrained")
     for axis, varying, averaged, title in (
         (axes[0], "eeg_snr_db", "MEG", "Vary EEG SNR (average over MEG)"),
         (axes[1], "meg_snr_db", "EEG", "Vary MEG SNR (average over EEG)"),
     ):
-        for method in METHODS:
+        for method in methods:
             means = [
                 np.mean([row["auc_tie_corrected"] for row in results[method] if int(row[varying]) == snr])
                 for snr in SNR_LEVELS
@@ -379,9 +471,20 @@ def plot_snr_robustness(results: dict[str, list[dict[str, float]]], output: Path
 
 
 def plot_auc_heatmaps(results: dict[str, list[dict[str, float]]], output: Path) -> Path:
-    figure, axes = plt.subplots(3, 3, figsize=(12.4, 11.2), sharex=True, sharey=True, layout="constrained")
+    methods = tuple(results)
+    columns = min(3, len(methods))
+    rows = int(np.ceil(len(methods) / columns))
+    figure, axes = plt.subplots(
+        rows,
+        columns,
+        figsize=(4.15 * columns, 3.75 * rows),
+        sharex=True,
+        sharey=True,
+        squeeze=False,
+        layout="constrained",
+    )
     image = None
-    for axis, method in zip(axes.flat, METHODS, strict=True):
+    for axis, method in zip(axes.flat, methods):
         matrix = _matrix(results, method, "auc_tie_corrected")
         image = axis.imshow(matrix, origin="lower", cmap="cividis", vmin=0.5, vmax=1.0, aspect="equal")
         if matrix.min() < 0.9 < matrix.max():
@@ -402,6 +505,8 @@ def plot_auc_heatmaps(results: dict[str, list[dict[str, float]]], output: Path) 
         axis.set_xticks(range(7), SNR_LEVELS)
         axis.set_yticks(range(7), SNR_LEVELS)
         axis.tick_params(labelsize=7)
+    for axis in axes.flat[len(methods) :]:
+        axis.set_axis_off()
     for axis in axes[-1, :]:
         axis.set_xlabel("MEG SNR (dB)")
     for axis in axes[:, 0]:
@@ -414,9 +519,10 @@ def plot_auc_heatmaps(results: dict[str, list[dict[str, float]]], output: Path) 
 
 def generate(root: Path, output: Path) -> list[Path]:
     _style()
-    results = load_results(root)
+    results, availability = load_results_with_availability(root)
     output = Path(output)
     return [
+        write_availability(availability, output / "method_availability.csv"),
         write_statistics(results, output / "method_metric_statistics.csv"),
         plot_metric_table(results, output / "metric_mean_rank_heatmap.png"),
         plot_score_distributions(results, output / "auc_rmse_distributions.png"),
@@ -425,6 +531,15 @@ def generate(root: Path, output: Path) -> list[Path]:
         plot_snr_robustness(results, output / "snr_robustness_lines.png"),
         plot_auc_heatmaps(results, output / "an_auc_snr_heatmaps.png"),
     ]
+
+
+def write_availability(rows: list[dict[str, str]], output: Path) -> Path:
+    output.parent.mkdir(parents=True, exist_ok=True)
+    with output.open("w", encoding="utf-8-sig", newline="") as stream:
+        writer = csv.DictWriter(stream, fieldnames=list(rows[0]))
+        writer.writeheader()
+        writer.writerows(rows)
+    return output
 
 
 def main(argv: Sequence[str] | None = None) -> list[Path]:

@@ -24,10 +24,40 @@ ESTIMATE_KEYS = ("estimate", "source_estimates", "S", "source", "s_wen")
 
 
 def _select_case(
-    cases: list[dict], case_id: str | None, case_number: int | None
+    cases: list[dict],
+    case_id: str | None,
+    case_number: int | None,
+    *,
+    eeg_snr_db: int | None = None,
+    meg_snr_db: int | None = None,
+    scenario: str | None = None,
+    location: int | None = None,
 ) -> dict:
-    if (case_id is None) == (case_number is None):
-        raise ValueError("specify exactly one of case_id or case_number")
+    query = (eeg_snr_db, meg_snr_db, scenario, location)
+    query_requested = any(value is not None for value in query)
+    if sum((case_id is not None, case_number is not None, query_requested)) != 1:
+        raise ValueError(
+            "specify exactly one selector: case_id, case_number, or "
+            "(eeg_snr_db, meg_snr_db, scenario, location)"
+        )
+    if query_requested:
+        if any(value is None for value in query):
+            raise ValueError("the SNR/scenario/location selector requires all four fields")
+        matches = [
+            case
+            for case in cases
+            if int(case["eeg_snr_db"]) == eeg_snr_db
+            and int(case["meg_snr_db"]) == meg_snr_db
+            and str(case["scenario"]) == scenario
+            and int(case["location"]) == location
+        ]
+        if len(matches) != 1:
+            raise ValueError(
+                "case query must match exactly once: "
+                f"EEG={eeg_snr_db}, MEG={meg_snr_db}, scenario={scenario}, "
+                f"location={location}; matches={len(matches)}"
+            )
+        return matches[0]
     if case_number is not None:
         if case_number < 0 or case_number >= len(cases):
             raise ValueError(f"case_number must be in [0,{len(cases) - 1}]")
@@ -45,14 +75,35 @@ def load_strict_case(
     *,
     case_id: str | None = None,
     case_number: int | None = None,
+    eeg_snr_db: int | None = None,
+    meg_snr_db: int | None = None,
+    scenario: str | None = None,
+    location: int | None = None,
 ) -> dict:
     """Load one archived observation pair and reconstruct only its source truth."""
     cases, manifest_sha256 = strict._load_manifest(Path(manifest_path))
-    case = _select_case(cases, case_id, case_number)
+    case = _select_case(
+        cases,
+        case_id,
+        case_number,
+        eeg_snr_db=eeg_snr_db,
+        meg_snr_db=meg_snr_db,
+        scenario=scenario,
+        location=location,
+    )
     chunks = strict._discover_chunks(Path(input_root), len(cases))
     number = int(case["case_number"])
     spec = next(chunk for chunk in chunks if chunk.start <= number < chunk.stop)
     geometry = strict._load_geometry(Path(data_root))
+    geometry_metadata = sio.loadmat(
+        geometry["path"], variable_names=("deep_aseg_labels",), simplify_cells=True
+    )
+    deep_labels = geometry_metadata.get("deep_aseg_labels")
+    if deep_labels is not None:
+        deep_labels = np.asarray(deep_labels, dtype=int).ravel()
+        if deep_labels.size != geometry["n_deep"] or not np.all(np.isin(deep_labels, (10, 49))):
+            raise ValueError("invalid corrected deep anatomical labels")
+    geometry["deep_aseg_labels"] = deep_labels
     reference = strict._load_chunk(chunks[0].path, observations=False)
     fingerprints = strict._fingerprints(reference)
     strict._validate_chunk(
@@ -310,6 +361,10 @@ def plot_case(
     *,
     case_id: str | None = None,
     case_number: int | None = None,
+    eeg_snr_db: int | None = None,
+    meg_snr_db: int | None = None,
+    scenario: str | None = None,
+    location: int | None = None,
     estimate_path: Path | None = None,
     output: Path | None = None,
 ) -> Path:
@@ -319,6 +374,10 @@ def plot_case(
         data_root,
         case_id=case_id,
         case_number=case_number,
+        eeg_snr_db=eeg_snr_db,
+        meg_snr_db=meg_snr_db,
+        scenario=scenario,
+        location=location,
     )
     expected_shape = loaded["truth"].shape
     if estimate_path is None:
@@ -346,9 +405,13 @@ def plot_case(
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
-    selector = parser.add_mutually_exclusive_group(required=True)
+    selector = parser.add_mutually_exclusive_group()
     selector.add_argument("--case-id")
     selector.add_argument("--case-number", type=int)
+    parser.add_argument("--eeg-snr-db", type=int)
+    parser.add_argument("--meg-snr-db", type=int)
+    parser.add_argument("--scenario")
+    parser.add_argument("--location", type=int)
     parser.add_argument("--manifest", type=Path, default=strict.DEFAULT_MANIFEST)
     parser.add_argument("--input-root", type=Path, default=strict.DEFAULT_INPUT_ROOT)
     parser.add_argument(
@@ -367,6 +430,10 @@ def main() -> None:
         args.data_root,
         case_id=args.case_id,
         case_number=args.case_number,
+        eeg_snr_db=args.eeg_snr_db,
+        meg_snr_db=args.meg_snr_db,
+        scenario=args.scenario,
+        location=args.location,
         estimate_path=args.estimate,
         output=args.output,
     )

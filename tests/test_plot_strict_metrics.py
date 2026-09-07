@@ -1,4 +1,5 @@
 from pathlib import Path
+import shutil
 
 import plot_strict_metrics as plotting
 
@@ -14,3 +15,18 @@ def test_strict_metric_loader_statistics_and_figure(tmp_path: Path) -> None:
     figure = plotting.plot_metric_table(results, tmp_path / "metrics.png")
     assert figure.read_bytes().startswith(b"\x89PNG\r\n\x1a\n")
     assert figure.stat().st_size > 30_000
+
+
+def test_missing_sisses_is_na_and_excluded(tmp_path: Path) -> None:
+    source = Path(__file__).parents[1] / "results" / "strict_blind"
+    for directory in ("oaster_v19_final", "comparators_final"):
+        target = tmp_path / directory
+        target.mkdir()
+        shutil.copy(source / directory / plotting.SUMMARY_NAME, target / plotting.SUMMARY_NAME)
+
+    results, availability = plotting.load_results_with_availability(tmp_path)
+
+    assert "SISSES" not in results
+    sisses = next(row for row in availability if row["method"] == "SISSES")
+    assert sisses["status"] == "N/A"
+    assert sisses["included_in_comparison"] == "no"

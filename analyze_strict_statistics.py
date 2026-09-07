@@ -1,7 +1,8 @@
-"""Paired, SNR-blocked statistics for the frozen strict benchmark."""
+"""Paired, SNR-blocked statistics for completed strict-benchmark methods."""
 
 from __future__ import annotations
 
+import argparse
 import csv
 import hashlib
 import json
@@ -9,9 +10,12 @@ import math
 import warnings
 from collections import defaultdict
 from pathlib import Path
+from typing import Sequence
 
 import numpy as np
 from scipy import stats
+
+import plot_strict_metrics as reporting
 
 
 ROOT = Path(__file__).resolve().parent
@@ -19,18 +23,8 @@ STRICT = ROOT / "results" / "strict_blind"
 OUTPUT = STRICT / "statistics"
 SEED = 20260907
 BOOTSTRAP_RESAMPLES = 10_000
-OASTER = "OASTER V19"
-METHODS = (
-    OASTER,
-    "SISSES",
-    "MNE",
-    "dSPM",
-    "sLORETA",
-    "eLORETA",
-    "LCMV",
-    "Dipole fitting (grid)",
-    "RAP-MUSIC",
-)
+OASTER = "OASTER"
+METHODS = reporting.METHODS
 # direction: +1 means larger is better, -1 means smaller is better.
 METRICS = (
     ("auc_tie_corrected", "An_auc", 1),
@@ -59,34 +53,27 @@ def _read_csv(path: Path) -> list[dict[str, str]]:
         return list(csv.DictReader(handle))
 
 
-def _load_blocks() -> dict[str, dict[tuple[int, int], dict[str, float]]]:
-    sources = (
-        (STRICT / "oaster_v19_final" / "summary_by_snr_pair_scenario_macro.csv", OASTER),
-        (STRICT / "sisses_preserved" / "summary_by_snr_pair_scenario_macro.csv", "SISSES"),
-        (STRICT / "comparators_final" / "summary_by_snr_pair_scenario_macro.csv", None),
-    )
-    blocks: dict[str, dict[tuple[int, int], dict[str, float]]] = defaultdict(dict)
+def _load_blocks(
+    root: Path = STRICT,
+) -> tuple[
+    dict[str, dict[tuple[int, int], dict[str, float]]], list[dict[str, str]]
+]:
+    results, availability = reporting.load_results_with_availability(root)
     metric_names = [field for field, _, _ in METRICS]
-    for path, fixed_method in sources:
-        for row in _read_csv(path):
-            method = fixed_method or row["method"]
-            pair = (int(row["eeg_snr_db"]), int(row["meg_snr_db"]))
-            if row["aggregation"] != "scenario_macro" or pair in blocks[method]:
-                raise ValueError(f"Invalid or duplicate SNR block in {path}: {method} {pair}")
-            values = {name: float(row[name]) for name in metric_names}
-            if not all(math.isfinite(value) for value in values.values()):
-                raise ValueError(f"Non-finite metric in {path}: {method} {pair}")
-            blocks[method][pair] = values
-
-    if set(blocks) != set(METHODS):
-        raise ValueError(f"Method mismatch: expected {METHODS}, got {tuple(blocks)}")
-    expected_pairs = set(blocks[OASTER])
-    if len(expected_pairs) != 49:
-        raise ValueError(f"Expected 49 EEG×MEG SNR blocks, got {len(expected_pairs)}")
-    for method in METHODS:
-        if set(blocks[method]) != expected_pairs:
-            raise ValueError(f"SNR blocks do not align for {method}")
-    return blocks
+    blocks = {
+        method: {
+            (int(row["eeg_snr_db"]), int(row["meg_snr_db"])): {
+                name: float(row[name]) for name in metric_names
+            }
+            for row in rows
+        }
+        for method, rows in results.items()
+    }
+    if OASTER not in blocks:
+        raise ValueError("a complete OASTER summary is required for paired comparisons")
+    if len(blocks) < 2:
+        raise ValueError("at least two complete methods are required")
+    return blocks, availability
 
 
 def _bootstrap_mean_ci(
@@ -118,60 +105,89 @@ def _rank_biserial(differences: np.ndarray) -> float:
 
 
 def _write_csv(path: Path, rows: list[dict[str, object]]) -> None:
+    if not rows:
+        path.write_text("", encoding="utf-8-sig")
+        return
     with path.open("w", encoding="utf-8-sig", newline="") as handle:
         writer = csv.DictWriter(handle, fieldnames=list(rows[0]))
         writer.writeheader()
         writer.writerows(rows)
 
 
-def _validate_case_inputs() -> dict[str, object]:
-    sisses_metadata = json.loads(
-        (STRICT / "sisses_preserved" / "metadata.json").read_text(encoding="utf-8-sig")
-    )
-    paths = {
-        OASTER: STRICT / "oaster_v19_final" / "rows.csv",
-        "comparators": STRICT / "comparators_final" / "rows.csv",
-        "SISSES": Path(sisses_metadata["source_scores"]),
-    }
-    expected_hash = sisses_metadata["source_scores_sha256"]
-    if not all(path.is_file() for path in paths.values()):
-        missing = [str(path) for path in paths.values() if not path.is_file()]
-        return {"performed": False, "reason": "missing local raw input", "missing": missing}
+def _raw_path(summary: Path) -> tuple[Path | None, str | None]:
+    rows = summary.parent / "rows.csv"
+    if rows.is_file():
+        return rows, None
+    metadata = summary.parent / "metadata.json"
+    if not metadata.is_file():
+        return None, None
+    values = json.loads(metadata.read_text(encoding="utf-8-sig"))
+    source = Path(values["source_scores"]) if values.get("source_scores") else None
+    return source, values.get("source_scores_sha256")
 
-    case_sets: dict[str, set[str]] = {}
-    files: dict[str, object] = {}
-    for source, path in paths.items():
+
+def _validate_case_inputs(
+    root: Path, availability: list[dict[str, str]]
+) -> dict[str, object]:
+    manifest = root / "manifest.json"
+    expected_cases = len(json.loads(manifest.read_text(encoding="utf-8"))) if manifest.is_file() else None
+    summaries = {
+        Path(row["source"])
+        for row in availability
+        if row["status"] == "complete" and row["source"]
+    }
+    raw_files: dict[str, object] = {}
+    case_sets: list[set[str]] = []
+    missing: list[str] = []
+    for summary in sorted(summaries):
+        raw, expected_hash = _raw_path(summary)
+        if raw is None or not raw.is_file():
+            missing.append(str(raw or summary.parent / "rows.csv"))
+            continue
+        if expected_hash and _sha256(raw) != expected_hash:
+            raise ValueError(f"preserved raw-score hash mismatch: {raw}")
         by_method: dict[str, set[str]] = defaultdict(set)
-        rows = 0
         bad_status = 0
-        for row in _read_csv(path):
-            rows += 1
-            bad_status += row["status"] != "ok"
-            if row["case_id"] in by_method[row["method"]]:
-                raise ValueError(f"Duplicate case/method in {path}: {row['case_id']} {row['method']}")
-            by_method[row["method"]].add(row["case_id"])
-        if bad_status or any(len(ids) != 9065 for ids in by_method.values()):
-            raise ValueError(f"Incomplete case-level input: {path}")
+        row_count = 0
+        for row in _read_csv(raw):
+            row_count += 1
+            bad_status += row.get("status", "ok") != "ok"
+            method = row.get("method", summary.parent.name)
+            case_id = row["case_id"]
+            if case_id in by_method[method]:
+                raise ValueError(f"duplicate case/method in {raw}: {case_id} {method}")
+            by_method[method].add(case_id)
+        if bad_status:
+            raise ValueError(f"raw result contains failed cases: {raw}")
+        if expected_cases is not None and any(len(ids) != expected_cases for ids in by_method.values()):
+            raise ValueError(f"raw result is incomplete for the manifest: {raw}")
         if len({frozenset(ids) for ids in by_method.values()}) != 1:
-            raise ValueError(f"Comparator case sets do not align within {path}")
-        case_sets[source] = next(iter(by_method.values()))
-        files[source] = {
-            "path": str(path),
-            "sha256": _sha256(path),
-            "row_count": rows,
+            raise ValueError(f"method case sets do not align within {raw}")
+        case_sets.append(next(iter(by_method.values())))
+        raw_files[str(raw)] = {
+            "sha256": _sha256(raw),
+            "row_count": row_count,
             "methods": sorted(by_method),
             "status_errors": bad_status,
         }
-    if len({frozenset(ids) for ids in case_sets.values()}) != 1:
-        raise ValueError("OASTER, comparators, and SISSES do not contain identical case IDs")
-    if files["SISSES"]["sha256"] != expected_hash:
-        raise ValueError("SISSES scores.csv hash no longer matches preserved metadata")
-    return {"performed": True, "case_ids_aligned": True, "case_count": 9065, "files": files}
+    aligned = not case_sets or len({frozenset(ids) for ids in case_sets}) == 1
+    if not aligned:
+        raise ValueError("completed methods do not contain identical case IDs")
+    return {
+        "performed": bool(raw_files),
+        "case_ids_aligned": aligned,
+        "expected_case_count": expected_cases,
+        "files": raw_files,
+        "missing_raw_inputs": missing,
+    }
 
 
-def analyze(output: Path = OUTPUT) -> None:
-    blocks = _load_blocks()
-    raw_validation = _validate_case_inputs()
+def analyze(output: Path | None = None, *, root: Path = STRICT) -> Path:
+    root = Path(root)
+    output = Path(output) if output is not None else root / "statistics"
+    blocks, availability = _load_blocks(root)
+    methods = tuple(blocks)
+    raw_validation = _validate_case_inputs(root, availability)
     pairs = sorted(blocks[OASTER])
     rng = np.random.default_rng(SEED)
     descriptive: list[dict[str, object]] = []
@@ -182,9 +198,9 @@ def analyze(output: Path = OUTPUT) -> None:
 
     for metric, label, direction in METRICS:
         matrix = np.asarray(
-            [[blocks[method][pair][metric] for method in METHODS] for pair in pairs], dtype=float
+            [[blocks[method][pair][metric] for method in methods] for pair in pairs], dtype=float
         )
-        for method_index, method in enumerate(METHODS):
+        for method_index, method in enumerate(methods):
             values = matrix[:, method_index]
             ci_low, ci_high = _bootstrap_mean_ci(values, rng)
             descriptive.append(
@@ -207,21 +223,26 @@ def analyze(output: Path = OUTPUT) -> None:
             )
 
         benefit = direction * matrix
-        friedman = stats.friedmanchisquare(*(benefit[:, index] for index in range(len(METHODS))))
-        omnibus.append(
-            {
-                "metric": metric,
-                "metric_label": label,
-                "n_snr_pairs": len(pairs),
-                "method_count": len(METHODS),
-                "friedman_chi_square": float(friedman.statistic),
-                "degrees_of_freedom": len(METHODS) - 1,
-                "p_value": float(friedman.pvalue),
-                "kendalls_w": float(friedman.statistic / (len(pairs) * (len(METHODS) - 1))),
-            }
-        )
+        if len(methods) >= 3:
+            friedman = stats.friedmanchisquare(
+                *(benefit[:, index] for index in range(len(methods)))
+            )
+            omnibus.append(
+                {
+                    "metric": metric,
+                    "metric_label": label,
+                    "n_snr_pairs": len(pairs),
+                    "method_count": len(methods),
+                    "friedman_chi_square": float(friedman.statistic),
+                    "degrees_of_freedom": len(methods) - 1,
+                    "p_value": float(friedman.pvalue),
+                    "kendalls_w": float(
+                        friedman.statistic / (len(pairs) * (len(methods) - 1))
+                    ),
+                }
+            )
         ranks = stats.rankdata(-benefit, axis=1, method="average")
-        for index, method in enumerate(METHODS):
+        for index, method in enumerate(methods):
             method_ranks.append(
                 {
                     "metric": metric,
@@ -231,14 +252,14 @@ def analyze(output: Path = OUTPUT) -> None:
                 }
             )
 
-        raw_p_values: list[float] = []
         metric_rows: list[dict[str, object]] = []
-        for baseline_index, baseline in enumerate(METHODS[1:], start=1):
+        raw_p_values: list[float] = []
+        for baseline_index, baseline in enumerate(methods[1:], start=1):
             differences = benefit[:, 0] - benefit[:, baseline_index]
             ci_low, ci_high = _bootstrap_mean_ci(differences, rng)
             ties = np.isclose(differences, 0.0, rtol=1e-10, atol=1e-12)
-            tested_differences = differences.copy()
-            tested_differences[ties] = 0.0
+            tested = differences.copy()
+            tested[ties] = 0.0
             wins = int(np.sum((differences > 0) & ~ties))
             losses = int(np.sum((differences < 0) & ~ties))
             tie_count = int(ties.sum())
@@ -247,14 +268,7 @@ def analyze(output: Path = OUTPUT) -> None:
             else:
                 with warnings.catch_warnings():
                     warnings.simplefilter("ignore", RuntimeWarning)
-                    p_value = float(
-                        stats.wilcoxon(
-                            tested_differences,
-                            alternative="two-sided",
-                            zero_method="wilcox",
-                            method="auto",
-                        ).pvalue
-                    )
+                    p_value = float(stats.wilcoxon(tested, zero_method="wilcox").pvalue)
             raw_p_values.append(p_value)
             metric_rows.append(
                 {
@@ -272,14 +286,18 @@ def analyze(output: Path = OUTPUT) -> None:
                     "oaster_wins": wins,
                     "ties": tie_count,
                     "oaster_losses": losses,
-                    "win_rate_excluding_ties": float(wins / (wins + losses)) if wins + losses else math.nan,
-                    "common_language_win_probability": float((wins + 0.5 * tie_count) / len(pairs)),
+                    "win_rate_excluding_ties": float(wins / (wins + losses))
+                    if wins + losses
+                    else math.nan,
+                    "common_language_win_probability": float(
+                        (wins + 0.5 * tie_count) / len(pairs)
+                    ),
                     "wilcoxon_p_value": p_value,
                     "holm_p_value_within_metric": math.nan,
-                    "paired_rank_biserial": _rank_biserial(tested_differences),
+                    "paired_rank_biserial": _rank_biserial(tested),
                 }
             )
-            for pair, oaster_value, baseline_value, difference, tie in zip(
+            for pair, a, b, difference, tie in zip(
                 pairs, matrix[:, 0], matrix[:, baseline_index], differences, ties, strict=True
             ):
                 by_pair.append(
@@ -289,8 +307,8 @@ def analyze(output: Path = OUTPUT) -> None:
                         "baseline": baseline,
                         "eeg_snr_db": pair[0],
                         "meg_snr_db": pair[1],
-                        "oaster_value": float(oaster_value),
-                        "baseline_value": float(baseline_value),
+                        "oaster_value": float(a),
+                        "baseline_value": float(b),
                         "oriented_difference_positive_favors_oaster": float(difference),
                         "outcome": "tie" if tie else ("win" if difference > 0 else "loss"),
                     }
@@ -299,8 +317,11 @@ def analyze(output: Path = OUTPUT) -> None:
             row["holm_p_value_within_metric"] = adjusted
         pairwise.extend(metric_rows)
 
-    for row, adjusted in zip(omnibus, _holm([float(row["p_value"]) for row in omnibus]), strict=True):
-        row["holm_p_value_across_metrics"] = adjusted
+    if omnibus:
+        for row, adjusted in zip(
+            omnibus, _holm([float(row["p_value"]) for row in omnibus]), strict=True
+        ):
+            row["holm_p_value_across_metrics"] = adjusted
 
     output.mkdir(parents=True, exist_ok=True)
     _write_csv(output / "summary_method_descriptive.csv", descriptive)
@@ -308,15 +329,16 @@ def analyze(output: Path = OUTPUT) -> None:
     _write_csv(output / "summary_snr_pair_differences.csv", by_pair)
     _write_csv(output / "summary_omnibus.csv", omnibus)
     _write_csv(output / "summary_method_ranks.csv", method_ranks)
+    reporting.write_availability(availability, output / "method_availability.csv")
 
-    source_summaries = (
-        STRICT / "oaster_v19_final" / "summary_by_snr_pair_scenario_macro.csv",
-        STRICT / "sisses_preserved" / "summary_by_snr_pair_scenario_macro.csv",
-        STRICT / "comparators_final" / "summary_by_snr_pair_scenario_macro.csv",
+    source_summaries = sorted(
+        {Path(row["source"]) for row in availability if row["status"] == "complete"}
     )
     metadata = {
-        "analysis_unit": "49 paired EEG×MEG SNR cells; each value is the macro-average of four scenarios",
-        "methods": list(METHODS),
+        "results_root": str(root.resolve()),
+        "analysis_unit": "49 paired EEG×MEG SNR cells; each value is a scenario macro-average",
+        "methods_included": list(methods),
+        "method_availability": availability,
         "metrics": [field for field, _, _ in METRICS],
         "bootstrap": {
             "type": "paired nonparametric percentile bootstrap over SNR cells",
@@ -326,28 +348,24 @@ def analyze(output: Path = OUTPUT) -> None:
         },
         "tests": {
             "omnibus": "Friedman test with Kendall's W; Holm correction across endpoints",
-            "pairwise": "two-sided paired Wilcoxon signed-rank; Holm correction across eight OASTER contrasts within each endpoint",
+            "pairwise": (
+                "two-sided paired Wilcoxon signed-rank; Holm correction over available "
+                "OASTER contrasts within each endpoint"
+            ),
             "effect_size": "paired rank-biserial correlation; positive favors OASTER",
         },
-        "scope_warning": "The 49 SNR cells are a fixed experimental grid, not an iid population sample. Intervals and p-values quantify consistency across this tested grid and do not establish clinical or population generalization.",
-        "localization_metrics": "Only miss-penalized layer SD/DLE enter inference; finite-only unpenalized means are intentionally excluded.",
+        "scope_warning": "The 49 SNR cells are a fixed experimental grid, not an iid population sample.",
+        "localization_metrics": "Only miss-penalized layer SD/DLE enter inference.",
         "source_summaries": [
             {"path": str(path), "sha256": _sha256(path)} for path in source_summaries
         ],
         "raw_case_validation": raw_validation,
-        "outputs": [
-            "summary_method_descriptive.csv",
-            "summary_oaster_pairwise.csv",
-            "summary_snr_pair_differences.csv",
-            "summary_omnibus.csv",
-            "summary_method_ranks.csv",
-            "REPORT.md",
-        ],
     }
     (output / "metadata.json").write_text(
         json.dumps(metadata, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
     )
-    _write_report(output / "REPORT.md", descriptive, pairwise, omnibus)
+    _write_report(output / "REPORT.md", descriptive, pairwise, omnibus, methods, availability)
+    return output
 
 
 def _write_report(
@@ -355,23 +373,39 @@ def _write_report(
     descriptive: list[dict[str, object]],
     pairwise: list[dict[str, object]],
     omnibus: list[dict[str, object]],
+    methods: tuple[str, ...],
+    availability: list[dict[str, str]],
 ) -> None:
     lookup = {(row["metric"], row["method"]): row for row in descriptive}
     primary = [row for row in pairwise if row["metric"] == "auc_tie_corrected"]
-    by_contrast = {(row["metric"], row["baseline"]): row for row in pairwise}
-    sisses_auc = by_contrast[("auc_tie_corrected", "SISSES")]
-    lcmv_dle = by_contrast[("deep_dle_mm_penalized", "LCMV")]
-    lcmv_sensitivity = by_contrast[("deep_sensitivity", "LCMV")]
+    missing = [row["method"] for row in availability if row["status"] != "complete"]
     lines = [
-        "# 冻结严格基准统计分析",
+        "# 严格基准统计分析",
         "",
-        "统计区组为 49 个 EEG×MEG SNR 组合；每个区组内先对四种场景做宏平均，再进行九方法配对比较。9,065 个病例不被当作独立重复，因此不会以样本量膨胀显著性。",
+        f"统计区组为 49 个 EEG×MEG SNR 组合；本次仅纳入 {len(methods)} 个完整方法："
+        + "、".join(methods)
+        + "。",
         "",
-        "## 主指标：An_auc",
+        "## 方法可用性",
         "",
-        "| 对比方法 | OASTER 均值 | 方法均值 | OASTER 优势 | 配对 bootstrap 95% CI | 胜/平/负 | Holm p | 配对秩二列 r |",
-        "|---|---:|---:|---:|---:|---:|---:|---:|",
+        "| 方法 | 状态 | 纳入排名/显著性 |",
+        "|---|---:|---:|",
     ]
+    for row in availability:
+        lines.append(
+            f"| {row['method']} | {row['status']} | {row['included_in_comparison']} |"
+        )
+    if "SISSES" in missing:
+        lines.extend(["", "SISSES 为 **N/A**，未纳入排名、Friedman 或 Wilcoxon 检验。"])
+    lines.extend(
+        [
+            "",
+            "## 主指标：An_auc",
+            "",
+            "| 对比方法 | OASTER 均值 | 方法均值 | OASTER 优势 | 配对 bootstrap 95% CI | 胜/平/负 | Holm p | 配对秩二列 r |",
+            "|---|---:|---:|---:|---:|---:|---:|---:|",
+        ]
+    )
     for row in primary:
         lines.append(
             f"| {row['baseline']} | {row['oaster_mean']:.6f} | {row['baseline_mean']:.6f} | "
@@ -383,24 +417,19 @@ def _write_report(
     lines.extend(
         [
             "",
-            "差值和效应量均已按指标方向定向，正值表示 OASTER 更好。置信区间通过同时重采样配对 SNR 区组得到。",
+            "正的定向差值表示 OASTER 更好；检验和 Holm 校正只使用上表中的可用方法。",
             "",
-            "## 统计结论",
+            f"## {len(methods)} 方法总体检验",
             "",
-            f"- OASTER 的 An_auc 网格均值比 SISSES 高 {sisses_auc['mean_oriented_difference']:.6f}，但区间跨 0、Holm p={sisses_auc['holm_p_value_within_metric']:.3g}，且只在 {sisses_auc['oaster_wins']}/49 个 SNR 对获胜；因此只能说均值略高，不能声称在整个 SNR 网格上显著优于 SISSES。",
-            "- OASTER 对其余七种方法的 An_auc 在 49/49 个 SNR 对均获胜，校正后检验均支持稳定优势。",
-            f"- 深层 penalized DLE 相对 LCMV 的定向均值差为 {lcmv_dle['mean_oriented_difference']:+.3f} mm（Holm p={lcmv_dle['holm_p_value_within_metric']:.3g}），深层敏感度差为 {lcmv_sensitivity['mean_oriented_difference']:+.4f}（Holm p={lcmv_sensitivity['holm_p_value_within_metric']:.3g}）；这两项没有证据表明 OASTER 更优。",
-            "",
-            "## 九方法总体检验",
-            "",
-            "| 指标 | Friedman χ²(8) | Holm p（跨指标） | Kendall's W |",
-            "|---|---:|---:|---:|",
+            "| 指标 | Friedman χ² | 自由度 | Holm p（跨指标） | Kendall's W |",
+            "|---|---:|---:|---:|---:|",
         ]
     )
     for row in omnibus:
         lines.append(
             f"| {row['metric_label']} | {row['friedman_chi_square']:.3f} | "
-            f"{row['holm_p_value_across_metrics']:.3g} | {row['kendalls_w']:.3f} |"
+            f"{row['degrees_of_freedom']} | {row['holm_p_value_across_metrics']:.3g} | "
+            f"{row['kendalls_w']:.3f} |"
         )
     lines.extend(
         [
@@ -411,7 +440,7 @@ def _write_report(
             "|---|---:|---:|---:|",
         ]
     )
-    for method in METHODS:
+    for method in methods:
         row = lookup[("auc_tie_corrected", method)]
         lines.append(
             f"| {method} | {row['mean']:.6f} ± {row['sd_across_snr_pairs']:.6f} | "
@@ -423,16 +452,23 @@ def _write_report(
             "",
             "## 解读边界",
             "",
-            "- 49 个 SNR 单元是预设实验网格，不是从某个人群随机抽取的独立样本；p 值和区间只刻画该网格内的一致性，不能外推为临床或人群效应。",
-            "- 推断只使用 miss-penalized 的表层/深层 SD、DLE；会排除漏检病例的 finite-only 非惩罚均值没有参与检验。",
-            "- Holm 校正在每个指标的 8 个 OASTER 配对比较内实施；Friedman 的 10 个端点另做跨指标 Holm 校正。",
-            "- `rmse` 沿用历史字段名，实际语义是平方相对 Frobenius 误差，而非常规定义的均方根误差。",
-            "",
-            "完整逐指标描述统计、逐 SNR 差值/胜负、平均秩及检验结果见本目录 CSV；输入哈希与逐病例对齐验证见 `metadata.json`。",
+            "- 49 个 SNR 单元是预设实验网格，不是独立人群样本。",
+            "- 推断只使用 miss-penalized 的表层/深层 SD、DLE。",
+            "- `rmse` 沿用历史字段名，实际为平方相对 Frobenius 误差。",
         ]
     )
     path.write_text("\n".join(lines) + "\n", encoding="utf-8")
 
 
+def main(argv: Sequence[str] | None = None) -> Path:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--root", type=Path, default=STRICT)
+    parser.add_argument("--output", type=Path)
+    args = parser.parse_args(argv)
+    result = analyze(args.output, root=args.root)
+    print(result)
+    return result
+
+
 if __name__ == "__main__":
-    analyze()
+    main()

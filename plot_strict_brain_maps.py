@@ -1,8 +1,8 @@
-"""Render nine strict-benchmark estimates on the same anatomical MRI slices.
+"""Render completed strict-benchmark estimates on the same anatomical MRI slices.
 
-The default case is the representative 0/0 dB deep-plus-two-surface case 3124.
-SISSES is loaded read-only from its preserved MATLAB output; all other methods
-are recomputed from that case's immutable archived EEG/MEG observations.
+The default query is a representative 0/0 dB deep-plus-two-surface location.
+SISSES is loaded read-only when available; Python methods are recomputed from
+that case's immutable archived EEG/MEG observations.
 """
 
 from __future__ import annotations
@@ -10,7 +10,7 @@ from __future__ import annotations
 import argparse
 import csv
 import json
-import re
+import math
 from pathlib import Path
 
 import matplotlib
@@ -30,6 +30,7 @@ import scipy.io as sio
 from scipy.ndimage import gaussian_filter
 
 import plot_strict_case as strict_plot
+import plot_strict_metrics as metric_plots
 import run_strict_comparators as comparators
 from benchmark import methods as comparator_methods
 from benchmark import metrics as benchmark_metrics
@@ -40,7 +41,7 @@ from visualization.visualize_spatial_fused_mri import (
 
 
 ROOT = Path(__file__).resolve().parent
-DEFAULT_CASE_NUMBER = 3124
+DEFAULT_CASE_QUERY = (0, 0, "deep_plus_two_surface", 13)
 DEFAULT_SISSES_ROOT = Path(r"D:\oaster_strict_blind_sisses")
 DEFAULT_OUTPUT_ROOT = ROOT / "results" / "strict_blind" / "brain_maps_v2"
 DEFAULT_SAMPLE_PATH = Path(r"D:\mne_data\MNE-sample-data")
@@ -153,47 +154,90 @@ def load_sisses_estimate(loaded: dict, sisses_root: Path) -> tuple[np.ndarray, P
     }
 
 
-def reconstruct_all(loaded: dict, sisses_root: Path) -> tuple[dict[str, np.ndarray], dict]:
-    """Reconstruct the same observation with OASTER, SISSES and seven comparators."""
+def _completed_method_order(results_root: Path) -> tuple[tuple[str, ...], list[dict[str, str]]]:
+    results, availability = metric_plots.load_results_with_availability(results_root)
+    aliases = {"OASTER": "OASTER V19"}
+    return tuple(aliases.get(method, method) for method in results), availability
+
+
+def reconstruct_all(
+    loaded: dict,
+    sisses_root: Path,
+    methods: tuple[str, ...] = METHOD_ORDER,
+    *,
+    sisses_mode: str = "auto",
+) -> tuple[dict[str, np.ndarray], dict]:
+    """Reconstruct only requested methods; unavailable optional SISSES becomes N/A."""
+    if sisses_mode not in {"auto", "require", "skip"}:
+        raise ValueError("sisses_mode must be auto, require, or skip")
+    unknown = set(methods) - set(METHOD_ORDER)
+    if not methods or unknown:
+        raise ValueError(f"invalid method selection: {sorted(unknown)}")
+
     runtime = strict_plot.strict._runtime(loaded["geometry"], loaded["reference"])
-    oaster, diagnostics = strict_plot.strict.oaster.reconstruct(
-        loaded["eeg"],
-        loaded["meg"],
-        loaded["gain_eeg"],
-        loaded["gain_meg"],
-        loaded["geometry"]["n_surf"],
-        runtime["kernels"],
-    )
-    sisses, sisses_path, sisses_metadata = load_sisses_estimate(loaded, sisses_root)
-    data, gain = comparator_methods.joint_whiten(
-        loaded["eeg"], loaded["meg"], loaded["gain_eeg"], loaded["gain_meg"]
-    )
-    family = comparator_methods.minimum_norm_family(data, gain)
-    active = runtime["active"]
-    estimates = {
-        "OASTER V19": oaster,
-        "SISSES": sisses,
-        **family,
-        "LCMV": comparator_methods.lcmv(data, gain, active),
-        "Dipole fitting (grid)": comparator_methods.dipole_fit(data, gain, active),
-        "RAP-MUSIC": comparator_methods.rap_music(data, gain, active),
-    }
-    if tuple(estimates) != METHOD_ORDER:
-        raise RuntimeError(f"nine-method ordering changed: {tuple(estimates)}")
-    return estimates, {
-        "oaster_diagnostics": {
+    computed: dict[str, np.ndarray] = {}
+    provenance: dict[str, object] = {}
+    if "OASTER V19" in methods:
+        estimate, diagnostics = strict_plot.strict.oaster.reconstruct(
+            loaded["eeg"],
+            loaded["meg"],
+            loaded["gain_eeg"],
+            loaded["gain_meg"],
+            loaded["geometry"]["n_surf"],
+            runtime["kernels"],
+        )
+        computed["OASTER V19"] = estimate
+        provenance["oaster_diagnostics"] = {
             "temporal_rank": int(diagnostics["temporal_rank"]),
             "selected_templates": int(diagnostics["selected_templates"]),
-        },
-        "sisses_path": str(sisses_path.resolve()),
-        "sisses": sisses_metadata,
-    }
+        }
+
+    if "SISSES" in methods and sisses_mode != "skip":
+        try:
+            estimate, path, metadata = load_sisses_estimate(loaded, sisses_root)
+            computed["SISSES"] = estimate
+            provenance.update(
+                {"sisses_status": "available", "sisses_path": str(path.resolve()), "sisses": metadata}
+            )
+        except (OSError, ValueError, KeyError, TypeError) as error:
+            if sisses_mode == "require":
+                raise
+            provenance.update({"sisses_status": "N/A", "sisses_reason": str(error)})
+    elif "SISSES" not in methods or sisses_mode == "skip":
+        provenance["sisses_status"] = "N/A"
+        provenance["sisses_reason"] = (
+            "disabled by --sisses-mode skip"
+            if sisses_mode == "skip"
+            else "not completed for this results root"
+        )
+
+    requested_comparators = set(methods) & set(comparators.METHODS)
+    if requested_comparators:
+        data, gain = comparator_methods.joint_whiten(
+            loaded["eeg"], loaded["meg"], loaded["gain_eeg"], loaded["gain_meg"]
+        )
+        family = comparator_methods.minimum_norm_family(data, gain)
+        computed.update(
+            {method: estimate for method, estimate in family.items() if method in requested_comparators}
+        )
+        active = runtime["active"]
+        if "LCMV" in requested_comparators:
+            computed["LCMV"] = comparator_methods.lcmv(data, gain, active)
+        if "Dipole fitting (grid)" in requested_comparators:
+            computed["Dipole fitting (grid)"] = comparator_methods.dipole_fit(data, gain, active)
+        if "RAP-MUSIC" in requested_comparators:
+            computed["RAP-MUSIC"] = comparator_methods.rap_music(data, gain, active)
+
+    estimates = {method: computed[method] for method in methods if method in computed}
+    if not estimates:
+        raise ValueError("no requested method estimate is available")
+    return estimates, provenance
 
 
 def evaluate_all(loaded: dict, estimates: dict[str, np.ndarray]) -> list[dict]:
     runtime = comparators._runtime(loaded["geometry"], loaded["reference"])
     rows = []
-    for method in METHOD_ORDER:
+    for method in estimates:
         rows.append(
             {
                 "case_id": loaded["case"]["case_id"],
@@ -234,7 +278,8 @@ def _focuses(loaded: dict) -> list[tuple[str, int]]:
         for number, index in enumerate(case.get("surface_centers", []), start=1)
     ]
     if case.get("deep_index") is not None:
-        focuses.append(("Non-cortical source", int(case["deep_index"])))
+        corrected = loaded["geometry"].get("deep_aseg_labels") is not None
+        focuses.append(("Thalamic source" if corrected else "Non-cortical source", int(case["deep_index"])))
     if not focuses:
         raise ValueError("strict case has no source focus")
     return focuses
@@ -452,13 +497,23 @@ def render_method(
 
 
 def render_montage(paths: list[tuple[str, Path]], output: Path, dpi: int) -> Path:
-    fig, axes = plt.subplots(3, 3, figsize=(19.2, 18.0), facecolor="white")
+    columns = min(3, len(paths))
+    rows = math.ceil(len(paths) / columns)
+    fig, axes = plt.subplots(
+        rows,
+        columns,
+        figsize=(6.4 * columns, 6.0 * rows),
+        facecolor="white",
+        squeeze=False,
+    )
     for ax, (method, path) in zip(axes.ravel(), paths):
         ax.imshow(plt.imread(path))
         ax.set_title(method, fontsize=13, fontweight="bold", pad=5)
         ax.set_axis_off()
+    for ax in axes.ravel()[len(paths) :]:
+        ax.set_axis_off()
     fig.suptitle(
-        "Nine-method source localization on one frozen EEG-MEG observation",
+        f"{len(paths)}-method source localization on one EEG-MEG observation",
         fontsize=18,
         fontweight="bold",
         y=0.995,
@@ -493,14 +548,24 @@ def plot_brain_maps(
     sample_path: Path = DEFAULT_SAMPLE_PATH,
     sisses_root: Path = DEFAULT_SISSES_ROOT,
     output_root: Path = DEFAULT_OUTPUT_ROOT,
+    results_root: Path | None = None,
     *,
     case_id: str | None = None,
     case_number: int | None = None,
+    eeg_snr_db: int | None = None,
+    meg_snr_db: int | None = None,
+    scenario: str | None = None,
+    location: int | None = None,
+    sisses_mode: str = "auto",
     relative_threshold: float = 0.10,
     dpi: int = 160,
 ) -> Path:
-    if case_id is None and case_number is None:
-        case_number = DEFAULT_CASE_NUMBER
+    if (
+        case_id is None
+        and case_number is None
+        and all(value is None for value in (eeg_snr_db, meg_snr_db, scenario, location))
+    ):
+        eeg_snr_db, meg_snr_db, scenario, location = DEFAULT_CASE_QUERY
     if not 0 < relative_threshold < 1 or dpi < 72:
         raise ValueError("relative_threshold must be in (0,1) and dpi must be >= 72")
     sisses_root = Path(sisses_root).resolve()
@@ -513,8 +578,18 @@ def plot_brain_maps(
         Path(data_root or _default_data_root()),
         case_id=case_id,
         case_number=case_number,
+        eeg_snr_db=eeg_snr_db,
+        meg_snr_db=meg_snr_db,
+        scenario=scenario,
+        location=location,
     )
-    estimates, provenance = reconstruct_all(loaded, sisses_root)
+    if results_root is None:
+        method_order, availability = METHOD_ORDER, []
+    else:
+        method_order, availability = _completed_method_order(Path(results_root))
+    estimates, provenance = reconstruct_all(
+        loaded, sisses_root, method_order, sisses_mode=sisses_mode
+    )
     rows = evaluate_all(loaded, estimates)
     anatomy = load_anatomy(Path(sample_path))
     case = loaded["case"]
@@ -522,7 +597,7 @@ def plot_brain_maps(
     case_dir.mkdir(parents=True, exist_ok=True)
     rendered = []
     by_method = {row["method"]: row for row in rows}
-    for method in METHOD_ORDER:
+    for method in estimates:
         path = render_method(
             method,
             estimates[method],
@@ -540,7 +615,8 @@ def plot_brain_maps(
         json.dumps(
             {
                 "case": case,
-                "methods": list(METHOD_ORDER),
+                "methods": list(estimates),
+                "method_availability": availability,
                 "normalization": "per-method active-minus-baseline RMS, normalized to global peak",
                 "display_threshold": relative_threshold,
                 "truth_overlay": "green parcel rings and green star at each simulated source center",
@@ -548,7 +624,11 @@ def plot_brain_maps(
                 "observations": "immutable archived F_EEG/F_MEG; never regenerated",
                 "sisses_archive_access": "read-only; output root is explicitly rejected inside archive",
                 "case_metrics": "recomputed uniformly with the current benchmark.metrics scorer; primary AUC is auc_tie_corrected (An_auc)",
-                "deep_grid_warning": "the frozen 15-point grid was intended as thalamus but a legacy HEAD-to-MRI selection error places it near brain stem/cerebellum/fourth ventricle; see SOURCE_SPACE_AUDIT.md",
+                "deep_source_anatomy": (
+                    "bilateral thalamus (aseg labels 10/49)"
+                    if loaded["geometry"].get("deep_aseg_labels") is not None
+                    else "legacy non-cortical grid; see SOURCE_SPACE_AUDIT.md"
+                ),
                 "legacy_auc_note": "the preserved SISSES table used an older parcel-AUC aggregation for multi-source cases; do not substitute that historical auc column for the common-scoring value here",
                 **provenance,
             },
@@ -566,12 +646,18 @@ def main() -> None:
     selector = parser.add_mutually_exclusive_group()
     selector.add_argument("--case-id")
     selector.add_argument("--case-number", type=int)
+    parser.add_argument("--eeg-snr-db", type=int)
+    parser.add_argument("--meg-snr-db", type=int)
+    parser.add_argument("--scenario")
+    parser.add_argument("--location", type=int)
     parser.add_argument("--manifest", type=Path, default=strict_plot.strict.DEFAULT_MANIFEST)
     parser.add_argument("--input-root", type=Path, default=strict_plot.strict.DEFAULT_INPUT_ROOT)
     parser.add_argument("--data-root", type=Path)
     parser.add_argument("--sample-path", type=Path, default=DEFAULT_SAMPLE_PATH)
     parser.add_argument("--sisses-root", type=Path, default=DEFAULT_SISSES_ROOT)
     parser.add_argument("--output-root", type=Path, default=DEFAULT_OUTPUT_ROOT)
+    parser.add_argument("--results-root", type=Path)
+    parser.add_argument("--sisses-mode", choices=("auto", "require", "skip"), default="auto")
     parser.add_argument("--relative-threshold", type=float, default=0.10)
     parser.add_argument("--dpi", type=int, default=160)
     args = parser.parse_args()
@@ -582,12 +668,18 @@ def main() -> None:
         args.sample_path,
         args.sisses_root,
         args.output_root,
+        args.results_root,
         case_id=args.case_id,
         case_number=args.case_number,
+        eeg_snr_db=args.eeg_snr_db,
+        meg_snr_db=args.meg_snr_db,
+        scenario=args.scenario,
+        location=args.location,
+        sisses_mode=args.sisses_mode,
         relative_threshold=args.relative_threshold,
         dpi=args.dpi,
     )
-    print(f"Saved nine-method brain maps: {output}")
+    print(f"Saved brain maps: {output}")
 
 
 if __name__ == "__main__":
