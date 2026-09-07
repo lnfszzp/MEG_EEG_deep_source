@@ -21,7 +21,11 @@
 - `run_strict_oaster.py`、`run_strict_comparators.py`：直接读取冻结观测的 OASTER 与七种 Python 对比方法；`run_snr_comparators_matrix.py` 是后者的旧命令名兼容入口。
 - `run_strict_blind_sisses.py`：只读核验与汇总现存 SISSES 归档，不再生成观测或调用 MATLAB。
 - `visualization/`、`plot_results.py`：皮层、MRI、波形和指标图。
+- `plot_strict_metrics.py`：九方法十指标的分布、森林图、鲁棒性曲线和 7×7 SNR 热图。
+- `analyze_strict_statistics.py`：49 个 SNR 配对区组的描述统计、bootstrap、Friedman/Wilcoxon、Holm 校正与效应量。
+- `plot_strict_brain_maps.py`：在同一 MNE sample T1 空间绘制九方法的逐方法和总览源定位图。
 - `FINAL_RESULTS.md`：恢复证据、开发实验、严格矩阵、复现命令和解释边界的总报告。
+- `VISUAL_STATISTICAL_REPORT.md`：新增指标图、统计结论、比较表和脑空间投影的集中索引。
 
 历史 V15–V18 入口仍依赖当时 `benchmark/results/scores.csv` 所索引的逐例 SISSES 源估计；这些输入没有保存在 Git 历史或现存严格盲测归档中。因此仓库可以核对已提交的历史汇总、审查并在输入补齐后运行后处理链，但目前不能从零重跑 V15–V18。无需历史 SISSES 输入的 OASTER、七种 Python 对比方法、严格矩阵与绘图入口均可直接运行。
 
@@ -61,6 +65,17 @@ python run_strict_comparators.py --input-root 'D:\oaster_strict_blind_sisses\mat
 python plot_snr_matrix.py --input 'OASTER=results\strict_blind\oaster_v19_final\summary_by_snr_pair_scenario_macro.csv' --input 'SISSES=results\strict_blind\sisses_preserved\summary_by_snr_pair_scenario_macro.csv' --input 'Python=results\strict_blind\comparators_final\summary_by_snr_pair_scenario_macro.csv' --metric auc_tie_corrected --output results\strict_blind\figures\auc_matrix.png
 python plot_strict_case.py --case-number 0 --input-root 'D:\oaster_strict_blind_sisses\matlab_input' --data-root $env:SOURCE_DATA_ROOT --output results\strict_blind\figures\strict_case_00000.png
 ```
+
+九方法完整指标图、统计分析和脑空间投影：
+
+```powershell
+python plot_strict_metrics.py
+python analyze_strict_statistics.py
+python plot_strict_brain_maps.py --case-number 3124
+python plot_strict_brain_maps.py --case-number 92
+```
+
+结果索引见 `VISUAL_STATISTICAL_REPORT.md`；完整方法比较工作簿位于 `outputs/01a0747c-f942-7dc2-b982-f01e067136c6/strict_benchmark_method_comparison.xlsx`。
 
 现存 SISSES 归档只读核验与汇总：
 

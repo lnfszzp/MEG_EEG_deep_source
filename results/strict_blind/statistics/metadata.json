@@ -1,0 +1,101 @@
+{
+  "analysis_unit": "49 paired EEG×MEG SNR cells; each value is the macro-average of four scenarios",
+  "methods": [
+    "OASTER V19",
+    "SISSES",
+    "MNE",
+    "dSPM",
+    "sLORETA",
+    "eLORETA",
+    "LCMV",
+    "Dipole fitting (grid)",
+    "RAP-MUSIC"
+  ],
+  "metrics": [
+    "auc_tie_corrected",
+    "auc",
+    "rmse",
+    "surface_sd_mm_penalized",
+    "surface_dle_mm_penalized",
+    "deep_sd_mm_penalized",
+    "deep_dle_mm_penalized",
+    "deep_sensitivity",
+    "deep_specificity",
+    "deep_balanced_accuracy"
+  ],
+  "bootstrap": {
+    "type": "paired nonparametric percentile bootstrap over SNR cells",
+    "resamples": 10000,
+    "seed": 20260907,
+    "confidence_level": 0.95
+  },
+  "tests": {
+    "omnibus": "Friedman test with Kendall's W; Holm correction across endpoints",
+    "pairwise": "two-sided paired Wilcoxon signed-rank; Holm correction across eight OASTER contrasts within each endpoint",
+    "effect_size": "paired rank-biserial correlation; positive favors OASTER"
+  },
+  "scope_warning": "The 49 SNR cells are a fixed experimental grid, not an iid population sample. Intervals and p-values quantify consistency across this tested grid and do not establish clinical or population generalization.",
+  "localization_metrics": "Only miss-penalized layer SD/DLE enter inference; finite-only unpenalized means are intentionally excluded.",
+  "source_summaries": [
+    {
+      "path": "D:\\博士\\工作＆汇报\\源定位\\新建文件夹\\results\\strict_blind\\oaster_v19_final\\summary_by_snr_pair_scenario_macro.csv",
+      "sha256": "b4ed2ee8cf0115703f6b901e819439e6a3bb36a821088b5c96fff08ab3e8c41f"
+    },
+    {
+      "path": "D:\\博士\\工作＆汇报\\源定位\\新建文件夹\\results\\strict_blind\\sisses_preserved\\summary_by_snr_pair_scenario_macro.csv",
+      "sha256": "ef40a2858b0f353785ba0df56c692a73cc9af096da8c54e6a79d584e628c741b"
+    },
+    {
+      "path": "D:\\博士\\工作＆汇报\\源定位\\新建文件夹\\results\\strict_blind\\comparators_final\\summary_by_snr_pair_scenario_macro.csv",
+      "sha256": "588747116dacb5a438d2f8c7eca14682e0ca1937ac97daad00eb6b7d02b4f315"
+    }
+  ],
+  "raw_case_validation": {
+    "performed": true,
+    "case_ids_aligned": true,
+    "case_count": 9065,
+    "files": {
+      "OASTER V19": {
+        "path": "D:\\博士\\工作＆汇报\\源定位\\新建文件夹\\results\\strict_blind\\oaster_v19_final\\rows.csv",
+        "sha256": "76d789130a228704752e0fb298192516186fc414fef0bf0c70f20f850ba8145e",
+        "row_count": 9065,
+        "methods": [
+          "OASTER_rebuilt"
+        ],
+        "status_errors": 0
+      },
+      "comparators": {
+        "path": "D:\\博士\\工作＆汇报\\源定位\\新建文件夹\\results\\strict_blind\\comparators_final\\rows.csv",
+        "sha256": "e98c86206c3e9900d5fab80d0ff890cf06395eb44dd3e25c26961dd674915ca2",
+        "row_count": 63455,
+        "methods": [
+          "Dipole fitting (grid)",
+          "LCMV",
+          "MNE",
+          "RAP-MUSIC",
+          "dSPM",
+          "eLORETA",
+          "sLORETA"
+        ],
+        "status_errors": 0
+      },
+      "SISSES": {
+        "path": "D:\\oaster_strict_blind_sisses\\scores.csv",
+        "sha256": "db37c46a2476e4b440117825ba89b181a92f0f50b1402c41fa0d3b10102940d7",
+        "row_count": 9065,
+        "methods": [
+          "SISSES"
+        ],
+        "status_errors": 0
+      }
+    }
+  },
+  "outputs": [
+    "summary_method_descriptive.csv",
+    "summary_oaster_pairwise.csv",
+    "summary_snr_pair_differences.csv",
+    "summary_omnibus.csv",
+    "summary_method_ranks.csv",
+    "REPORT.md"
+  ]
+}

@@ -81,3 +81,8 @@ results/strict_blind/*_shards/
 !results/strict_blind/figures/oaster_vs_sisses_*.png
 !results/strict_blind/figures/oaster_case_*.png
 !results/strict_blind/figures/all_methods_*.png
+!results/strict_blind/figures_v2/*.png
+!results/strict_blind/figures_v2/*.csv
+!results/strict_blind/brain_maps_v2/README.md
+!results/strict_blind/brain_maps_v2/**/*.png
+!results/strict_blind/brain_maps_v2/**/*.csv

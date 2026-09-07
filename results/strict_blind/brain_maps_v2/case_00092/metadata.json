@@ -1,0 +1,63 @@
+{
+  "case": {
+    "case_id": "strict-blind-00092-deep_plus_surface-eeg-10-meg-10",
+    "case_number": 92,
+    "configuration_id": "strict-blind-source-092-deep_plus_surface",
+    "configuration_number": 92,
+    "correlation": 0.0,
+    "deep_index": 7507,
+    "deep_local": 9,
+    "deep_surface_ratio": 1.0,
+    "eeg_snr_db": -10,
+    "location": 9,
+    "meg_snr_db": -10,
+    "pair_index": 0,
+    "panel": "strict_blind",
+    "replicate": 0,
+    "scenario": "deep_plus_surface",
+    "scenario_code": 2,
+    "seed": [
+      20260901,
+      0,
+      2,
+      92
+    ],
+    "snr_db": -10,
+    "source_case_id": "strict-blind-source-092-deep_plus_surface",
+    "surface_centers": [
+      6507
+    ],
+    "surface_parcels": [
+      "entorhinal-rh"
+    ]
+  },
+  "methods": [
+    "OASTER V19",
+    "SISSES",
+    "MNE",
+    "dSPM",
+    "sLORETA",
+    "eLORETA",
+    "LCMV",
+    "Dipole fitting (grid)",
+    "RAP-MUSIC"
+  ],
+  "normalization": "per-method active-minus-baseline RMS, normalized to global peak",
+  "display_threshold": 0.1,
+  "truth_overlay": "green rings and focus plus signs",
+  "anatomy": "D:\\mne_data\\MNE-sample-data",
+  "observations": "immutable archived F_EEG/F_MEG; never regenerated",
+  "sisses_archive_access": "read-only; output root is explicitly rejected inside archive",
+  "case_metrics": "recomputed uniformly with the current benchmark.metrics scorer; primary AUC is auc_tie_corrected (An_auc)",
+  "legacy_auc_note": "the preserved SISSES table used an older parcel-AUC aggregation for multi-source cases; do not substitute that historical auc column for the common-scoring value here",
+  "oaster_diagnostics": {
+    "temporal_rank": 8,
+    "selected_templates": 1
+  },
+  "sisses_path": "D:\\oaster_strict_blind_sisses\\matlab_output\\strict_00080_00100\\case_0013.mat",
+  "sisses": {
+    "format_version": "matlab_adapters_v1",
+    "variant": "v14 joint EEG+MEG SISSES; BIC-selected wen_sisses_fast equivalent",
+    "bytes": 34816382
+  }
+}
