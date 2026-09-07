@@ -1,0 +1,53 @@
+{
+  "manifest": "D:\\博士\\工作＆汇报\\源定位\\新建文件夹\\results\\corrected_v2\\strict_blind\\manifest.json",
+  "manifest_sha256": "8147726ec34b548fba6f25fe6c05dd55933e4cf458c7c2cec94c31a9d7c5e60c",
+  "input_root": "D:\\oaster_corrected_v2_sisses\\matlab_input",
+  "geometry_reference": "D:\\博士\\工作＆汇报\\源定位\\新建文件夹\\corrected_v2\\generated\\deep_plus_two_surface\\sub_EEG.mat",
+  "method": "OASTER_rebuilt",
+  "adapter": "candidates.oaster_rebuilt",
+  "observations": "archived F_EEG/F_MEG; never regenerated",
+  "truth": "benchmark.protocol.truth_for_case; scoring only",
+  "metrics": {
+    "auc": "raw requested An_cal_AUC",
+    "auc_tie_corrected": "corrected tied-rank An_auc",
+    "spatial": "surface/deep SD and DLE",
+    "deep_balanced_accuracy": "mean(deep sensitivity, surface-only specificity)"
+  },
+  "surface_scales_mm": [
+    0.0,
+    4.0,
+    7.0
+  ],
+  "ridge_fraction": 0.03,
+  "spectral_fraction": 0.05,
+  "deep_threshold": 0.1,
+  "threshold_recalibrated_on_strict_blind": false,
+  "checkpoint": "one atomically replaced CSV per immutable input chunk",
+  "chunk_count": 456,
+  "start_chunk": 0,
+  "limit_chunks": null,
+  "workers": 4,
+  "cross_chunk_fingerprints_sha256": {
+    "Gain_EEG": "36108ed1e6ce24f2a30027e2cd11884527be086ace54bb930ffe2f9069021f51",
+    "Gain_MEG": "74bb0117947bee5431a74b78728724b852dd3f845021fad65b863901219026fe",
+    "VertConn": "f5d524269d56d9e466543fb5c2430af0bbddec5f3bf3743b843937eef4760955"
+  },
+  "provenance": {
+    "git_commit_at_merge": "a83444de735cfc95d753856c135d0549ae3074ff",
+    "python": "3.13.5",
+    "packages": {
+      "numpy": "2.5.2",
+      "scipy": "1.18.1",
+      "h5py": "3.16.0",
+      "matplotlib": "3.11.1",
+      "mne": "1.12.1",
+      "nibabel": "5.4.2"
+    },
+    "code_sha256": {
+      "strict_runner": "1f867264fd45652d1b55e0e699cecf3dd419beacbc25adb2d4d8864f43a0c7e6",
+      "oaster_algorithm": "f598a1ecffcc3f0f25b32cf7a0de491cefadfed1e55cc719a9e9171cfbd88aa1",
+      "metrics": "d7d9f4194fecb2383d153094fe8e96b5eb3d82618f03e3e5c05840de32f5f41b"
+    },
+    "bitwise_cross_environment_reproducibility_claimed": false
+  }
+}
