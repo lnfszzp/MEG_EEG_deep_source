@@ -5,9 +5,11 @@ import inspect
 import numpy as np
 
 import experiment_oaster_deep_rescue as experiment
+from candidates import oaster_rebuilt as oaster
 
 
 def test_deep_rescue_is_observation_only_and_uses_deep_universe() -> None:
+    assert experiment.deep_rescue_trial is oaster.deep_rescue_trial
     assert list(inspect.signature(experiment.deep_rescue_trial).parameters) == [
         "data",
         "leadfield",

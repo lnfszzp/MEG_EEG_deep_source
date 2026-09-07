@@ -7,6 +7,8 @@ recorded active-vs-baseline singular-value edge formula.
 
 from __future__ import annotations
 
+import math
+
 import numpy as np
 from scipy import sparse
 from scipy.signal import welch
@@ -20,6 +22,8 @@ NOISE_SAMPLES = 200
 SURFACE_SCALES_MM = (0.0, 4.0, 7.0)
 RIDGE_FRACTION = 0.03
 SPECTRAL_FRACTION = 0.05
+DEEP_RESCUE_TAU = 0.0
+MAX_DEEP_RESCUES = 1
 
 
 # Recovered exact from the later protected_multilayer.py transcript fragment.
@@ -175,6 +179,97 @@ def _temporal_basis(
     return basis
 
 
+def _column_space(matrix: np.ndarray) -> np.ndarray:
+    """Return a stable orthonormal basis for a fitted sensor-space design."""
+    matrix = np.asarray(matrix, dtype=float)
+    if not matrix.size or not np.any(matrix):
+        return np.zeros((matrix.shape[0], 0))
+    left, singular, _right = np.linalg.svd(matrix, full_matrices=False)
+    tolerance = singular[0] * max(matrix.shape) * np.finfo(float).eps
+    return left[:, singular > tolerance]
+
+
+def deep_rescue_trial(
+    data: np.ndarray,
+    leadfield: np.ndarray,
+    primary: np.ndarray,
+    n_surf: int,
+    basis: np.ndarray,
+) -> tuple[np.ndarray, dict]:
+    """Propose one observation-only deep source using conditional EBIC.
+
+    ``_ebic_templates`` does not expose its selected design. Its fitted reduced
+    sensor signal has the same observable column space when selected temporal
+    coefficients are full rank, so that space is recovered by SVD and used as
+    the conditioning design. This is the method's only approximation.
+    """
+    data = np.asarray(data, dtype=float)
+    leadfield = np.asarray(leadfield, dtype=float)
+    primary = np.asarray(primary, dtype=float)
+    basis = np.asarray(basis, dtype=float)
+    if data.ndim != 2 or leadfield.ndim != 2 or data.shape[0] != leadfield.shape[0]:
+        raise ValueError("data and leadfield must share the channel axis")
+    if primary.shape != (leadfield.shape[1], data.shape[1]):
+        raise ValueError("primary must be sources x time")
+    if basis.ndim != 2 or basis.shape[1] != data.shape[1]:
+        raise ValueError("basis must be temporal-rank x time")
+    if not 0 < n_surf < leadfield.shape[1]:
+        raise ValueError("the leadfield must contain surface and deep candidates")
+
+    rescue = np.zeros_like(primary)
+    universe = int(leadfield.shape[1] - n_surf)
+    diagnostics = {
+        "accepted_without_tau": False,
+        "deep_local": -1,
+        "ebic_delta_without_tau": math.inf,
+        "universe": universe,
+        "recovered_design_rank": 0,
+    }
+    if basis.size == 0:
+        return rescue, diagnostics
+
+    reduced = data @ basis.T
+    fitted = leadfield @ (primary @ basis.T)
+    design = _column_space(fitted)
+    diagnostics["recovered_design_rank"] = int(design.shape[1])
+    residual = reduced - fitted
+    deep_gain = leadfield[:, n_surf:]
+    if design.shape[1]:
+        residual = residual - design @ (design.T @ residual)
+        residualized_gain = deep_gain - design @ (design.T @ deep_gain)
+    else:
+        residualized_gain = deep_gain
+
+    norms = np.sum(residualized_gain**2, axis=0)
+    valid = norms > np.finfo(float).eps
+    rss_old = float(np.sum(residual**2))
+    if not np.any(valid) or rss_old <= np.finfo(float).eps:
+        return rescue, diagnostics
+    drops = np.full(universe, -np.inf)
+    drops[valid] = (
+        np.sum((residualized_gain[:, valid].T @ residual) ** 2, axis=1)
+        / norms[valid]
+    )
+    index = int(np.argmax(drops))
+    drop = min(float(drops[index]), rss_old)
+    n_obs = int(reduced.size)
+    rank = int(basis.shape[0])
+    rss_new = max(rss_old - drop, np.finfo(float).tiny)
+    delta = (
+        n_obs * math.log(rss_new / rss_old)
+        + rank * math.log(n_obs)
+        + 2.0 * math.log(universe)
+    )
+    coefficients = (residualized_gain[:, index].T @ residual) / norms[index]
+    rescue[n_surf + index] = coefficients @ basis
+    diagnostics.update(
+        accepted_without_tau=bool(delta < 0.0),
+        deep_local=index,
+        ebic_delta_without_tau=float(delta),
+    )
+    return rescue, diagnostics
+
+
 def _ebic_templates(
     data: np.ndarray,
     leadfield: np.ndarray,
@@ -281,6 +376,15 @@ def reconstruct(
     )
     basis = _temporal_basis(data)
     primary, count = _ebic_templates(data, leadfield, n_surf, kernels, basis)
+    rescue, rescue_diagnostics = deep_rescue_trial(
+        data, leadfield, primary, n_surf, basis
+    )
+    rescue_delta = (
+        float(rescue_diagnostics["ebic_delta_without_tau"]) + DEEP_RESCUE_TAU
+    )
+    rescue_accepted = rescue_delta < 0.0
+    if rescue_accepted:
+        primary = primary + rescue
     spectral_fn = getattr(
         protected,
         "multiscale_spectral_evidence_source",
@@ -292,4 +396,10 @@ def reconstruct(
     return estimate, {
         "temporal_rank": basis.shape[0],
         "selected_templates": count,
+        "deep_rescue_tau": DEEP_RESCUE_TAU,
+        "deep_rescue_accepted": rescue_accepted,
+        "deep_rescue_deep_local": rescue_diagnostics["deep_local"],
+        "deep_rescue_ebic_delta": rescue_delta,
+        "deep_rescue_universe": rescue_diagnostics["universe"],
+        "deep_rescue_design_rank": rescue_diagnostics["recovered_design_rank"],
     }

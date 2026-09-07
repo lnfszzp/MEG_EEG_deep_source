@@ -87,95 +87,7 @@ ROW_FIELDS = (
 )
 
 
-def _column_space(matrix: np.ndarray) -> np.ndarray:
-    """Return a stable orthonormal basis for a fitted sensor-space design."""
-    matrix = np.asarray(matrix, dtype=float)
-    if not matrix.size or not np.any(matrix):
-        return np.zeros((matrix.shape[0], 0))
-    left, singular, _right = np.linalg.svd(matrix, full_matrices=False)
-    tolerance = singular[0] * max(matrix.shape) * np.finfo(float).eps
-    return left[:, singular > tolerance]
-
-
-def deep_rescue_trial(
-    data: np.ndarray,
-    leadfield: np.ndarray,
-    primary: np.ndarray,
-    n_surf: int,
-    basis: np.ndarray,
-) -> tuple[np.ndarray, dict]:
-    """Propose one observation-only deep source using conditional EBIC.
-
-    ``_ebic_templates`` does not expose its selected design.  Its fitted reduced
-    sensor signal has the same observable column space when selected temporal
-    coefficients are full rank, so that space is recovered by SVD and used as
-    ``D`` below.  This is the only approximation in the experiment.
-    """
-    data = np.asarray(data, dtype=float)
-    leadfield = np.asarray(leadfield, dtype=float)
-    primary = np.asarray(primary, dtype=float)
-    basis = np.asarray(basis, dtype=float)
-    if data.ndim != 2 or leadfield.ndim != 2 or data.shape[0] != leadfield.shape[0]:
-        raise ValueError("data and leadfield must share the channel axis")
-    if primary.shape != (leadfield.shape[1], data.shape[1]):
-        raise ValueError("primary must be sources x time")
-    if basis.ndim != 2 or basis.shape[1] != data.shape[1]:
-        raise ValueError("basis must be temporal-rank x time")
-    if not 0 < n_surf < leadfield.shape[1]:
-        raise ValueError("the leadfield must contain surface and deep candidates")
-
-    rescue = np.zeros_like(primary)
-    universe = int(leadfield.shape[1] - n_surf)
-    diagnostics = {
-        "accepted_without_tau": False,
-        "deep_local": -1,
-        "ebic_delta_without_tau": math.inf,
-        "universe": universe,
-        "recovered_design_rank": 0,
-    }
-    if basis.size == 0:
-        return rescue, diagnostics
-
-    reduced = data @ basis.T
-    fitted = leadfield @ (primary @ basis.T)
-    design = _column_space(fitted)
-    diagnostics["recovered_design_rank"] = int(design.shape[1])
-    residual = reduced - fitted
-    deep_gain = leadfield[:, n_surf:]
-    if design.shape[1]:
-        residual = residual - design @ (design.T @ residual)
-        residualized_gain = deep_gain - design @ (design.T @ deep_gain)
-    else:
-        residualized_gain = deep_gain
-
-    norms = np.sum(residualized_gain**2, axis=0)
-    valid = norms > np.finfo(float).eps
-    rss_old = float(np.sum(residual**2))
-    if not np.any(valid) or rss_old <= np.finfo(float).eps:
-        return rescue, diagnostics
-    drops = np.full(universe, -np.inf)
-    drops[valid] = (
-        np.sum((residualized_gain[:, valid].T @ residual) ** 2, axis=1)
-        / norms[valid]
-    )
-    index = int(np.argmax(drops))
-    drop = min(float(drops[index]), rss_old)
-    n_obs = int(reduced.size)
-    rank = int(basis.shape[0])
-    rss_new = max(rss_old - drop, np.finfo(float).tiny)
-    delta = (
-        n_obs * math.log(rss_new / rss_old)
-        + rank * math.log(n_obs)
-        + 2.0 * math.log(universe)
-    )
-    coefficients = (residualized_gain[:, index].T @ residual) / norms[index]
-    rescue[n_surf + index] = coefficients @ basis
-    diagnostics.update(
-        accepted_without_tau=bool(delta < 0.0),
-        deep_local=index,
-        ebic_delta_without_tau=float(delta),
-    )
-    return rescue, diagnostics
+deep_rescue_trial = oaster.deep_rescue_trial
 
 
 def reconstruct_variants(
@@ -206,7 +118,7 @@ def reconstruct_variants(
     add_fn = getattr(protected, "add_scaled_evidence", oaster._add_scaled_evidence)
     spectral = spectral_fn(data, leadfield, n_surf, kernel_by_scale[4.0])
     baseline = add_fn(primary, spectral, oaster.SPECTRAL_FRACTION)
-    rescue, rescue_diagnostics = deep_rescue_trial(
+    rescue, rescue_diagnostics = oaster.deep_rescue_trial(
         data, leadfield, primary, n_surf, basis
     )
     rescued = add_fn(primary + rescue, spectral, oaster.SPECTRAL_FRACTION)

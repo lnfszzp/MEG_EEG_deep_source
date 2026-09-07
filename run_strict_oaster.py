@@ -753,6 +753,8 @@ def _metadata(
         "surface_scales_mm": list(oaster.SURFACE_SCALES_MM),
         "ridge_fraction": oaster.RIDGE_FRACTION,
         "spectral_fraction": oaster.SPECTRAL_FRACTION,
+        "deep_rescue_tau": oaster.DEEP_RESCUE_TAU,
+        "maximum_deep_rescues": oaster.MAX_DEEP_RESCUES,
         "deep_threshold": 0.1,
         "threshold_recalibrated_on_strict_blind": False,
         "checkpoint": "one atomically replaced CSV per immutable input chunk",

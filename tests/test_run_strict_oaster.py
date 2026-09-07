@@ -170,6 +170,8 @@ def test_direct_chunk_run_checkpoints_and_summarizes(tmp_path, monkeypatch) -> N
     metadata = json.loads((output / "metadata.json").read_text(encoding="utf-8"))
     assert len(metadata["provenance"]["code_sha256"]["oaster_algorithm"]) == 64
     assert metadata["provenance"]["packages"]["numpy"]
+    assert metadata["deep_rescue_tau"] == runner.oaster.DEEP_RESCUE_TAU == 0.0
+    assert metadata["maximum_deep_rescues"] == runner.oaster.MAX_DEEP_RESCUES == 1
 
     # A valid checkpoint is verified against its source chunk but not recomputed.
     runner.run(manifest, input_root, data_root / "generated", output, workers=1)
