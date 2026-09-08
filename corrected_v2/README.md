@@ -113,14 +113,14 @@ EEG 与 MEG 的信噪比分别独立取值：
 
 ## 6. SISSES 状态
 
-corrected-v2 输入归档保留了供 MATLAB 适配器读取的结构，但当前机器上没有恢复出完整、可执行的 SISSES 核心和完整适配流程；能找到的作者公开代码包也没有清晰可见的许可证，不能据此把第三方源码复制进本仓库或宣称已合法完整复现。
+SISSES 的作者 MATLAB 核心已经在本机目录恢复，`wen_sisses`、`wen_mrf_admm`、`VariationEdge` 和 `TBFSelection` 调用链完整；MATLAB R2020a 的小矩阵测试以及 corrected-v2 单病例端到端测试均已通过。本仓库新增外部路径适配器，分别对白化 EEG/MEG、联合数据与 lead field、执行 Kaiser TBF，并使用旧协议预先冻结的两个参数候选按 observation-only BIC 选择。源码包没有显式许可证，因此只从 `SISSES_ROOT` 调用，不把第三方源码复制进本仓库。
 
 因此：
 
-- corrected-v2 的 SISSES 结果标记为 **N/A（未重跑）**；
+- corrected-v2 的 SISSES 聚合结果暂标记为 **N/A（仅完成单病例 smoke，尚未全量重跑）**；
 - 旧 SISSES 输出基于错误的 legacy 深部几何，标记为 **legacy geometry; not comparable**；
 - SISSES 不进入 corrected-v2 排名、显著性检验或“最佳方法”结论；
-- 以后只有在取得完整上游实现、确认许可证并完成独立适配审计后，才能在同一冻结归档上补跑。
+- 只有完成 9,114 例、统一评分并生成 `sisses_final/completion.json` 后，才会进入 corrected-v2 排名和统计检验。
 
 ## 7. 复现命令
 
@@ -153,7 +153,26 @@ python .\verify_strict_archive.py `
   --sample-cases 0 68 93 152 1116 3141 7812 8928 9113
 ```
 
-### 7.2 运行 OASTER 与七种 Python 对比方法
+### 7.2 检查并运行 SISSES
+
+```powershell
+$env:SISSES_ROOT='D:\博士\工作＆汇报\源定位\李文\SISSES-code-for-MEG-main\SISSES-code-for-MEG-main\SISSES\SISSES'
+$env:SISSES_FAST_ROOT='D:\博士\工作＆汇报\源定位\脑电脑磁融合\二阶全头仿真0713'
+$env:MATLAB_EXE='D:\app\matlab2020a\bin\matlab.exe'
+
+# 只读检查；随后只跑第一个病例
+python .\run_corrected_v2_sisses.py check
+python .\run_corrected_v2_sisses.py smoke
+
+# 分片、断点续跑；全量运行必须显式指定 --all-chunks
+python .\run_corrected_v2_sisses.py run --start-chunk 0 --limit-chunks 1 --workers 1
+python .\run_corrected_v2_sisses.py run --all-chunks --workers 4
+python .\run_corrected_v2_sisses.py score --all-chunks
+```
+
+不设置 `SISSES_FAST_ROOT` 时会直接调用作者的 `wen_sisses`；可选快速后端必须另行提供，并由运行器记录哈希。单病例端到端 smoke 的两个候选合计约 224 秒，因此全量运行是多天级计算，所有病例均按清单哈希和求解器指纹原子保存，可重复同一命令续跑。
+
+### 7.3 运行 OASTER 与七种 Python 对比方法
 
 ```powershell
 $strictRoot = Join-Path $repo 'results\corrected_v2\strict_blind'
@@ -169,7 +188,7 @@ python .\run_strict_comparators.py `
 
 对比运行器默认包含 `MNE`、`dSPM`、`sLORETA`、`eLORETA`、`LCMV`、`Dipole fitting (grid)` 和 `RAP-MUSIC`。分片运行可使用 `--start-chunk` 与 `--limit-chunks`；所有分片结束后必须再执行一次不带这两个参数的命令，以验证全部 checkpoint 并汇总。
 
-### 7.3 指标图、统计分析与脑空间图
+### 7.4 指标图、统计分析与脑空间图
 
 ```powershell
 python .\plot_strict_metrics.py `

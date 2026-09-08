@@ -21,7 +21,8 @@
 - `benchmark/methods.py`：MNE、dSPM、sLORETA、eLORETA、LCMV、网格偶极子拟合和 RAP-MUSIC 的统一数值实现。
 - `run_oaster_dev_matrix.py`：开发集 EEG×MEG 信噪比矩阵；`run_oaster_benchmark.py` 是旧命令名的兼容入口。
 - `run_strict_oaster.py`、`run_strict_comparators.py`：直接读取冻结观测的 OASTER 与七种 Python 对比方法；`run_snr_comparators_matrix.py` 是后者的旧命令名兼容入口。
-- `run_strict_blind_sisses.py`：只读核验与汇总现存 SISSES 归档，不再生成观测或调用 MATLAB。
+- `run_strict_blind_sisses.py`：只读核验与汇总旧 SISSES 归档。
+- `run_corrected_v2_sisses.py`、`corrected_v2_sisses_adapter.m`：从外部 `SISSES_ROOT` 调用已恢复的作者 MATLAB 核心，在 corrected-v2 上分片运行和统一评分；不复制第三方源码。
 - `visualization/`、`plot_results.py`：皮层、MRI、波形和指标图。
 - `plot_strict_metrics.py`：九方法十指标的分布、森林图、鲁棒性曲线和 7×7 SNR 热图。
 - `analyze_strict_statistics.py`：49 个 SNR 配对区组的描述统计、bootstrap、Friedman/Wilcoxon、Holm 校正与效应量。
@@ -93,7 +94,7 @@ python run_strict_blind_sisses.py verify
 python run_strict_blind_sisses.py summarize --data-root $env:SOURCE_DATA_ROOT
 ```
 
-第三方 SISSES 源码和可复现的 MATLAB 执行适配器均未随本仓库保存，因此该入口不会重新运行 SISSES，也不会写入或覆盖冻结归档。
+作者 SISSES 核心已在本机恢复并通过 MATLAB 冒烟测试；旧入口仍保持只读。corrected-v2 使用单独的 `run_corrected_v2_sisses.py` 调用外部源码目录，运行器会记录核心文件 SHA-256、适配器哈希和清单哈希。上游仓库没有显式许可证，因此第三方源码本身不复制到本仓库；只有适配器和调用说明进入 Git。
 
 ## 检查
 
