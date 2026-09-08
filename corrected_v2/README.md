@@ -183,10 +183,13 @@ python .\plot_strict_brain_maps.py `
   --results-root $strictRoot --sisses-mode skip `
   --eeg-snr-db 0 --meg-snr-db 0 `
   --scenario deep_plus_two_surface --location 13 `
-  --output-root (Join-Path $strictRoot 'brain_maps_v20') --surface-maps
+  --output-root (Join-Path $strictRoot 'brain_maps_v20') --surface-maps `
+  --relative-threshold 0.10 --display-percentile 95
 ```
 
-修正几何的脑空间图位于 `results\corrected_v2\strict_blind\brain_maps_v20`，分类入口见其中的 [`INDEX.md`](../results/corrected_v2/strict_blind/brain_maps_v20/INDEX.md)。每个病例单独生成 `simulation_truth_mri.png`；`--surface-maps` 还会生成 `simulation_truth_surface.png` 以及 MNE/PyVista 膨胀皮层的左右半球外侧/内侧四视图。所有算法图均不叠加仿真真值。绿色 patch/中心只存在于单独真值图；丘脑真值不投影到皮层，纯深层或混合源的深部定位必须查看 MRI 真值图。不要改用旧的 `results\strict_blind\brain_maps_v2`，后者属于错误的 legacy 深部几何。
+修正几何的脑空间图位于 `results\corrected_v2\strict_blind\brain_maps_v20`，分类入口见其中的 [`INDEX.md`](../results/corrected_v2/strict_blind/brain_maps_v20/INDEX.md)。每个病例单独生成 `simulation_truth_mri.png`；`--surface-maps` 还会生成 `simulation_truth_surface.png` 以及 MNE/PyVista 膨胀皮层的左右半球外侧/内侧四视图。真值只用连续能量热图表达，不使用星号、圆圈、绿色 label 或 foci；所有算法图也完全不叠加仿真真值。
+
+算法 MRI 与 surface 默认显示 `cutoff = max(10% 峰值, P95)`；surface 色标使用 P95/P97/P99 对应的归一化能量值，稀疏结果的分位点退化时回退到归一化能量的 10%/55%/100%，真值图只使用 10% 峰值 cutoff。所有含深层源的病例还生成 `simulation_truth_mri_surface.png`、每算法 `*_mri_surface.png` 和 `all_methods_brain_combined.png`：左侧解剖 MRI 包含深浅层源，右侧渲染皮层只含表层分量，两面板独立归一化。丘脑真值不投影到皮层；不要改用旧的 `results\strict_blind\brain_maps_v2`，后者属于错误的 legacy 深部几何。
 
 ## 8. 指标口径
 
@@ -211,4 +214,4 @@ python .\plot_strict_brain_maps.py `
 
 OASTER 的 An_auc 在 49 个 SNR 区组中相对每一种对比方法均为 `49/49` 胜出；次优 dSPM 的均值为 0.936026，OASTER 的配对优势为 +0.031398。需要保留的限制是：细分到单独场景×SNR 后，复杂的 `deep_plus_two_surface` 最差单元为 0.880359，因此不能声称 196 个细分单元全部超过 0.90。
 
-SISSES 仍为 N/A，不参与排名或统计检验。各方法完整指标表、置信区间、显著性检验、结果图和带真值标记的脑空间图见[最终报告](../results/corrected_v2/strict_blind/FINAL_REPORT.md)。
+SISSES 仍为 N/A，不参与排名或统计检验。各方法完整指标表、置信区间、显著性检验、结果图和独立真值连续热图见[最终报告](../results/corrected_v2/strict_blind/FINAL_REPORT.md)。

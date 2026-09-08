@@ -113,19 +113,21 @@ An_auc 的八方法 Friedman 检验为 `χ²(7) = 318.007`，跨指标 Holm 校�
 
 脑空间图位于 [`brain_maps_v20`](brain_maps_v20)，分类入口见 [`brain_maps_v20/INDEX.md`](brain_maps_v20/INDEX.md)。它只使用 corrected-v2 的 `7,498` 个皮层点与经 `aseg` 标签 10/49 验证的 16 个双侧丘脑点。每个代表病例严格分成两组文件：
 
-- `simulation_truth_mri.png` / `simulation_truth_surface.png`：只画仿真真值及其 patch/中心；
-- 每方法图和 `all_methods_brain_*.png`：只画算法估计，完全不叠加绿色仿真真值。
+- `simulation_truth_mri.png` / `simulation_truth_surface.png`：只用连续能量热图画仿真真值，不使用星号、圆圈、绿色 label 或 foci；
+- 每方法图和 `all_methods_brain_*.png`：只画算法估计，完全不叠加仿真真值。
 
-所有图标题均写明 case、源组合、EEG SNR 和 MEG SNR。皮层图采用 MNE/PyVista 膨胀皮层的左右半球外侧/内侧四视图，以及白底、`classic` 沟回底色、`inferno` 激活色和 10 步平滑。丘脑属于体源，不能诚实地投影到 pial/inflated 皮层；纯深层的 surface truth 因此显示空皮层并明确提示查看 MRI。
+算法 MRI 与 surface 默认使用 `cutoff = max(10% 峰值, P95)`；surface 先计算 P95/P97/P99，再以对应的三个归一化能量值控制色标，稀疏结果的分位点退化时回退到归一化能量的 10%/55%/100%。仿真真值图不使用 P95，只采用 10% 峰值 cutoff。旧的单独 10% 峰值规则在 6 个代表病例中使 dSPM/eLORETA/sLORETA 的可见皮层顶点比例中位数分别达到 61.46%/69.65%/45.66%，在纯深层病例约为 100%/100%/99.67%；因此全头发亮来自弥散解与过低显示阈值，不是渲染错误。
+
+所有图标题均写明 case、源组合、EEG SNR 和 MEG SNR。皮层图采用 MNE/PyVista 膨胀皮层的左右半球外侧/内侧四视图，以及白底、`classic` 沟回底色、`inferno` 激活色和 10 步平滑。所有含深层源的病例还提供 `simulation_truth_mri_surface.png`、每算法 `*_mri_surface.png` 与 `all_methods_brain_combined.png`：联合图左侧解剖 MRI 显示完整深浅层源，右侧渲染皮层只显示表层分量；两面板独立归一化，颜色不能用于跨面板比较幅值。丘脑属于体源，不能诚实地投影到 pial/inflated 皮层；纯深层的 surface truth 因此显示空皮层并明确提示查看 MRI。
 
 四种协议场景的代表图：
 
-| 场景 | EEG/MEG SNR | 病例 | 单独仿真真值 | 八算法 MRI（无真值） | 八算法皮层（无真值） |
-|---|---:|---:|---|---|---|
-| `surface_only` | -10 / -5 dB | 186 | [MRI](brain_maps_v20/case_00186/simulation_truth_mri.png) / [surface](brain_maps_v20/case_00186/simulation_truth_surface.png) | [estimates](brain_maps_v20/case_00186/all_methods_brain_mri.png) | [estimates](brain_maps_v20/case_00186/all_methods_brain_surface.png) |
-| `deep_only` | -5 / -10 dB | 1385 | [MRI](brain_maps_v20/case_01385/simulation_truth_mri.png) / [empty surface](brain_maps_v20/case_01385/simulation_truth_surface.png) | [estimates](brain_maps_v20/case_01385/all_methods_brain_mri.png) | [cortical leakage](brain_maps_v20/case_01385/all_methods_brain_surface.png) |
-| `deep_plus_surface` | 0 / 5 dB | 3264 | [MRI](brain_maps_v20/case_03264/simulation_truth_mri.png) / [surface](brain_maps_v20/case_03264/simulation_truth_surface.png) | [estimates](brain_maps_v20/case_03264/all_methods_brain_mri.png) | [estimates](brain_maps_v20/case_03264/all_methods_brain_surface.png) |
-| `deep_plus_two_surface` | 10 / 20 dB | 6489 | [MRI](brain_maps_v20/case_06489/simulation_truth_mri.png) / [surface](brain_maps_v20/case_06489/simulation_truth_surface.png) | [estimates](brain_maps_v20/case_06489/all_methods_brain_mri.png) | [estimates](brain_maps_v20/case_06489/all_methods_brain_surface.png) |
+| 场景 | EEG/MEG SNR | 病例 | 单独仿真真值 | 八算法 MRI（无真值） | 八算法皮层（无真值） | MRI + surface 联合图 |
+|---|---:|---:|---|---|---|---|
+| `surface_only` | -10 / -5 dB | 186 | [MRI](brain_maps_v20/case_00186/simulation_truth_mri.png) / [surface](brain_maps_v20/case_00186/simulation_truth_surface.png) | [estimates](brain_maps_v20/case_00186/all_methods_brain_mri.png) | [estimates](brain_maps_v20/case_00186/all_methods_brain_surface.png) | — |
+| `deep_only` | -5 / -10 dB | 1385 | [MRI](brain_maps_v20/case_01385/simulation_truth_mri.png) / [empty surface](brain_maps_v20/case_01385/simulation_truth_surface.png) | [estimates](brain_maps_v20/case_01385/all_methods_brain_mri.png) | [cortical leakage](brain_maps_v20/case_01385/all_methods_brain_surface.png) | [truth](brain_maps_v20/case_01385/simulation_truth_mri_surface.png) / [8 methods](brain_maps_v20/case_01385/all_methods_brain_combined.png) |
+| `deep_plus_surface` | 0 / 5 dB | 3264 | [MRI](brain_maps_v20/case_03264/simulation_truth_mri.png) / [surface](brain_maps_v20/case_03264/simulation_truth_surface.png) | [estimates](brain_maps_v20/case_03264/all_methods_brain_mri.png) | [estimates](brain_maps_v20/case_03264/all_methods_brain_surface.png) | [truth](brain_maps_v20/case_03264/simulation_truth_mri_surface.png) / [8 methods](brain_maps_v20/case_03264/all_methods_brain_combined.png) |
+| `deep_plus_two_surface` | 10 / 20 dB | 6489 | [MRI](brain_maps_v20/case_06489/simulation_truth_mri.png) / [surface](brain_maps_v20/case_06489/simulation_truth_surface.png) | [estimates](brain_maps_v20/case_06489/all_methods_brain_mri.png) | [estimates](brain_maps_v20/case_06489/all_methods_brain_surface.png) | [truth](brain_maps_v20/case_06489/simulation_truth_mri_surface.png) / [8 methods](brain_maps_v20/case_06489/all_methods_brain_combined.png) |
 
 ![纯表层仿真真值](brain_maps_v20/case_00186/simulation_truth_mri.png)
 

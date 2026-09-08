@@ -20,7 +20,6 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 from matplotlib.cm import ScalarMappable
 from matplotlib.colors import Normalize
-from matplotlib.lines import Line2D
 from matplotlib.patches import Patch
 import mne
 from mne.transforms import apply_trans
@@ -59,7 +58,7 @@ METHOD_SLUGS = {
 }
 PLANES = ("coronal", "sagittal", "axial")
 ESTIMATE_CMAP = "magma"
-TRUTH_COLOR = "#00E5A8"
+SURFACE_CLIM = (95, 97, 99)
 SCENARIO_LABELS = {
     "surface_only": "Cortical surface only",
     "deep_only": "Thalamic deep source only",
@@ -78,43 +77,49 @@ def _case_title(case: dict) -> str:
     )
 
 
-def _legend_handles(
-    include_truth: bool = True, energy_label: str = "Estimated source energy"
-) -> list:
-    handles = []
-    if include_truth:
-        handles.extend(
-            [
-                Line2D(
-                    [0],
-                    [0],
-                    marker="*",
-                    linestyle="none",
-                    markerfacecolor=TRUTH_COLOR,
-                    markeredgecolor="#07130F",
-                    markersize=13,
-                    label="Simulated source center",
-                ),
-                Line2D(
-                    [0],
-                    [0],
-                    marker="o",
-                    linestyle="none",
-                    markerfacecolor="none",
-                    markeredgecolor=TRUTH_COLOR,
-                    markeredgewidth=1.8,
-                    markersize=9,
-                    label="Simulated source parcel",
-                ),
-            ]
-        )
-    handles.append(
-        Patch(
-            facecolor=plt.get_cmap(ESTIMATE_CMAP)(0.72),
-            label=energy_label,
-        )
+def _legend_handles(energy_label: str = "Estimated source energy") -> list:
+    return [Patch(facecolor=plt.get_cmap(ESTIMATE_CMAP)(0.72), label=energy_label)]
+
+
+def _display_rule(relative_threshold: float, display_percentile: float) -> str:
+    floor = f"{relative_threshold:.0%} peak floor"
+    return (
+        f"top {100.0 - display_percentile:g}% (P{display_percentile:g}) + {floor}"
+        if display_percentile > 0
+        else floor
     )
-    return handles
+
+
+def _display_mask(
+    amplitude: np.ndarray, relative_threshold: float, display_percentile: float
+) -> tuple[np.ndarray, np.ndarray]:
+    """Apply a peak floor plus an optional percentile cutoff."""
+    amplitude = np.asarray(amplitude, dtype=float).ravel()
+    peak = float(amplitude.max(initial=0.0))
+    relative = amplitude / peak if peak > 0 else np.zeros_like(amplitude)
+    cutoff = float(relative_threshold)
+    if display_percentile > 0 and relative.size:
+        cutoff = max(cutoff, float(np.percentile(relative, display_percentile)))
+    return relative, (relative >= cutoff) & (relative > 0)
+
+
+def _surface_display(
+    amplitude: np.ndarray, relative_threshold: float, is_truth: bool
+) -> tuple[np.ndarray, dict]:
+    relative, _keep = _display_mask(amplitude, relative_threshold, 0)
+    value_clim = {
+        "kind": "value",
+        "lims": [relative_threshold, (1.0 + relative_threshold) / 2.0, 1.0],
+    }
+    if is_truth:
+        return np.where(relative >= relative_threshold, relative, 0.0), value_clim
+    quantiles = np.percentile(relative, SURFACE_CLIM) if relative.size else np.zeros(3)
+    cutoff = max(relative_threshold, float(quantiles[0]))
+    displayed = np.where(relative >= cutoff, relative, 0.0)
+    limits = [cutoff, float(quantiles[1]), float(quantiles[2])]
+    if not np.all(np.diff(limits) > np.finfo(float).eps):
+        return displayed, value_clim
+    return displayed, {"kind": "value", "lims": limits}
 
 
 def _default_data_root() -> Path:
@@ -349,42 +354,6 @@ def load_surface_source_space(sample_path: Path, geometry: dict) -> dict:
     return _validate_surface_source_space(geometry, forward["src"], sample_path / "subjects")
 
 
-def _surface_truth_overlays(loaded: dict, surface: dict) -> list[dict]:
-    """Return cortical truth only; deep indices are deliberately discarded."""
-    n_surf = int(loaded["geometry"]["n_surf"])
-    left_count = len(surface["vertices"][0])
-
-    def mapped(index: int) -> tuple[str, int]:
-        if not 0 <= index < n_surf:
-            raise ValueError(f"surface truth index outside [0,{n_surf}): {index}")
-        hemi = 0 if index < left_count else 1
-        local = index if hemi == 0 else index - left_count
-        return ("lh", "rh")[hemi], int(surface["vertices"][hemi][local])
-
-    overlays = []
-    for number, center in enumerate(loaded["case"].get("surface_centers", []), start=1):
-        center = int(center)
-        indices = np.array([center], dtype=int)
-        for group in loaded["groups"]:
-            candidate = np.asarray(group, dtype=int).ravel()
-            if np.any(candidate == center):
-                indices = np.unique(candidate[(candidate >= 0) & (candidate < n_surf)])
-                break
-        center_hemi, center_vertex = mapped(center)
-        mapped_patch = [mapped(int(index)) for index in indices]
-        if any(hemi != center_hemi for hemi, _vertex in mapped_patch):
-            raise ValueError("one simulated surface patch crosses hemispheres")
-        overlays.append(
-            {
-                "name": f"simulated_surface_{number}",
-                "hemi": center_hemi,
-                "patch_vertices": np.asarray([vertex for _hemi, vertex in mapped_patch], dtype=int),
-                "center_vertex": center_vertex,
-            }
-        )
-    return overlays
-
-
 def _focuses(loaded: dict) -> list[tuple[str, int]]:
     case = loaded["case"]
     focuses = [
@@ -404,12 +373,11 @@ def _source_projection(
     loaded: dict,
     anatomy: dict,
     relative_threshold: float,
+    display_percentile: float,
 ) -> tuple[np.ndarray, np.ndarray]:
     active = np.arange(strict_plot.strict.protocol.ACTIVE_START, source.shape[1])
     amplitude = benchmark_metrics.source_amplitude(source, active)
-    peak = float(amplitude.max(initial=0.0))
-    relative = amplitude / peak if peak > 0 else np.zeros_like(amplitude)
-    keep = relative >= float(relative_threshold)
+    relative, keep = _display_mask(amplitude, relative_threshold, display_percentile)
     positions_mri = apply_trans(
         anatomy["head_to_mri"], loaded["geometry"]["vertices"]
     )
@@ -418,22 +386,6 @@ def _source_projection(
         dtype=float,
     )
     return voxels.reshape(-1, 3), relative[keep]
-
-
-def _truth_voxels(loaded: dict, anatomy: dict, focus_index: int) -> np.ndarray:
-    indices = np.asarray([focus_index], dtype=int)
-    for group in loaded["groups"]:
-        candidate = np.asarray(group, dtype=int)
-        if np.any(candidate == focus_index):
-            indices = np.unique(candidate)
-            break
-    positions = apply_trans(
-        anatomy["head_to_mri"], loaded["geometry"]["vertices"][indices]
-    )
-    return np.asarray(
-        [pos_to_vox(position, anatomy["vox2ras_tkr"]) for position in positions],
-        dtype=float,
-    )
 
 
 def _focus_voxel(index: int, loaded: dict, anatomy: dict) -> np.ndarray:
@@ -449,7 +401,6 @@ def _draw_slice(
     center_voxel: np.ndarray,
     estimate_voxels: np.ndarray,
     estimate_weights: np.ndarray,
-    truth_voxels: np.ndarray | None,
     volume: np.ndarray,
 ) -> None:
     image, axis, index, point_2d = plane_image(volume, plane, center_voxel)
@@ -477,39 +428,6 @@ def _draw_slice(
             vmin=0.10,
             vmax=1.0,
         )
-    if truth_voxels is not None:
-        near = truth_voxels[np.abs(truth_voxels[:, axis] - index) <= 3.0]
-        if near.size:
-            points = np.asarray([point_2d(voxel) for voxel in near])
-            ax.scatter(
-                points[:, 0],
-                points[:, 1],
-                s=58,
-                facecolors="none",
-                edgecolors="#07130F",
-                linewidths=3.8,
-                zorder=6,
-            )
-            ax.scatter(
-                points[:, 0],
-                points[:, 1],
-                s=58,
-                facecolors="none",
-                edgecolors=TRUTH_COLOR,
-                linewidths=1.8,
-                zorder=7,
-            )
-        focus_xy = point_2d(center_voxel)
-        ax.scatter(
-            [focus_xy[0]],
-            [focus_xy[1]],
-            s=190,
-            marker="*",
-            facecolor=TRUTH_COLOR,
-            edgecolor="#07130F",
-            linewidths=1.4,
-            zorder=8,
-        )
     ax.set_axis_off()
 
 
@@ -528,11 +446,12 @@ def render_method(
     relative_threshold: float,
     dpi: int,
     *,
-    truth_overlay: bool = False,
+    display_percentile: float = 95.0,
+    is_truth: bool = False,
 ) -> Path:
     focuses = _focuses(loaded)
     estimate_voxels, estimate_weights = _source_projection(
-        estimate, loaded, anatomy, relative_threshold
+        estimate, loaded, anatomy, relative_threshold, display_percentile
     )
     fig, axes = plt.subplots(
         len(focuses),
@@ -543,9 +462,6 @@ def render_method(
     )
     for row, (focus_label, source_index) in enumerate(focuses):
         center = _focus_voxel(source_index, loaded, anatomy)
-        truth_voxels = (
-            _truth_voxels(loaded, anatomy, source_index) if truth_overlay else None
-        )
         for column, plane in enumerate(PLANES):
             _draw_slice(
                 axes[row, column],
@@ -553,7 +469,6 @@ def render_method(
                 center,
                 estimate_voxels,
                 estimate_weights,
-                truth_voxels,
                 anatomy["volume"],
             )
             if row == 0:
@@ -581,7 +496,8 @@ def render_method(
             f"Deep DLE {_number(metrics['deep_dle_mm'], 1)} mm"
         )
     fig.suptitle(
-        f"{method}\n{_case_title(case)}{metric_line}",
+        f"{method} | MRI display {_display_rule(relative_threshold, display_percentile)}\n"
+        f"{_case_title(case)}{metric_line}",
         color="#F6F7FB",
         fontsize=13,
         y=0.995,
@@ -593,14 +509,14 @@ def render_method(
         pad=0.012,
         aspect=35,
     )
-    energy_label = "Simulated source energy" if truth_overlay else "Estimated source energy"
+    energy_label = "Simulated source energy" if is_truth else "Estimated source energy"
     colorbar.set_label(f"Relative {energy_label.lower()}", color="#ECEEF4", fontsize=9)
     colorbar.ax.tick_params(colors="#ECEEF4", labelsize=8)
     legend = fig.legend(
-        handles=_legend_handles(truth_overlay, energy_label),
+        handles=_legend_handles(energy_label),
         loc="upper center",
         bbox_to_anchor=(0.5, 0.905),
-        ncol=3 if truth_overlay else 1,
+        ncol=1,
         frameon=True,
         fontsize=9,
         handletextpad=0.6,
@@ -613,8 +529,8 @@ def render_method(
     fig.text(
         0.995,
         0.008,
-        f"Heat shown >= {relative_threshold:.0%} of source-map peak; "
-        + ("green marks identify truth" if truth_overlay else "simulation truth is shown separately"),
+        f"Source vertices shown by {_display_rule(relative_threshold, display_percentile)}; "
+        + ("continuous simulation-truth heat" if is_truth else "simulation truth is separate"),
         ha="right",
         color="#B8BBC6",
         fontsize=8,
@@ -634,17 +550,17 @@ def render_surface_method(
     output: Path,
     dpi: int = 160,
     *,
-    truth_overlay: bool = False,
+    relative_threshold: float = 0.10,
+    is_truth: bool = False,
 ) -> Path:
     """Render either a cortical estimate or the separate simulation truth."""
     active = np.arange(strict_plot.strict.protocol.ACTIVE_START, estimate.shape[1])
     amplitude = benchmark_metrics.source_amplitude(estimate, active)
     n_surf = int(loaded["geometry"]["n_surf"])
     cortical = amplitude[:n_surf]
-    peak = float(cortical.max(initial=0.0))
-    relative = cortical / peak if peak > 0 else np.zeros_like(cortical)
+    displayed, clim = _surface_display(cortical, relative_threshold, is_truth)
     stc = mne.SourceEstimate(
-        relative[:, np.newaxis],
+        displayed[:, np.newaxis],
         vertices=list(surface["vertices"]),
         tmin=0.0,
         tstep=1.0,
@@ -661,10 +577,7 @@ def render_surface_method(
             transparent=True,
             subjects_dir=surface["subjects_dir"],
             size=(1200, 800),
-            clim={
-                "kind": "value",
-                "lims": [0.10, 0.55, 1.0],
-            },
+            clim=clim,
             background="white",
             foreground="black",
             cortex="classic",
@@ -676,43 +589,34 @@ def render_surface_method(
             backend="pyvistaqt",
             brain_kwargs={"show": False, "theme": "light"},
         )
-        overlays = _surface_truth_overlays(loaded, surface) if truth_overlay else []
-        for overlay in overlays:
-            label = mne.Label(
-                overlay["patch_vertices"],
-                hemi=overlay["hemi"],
-                name=overlay["name"],
-                subject=surface["subject"],
-            )
-            brain.add_label(label, color=TRUTH_COLOR, alpha=0.9, borders=True)
-            brain.add_foci(
-                [overlay["center_vertex"]],
-                coords_as_verts=True,
-                hemi=overlay["hemi"],
-                scale_factor=0.7,
-                color=TRUTH_COLOR,
-                name=f"{overlay['name']}_center",
-            )
         image = brain.screenshot(mode="rgb", time_viewer=False)
     finally:
         if brain is not None:
             brain.close()
     case = loaded["case"]
     notes = []
-    if truth_overlay and overlays:
-        notes.append("Green outline/sphere: simulated cortical patch/center.")
-    if not truth_overlay:
-        notes.append("Simulation truth is shown separately.")
+    threshold_note = (
+        f"continuous truth heat >= {relative_threshold:.0%} of cortical peak"
+        if is_truth
+        else f"display >= max({relative_threshold:.0%} peak, P95); "
+        "color controls from P95/P97/P99"
+    )
+    if not is_truth:
+        notes.append("Simulation truth is separate.")
     if case.get("deep_index") is not None:
         notes.append(
             "No cortical truth; see MRI."
-            if truth_overlay and not overlays
+            if is_truth and not case.get("surface_centers")
             else "Deep sources are not projected to cortex; see MRI."
         )
     fig, ax = plt.subplots(figsize=(12.0, 8.6), facecolor="white")
     ax.imshow(image)
     ax.set_axis_off()
-    fig.suptitle(f"{method}\n{_case_title(case)}", fontsize=15, fontweight="bold")
+    fig.suptitle(
+        f"{method} | {threshold_note}\n{_case_title(case)}",
+        fontsize=15,
+        fontweight="bold",
+    )
     if notes:
         fig.text(0.5, 0.015, " ".join(notes), ha="center", fontsize=10, color="#202020")
     fig.subplots_adjust(left=0.005, right=0.995, top=0.91, bottom=0.045)
@@ -727,10 +631,12 @@ def render_montage(
 ) -> Path:
     columns = min(3, len(paths))
     rows = math.ceil(len(paths) / columns)
+    sample = plt.imread(paths[0][1])
+    row_height = min(6.0, 0.6 + 6.4 * sample.shape[0] / sample.shape[1])
     fig, axes = plt.subplots(
         rows,
         columns,
-        figsize=(6.4 * columns, 6.0 * rows),
+        figsize=(6.4 * columns, row_height * rows),
         facecolor="white",
         squeeze=False,
     )
@@ -741,7 +647,54 @@ def render_montage(
     for ax in axes.ravel()[len(paths) :]:
         ax.set_axis_off()
     fig.suptitle(title, fontsize=18, fontweight="bold", y=0.995)
-    fig.subplots_adjust(left=0.005, right=0.995, top=0.94, bottom=0.005, wspace=0.015, hspace=0.04)
+    top = 0.94 - 0.03 * title.count("\n")
+    fig.subplots_adjust(left=0.005, right=0.995, top=top, bottom=0.005, wspace=0.015, hspace=0.04)
+    fig.savefig(output, dpi=dpi, facecolor="white", bbox_inches="tight")
+    plt.close(fig)
+    return output
+
+
+def render_anatomy_surface_pair(
+    mri_path: Path,
+    surface_path: Path,
+    output: Path,
+    dpi: int,
+    title: str,
+) -> Path:
+    """Place the anatomical and cortical renders together without duplicate headers."""
+    images = [plt.imread(path) for path in (mri_path, surface_path)]
+    images = [image[int(image.shape[0] * 0.15) :] for image in images]
+    ratios = [image.shape[1] / image.shape[0] for image in images]
+    fig, axes = plt.subplots(
+        1,
+        2,
+        figsize=(18.0, 7.2),
+        facecolor="white",
+        gridspec_kw={"width_ratios": ratios},
+    )
+    for ax, image, label in zip(
+        axes,
+        images,
+        (
+            "Anatomical MRI — cortical + deep source space",
+            "Rendered cortical surface — cortical component only",
+        ),
+    ):
+        ax.imshow(image)
+        ax.set_title(label, fontsize=12, fontweight="bold", pad=5)
+        ax.set_axis_off()
+    fig.suptitle(title, fontsize=17, fontweight="bold", y=0.985)
+    fig.text(
+        0.5,
+        0.012,
+        "Panels are independently scaled; compare locations, not colors across panels. "
+        "Deep sources remain on MRI.",
+        ha="center",
+        fontsize=9,
+        color="#303030",
+    )
+    fig.subplots_adjust(left=0.005, right=0.995, top=0.86, bottom=0.045, wspace=0.015)
+    output.parent.mkdir(parents=True, exist_ok=True)
     fig.savefig(output, dpi=dpi, facecolor="white", bbox_inches="tight")
     plt.close(fig)
     return output
@@ -771,6 +724,7 @@ def plot_brain_maps(
     location: int | None = None,
     sisses_mode: str = "auto",
     relative_threshold: float = 0.10,
+    display_percentile: float = 95.0,
     dpi: int = 160,
     surface_maps: bool = False,
 ) -> Path:
@@ -780,8 +734,15 @@ def plot_brain_maps(
         and all(value is None for value in (eeg_snr_db, meg_snr_db, scenario, location))
     ):
         eeg_snr_db, meg_snr_db, scenario, location = DEFAULT_CASE_QUERY
-    if not 0 < relative_threshold < 1 or dpi < 72:
-        raise ValueError("relative_threshold must be in (0,1) and dpi must be >= 72")
+    if (
+        not 0 < relative_threshold < 1
+        or not (display_percentile == 0 or 0 < display_percentile < 100)
+        or dpi < 72
+    ):
+        raise ValueError(
+            "relative_threshold must be in (0,1), display_percentile must be 0 or "
+            "in (0,100), and dpi must be >= 72"
+        )
     sisses_root = Path(sisses_root).resolve()
     output_root = Path(output_root).resolve()
     if output_root == sisses_root or sisses_root in output_root.parents:
@@ -816,8 +777,9 @@ def plot_brain_maps(
     case_dir.mkdir(parents=True, exist_ok=True)
     rendered = []
     rendered_surface = []
+    rendered_combined = []
     by_method = {row["method"]: row for row in rows}
-    render_method(
+    truth_mri = render_method(
         "Simulated truth",
         loaded["truth"],
         None,
@@ -826,18 +788,31 @@ def plot_brain_maps(
         case_dir / "simulation_truth_mri.png",
         relative_threshold,
         dpi,
-        truth_overlay=True,
+        display_percentile=0,
+        is_truth=True,
     )
+    truth_surface = None
     if surface is not None:
-        render_surface_method(
+        truth_surface = render_surface_method(
             "Simulated truth",
             loaded["truth"],
             loaded,
             surface,
             case_dir / "simulation_truth_surface.png",
             dpi,
-            truth_overlay=True,
+            relative_threshold=relative_threshold,
+            is_truth=True,
         )
+    if case.get("deep_index") is not None and truth_surface is not None:
+        truth_combined = render_anatomy_surface_pair(
+            truth_mri,
+            truth_surface,
+            case_dir / "simulation_truth_mri_surface.png",
+            dpi,
+            f"Simulated truth | Anatomical MRI + rendered cortical surface\n"
+            f"{_case_title(case)}",
+        )
+        rendered_combined.append(("Simulated truth", truth_combined))
     for method in estimates:
         path = render_method(
             method,
@@ -848,6 +823,7 @@ def plot_brain_maps(
             case_dir / f"{METHOD_SLUGS[method]}.png",
             relative_threshold,
             dpi,
+            display_percentile=display_percentile,
         )
         rendered.append((method, path))
         if surface is not None:
@@ -858,20 +834,43 @@ def plot_brain_maps(
                 surface,
                 case_dir / f"{METHOD_SLUGS[method]}_surface.png",
                 dpi,
+                relative_threshold=relative_threshold,
             )
             rendered_surface.append((method, surface_path))
+            if case.get("deep_index") is not None:
+                combined_path = render_anatomy_surface_pair(
+                    path,
+                    surface_path,
+                    case_dir / f"{METHOD_SLUGS[method]}_mri_surface.png",
+                    dpi,
+                    f"{method} | Anatomical MRI + rendered cortical surface\n"
+                    f"{_case_title(case)}",
+                )
+                rendered_combined.append((method, combined_path))
     render_montage(
         rendered,
         case_dir / "all_methods_brain_mri.png",
         dpi,
-        f"Algorithm estimates on MRI slices\n{_case_title(case)}",
+        f"Algorithm estimates on MRI slices | "
+        f"{_display_rule(relative_threshold, display_percentile)}\n{_case_title(case)}",
     )
     if rendered_surface:
         render_montage(
             rendered_surface,
             case_dir / "all_methods_brain_surface.png",
             dpi,
-            f"Algorithm estimates on cortical surfaces\n{_case_title(case)}",
+            f"Algorithm estimates on cortical surfaces | "
+            f"display >= max({relative_threshold:.0%} peak, P95)\n"
+            f"{_case_title(case)}",
+        )
+    if rendered_combined:
+        render_montage(
+            rendered_combined,
+            case_dir / "all_methods_brain_combined.png",
+            dpi,
+            f"Truth + {len(estimates)}-method anatomical MRI + cortical-surface "
+            f"comparison | algorithm cutoff max({relative_threshold:.0%} peak, P95)\n"
+            f"{_case_title(case)}",
         )
     _write_metrics(case_dir / "metrics.csv", rows)
     (case_dir / "metadata.json").write_text(
@@ -881,17 +880,52 @@ def plot_brain_maps(
                 "methods": list(estimates),
                 "method_availability": availability,
                 "normalization": "per-method active-minus-baseline RMS, normalized to global peak",
-                "display_threshold": relative_threshold,
-                "algorithm_truth_overlay": "none; simulation truth is stored in separate files",
+                "relative_peak_floor": relative_threshold,
+                "algorithm_mri_display_percentile": display_percentile,
+                "algorithm_mri_display_rule": _display_rule(
+                    relative_threshold, display_percentile
+                ),
+                "simulation_truth_display_rule": _display_rule(relative_threshold, 0),
+                "algorithm_truth_overlay": "none",
                 "simulation_truth_mri": "simulation_truth_mri.png",
                 "simulation_truth_surface": (
                     "simulation_truth_surface.png" if surface_maps else "not requested"
                 ),
                 "surface_maps": surface_maps,
                 "surface_truth_overlay": (
-                    "only simulation_truth_surface.png has green cortical truth marks; deep sources are never projected"
+                    "none; truth is shown only as a continuous heat region and deep sources are never projected"
                     if surface_maps
                     else "not requested"
+                ),
+                "algorithm_surface_clim": (
+                    {
+                        "kind": "value",
+                        "control_percentiles": list(SURFACE_CLIM),
+                        "display_rule": _display_rule(
+                            relative_threshold, SURFACE_CLIM[0]
+                        ),
+                        "fallback": "value [peak floor, midpoint, 1] when percentiles degenerate",
+                    }
+                    if surface_maps
+                    else "not requested"
+                ),
+                "simulation_truth_surface_clim": (
+                    {
+                        "kind": "value",
+                        "lims": [
+                            relative_threshold,
+                            (1.0 + relative_threshold) / 2.0,
+                            1.0,
+                        ],
+                    }
+                    if surface_maps
+                    else "not requested"
+                ),
+                "deep_case_combined_outputs": (
+                    "simulation_truth_mri_surface.png, <method>_mri_surface.png, "
+                    "all_methods_brain_combined.png"
+                    if surface_maps and case.get("deep_index") is not None
+                    else "not generated"
                 ),
                 "surface_normalization": (
                     "per-method cortical RMS amplitude divided by its cortical peak"
@@ -942,7 +976,18 @@ def main() -> None:
     parser.add_argument("--output-root", type=Path, default=DEFAULT_OUTPUT_ROOT)
     parser.add_argument("--results-root", type=Path)
     parser.add_argument("--sisses-mode", choices=("auto", "require", "skip"), default="auto")
-    parser.add_argument("--relative-threshold", type=float, default=0.10)
+    parser.add_argument(
+        "--relative-threshold",
+        type=float,
+        default=0.10,
+        help="relative peak floor used by MRI maps and simulation-truth surface maps",
+    )
+    parser.add_argument(
+        "--display-percentile",
+        type=float,
+        default=95.0,
+        help="MRI estimate percentile cutoff (95 keeps the top 5%%; 0 disables)",
+    )
     parser.add_argument("--dpi", type=int, default=160)
     parser.add_argument(
         "--surface-maps",
@@ -966,6 +1011,7 @@ def main() -> None:
         location=args.location,
         sisses_mode=args.sisses_mode,
         relative_threshold=args.relative_threshold,
+        display_percentile=args.display_percentile,
         dpi=args.dpi,
         surface_maps=args.surface_maps,
     )

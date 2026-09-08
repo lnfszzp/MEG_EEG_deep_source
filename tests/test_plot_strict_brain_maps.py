@@ -101,8 +101,6 @@ def test_method_brain_map_renders_truth_and_estimate(tmp_path: Path) -> None:
 
     assert len(brain_maps.METHOD_ORDER) == 9
     assert [handle.get_label() for handle in brain_maps._legend_handles()] == [
-        "Simulated source center",
-        "Simulated source parcel",
         "Estimated source energy",
     ]
     assert output.is_file() and output.stat().st_size > 10_000
@@ -156,15 +154,15 @@ def test_completed_oaster_label_follows_selected_result_version(
         assert actual_availability is availability
 
 
-def test_slice_draws_truth_patch_ring_and_exact_center_star(monkeypatch) -> None:
-    calls = []
+def test_slice_draws_only_continuous_heat_without_truth_markers(monkeypatch) -> None:
+    images = []
 
     class Axes:
         def imshow(self, *_args, **_kwargs):
-            pass
+            images.append((_args, _kwargs))
 
-        def scatter(self, *args, **kwargs):
-            calls.append((args, kwargs))
+        def scatter(self, *_args, **_kwargs):
+            raise AssertionError("truth markers must not be drawn")
 
         def set_axis_off(self):
             pass
@@ -184,34 +182,11 @@ def test_slice_draws_truth_patch_ring_and_exact_center_star(monkeypatch) -> None
         Axes(),
         "axial",
         center,
-        np.empty((0, 3)),
-        np.empty(0),
-        np.array([[2.0, 3.0, 4.0]]),
+        np.array([[3.0, 4.0, 4.0]]),
+        np.array([1.0]),
         np.zeros((8, 8, 8)),
     )
-
-    assert any(
-        call[1].get("facecolors") == "none"
-        and call[1].get("edgecolors") == brain_maps.TRUTH_COLOR
-        for call in calls
-    )
-    star_args, star_style = calls[-1]
-    assert star_style["marker"] == "*"
-    assert star_style["facecolor"] == brain_maps.TRUTH_COLOR
-    assert np.array_equal(star_args[0], [center[0]])
-    assert np.array_equal(star_args[1], [center[1]])
-
-    calls.clear()
-    brain_maps._draw_slice(
-        Axes(),
-        "axial",
-        center,
-        np.empty((0, 3)),
-        np.empty(0),
-        None,
-        np.zeros((8, 8, 8)),
-    )
-    assert calls == []
+    assert len(images) == 2
 
 
 def test_case_titles_are_human_readable_and_complete() -> None:
@@ -229,18 +204,7 @@ def test_case_titles_are_human_readable_and_complete() -> None:
     )
 
 
-def test_truth_rings_are_limited_to_the_current_source() -> None:
-    loaded = {
-        "groups": [np.array([0, 1]), np.array([2])],
-        "geometry": {"vertices": np.eye(3)},
-    }
-    anatomy = {"head_to_mri": np.eye(4), "vox2ras_tkr": np.eye(4)}
-
-    assert brain_maps._truth_voxels(loaded, anatomy, 0).shape == (2, 3)
-    assert brain_maps._truth_voxels(loaded, anatomy, 2).shape == (1, 3)
-
-
-def test_surface_forward_mapping_and_deep_truth_filter(tmp_path: Path) -> None:
+def test_surface_forward_mapping(tmp_path: Path) -> None:
     subjects_dir = tmp_path / "subjects"
     for hemi in ("lh", "rh"):
         path = subjects_dir / "sample" / "surf" / f"{hemi}.pial"
@@ -259,21 +223,7 @@ def test_surface_forward_mapping_and_deep_truth_filter(tmp_path: Path) -> None:
     }
 
     surface = brain_maps._validate_surface_source_space(geometry, src, subjects_dir)
-    overlays = brain_maps._surface_truth_overlays(
-        {
-            "case": {"surface_centers": [1, 2], "deep_index": 4},
-            "groups": [np.array([0, 1, 4]), np.array([2, 3]), np.array([4])],
-            "geometry": geometry,
-        },
-        surface,
-    )
-
     assert [part.tolist() for part in surface["vertices"]] == [[1, 2], [0, 2]]
-    assert [(item["hemi"], item["center_vertex"]) for item in overlays] == [
-        ("lh", 2),
-        ("rh", 0),
-    ]
-    assert [item["patch_vertices"].tolist() for item in overlays] == [[1, 2], [0, 2]]
     bad_geometry = {**geometry, "vertices": geometry["vertices"].copy()}
     bad_geometry["vertices"][0, 0] += 1e-6
     with pytest.raises(ValueError, match="source order"):
@@ -283,17 +233,17 @@ def test_surface_forward_mapping_and_deep_truth_filter(tmp_path: Path) -> None:
 def test_surface_render_uses_mne_brain_without_projecting_deep_truth(
     tmp_path: Path, monkeypatch
 ) -> None:
-    calls = {"labels": [], "foci": [], "plots": []}
+    calls = {"plots": []}
 
     class Brain:
         def __init__(self):
             self.closed = False
 
-        def add_label(self, label, **kwargs):
-            calls["labels"].append((label, kwargs))
+        def add_label(self, *_args, **_kwargs):
+            raise AssertionError("truth labels must not be drawn")
 
-        def add_foci(self, coords, **kwargs):
-            calls["foci"].append((list(coords), kwargs))
+        def add_foci(self, *_args, **_kwargs):
+            raise AssertionError("truth foci must not be drawn")
 
         def screenshot(self, **kwargs):
             calls["screenshot"] = kwargs
@@ -343,9 +293,9 @@ def test_surface_render_uses_mne_brain_without_projecting_deep_truth(
     assert calls["plot"]["colormap"] == "inferno"
     assert calls["plot"]["background"] == "white"
     assert calls["plot"]["cortex"] == "classic"
+    assert calls["plot"]["clim"]["kind"] == "value"
+    assert calls["plot"]["clim"]["lims"] == pytest.approx([0.85, 0.91, 0.97])
     assert calls["plot"]["brain_kwargs"] == {"show": False, "theme": "light"}
-    assert calls["labels"] == []
-    assert calls["foci"] == []
     assert calls["screenshot"] == {"mode": "rgb", "time_viewer": False}
     assert calls["stc"].data.shape == (4, 1)
     assert calls["stc"].data.max() == 1.0
@@ -357,21 +307,100 @@ def test_surface_render_uses_mne_brain_without_projecting_deep_truth(
         loaded,
         surface,
         tmp_path / "simulation_truth_surface.png",
-        truth_overlay=True,
+        is_truth=True,
     )
 
     assert truth_output.is_file() and truth_output.stat().st_size > 1_000
-    assert calls["labels"][0][0].vertices.tolist() == [10, 11]
-    assert calls["foci"] == [
-        (
-            [11],
-            {
-                "coords_as_verts": True,
-                "hemi": "lh",
-                "scale_factor": 0.7,
-                "color": brain_maps.TRUTH_COLOR,
-                "name": "simulated_surface_1_center",
-            },
-        )
-    ]
+    assert calls["plot"]["clim"]["kind"] == "value"
     assert calls["plots"][1].closed
+
+
+def test_display_cutoffs_keep_truth_and_fallback_for_sparse_surface() -> None:
+    amplitude = np.arange(1.0, 101.0)
+    _relative, algorithm = brain_maps._display_mask(amplitude, 0.10, 95)
+    _relative, truth = brain_maps._display_mask(amplitude, 0.10, 0)
+    assert algorithm.sum() == 5
+    assert truth.sum() == 91
+
+    displayed, clim = brain_maps._surface_display(
+        np.r_[1.0, np.zeros(999)], 0.10, False
+    )
+    assert np.count_nonzero(displayed) == 1
+    assert clim["kind"] == "value"
+
+
+def test_deep_case_builds_truth_method_and_all_combined_maps(
+    tmp_path: Path, monkeypatch
+) -> None:
+    case = {
+        "case_id": "deep-mini",
+        "case_number": 0,
+        "scenario": "deep_plus_surface",
+        "surface_centers": [0],
+        "deep_index": 2,
+        "eeg_snr_db": -5,
+        "meg_snr_db": 10,
+    }
+    source = np.zeros((3, 220))
+    loaded = {
+        "case": case,
+        "truth": source,
+        "groups": [np.array([0]), np.array([2])],
+        "geometry": {
+            "n_surf": 2,
+            "n_deep": 1,
+            "deep_aseg_labels": np.array([10]),
+        },
+        "reference": {},
+    }
+    montages = []
+
+    def fake_image(*args, **_kwargs):
+        output = Path(args[5] if len(args) >= 8 else args[4])
+        output.write_bytes(b"image")
+        return output
+
+    def fake_montage(paths, output, _dpi, title):
+        output.write_bytes(b"montage")
+        montages.append(([label for label, _path in paths], output.name, title))
+        return output
+
+    def fake_pair(_mri, _surface, output, _dpi, title):
+        output.write_bytes(b"pair")
+        montages.append((["Anatomical MRI", "Cortical surface"], output.name, title))
+        return output
+
+    monkeypatch.setattr(brain_maps.strict_plot, "load_strict_case", lambda *_a, **_k: loaded)
+    monkeypatch.setattr(
+        brain_maps,
+        "reconstruct_all",
+        lambda *_a, **_k: ({"MNE": source}, {}),
+    )
+    monkeypatch.setattr(brain_maps, "evaluate_all", lambda *_a: [{"method": "MNE"}])
+    monkeypatch.setattr(
+        brain_maps, "load_anatomy", lambda *_a: {"sample_path": "sample"}
+    )
+    monkeypatch.setattr(brain_maps, "load_surface_source_space", lambda *_a: {})
+    monkeypatch.setattr(brain_maps, "render_method", fake_image)
+    monkeypatch.setattr(brain_maps, "render_surface_method", fake_image)
+    monkeypatch.setattr(brain_maps, "render_anatomy_surface_pair", fake_pair)
+    monkeypatch.setattr(brain_maps, "render_montage", fake_montage)
+
+    case_dir = brain_maps.plot_brain_maps(
+        output_root=tmp_path / "out",
+        sisses_root=tmp_path / "archive",
+        case_number=0,
+        surface_maps=True,
+    )
+
+    assert case_dir.name == "case_00000"
+    assert [name for _labels, name, _title in montages] == [
+        "simulation_truth_mri_surface.png",
+        "mne_mri_surface.png",
+        "all_methods_brain_mri.png",
+        "all_methods_brain_surface.png",
+        "all_methods_brain_combined.png",
+    ]
+    assert montages[-1][0] == ["Simulated truth", "MNE"]
+    assert "EEG SNR -5 dB" in montages[-1][2]
+    assert "P95" in montages[-1][2]

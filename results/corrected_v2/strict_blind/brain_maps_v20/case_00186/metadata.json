@@ -116,12 +116,34 @@
     }
   ],
   "normalization": "per-method active-minus-baseline RMS, normalized to global peak",
-  "display_threshold": 0.1,
-  "algorithm_truth_overlay": "none; simulation truth is stored in separate files",
+  "relative_peak_floor": 0.1,
+  "algorithm_mri_display_percentile": 95.0,
+  "algorithm_mri_display_rule": "top 5% (P95) + 10% peak floor",
+  "simulation_truth_display_rule": "10% peak floor",
+  "algorithm_truth_overlay": "none",
   "simulation_truth_mri": "simulation_truth_mri.png",
   "simulation_truth_surface": "simulation_truth_surface.png",
   "surface_maps": true,
-  "surface_truth_overlay": "only simulation_truth_surface.png has green cortical truth marks; deep sources are never projected",
+  "surface_truth_overlay": "none; truth is shown only as a continuous heat region and deep sources are never projected",
+  "algorithm_surface_clim": {
+    "kind": "value",
+    "control_percentiles": [
+      95,
+      97,
+      99
+    ],
+    "display_rule": "top 5% (P95) + 10% peak floor",
+    "fallback": "value [peak floor, midpoint, 1] when percentiles degenerate"
+  },
+  "simulation_truth_surface_clim": {
+    "kind": "value",
+    "lims": [
+      0.1,
+      0.55,
+      1.0
+    ]
+  },
+  "deep_case_combined_outputs": "not generated",
   "surface_normalization": "per-method cortical RMS amplitude divided by its cortical peak",
   "surface_rendering": "inflated cortex; split hemispheres; lateral and medial views; classic cortex; inferno colormap; 10 smoothing steps",
   "anatomy": "D:\\mne_data\\MNE-sample-data",

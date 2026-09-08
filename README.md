@@ -76,10 +76,12 @@ python plot_strict_metrics.py
 python analyze_strict_statistics.py
 python plot_strict_brain_maps.py --case-number 3124
 python plot_strict_brain_maps.py --case-number 92
-python plot_strict_brain_maps.py --manifest results\corrected_v2\strict_blind\manifest.json --input-root 'D:\oaster_corrected_v2_sisses\matlab_input' --data-root corrected_v2\generated --results-root results\corrected_v2\strict_blind --sisses-mode skip --case-number 6489 --output-root results\corrected_v2\strict_blind\brain_maps_v20 --surface-maps
+python plot_strict_brain_maps.py --manifest results\corrected_v2\strict_blind\manifest.json --input-root 'D:\oaster_corrected_v2_sisses\matlab_input' --data-root corrected_v2\generated --results-root results\corrected_v2\strict_blind --sisses-mode skip --case-number 6489 --output-root results\corrected_v2\strict_blind\brain_maps_v20 --surface-maps --relative-threshold 0.10 --display-percentile 95
 ```
 
-每个病例分别生成 `simulation_truth_mri.png` / `simulation_truth_surface.png` 仿真真值图，以及完全不叠加真值的算法 MRI / 皮层图；完整情形索引见 [`brain_maps_v20/INDEX.md`](results/corrected_v2/strict_blind/brain_maps_v20/INDEX.md)。表层图使用白底、`classic` 沟回底色、`inferno` 激活色和 10 步平滑；深部源不会被错误投影到皮层。表层批量渲染还需要 `pyvistaqt` 与 `PyQt6`（已列入 `requirements.txt`）。
+每个病例分别生成 `simulation_truth_mri.png` / `simulation_truth_surface.png` 仿真真值图，以及完全不叠加真值的算法 MRI / 皮层图；真值只用连续能量热图表达，不使用星号、圆圈、绿色 label 或 foci。算法 MRI 与 surface 默认显示 `cutoff = max(10% 峰值, P95)`；surface 色标使用 P95/P97/P99 对应的归一化能量值，稀疏结果的分位点退化时回退到归一化能量的 10%/55%/100%，真值图只使用 10% 峰值 cutoff。
+
+所有含深层源的代表病例还生成 `simulation_truth_mri_surface.png`、每算法 `*_mri_surface.png` 和 `all_methods_brain_combined.png`。联合图左侧解剖 MRI 显示完整深浅层源，右侧渲染皮层只显示表层分量；两面板独立归一化，颜色不能用于跨面板比较幅值。完整情形与联合图入口见 [`brain_maps_v20/INDEX.md`](results/corrected_v2/strict_blind/brain_maps_v20/INDEX.md)。表层图使用白底、`classic` 沟回底色、`inferno` 激活色和 10 步平滑；深部源不会被错误投影到皮层。表层批量渲染还需要 `pyvistaqt` 与 `PyQt6`（已列入 `requirements.txt`）。
 
 结果索引见 `VISUAL_STATISTICAL_REPORT.md`；完整方法比较工作簿位于 `outputs/01a0747c-f942-7dc2-b982-f01e067136c6/strict_benchmark_method_comparison.xlsx`。
 
