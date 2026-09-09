@@ -256,11 +256,25 @@ def build_candidate_mask(
 
 
 def whitened_joint_system(eeg: dict, meg: dict) -> tuple[np.ndarray, np.ndarray]:
-    eeg_w = whitening_matrix(np.asarray(eeg["F"], dtype=float), NOISE_SAMPLES)
-    meg_w = whitening_matrix(np.asarray(meg["F"], dtype=float), NOISE_SAMPLES)
-    b = np.vstack([eeg_w @ np.asarray(eeg["F"], dtype=float), meg_w @ np.asarray(meg["F"], dtype=float)])
-    l = np.vstack([eeg_w @ np.asarray(eeg["Gain"], dtype=float), meg_w @ np.asarray(meg["Gain"], dtype=float)])
-    return b, l
+    data_blocks, gain_blocks = [], []
+    shape = None
+    for modality in (eeg, meg):
+        data = np.asarray(modality["F"], dtype=float)
+        gain = np.asarray(modality["Gain"], dtype=float)
+        if data.ndim != 2 or gain.ndim != 2 or data.shape[0] != gain.shape[0]:
+            raise ValueError("each modality must share the data/gain channel axis")
+        if not data.shape[0]:
+            continue
+        current = (data.shape[1], gain.shape[1])
+        if shape is not None and current != shape:
+            raise ValueError("modalities must share the time and source axes")
+        shape = current
+        whitener = whitening_matrix(data, NOISE_SAMPLES)
+        data_blocks.append(whitener @ data)
+        gain_blocks.append(whitener @ gain)
+    if not data_blocks:
+        raise ValueError("at least one non-empty modality is required")
+    return np.vstack(data_blocks), np.vstack(gain_blocks)
 
 
 def connected_euclidean_surface_kernels(

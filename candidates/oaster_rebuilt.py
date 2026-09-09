@@ -297,7 +297,9 @@ def _ebic_templates(
         (kernel, np.asarray(leadfield[:, :n_surf] @ kernel))
         for _scale, kernel in kernels
     ]
-    candidates = [gain for _kernel, gain in surface] + [leadfield[:, n_surf:]]
+    candidates = [gain for _kernel, gain in surface]
+    if n_surf < leadfield.shape[1]:
+        candidates.append(leadfield[:, n_surf:])
     norms = [np.maximum(np.sum(gain**2, axis=0), 1e-30) for gain in candidates]
     selected: list[tuple[int, int]] = []
     columns: list[np.ndarray] = []
@@ -357,28 +359,36 @@ def _ebic_templates(
     return result, len(selected)
 
 
-def reconstruct(
-    eeg_data: np.ndarray,
-    meg_data: np.ndarray,
-    gain_eeg: np.ndarray,
-    gain_meg: np.ndarray,
+def reconstruct_from_whitened(
+    data: np.ndarray,
+    leadfield: np.ndarray,
     n_surf: int,
     kernels,
 ) -> tuple[np.ndarray, dict]:
-    """Reconstruct sources using only EEG/MEG observations and forward operators."""
+    """Run OASTER on an already whitened sensor system."""
+    data = np.asarray(data, dtype=float)
+    leadfield = np.asarray(leadfield, dtype=float)
+    if data.ndim != 2 or leadfield.ndim != 2 or data.shape[0] != leadfield.shape[0]:
+        raise ValueError("data and leadfield must share the channel axis")
     kernels = tuple(kernels)
     kernel_by_scale = dict(kernels)
     if 4.0 not in kernel_by_scale:
         raise ValueError("kernels must include the recovered 4-mm evidence scale")
-    data, leadfield = protected.whitened_joint_system(
-        {"F": eeg_data, "Gain": gain_eeg},
-        {"F": meg_data, "Gain": gain_meg},
-    )
     basis = _temporal_basis(data)
     primary, count = _ebic_templates(data, leadfield, n_surf, kernels, basis)
-    rescue, rescue_diagnostics = deep_rescue_trial(
-        data, leadfield, primary, n_surf, basis
-    )
+    if n_surf < leadfield.shape[1]:
+        rescue, rescue_diagnostics = deep_rescue_trial(
+            data, leadfield, primary, n_surf, basis
+        )
+    else:
+        rescue = np.zeros_like(primary)
+        rescue_diagnostics = {
+            "accepted_without_tau": False,
+            "deep_local": -1,
+            "ebic_delta_without_tau": math.inf,
+            "universe": 0,
+            "recovered_design_rank": 0,
+        }
     rescue_delta = (
         float(rescue_diagnostics["ebic_delta_without_tau"]) + DEEP_RESCUE_TAU
     )
@@ -403,3 +413,19 @@ def reconstruct(
         "deep_rescue_universe": rescue_diagnostics["universe"],
         "deep_rescue_design_rank": rescue_diagnostics["recovered_design_rank"],
     }
+
+
+def reconstruct(
+    eeg_data: np.ndarray,
+    meg_data: np.ndarray,
+    gain_eeg: np.ndarray,
+    gain_meg: np.ndarray,
+    n_surf: int,
+    kernels,
+) -> tuple[np.ndarray, dict]:
+    """Reconstruct sources using only EEG/MEG observations and forward operators."""
+    data, leadfield = protected.whitened_joint_system(
+        {"F": eeg_data, "Gain": gain_eeg},
+        {"F": meg_data, "Gain": gain_meg},
+    )
+    return reconstruct_from_whitened(data, leadfield, n_surf, kernels)

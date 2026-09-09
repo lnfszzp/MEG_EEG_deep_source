@@ -1,0 +1,7 @@
+﻿metric,comparison,oaster_wins,non_ties,median_advantage_for_oaster,exact_two_sided_sign_p
+n20_left_s1_enrichment_median,OASTER Joint vs dSPM Joint,1,5,-2.067122014922789,0.375
+n20_peak_euclidean_distance_to_left_s1_mm_median,OASTER Joint vs dSPM Joint,2,5,-8.054066133979623,1.0
+p30_left_s1_enrichment_median,OASTER Joint vs dSPM Joint,1,5,-5.500051487835814,0.375
+p30_peak_euclidean_distance_to_left_s1_mm_median,OASTER Joint vs dSPM Joint,1,5,-18.60338869963744,0.375
+n20_run_map_spearman_mean,OASTER Joint vs dSPM Joint,0,5,-0.2972690877642734,0.0625
+p30_run_map_spearman_mean,OASTER Joint vs dSPM Joint,0,5,-0.27389687468196394,0.0625

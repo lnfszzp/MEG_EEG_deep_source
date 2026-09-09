@@ -74,6 +74,28 @@ def test_reconstruct_is_finite_and_oracle_free() -> None:
     assert diagnostics["selected_templates"] >= 1
 
 
+def test_reconstruct_accepts_cortex_only_single_modality() -> None:
+    rng = np.random.default_rng(23)
+    gain = rng.normal(size=(8, 3))
+    source = np.zeros((3, 400))
+    source[1, 200:] = 4.0 * np.sin(2.0 * np.pi * 8.0 * np.arange(200) / 200.0)
+    eeg = gain @ source + rng.normal(scale=0.03, size=(8, 400))
+
+    estimate, diagnostics = oaster.reconstruct(
+        eeg,
+        np.empty((0, 400)),
+        gain,
+        np.empty((0, 3)),
+        3,
+        _kernels(3),
+    )
+
+    assert estimate.shape == source.shape
+    assert np.isfinite(estimate).all()
+    assert diagnostics["deep_rescue_universe"] == 0
+    assert diagnostics["deep_rescue_accepted"] is False
+
+
 @pytest.mark.parametrize(("delta", "accepted"), ((-1.0, True), (1.0, False)))
 def test_reconstruct_applies_rescue_conditionally_before_spectral_fusion(
     monkeypatch: pytest.MonkeyPatch, delta: float, accepted: bool

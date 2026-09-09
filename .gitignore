@@ -67,6 +67,12 @@ results/dev_experiments/**
 !results/position_validation/evidence_peak_report.csv
 !results/position_validation/dle_by_scenario_report.csv
 !results/position_validation/threshold_sweep.csv
+!results/real_data/
+!results/real_data/ds006035/
+!results/real_data/ds006035/group_final/
+!results/real_data/ds006035/group_final/GROUP_REPORT.md
+!results/real_data/ds006035/group_final/*.csv
+!results/real_data/ds006035/group_final/group_method_metrics.png
 !results/v11/
 !results/v11/metrics.csv
 !results/v11/grid_resolution.csv
