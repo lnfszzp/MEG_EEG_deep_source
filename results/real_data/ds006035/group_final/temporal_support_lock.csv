@@ -1,24 +1,29 @@
 ﻿subject,method,same_n20_p30_peak_runs,runs
+sm04,OASTER ERP Joint,0,3
 sm04,OASTER Joint,3,3
 sm04,OASTER EEG,3,3
 sm04,OASTER MAG,3,3
 sm04,dSPM Joint,0,3
 sm04,eLORETA Joint,0,3
+sm06,OASTER ERP Joint,0,3
 sm06,OASTER Joint,3,3
 sm06,OASTER EEG,3,3
 sm06,OASTER MAG,3,3
 sm06,dSPM Joint,0,3
 sm06,eLORETA Joint,0,3
+sm07,OASTER ERP Joint,2,3
 sm07,OASTER Joint,3,3
 sm07,OASTER EEG,3,3
 sm07,OASTER MAG,3,3
 sm07,dSPM Joint,2,3
 sm07,eLORETA Joint,1,3
+sm09,OASTER ERP Joint,0,3
 sm09,OASTER Joint,3,3
 sm09,OASTER EEG,3,3
 sm09,OASTER MAG,3,3
 sm09,dSPM Joint,0,3
 sm09,eLORETA Joint,0,3
+sm12,OASTER ERP Joint,0,3
 sm12,OASTER Joint,3,3
 sm12,OASTER EEG,3,3
 sm12,OASTER MAG,2,3

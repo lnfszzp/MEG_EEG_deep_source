@@ -463,7 +463,24 @@ assert np.isfinite(joint_gain_white).all()
 
 
 #%%
-# ==================== 13. 建立 0、4、7 mm 的表层空间模板 ====================
+# ==================== 13. OASTER ERP：直接做有符号时间域逆解 ====================
+# 这条分支不做频谱筛选，也不让 N20 和 P30 共用稀疏空间支持。
+# depth=0.8、lambda2=1/9 是预先固定的常用设置，不根据 S1 指标调参。
+
+oaster_erp_joint, oaster_erp_information = oaster.reconstruct_evoked_from_whitened(
+    joint_white,
+    joint_gain_white,
+)
+
+print("OASTER ERP 结果：", oaster_erp_joint.shape)
+print("OASTER ERP 信息：", oaster_erp_information)
+
+assert oaster_erp_joint.shape == (n_sources, len(target_times))
+assert np.isfinite(oaster_erp_joint).all()
+
+
+#%%
+# ==================== 14. 建立 0、4、7 mm 的表层空间模板 ====================
 
 source_adjacency = mne.spatial_src_adjacency(analysis_src, verbose=False).toarray()
 surface_kernels = protected.connected_euclidean_surface_kernels(
@@ -480,7 +497,7 @@ assert 4.0 in kernel_by_scale
 
 
 #%%
-# ==================== 14. OASTER 第二步：提取时间基 ====================
+# ==================== 15. 原频谱 OASTER 第二步：提取时间基 ====================
 # 当前还原版会先进行 active/baseline 频谱筛选，再对 15-45 ms 做 SVD。
 # 只有超过基线噪声奇异值边界的时间成分会被保留。
 
@@ -494,7 +511,7 @@ print("OASTER 时间秩：", time_basis.shape[0])
 
 
 #%%
-# ==================== 15. OASTER 第三步：EBIC 选择空间模板 ====================
+# ==================== 16. 原频谱 OASTER 第三步：EBIC 选择空间模板 ====================
 # EBIC 会在 0、4、7 mm 模板中逐个加入候选源，直到继续加入不能降低 EBIC。
 # 这份公开数据脚本目前只建了皮层表面源空间，没有深部候选，所以不运行 deep rescue。
 
@@ -514,7 +531,7 @@ assert oaster_primary.shape == (n_sources, len(target_times))
 
 
 #%%
-# ==================== 16. OASTER 第四步：计算 4 mm 频谱证据 ====================
+# ==================== 17. 原频谱 OASTER 第四步：计算 4 mm 频谱证据 ====================
 # 这一步正是当前 OASTER 带有明显频谱定位倾向的地方。
 # 它比较 active 和 baseline 的频谱功率，再投影回皮层源空间。
 
@@ -530,7 +547,7 @@ print("频谱证据形状：", oaster_spectral.shape)
 
 
 #%%
-# ==================== 17. OASTER 第五步：主结果加 5% 频谱证据 ====================
+# ==================== 18. 原频谱 OASTER 第五步：主结果加 5% 频谱证据 ====================
 
 oaster_joint = oaster._add_scaled_evidence(
     oaster_primary,
@@ -544,7 +561,7 @@ assert np.isfinite(oaster_joint).all()
 
 
 #%%
-# ==================== 18. MNE 官方 dSPM 和 eLORETA ====================
+# ==================== 19. MNE 官方 dSPM 和 eLORETA ====================
 # 两个对比方法直接使用同一份 epochs.average()，不是单试次定位以后再平均。
 
 joint_forward = _merge_fwds(
@@ -609,20 +626,22 @@ print("eLORETA 结果：", eloreta_joint.shape)
 
 
 #%%
-# ==================== 19. 计算 N20 和 P30 的解剖合理性指标 ====================
+# ==================== 20. 计算 N20 和 P30 的解剖合理性指标 ====================
 # 真实数据没有源真值，所以这里不能计算 AUC、DLE 和 SD。
-# S1 富集等于 1 是均匀全脑的面积零假设；大于 1 才表示左侧 S1 有富集。
+# S1 富集等于 1 是均匀源点零假设；大于 1 才表示左侧 S1 有富集。
 
 geometry = label_geometry(analysis_src, subjects_dir)
 
 method_source = {
+    "OASTER ERP Joint": oaster_erp_joint,
     "OASTER Joint": oaster_joint,
     "dSPM Joint": dspm_joint,
     "eLORETA Joint": eloreta_joint,
 }
 
 method_color = {
-    "OASTER Joint": "#0072B2",
+    "OASTER ERP Joint": "#0072B2",
+    "OASTER Joint": "#6A3D9A",
     "dSPM Joint": "#CC79A7",
     "eLORETA Joint": "#D55E00",
 }
@@ -686,19 +705,22 @@ print(result_table.to_string(index=False))
 
 
 #%%
-# ==================== 20. 保存所有方法的源结果 ====================
+# ==================== 21. 保存所有方法的源结果 ====================
 
 np.savez_compressed(
     save_dir / "3-源定位结果.npz",
     target_times=target_times,
     vertices_lh=geometry["vertices"][0],
     vertices_rh=geometry["vertices"][1],
+    oaster_erp_joint=oaster_erp_joint,
     oaster_joint=oaster_joint,
     dspm_joint=dspm_joint,
     eloreta_joint=eloreta_joint,
+    oaster_erp_n20=n20_maps["OASTER ERP Joint"],
     oaster_n20=n20_maps["OASTER Joint"],
     dspm_n20=n20_maps["dSPM Joint"],
     eloreta_n20=n20_maps["eLORETA Joint"],
+    oaster_erp_p30=p30_maps["OASTER ERP Joint"],
     oaster_p30=p30_maps["OASTER Joint"],
     dspm_p30=p30_maps["dSPM Joint"],
     eloreta_p30=p30_maps["eLORETA Joint"],
@@ -706,7 +728,7 @@ np.savez_compressed(
 
 
 #%%
-# ==================== 21. 画三个方法的指标对比 ====================
+# ==================== 22. 画四个方法的指标对比 ====================
 
 method_names = result_table["method"].tolist()
 x = np.arange(len(method_names))
@@ -731,7 +753,7 @@ for axis, (column, title, ylabel) in zip(axes.ravel(), plot_items):
     axis.spines[["top", "right"]].set_visible(False)
     axis.bar_label(bars, fmt="%.2f", padding=3)
     if "enrichment" in column:
-        axis.axhline(1.0, color="#333333", linestyle="--", linewidth=1, label="面积零假设=1")
+        axis.axhline(1.0, color="#333333", linestyle="--", linewidth=1, label="均匀源点零假设=1")
         axis.legend(loc="upper right")
 
 fig.suptitle(f"sub-{subject} run-{run} | ERP叠加平均后的源定位", fontsize=15, fontweight="bold")
@@ -740,7 +762,7 @@ plt.close(fig)
 
 
 #%%
-# ==================== 22. 可选：把 N20 结果渲染到脑表面 ====================
+# ==================== 23. 可选：把 N20 结果渲染到脑表面 ====================
 # 参数区 draw_brain=False 时不会运行这一块，也不会打开三维窗口。
 
 if draw_brain:
@@ -787,7 +809,7 @@ if draw_brain:
         brain_images.append((method, brain.screenshot(mode="rgb", time_viewer=False)))
         brain.close()
 
-    fig, axes = plt.subplots(3, 1, figsize=(12, 11), layout="constrained")
+    fig, axes = plt.subplots(4, 1, figsize=(12, 14), layout="constrained")
 
     for axis, (method, brain_image) in zip(axes, brain_images):
         axis.imshow(brain_image)
@@ -799,7 +821,7 @@ if draw_brain:
 
 
 #%%
-# ==================== 23. 完成 ====================
+# ==================== 24. 完成 ====================
 
 print("\n运行完成，结果保存在：")
 print(save_dir)

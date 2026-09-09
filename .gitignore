@@ -74,6 +74,9 @@ results/dev_experiments/**
 !results/real_data/ds006035/group_final/GROUP_REPORT.md
 !results/real_data/ds006035/group_final/*.csv
 !results/real_data/ds006035/group_final/group_method_metrics.png
+!results/real_data/erp_four_paradigms_v1/
+!results/real_data/erp_four_paradigms_v1/*.csv
+!results/real_data/erp_four_paradigms_v1/*.png
 !results/v11/
 !results/v11/metrics.csv
 !results/v11/grid_resolution.csv

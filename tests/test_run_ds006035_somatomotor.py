@@ -46,7 +46,7 @@ def test_group_tests_use_paired_subject_values() -> None:
     rows = []
     for subject in SUBJECTS:
         for method in METHODS:
-            value = {"OASTER Joint": 0.5, "OASTER EEG": 0.4,
+            value = {"OASTER ERP Joint": 0.5, "OASTER Joint": 0.5, "OASTER EEG": 0.4,
                      "OASTER MAG": 0.8, "dSPM Joint": 1.0,
                      "eLORETA Joint": 0.6}[method]
             rows.append({"subject": subject, "method": method,

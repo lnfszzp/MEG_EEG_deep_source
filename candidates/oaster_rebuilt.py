@@ -24,6 +24,8 @@ RIDGE_FRACTION = 0.03
 SPECTRAL_FRACTION = 0.05
 DEEP_RESCUE_TAU = 0.0
 MAX_DEEP_RESCUES = 1
+ERP_LAMBDA2 = 1.0 / 9.0
+ERP_DEPTH = 0.8
 
 
 # Recovered exact from the later protected_multilayer.py transcript fragment.
@@ -412,6 +414,79 @@ def reconstruct_from_whitened(
         "deep_rescue_ebic_delta": rescue_delta,
         "deep_rescue_universe": rescue_diagnostics["universe"],
         "deep_rescue_design_rank": rescue_diagnostics["recovered_design_rank"],
+    }
+
+
+def reconstruct_evoked_from_whitened(
+    data: np.ndarray,
+    leadfield: np.ndarray,
+    *,
+    lambda2: float = ERP_LAMBDA2,
+    depth: float = ERP_DEPTH,
+) -> tuple[np.ndarray, dict]:
+    """Localize phase-locked evoked data without spectral windowing.
+
+    This is the ERP branch: it keeps the signed time course, uses a
+    depth-weighted minimum-norm inverse, and standardizes every source by its
+    propagated whitened-noise standard deviation.  Its mathematical backbone
+    is dSPM-like and is an auditable baseline, not a claimed novel substitute
+    for dSPM.  The caller must whiten the data and leadfield from single-trial
+    baseline samples or a noise covariance.  When ``data`` is an average of
+    several trials, the returned scale is relative noise-normalized amplitude,
+    not a z score, unless the whitener already includes the averaging factor.
+    """
+    data = np.asarray(data, dtype=float)
+    leadfield = np.asarray(leadfield, dtype=float)
+    if data.ndim != 2 or leadfield.ndim != 2 or data.shape[0] != leadfield.shape[0]:
+        raise ValueError("data and leadfield must share the channel axis")
+    if not data.shape[0] or not data.shape[1] or not leadfield.shape[1]:
+        raise ValueError("data and leadfield must be non-empty")
+    if not np.isfinite(data).all() or not np.isfinite(leadfield).all():
+        raise ValueError("data and leadfield must contain only finite values")
+    if not np.isfinite(lambda2) or lambda2 <= 0.0:
+        raise ValueError("lambda2 must be positive and finite")
+    if not np.isfinite(depth) or not 0.0 <= depth <= 1.0:
+        raise ValueError("depth must be between zero and one")
+
+    column_power = np.sum(leadfield**2, axis=0)
+    valid = column_power > 0.0
+    if not np.any(valid):
+        raise ValueError("leadfield has no observable source")
+    source_variance = np.zeros_like(column_power)
+    source_variance[valid] = column_power[valid] ** (-depth)
+    if not np.isfinite(source_variance[valid]).all():
+        raise ValueError("leadfield sensitivity is too ill-conditioned for depth weighting")
+    depth_prior_dynamic_range = float(
+        source_variance[valid].max() / source_variance[valid].min()
+    )
+    sensor_covariance = (leadfield * source_variance) @ leadfield.T
+    sensor_rank = int(np.linalg.matrix_rank(sensor_covariance, hermitian=True))
+    covariance_trace = float(np.trace(sensor_covariance))
+    if sensor_rank == 0 or covariance_trace <= 0.0:
+        raise ValueError("leadfield has zero sensor-space rank")
+
+    source_variance *= sensor_rank / covariance_trace
+    sensor_covariance = (leadfield * source_variance) @ leadfield.T
+    regularized = sensor_covariance + float(lambda2) * np.eye(data.shape[0])
+    inverse = (source_variance[:, None] * leadfield.T) @ np.linalg.solve(
+        regularized, np.eye(data.shape[0])
+    )
+    source = inverse @ data
+    noise_normalization = np.linalg.norm(inverse, axis=1)
+    standardized = np.zeros_like(source)
+    np.divide(
+        source,
+        noise_normalization[:, None],
+        out=standardized,
+        where=noise_normalization[:, None] > 0.0,
+    )
+    return standardized, {
+        "mode": "signed_time_domain_noise_normalized_minimum_norm",
+        "lambda2": float(lambda2),
+        "depth": float(depth),
+        "sensor_rank": sensor_rank,
+        "valid_sources": int(np.sum(valid)),
+        "depth_prior_dynamic_range": depth_prior_dynamic_range,
     }
 
 

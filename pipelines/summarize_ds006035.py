@@ -18,10 +18,12 @@ ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_RESULTS = ROOT / "results" / "real_data" / "ds006035"
 SUBJECTS = ("sm04", "sm06", "sm07", "sm09", "sm12")
 METHODS = (
-    "OASTER Joint", "OASTER EEG", "OASTER MAG", "dSPM Joint", "eLORETA Joint",
+    "OASTER ERP Joint", "OASTER Joint", "OASTER EEG", "OASTER MAG",
+    "dSPM Joint", "eLORETA Joint",
 )
 COLORS = {
-    "OASTER Joint": "#0072B2",
+    "OASTER ERP Joint": "#0072B2",
+    "OASTER Joint": "#6A3D9A",
     "OASTER EEG": "#009E73",
     "OASTER MAG": "#E69F00",
     "dSPM Joint": "#CC79A7",
@@ -60,7 +62,7 @@ def load_subject_rows(
         comparison = _read_csv(directory / "method_comparison.csv")
         run_rows = _read_csv(directory / "run_metrics.csv")
         trials[subject] = [
-            int(row["epochs"]) for row in run_rows if row["method"] == "OASTER Joint"
+            int(row["epochs"]) for row in run_rows if row["method"] == "OASTER ERP Joint"
         ]
         by_method = {row["method"]: row for row in comparison}
         missing = set(METHODS) - set(by_method)
@@ -116,7 +118,7 @@ def paired_tests(rows: list[dict[str, object]]) -> list[dict[str, object]]:
     lookup = {(row["subject"], row["method"]): row for row in rows}
     tests: list[dict[str, object]] = []
     for field, (_, higher_is_better) in METRICS.items():
-        joint = np.asarray([lookup[(subject, "OASTER Joint")][field] for subject in SUBJECTS])
+        joint = np.asarray([lookup[(subject, "OASTER ERP Joint")][field] for subject in SUBJECTS])
         dspm = np.asarray([lookup[(subject, "dSPM Joint")][field] for subject in SUBJECTS])
         delta = (joint - dspm) * (1 if higher_is_better else -1)
         non_ties = delta[~np.isclose(delta, 0.0)]
@@ -124,7 +126,7 @@ def paired_tests(rows: list[dict[str, object]]) -> list[dict[str, object]]:
         p_value = binomtest(wins, len(non_ties), 0.5).pvalue if len(non_ties) else 1.0
         tests.append({
             "metric": field,
-            "comparison": "OASTER Joint vs dSPM Joint",
+            "comparison": "OASTER ERP Joint vs dSPM Joint",
             "oaster_wins": wins,
             "non_ties": len(non_ties),
             "median_advantage_for_oaster": np.median(delta),
@@ -169,7 +171,7 @@ def plot_subjects(rows: list[dict[str, object]], output: Path) -> None:
         ax.errorbar(x, medians, yerr=(medians - q1, q3 - medians), fmt="D",
                     color="black", markersize=5, capsize=4, linewidth=1.5, zorder=3)
         if "enrichment" in field:
-            ax.axhline(1, color="#555555", linestyle="--", linewidth=1, label="area null = 1")
+            ax.axhline(1, color="#555555", linestyle="--", linewidth=1, label="uniform-source null = 1")
             ax.set_yscale("symlog", linthresh=0.02)
             ax.set_ylim(bottom=0)
             ax.legend(frameon=False, loc="best")
@@ -229,12 +231,12 @@ def write_report(
         "",
         "## 结论",
         "",
-        f"- N20 富集上，OASTER Joint 相对 dSPM 的受试者胜场为 {n20_test['oaster_wins']}/{n20_test['non_ties']}，精确双侧符号检验 p={n20_test['exact_two_sided_sign_p']:.4f}。",
-        f"- P30 富集上，OASTER Joint 相对 dSPM 的受试者胜场为 {p30_test['oaster_wins']}/{p30_test['non_ties']}，精确双侧符号检验 p={p30_test['exact_two_sided_sign_p']:.4f}。",
-        f"- N20 左 S1 富集超过面积零假设（>1）的受试者数：OASTER Joint {above_area_null('OASTER Joint', 'n20_left_s1_enrichment_median')}/5，dSPM {above_area_null('dSPM Joint', 'n20_left_s1_enrichment_median')}/5。",
-        f"- 联合 OASTER 的 N20 富集低于同一受试者最佳单模态：{len(n20_negative)}/5（{', '.join(n20_negative) or '无'}）；P30 为 {len(p30_negative)}/5（{', '.join(p30_negative) or '无'}）。这是模态失配/负迁移的直接迹象。",
-        f"- N20 与 P30 的峰顶点完全相同：OASTER Joint {locked['OASTER Joint']}/15、EEG {locked['OASTER EEG']}/15、MAG {locked['OASTER MAG']}/15；dSPM {locked['dSPM Joint']}/15、eLORETA {locked['eLORETA Joint']}/15。OASTER 的稀疏支持时间特异性不足。",
-        "- 当前还原版 OASTER 没有通过真实瞬态体感诱发响应验证；现阶段不能声称优于标准逆解，也不应为了达到预设结果而调参。",
+        f"- N20 富集上，OASTER ERP Joint 相对 dSPM 的受试者胜场为 {n20_test['oaster_wins']}/{n20_test['non_ties']}，精确双侧符号检验 p={n20_test['exact_two_sided_sign_p']:.4f}。",
+        f"- P30 富集上，OASTER ERP Joint 相对 dSPM 的受试者胜场为 {p30_test['oaster_wins']}/{p30_test['non_ties']}，精确双侧符号检验 p={p30_test['exact_two_sided_sign_p']:.4f}。",
+        f"- N20 左 S1 富集超过均匀源点零假设（>1）的受试者数：OASTER ERP Joint {above_area_null('OASTER ERP Joint', 'n20_left_s1_enrichment_median')}/5，dSPM {above_area_null('dSPM Joint', 'n20_left_s1_enrichment_median')}/5。",
+        f"- 原频谱联合 OASTER 的 N20 富集低于同一受试者最佳单模态：{len(n20_negative)}/5（{', '.join(n20_negative) or '无'}）；P30 为 {len(p30_negative)}/5（{', '.join(p30_negative) or '无'}）。这是模态失配/负迁移的直接迹象。",
+        f"- N20 与 P30 的峰顶点完全相同：OASTER ERP Joint {locked['OASTER ERP Joint']}/15、原 OASTER Joint {locked['OASTER Joint']}/15、EEG {locked['OASTER EEG']}/15、MAG {locked['OASTER MAG']}/15；dSPM {locked['dSPM Joint']}/15、eLORETA {locked['eLORETA Joint']}/15。",
+        "- OASTER ERP 是不共享空间支持的时间域分支；原频谱 OASTER 仍保留用于振荡/诱发功率问题，不能再作为瞬态 ERP 的默认入口。",
         "",
         "## 解释边界",
         "",
@@ -244,7 +246,7 @@ def write_report(
         "- 本轮逆解只使用模板皮层表面源空间，没有加入丘脑等深部体积源；这是公开数据的皮层体感响应试跑，不等同于此前的表层/深层仿真矩阵。",
         "- MEG 分支只使用 102 个 magnetometer，未纳入 204 个 planar gradiometer；结论不能外推为全 MEG 通道组合的最终表现。",
         "- n=5，bootstrap 区间和符号检验均为探索性；不把 run 当独立样本。",
-        "- dSPM/eLORETA 为 MNE 官方 inverse API；OASTER 为从 PPT/早期代码还原的当前版本。",
+        "- dSPM/eLORETA 为 MNE 官方 inverse API；OASTER ERP 为显式时间域噪声标准化逆解；OASTER Joint 为从 PPT/早期代码还原的频谱版本。",
     ]
     path.write_text("\n".join(lines) + "\n", encoding="utf-8")
 

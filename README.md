@@ -9,6 +9,8 @@
 - V4–V18 来自 Git 仓库历史；除 PPT 中 AUC `0.909` 与仓库精确值 `0.900910` 不一致外，PPT 最终表格的其余数值与 V18 结果吻合。V18 流程为：模态内基线白化、联合候选、深层残差救援、0/4/7 mm 表层模板重拟合，以及 25% 弱表层范围校正。
 - `metrics/user_metrics/` 保留 `An_auc`、SD、DLE、RMSE 接口。历史 `An_roc` 对并列分数顺序敏感；现在 `auc_tie_corrected` 使用并列秩修正，`auc` 仍保留历史 parcel-AUC 口径，便于复核旧表。
 - OASTER 的投影证据、谱滤波、谱证据和缩放融合来自恢复出的精确代码片段；EBIC 选择循环由精确的 GCV 实验版本还原。只有 `_temporal_basis` 的原函数正文未保存，它按同一实验中留下的基线谱边缘公式重建，代码中已明确标注。
+- 原频谱 OASTER 保留给振荡/诱发功率定位；相位锁定 ERP/ERF 改走 `reconstruct_evoked_from_whitened` 时间域分支。该分支逐时刻保留极性并做噪声标准化，不让 N20、P30 等成分共用一个稀疏支持；其数学骨架接近 dSPM，目前是可审计的 ERP 基线，不包装成新的独立算法贡献。
+- 当前 ERP 实测只验证了皮层表面源；诊断信息会报告深度先验动态范围，体积/深部 ERP 在完成个体解剖和深度权重上限验证前不作性能结论。
 - 冻结留出清单为 49 个 `(EEG SNR, MEG SNR)` 组合 × 185 个源配置，共 9,065 例；冻结 SHA-256 为 `3eda43e22ce70a17b4659658742aade66053ff7943140638868281e166a0bd76`。
 
 ## 目录
@@ -18,6 +20,7 @@
 - `generate_protocol_manifests.py`、`generate_strict_blind_manifest.py`：带哈希校验的清单生成。
 - `protected_multilayer.py`、`run_frozen_v15.py`–`run_frozen_v18.py`：PPT 算法演进和冻结评估。
 - `candidates/oaster_rebuilt.py`：恢复的 observation-only OASTER 核心。
+- `作者风格版/`：按 `#%%` 从上到下展开、没有自定义函数的真实 ERP、仿真和四范式验证入口。
 - `benchmark/methods.py`：MNE、dSPM、sLORETA、eLORETA、LCMV、网格偶极子拟合和 RAP-MUSIC 的统一数值实现。
 - `run_oaster_dev_matrix.py`：开发集 EEG×MEG 信噪比矩阵；`run_oaster_benchmark.py` 是旧命令名的兼容入口。
 - `run_strict_oaster.py`、`run_strict_comparators.py`：直接读取冻结观测的 OASTER 与七种 Python 对比方法；`run_snr_comparators_matrix.py` 是后者的旧命令名兼容入口。

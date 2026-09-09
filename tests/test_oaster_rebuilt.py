@@ -96,6 +96,58 @@ def test_reconstruct_accepts_cortex_only_single_modality() -> None:
     assert diagnostics["deep_rescue_accepted"] is False
 
 
+def test_evoked_branch_preserves_time_and_localizes_observable_source() -> None:
+    leadfield = np.eye(4)
+    data = np.zeros((4, 9))
+    data[1, :3] = (1.0, -3.0, 1.0)
+    data[2, 3:6] = (-2.0, 4.0, -2.0)
+
+    estimate, diagnostics = oaster.reconstruct_evoked_from_whitened(data, leadfield)
+    rescaled, _ = oaster.reconstruct_evoked_from_whitened(data, 1e-9 * leadfield)
+
+    assert estimate.shape == data.shape
+    assert np.argmax(np.linalg.norm(estimate[:, :3], axis=1)) == 1
+    assert np.argmax(np.linalg.norm(estimate, axis=1)) == 2
+    assert np.sign(estimate[2, 3:6]).tolist() == [-1.0, 1.0, -1.0]
+    assert np.allclose(estimate, rescaled)
+    assert diagnostics["mode"] == "signed_time_domain_noise_normalized_minimum_norm"
+    assert diagnostics["sensor_rank"] == 4
+
+
+def test_evoked_branch_matches_explicit_kernel_with_unequal_gain() -> None:
+    leadfield = np.asarray([
+        [1.0, 0.3, 0.0, 0.0],
+        [0.2, 2.0, 0.5, 0.0],
+        [0.0, 0.4, 1.0, 0.0],
+    ])
+    data = np.arange(15, dtype=float).reshape(3, 5) - 7.0
+    estimate, diagnostics = oaster.reconstruct_evoked_from_whitened(data, leadfield)
+
+    column_power = np.sum(leadfield**2, axis=0)
+    source_variance = np.zeros(leadfield.shape[1])
+    source_variance[:3] = column_power[:3] ** -oaster.ERP_DEPTH
+    sensor_covariance = (leadfield * source_variance) @ leadfield.T
+    rank = np.linalg.matrix_rank(sensor_covariance, hermitian=True)
+    source_variance *= rank / np.trace(sensor_covariance)
+    sensor_covariance = (leadfield * source_variance) @ leadfield.T
+    kernel = (source_variance[:, None] * leadfield.T) @ np.linalg.inv(
+        sensor_covariance + oaster.ERP_LAMBDA2 * np.eye(3)
+    )
+    expected = kernel @ data
+    np.divide(
+        expected,
+        np.linalg.norm(kernel, axis=1)[:, None],
+        out=expected,
+        where=np.linalg.norm(kernel, axis=1)[:, None] > 0.0,
+    )
+
+    assert np.allclose(estimate, expected)
+    assert np.all(estimate[3] == 0.0)
+    assert diagnostics["sensor_rank"] == 3
+    assert diagnostics["valid_sources"] == 3
+    assert diagnostics["depth_prior_dynamic_range"] > 1.0
+
+
 @pytest.mark.parametrize(("delta", "accepted"), ((-1.0, True), (1.0, False)))
 def test_reconstruct_applies_rescue_conditionally_before_spectral_fusion(
     monkeypatch: pytest.MonkeyPatch, delta: float, accepted: bool

@@ -34,10 +34,12 @@ import protected_multilayer as protected
 DEFAULT_DATASET = Path(r"D:\博士\工作＆汇报\源定位\开源数据\v1.0.0")
 DEFAULT_SUBJECTS_DIR = Path(r"C:\Users\zzp\mne_data\MNE-sample-data\subjects")
 METHODS = (
-    "OASTER Joint", "OASTER EEG", "OASTER MAG", "dSPM Joint", "eLORETA Joint",
+    "OASTER ERP Joint", "OASTER Joint", "OASTER EEG", "OASTER MAG",
+    "dSPM Joint", "eLORETA Joint",
 )
 COLORS = {
-    "OASTER Joint": "#0072B2",
+    "OASTER ERP Joint": "#0072B2",
+    "OASTER Joint": "#6A3D9A",
     "OASTER EEG": "#009E73",
     "OASTER MAG": "#E69F00",
     "dSPM Joint": "#CC79A7",
@@ -311,6 +313,9 @@ def solve_methods(
     mag_white, mag_gain = whiten_from_trials(mag, gm, mag_noise)
     joint = np.vstack((eeg_white, mag_white))
     joint_gain = np.vstack((eeg_gain, mag_gain))
+    joint_erp, joint_erp_diag = oaster.reconstruct_evoked_from_whitened(
+        joint, joint_gain
+    )
     joint_oaster, joint_diag = oaster.reconstruct_from_whitened(
         joint, joint_gain, sources, kernels
     )
@@ -321,12 +326,14 @@ def solve_methods(
         mag_white, mag_gain, sources, kernels
     )
     estimates = {
+        "OASTER ERP Joint": joint_erp,
         "OASTER Joint": joint_oaster,
         "OASTER EEG": eeg_oaster,
         "OASTER MAG": mag_oaster,
         **mne_estimates,
     }
     return estimates, {
+        "OASTER ERP Joint": joint_erp_diag,
         "OASTER Joint": joint_diag,
         "OASTER EEG": eeg_diag,
         "OASTER MAG": mag_diag,
@@ -448,8 +455,8 @@ def write_csv(path: Path, rows: list[dict]) -> None:
 
 def plot_comparison(rows: list[dict], output: Path, subject: str) -> None:
     panels = (
-        ("n20_left_s1_enrichment", "N20 left-S1 enrichment (× area null)"),
-        ("p30_left_s1_enrichment", "P30/P35 left-S1 enrichment (× area null)"),
+        ("n20_left_s1_enrichment", "N20 left-S1 enrichment (× uniform-source null)"),
+        ("p30_left_s1_enrichment", "P30/P35 left-S1 enrichment (× uniform-source null)"),
         ("n20_peak_euclidean_distance_to_left_s1_mm", "N20 peak-to-left-S1 Euclidean distance (mm)"),
         ("p30_peak_euclidean_distance_to_left_s1_mm", "P30/P35 peak-to-left-S1 Euclidean distance (mm)"),
     )
@@ -592,15 +599,12 @@ def recompute_saved_metrics(
 
 def write_report(path: Path, subject: str, rows: list[dict], summary: list[dict], coreg: dict, runs: list[int]) -> None:
     by_method = {row["method"]: row for row in summary}
-    joint = by_method["OASTER Joint"]
-    best_single_roi = max(
-        by_method["OASTER EEG"]["n20_left_s1_enrichment_mean"],
-        by_method["OASTER MAG"]["n20_left_s1_enrichment_mean"],
-    )
+    erp = by_method["OASTER ERP Joint"]
+    spectral = by_method["OASTER Joint"]
     lines = [
         f"# ds006035 sub-{subject} 同步 EEG–MEG 初步结果",
         "",
-        f"分析了 run {', '.join(map(str, runs))}，OASTER 使用 −250 至 −51 ms 噪声段和 15–45 ms 早期响应段，主指标固定为 18–24 ms（N20/N20m）。",
+        f"分析了 run {', '.join(map(str, runs))}。ERP 分支保留有符号时间序列；原 OASTER 仍使用 −250 至 −51 ms 噪声段和 15–45 ms 频谱证据。主指标固定为 18–24 ms（N20/N20m）。",
         "这是 MNE sample 模板脑 + 自动刚性配准的流程验证，不是个体 MRI 最终结果；数据没有源真值，因此不计算 AUC/DLE。",
         "",
         f"配准点到模板头表面：均值 {coreg['mean_mm']:.2f} mm，中位数 {coreg['median_mm']:.2f} mm，P95 {coreg['p95_mm']:.2f} mm。",
@@ -618,23 +622,21 @@ def write_report(path: Path, subject: str, rows: list[dict], summary: list[dict]
             f"{row['p30_peak_euclidean_distance_to_left_s1_mm_mean']:.2f} | "
             f"{row['n20_run_map_spearman_mean']:.3f} |"
         )
-    difference = joint["n20_left_s1_enrichment_mean"] - best_single_roi
-    direction = "高" if difference >= 0 else "低"
-    joint_interpretation = (
-        f"联合 OASTER 的 N20 左 S1 富集为 {joint['n20_left_s1_enrichment_mean']:.2f}（1 代表均匀全脑零假设），"
+    erp_interpretation = (
+        f"OASTER ERP Joint 的 N20 左 S1 富集为 {erp['n20_left_s1_enrichment_mean']:.2f}（1 代表均匀源点零假设），"
         + (
             "没有显示可信的 S1 富集。"
-            if joint["n20_left_s1_enrichment_mean"] < 1.0
-            else "显示出高于面积零假设的 S1 富集。"
+            if erp["n20_left_s1_enrichment_mean"] < 1.0
+            else "显示出高于均匀源点零假设的 S1 富集。"
         )
     )
     lines += [
         "",
         "## 初步判断",
         "",
-        joint_interpretation,
-        f"相对较好的单模态，联合 OASTER {direction} {abs(difference):.2f}；"
-        f"官方 dSPM 的 N20/P30 富集分别为 {by_method['dSPM Joint']['n20_left_s1_enrichment_mean']:.2f}/"
+        erp_interpretation,
+        f"原频谱 OASTER 的 N20/P30 富集分别为 {spectral['n20_left_s1_enrichment_mean']:.2f}/"
+        f"{spectral['p30_left_s1_enrichment_mean']:.2f}；官方 dSPM 为 {by_method['dSPM Joint']['n20_left_s1_enrichment_mean']:.2f}/"
         f"{by_method['dSPM Joint']['p30_left_s1_enrichment_mean']:.2f}。",
         "是否真正具有同步融合优势，应以全部 5 名受试者、个体 FreeSurfer/BEM 和留一 run 验证为准。",
         "run 不是独立受试者，本结果不做显著性检验。",
