@@ -1,0 +1,3 @@
+﻿roi,center_x_mm,center_y_mm,center_z_mm,radius_mm,source_count,mean_positive_erd_db,aggregated_power_ratio_db,p95_source_count
+right_sensorimotor,38.0,-28.0,50.0,25.0,126,1.2064238649795984,1.2004584946501566,70
+left_sensorimotor,-38.0,-28.0,50.0,25.0,129,1.1110567921030685,1.0923349099260768,62

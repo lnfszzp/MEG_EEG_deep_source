@@ -1,8 +1,8 @@
 # OASTER 作者风格版
 
-这里的两个脚本按你的习惯写成 `# %%` 分块、从上到下执行的形式。常用参数集中放在开头，关键中间量直接保留在工作区，并在重要步骤后 `print` 或画图检查。
+这里的脚本按你的习惯写成 `# %%` 分块、从上到下执行的形式。常用参数集中放在开头，关键中间量直接保留在工作区，并在重要步骤后 `print` 或画图检查。
 
-两个脚本互相独立：`1` 用公开真实 ERP 数据，`2` 用带真值的仿真数据。编号表示阅读顺序，不要求先运行 `1` 才能运行 `2`。
+脚本互相独立：`1` 用公开真实 ERP 数据，`2` 用带真值的仿真数据，`3` 验证四类 ERP/ERF，`4` 用 DBS 患者的 MEG 做 beta 频谱定位。编号表示阅读顺序，不要求依次运行。
 
 ## 怎么运行
 
@@ -58,6 +58,12 @@
 
 当前正式 SNR 网格为 `-10、-5、0、5、10、15、20 dB`。这个脚本一次只看一个 case；它不会替代完整 SNR 网格批处理。
 
+## 4-DBS频谱定位.py
+
+用途：在 ds004998 的完整 `sub-0cGdk9 / HoldL / MedOn / run-1` 上，以共同滤波器 DICS 比较静息和左臂持续用力的 13–30 Hz beta 功率。FIF 中名为 `EEG001-EEG008` 的通道实际是 STN-LFP 触点，本脚本明确不把它们当头皮 EEG，也不让它们进入逆解。
+
+脚本使用数据集自带的个体 4-mm FieldTrip 网格和单壳边界，试运行时降为约 8 mm；输出逐源表、预注册双侧感觉运动 ROI 指标、MNI 图，以及仅用于展示的 fsaverage MRI/pial 渲染。真实数据没有仿真真值，因此这里不计算 AUC 或 DLE。
+
 ## 原脚本对应关系
 
 | 作者风格版 | 原来的正式入口/底层代码 | 适用范围 |
@@ -66,7 +72,8 @@
 | `1-OASTER真实ERP.py` | `pipelines/summarize_ds006035.py` | 全部受试者完成后的组级统计 |
 | `2-OASTER仿真.py` | `generate_strict_blind_manifest.py`、`generate_strict_blind_inputs.py` | 建立冻结 manifest 和批量仿真输入 |
 | `2-OASTER仿真.py` | `run_strict_oaster.py` | 完整场景和 SNR 网格批处理 |
-| 两个脚本中的 OASTER 段 | `candidates/oaster_rebuilt.py`、`protected_multilayer.py` | 正式算法实现和公共数值检查 |
+| `4-DBS频谱定位.py` | MNE common-filter DICS + ds004998 自带 FieldTrip 网格/边界 | DBS-MEG 真实 beta-ERD 基线 |
+| 作者风格脚本中的 OASTER 段 | `candidates/oaster_rebuilt.py`、`protected_multilayer.py` | 正式算法实现和公共数值检查 |
 | `2-OASTER仿真.py` 的评价段 | `benchmark/metrics.py` | AUC、SD、DLE 的正式实现 |
 | `2-OASTER仿真.py` 的真值/噪声段 | `benchmark/protocol.py` | 冻结真值、波形和噪声协议 |
 

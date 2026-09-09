@@ -77,6 +77,12 @@ results/dev_experiments/**
 !results/real_data/erp_four_paradigms_v1/
 !results/real_data/erp_four_paradigms_v1/*.csv
 !results/real_data/erp_four_paradigms_v1/*.png
+!results/real_data/ds004998_dbs_v1/
+!results/real_data/ds004998_dbs_v1/**/
+!results/real_data/ds004998_dbs_v1/**/*.csv
+!results/real_data/ds004998_dbs_v1/**/*.json
+!results/real_data/ds004998_dbs_v1/**/*.md
+!results/real_data/ds004998_dbs_v1/**/*.png
 !results/v11/
 !results/v11/metrics.csv
 !results/v11/grid_resolution.csv

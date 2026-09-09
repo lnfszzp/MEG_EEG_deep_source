@@ -7,6 +7,7 @@ SCRIPTS = (
     PROJECT_ROOT / "作者风格版" / "1-OASTER真实ERP.py",
     PROJECT_ROOT / "作者风格版" / "2-OASTER仿真.py",
     PROJECT_ROOT / "作者风格版" / "3-ERP四类任务验证.py",
+    PROJECT_ROOT / "作者风格版" / "4-DBS频谱定位.py",
 )
 
 
