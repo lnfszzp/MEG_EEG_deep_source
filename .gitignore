@@ -2,6 +2,7 @@ __pycache__/
 *.pyc
 .pytest_cache/
 *.zip
+作者风格版/结果/
 corrected_v2/generated/
 generated_corrected_v2/
 results/**
