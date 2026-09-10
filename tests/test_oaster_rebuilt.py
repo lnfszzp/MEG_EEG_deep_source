@@ -148,6 +148,54 @@ def test_evoked_branch_matches_explicit_kernel_with_unequal_gain() -> None:
     assert diagnostics["depth_prior_dynamic_range"] > 1.0
 
 
+def test_evoked_oaster_uses_independent_signed_windows() -> None:
+    rng = np.random.default_rng(6035)
+    leadfield = np.eye(4)
+    data = rng.normal(scale=0.01, size=(4, 50))
+    baseline = np.zeros(50, dtype=bool)
+    n20 = np.zeros(50, dtype=bool)
+    p30 = np.zeros(50, dtype=bool)
+    baseline[:30] = True
+    n20[32:38] = True
+    p30[41:48] = True
+    data[1, n20] += np.asarray([0.0, -3.0, -7.0, -4.0, -1.0, 0.0])
+    data[2, p30] += np.asarray([0.0, 2.0, 6.0, 8.0, 4.0, 1.0, 0.0])
+
+    estimate, diagnostics = oaster.reconstruct_evoked_oaster_from_whitened(
+        data,
+        leadfield,
+        4,
+        _kernels(4),
+        baseline=baseline,
+        active_windows=(n20, p30),
+    )
+
+    assert np.argmax(np.linalg.norm(estimate[:, n20], axis=1)) == 1
+    assert np.argmax(np.linalg.norm(estimate[:, p30], axis=1)) == 2
+    assert estimate[1, np.flatnonzero(n20)[2]] < 0.0
+    assert estimate[2, np.flatnonzero(p30)[3]] > 0.0
+    assert diagnostics["mode"] == "signed_multiscale_erp_ebic"
+    assert diagnostics["selected_templates"] == 2
+    assert all(1 <= item["temporal_rank"] <= 3 for item in diagnostics["windows"])
+
+
+def test_evoked_oaster_returns_empty_support_for_zero_data() -> None:
+    baseline = np.arange(40) < 25
+    active = (np.arange(40) >= 30) & (np.arange(40) < 36)
+    estimate, diagnostics = oaster.reconstruct_evoked_oaster_from_whitened(
+        np.zeros((3, 40)),
+        np.eye(3),
+        3,
+        _kernels(3),
+        baseline=baseline,
+        active_windows=(active,),
+    )
+
+    assert np.array_equal(estimate, np.zeros_like(estimate))
+    assert diagnostics["selected_templates"] == 0
+    assert diagnostics["windows"][0]["temporal_rank"] == 0
+
+
 @pytest.mark.parametrize(("delta", "accepted"), ((-1.0, True), (1.0, False)))
 def test_reconstruct_applies_rescue_conditionally_before_spectral_fusion(
     monkeypatch: pytest.MonkeyPatch, delta: float, accepted: bool

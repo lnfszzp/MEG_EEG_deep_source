@@ -463,24 +463,7 @@ assert np.isfinite(joint_gain_white).all()
 
 
 #%%
-# ==================== 13. OASTER ERP：直接做有符号时间域逆解 ====================
-# 这条分支不做频谱筛选，也不让 N20 和 P30 共用稀疏空间支持。
-# depth=0.8、lambda2=1/9 是预先固定的常用设置，不根据 S1 指标调参。
-
-oaster_erp_joint, oaster_erp_information = oaster.reconstruct_evoked_from_whitened(
-    joint_white,
-    joint_gain_white,
-)
-
-print("OASTER ERP 结果：", oaster_erp_joint.shape)
-print("OASTER ERP 信息：", oaster_erp_information)
-
-assert oaster_erp_joint.shape == (n_sources, len(target_times))
-assert np.isfinite(oaster_erp_joint).all()
-
-
-#%%
-# ==================== 14. 建立 0、4、7 mm 的表层空间模板 ====================
+# ==================== 13. 建立 0、4、7 mm 的表层空间模板 ====================
 
 source_adjacency = mne.spatial_src_adjacency(analysis_src, verbose=False).toarray()
 surface_kernels = protected.connected_euclidean_surface_kernels(
@@ -494,6 +477,30 @@ kernel_by_scale = dict(surface_kernels)
 
 print("空间模板尺度：", list(kernel_by_scale))
 assert 4.0 in kernel_by_scale
+
+
+#%%
+# ==================== 14. OASTER-ERP：多尺度时间基 + EBIC 空间选择 ====================
+# N20、P30分别从数据中选择时间基和空间模板，避免强迫两个成分共用支持。
+# 最后在所选模板的并集上回归完整ERP，因此保留正负极性和真实基线残差。
+
+erp_baseline = np.arange(len(target_times)) < noise_samples
+
+oaster_erp_joint, oaster_erp_information = oaster.reconstruct_evoked_oaster_from_whitened(
+    joint_white,
+    joint_gain_white,
+    n_sources,
+    surface_kernels,
+    baseline=erp_baseline,
+    active_windows=(n20_window, p30_window),
+    ridge_fraction=oaster_ridge_fraction,
+)
+
+print("OASTER-ERP结果：", oaster_erp_joint.shape)
+print("OASTER-ERP信息：", oaster_erp_information)
+
+assert oaster_erp_joint.shape == (n_sources, len(target_times))
+assert np.isfinite(oaster_erp_joint).all()
 
 
 #%%

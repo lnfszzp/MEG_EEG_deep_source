@@ -236,7 +236,7 @@ def write_report(
         f"- N20 左 S1 富集超过均匀源点零假设（>1）的受试者数：OASTER ERP Joint {above_area_null('OASTER ERP Joint', 'n20_left_s1_enrichment_median')}/5，dSPM {above_area_null('dSPM Joint', 'n20_left_s1_enrichment_median')}/5。",
         f"- 原频谱联合 OASTER 的 N20 富集低于同一受试者最佳单模态：{len(n20_negative)}/5（{', '.join(n20_negative) or '无'}）；P30 为 {len(p30_negative)}/5（{', '.join(p30_negative) or '无'}）。这是模态失配/负迁移的直接迹象。",
         f"- N20 与 P30 的峰顶点完全相同：OASTER ERP Joint {locked['OASTER ERP Joint']}/15、原 OASTER Joint {locked['OASTER Joint']}/15、EEG {locked['OASTER EEG']}/15、MAG {locked['OASTER MAG']}/15；dSPM {locked['dSPM Joint']}/15、eLORETA {locked['eLORETA Joint']}/15。",
-        "- OASTER ERP 是不共享空间支持的时间域分支；原频谱 OASTER 仍保留用于振荡/诱发功率问题，不能再作为瞬态 ERP 的默认入口。",
+        "- OASTER ERP 对 N20、P30 分别进行多尺度时域基提取和 EBIC 空间选择，再对所选模板的并集做完整有符号 ERP 回归；原频谱 OASTER 仍保留用于振荡/诱发功率问题。",
         "",
         "## 解释边界",
         "",
@@ -246,7 +246,7 @@ def write_report(
         "- 本轮逆解只使用模板皮层表面源空间，没有加入丘脑等深部体积源；这是公开数据的皮层体感响应试跑，不等同于此前的表层/深层仿真矩阵。",
         "- MEG 分支只使用 102 个 magnetometer，未纳入 204 个 planar gradiometer；结论不能外推为全 MEG 通道组合的最终表现。",
         "- n=5，bootstrap 区间和符号检验均为探索性；不把 run 当独立样本。",
-        "- dSPM/eLORETA 为 MNE 官方 inverse API；OASTER ERP 为显式时间域噪声标准化逆解；OASTER Joint 为从 PPT/早期代码还原的频谱版本。",
+        "- dSPM/eLORETA 为 MNE 官方 inverse API；OASTER ERP 为迁移了多尺度时间基、EBIC空间选择和深源条件补救的时域版本；OASTER Joint 为从 PPT/早期代码还原的频谱版本。",
     ]
     path.write_text("\n".join(lines) + "\n", encoding="utf-8")
 

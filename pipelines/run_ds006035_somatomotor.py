@@ -313,8 +313,14 @@ def solve_methods(
     mag_white, mag_gain = whiten_from_trials(mag, gm, mag_noise)
     joint = np.vstack((eeg_white, mag_white))
     joint_gain = np.vstack((eeg_gain, mag_gain))
-    joint_erp, joint_erp_diag = oaster.reconstruct_evoked_from_whitened(
-        joint, joint_gain
+    erp_baseline = np.arange(joint.shape[1]) < 200
+    joint_erp, joint_erp_diag = oaster.reconstruct_evoked_oaster_from_whitened(
+        joint,
+        joint_gain,
+        sources,
+        kernels,
+        baseline=erp_baseline,
+        active_windows=(N20, P30),
     )
     joint_oaster, joint_diag = oaster.reconstruct_from_whitened(
         joint, joint_gain, sources, kernels
@@ -604,7 +610,7 @@ def write_report(path: Path, subject: str, rows: list[dict], summary: list[dict]
     lines = [
         f"# ds006035 sub-{subject} 同步 EEG–MEG 初步结果",
         "",
-        f"分析了 run {', '.join(map(str, runs))}。ERP 分支保留有符号时间序列；原 OASTER 仍使用 −250 至 −51 ms 噪声段和 15–45 ms 频谱证据。主指标固定为 18–24 ms（N20/N20m）。",
+        f"分析了 run {', '.join(map(str, runs))}。OASTER-ERP 对 N20、P30 分别建立多尺度时间基并用 EBIC 选择空间模板，最后对完整有符号 ERP 回归；原频谱 OASTER 仍使用 −250 至 −51 ms 噪声段和 15–45 ms 频谱证据。主指标固定为 18–24 ms（N20/N20m）。",
         "这是 MNE sample 模板脑 + 自动刚性配准的流程验证，不是个体 MRI 最终结果；数据没有源真值，因此不计算 AUC/DLE。",
         "",
         f"配准点到模板头表面：均值 {coreg['mean_mm']:.2f} mm，中位数 {coreg['median_mm']:.2f} mm，P95 {coreg['p95_mm']:.2f} mm。",
