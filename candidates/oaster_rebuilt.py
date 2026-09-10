@@ -574,7 +574,8 @@ def _evoked_ebic_surface_templates(
     universe: int,
     max_templates: int = ERP_MAX_TEMPLATES,
     max_correlation: float = 0.98,
-) -> tuple[list[tuple[int, int]], np.ndarray, float]:
+    require_one: bool = True,
+) -> tuple[list[tuple[int, int]], np.ndarray, float, list[float]]:
     """Select surface templates by conditional residual drops and EBIC."""
     reduced = np.asarray(reduced, dtype=float)
     if reduced.ndim != 2 or not surface_gains:
@@ -584,6 +585,7 @@ def _evoked_ebic_surface_templates(
         for gain in surface_gains
     )
     selected: list[tuple[int, int]] = []
+    score_deltas: list[float] = []
     columns: list[np.ndarray] = []
     residual = reduced.copy()
     n_obs = int(reduced.size)
@@ -631,19 +633,24 @@ def _evoked_ebic_surface_templates(
             + count * rank * math.log(n_obs)
             + 2.0 * count * math.log(universe)
         )
-        if trial_score >= score:
+        score_delta = float(trial_score - score)
+        forced_single = bool(score_delta >= 0.0 and not columns and require_one)
+        if trial_score >= score and not forced_single:
             break
         score = trial_score
         selected.append((family, index))
+        score_deltas.append(score_delta)
         columns.append(surface_gains[family][:, index])
         residual = trial_residual
+        if forced_single:
+            break
 
     design = (
         np.column_stack(columns)
         if columns
         else np.empty((reduced.shape[0], 0))
     )
-    return selected, design, float(score)
+    return selected, design, float(score), score_deltas
 
 
 def reconstruct_evoked_oaster_from_whitened(
@@ -654,6 +661,7 @@ def reconstruct_evoked_oaster_from_whitened(
     *,
     baseline: np.ndarray,
     active_windows,
+    window_channel_weights=None,
     ridge_fraction: float = RIDGE_FRACTION,
     max_templates: int = ERP_MAX_TEMPLATES,
 ) -> tuple[np.ndarray, dict]:
@@ -693,24 +701,48 @@ def reconstruct_evoked_oaster_from_whitened(
             raise ValueError("active windows must be non-empty, disjoint, and outside baseline")
         occupied |= window
 
+    if window_channel_weights is None:
+        channel_weights = tuple(np.ones(data.shape[0]) for _window in windows)
+    else:
+        channel_weights = tuple(
+            np.asarray(weights, dtype=float).ravel() for weights in window_channel_weights
+        )
+        if len(channel_weights) != len(windows):
+            raise ValueError("window_channel_weights must match active_windows")
+        if any(
+            weights.size != data.shape[0]
+            or not np.isfinite(weights).all()
+            or np.any(weights < 0.0)
+            or not np.any(weights > 0.0)
+            for weights in channel_weights
+        ):
+            raise ValueError("each channel-weight vector must be finite, non-negative, and non-zero")
+
     centered = data - data[:, baseline].mean(axis=1, keepdims=True)
     surface_gains = tuple(
         np.asarray(leadfield[:, :n_surf] @ kernel) for _scale, kernel in kernels
     )
     universe = int(sum(gain.shape[1] for gain in surface_gains))
     universe += int(leadfield.shape[1] - n_surf)
-    selected_all: list[tuple[int, int]] = []
+    selected_by_window: list[list[tuple[int, int]]] = []
     window_diagnostics = []
 
-    for window_number, window in enumerate(windows):
-        basis, basis_diagnostics = _evoked_temporal_basis(centered, baseline, window)
-        reduced = centered @ basis.T
-        selected, design, score = _evoked_ebic_surface_templates(
+    for window_number, (window, weights) in enumerate(zip(windows, channel_weights)):
+        weighted_data = centered * weights[:, None]
+        weighted_leadfield = leadfield * weights[:, None]
+        weighted_surface_gains = tuple(
+            gain * weights[:, None] for gain in surface_gains
+        )
+        basis, basis_diagnostics = _evoked_temporal_basis(
+            weighted_data, baseline, window
+        )
+        reduced = weighted_data @ basis.T
+        selected, design, score, score_deltas = _evoked_ebic_surface_templates(
             reduced,
-            surface_gains,
+            weighted_surface_gains,
             universe=universe,
             max_templates=max_templates,
-        ) if basis.size else ([], np.empty((data.shape[0], 0)), math.inf)
+        ) if basis.size else ([], np.empty((data.shape[0], 0)), math.inf, [])
         deep_local = -1
         deep_delta = math.inf
         if basis.size and n_surf < leadfield.shape[1]:
@@ -721,7 +753,7 @@ def reconstruct_evoked_oaster_from_whitened(
             else:
                 residual = reduced.copy()
                 orthogonal = np.empty((data.shape[0], 0))
-            deep_gain = leadfield[:, n_surf:]
+            deep_gain = weighted_leadfield[:, n_surf:]
             residualized = deep_gain - orthogonal @ (orthogonal.T @ deep_gain)
             norms = np.sum(residualized**2, axis=0)
             valid = norms > np.finfo(float).eps
@@ -746,35 +778,55 @@ def reconstruct_evoked_oaster_from_whitened(
                 deep_delta = float(trial_score - score)
                 if deep_delta < ERP_DEEP_EBIC_DELTA:
                     selected.append((len(kernels), deep_local))
-        selected_all.extend(selected)
+        selected_by_window.append(selected)
         window_diagnostics.append({
             "window": window_number,
             **basis_diagnostics,
+            "channel_weight_min": float(weights.min()),
+            "channel_weight_max": float(weights.max()),
+            "weighted_channels": int(np.sum(weights > 0.0)),
             "selected_surface_templates": int(sum(family < len(kernels) for family, _ in selected)),
+            "surface_ebic_deltas": score_deltas,
+            "selected_templates": [
+                {
+                    "layer": "surface" if family < len(kernels) else "deep",
+                    "scale_mm": float(kernels[family][0]) if family < len(kernels) else None,
+                    "index": int(index),
+                }
+                for family, index in selected
+            ],
             "deep_candidate_local": deep_local,
             "deep_ebic_delta": deep_delta,
             "deep_accepted": bool(selected and selected[-1] == (len(kernels), deep_local)),
         })
 
-    kept: list[tuple[int, int]] = []
-    kept_gains: list[np.ndarray] = []
-    for family, index in selected_all:
-        gain = (
-            surface_gains[family][:, index]
-            if family < len(kernels)
-            else leadfield[:, n_surf + index]
-        )
-        norm = max(float(np.linalg.norm(gain)), np.finfo(float).eps)
-        if all(
-            abs(float(gain @ old))
-            < 0.98 * norm * max(float(np.linalg.norm(old)), np.finfo(float).eps)
-            for old in kept_gains
-        ):
-            kept.append((family, index))
-            kept_gains.append(gain)
-
     estimate = np.zeros((leadfield.shape[1], data.shape[1]))
-    if kept:
+    baseline_estimates = []
+    selected_total = 0
+    selected_surface_total = 0
+    selected_deep_total = 0
+    for window, selected in zip(windows, selected_by_window):
+        kept: list[tuple[int, int]] = []
+        kept_gains: list[np.ndarray] = []
+        for family, index in selected:
+            gain = (
+                surface_gains[family][:, index]
+                if family < len(kernels)
+                else leadfield[:, n_surf + index]
+            )
+            norm = max(float(np.linalg.norm(gain)), np.finfo(float).eps)
+            if all(
+                abs(float(gain @ old))
+                < 0.98 * norm * max(float(np.linalg.norm(old)), np.finfo(float).eps)
+                for old in kept_gains
+            ):
+                kept.append((family, index))
+                kept_gains.append(gain)
+        if not kept:
+            continue
+        selected_total += len(kept)
+        selected_surface_total += sum(family < len(kernels) for family, _ in kept)
+        selected_deep_total += sum(family == len(kernels) for family, _ in kept)
         design = np.column_stack(kept_gains)
         norms = np.linalg.norm(design, axis=0)
         normalized = design / norms
@@ -787,20 +839,26 @@ def reconstruct_evoked_oaster_from_whitened(
             gram + ridge * np.eye(len(kept)), normalized.T @ centered
         )
         coefficients /= norms[:, None]
+        window_estimate = np.zeros_like(estimate)
         for row, (family, index) in enumerate(kept):
             if family < len(kernels):
                 spatial = kernels[family][1].getcol(index).toarray().ravel()
-                estimate[:n_surf] += spatial[:, None] * coefficients[row]
+                window_estimate[:n_surf] += spatial[:, None] * coefficients[row]
             else:
-                estimate[n_surf + index] += coefficients[row]
+                window_estimate[n_surf + index] += coefficients[row]
+        estimate[:, window] = window_estimate[:, window]
+        baseline_estimates.append(window_estimate[:, baseline])
+    if baseline_estimates:
+        estimate[:, baseline] = np.mean(baseline_estimates, axis=0)
 
     return estimate, {
         "mode": "signed_multiscale_erp_ebic",
         "surface_scales_mm": [float(scale) for scale, _kernel in kernels],
-        "selected_templates": len(kept),
-        "selected_surface_templates": int(sum(family < len(kernels) for family, _ in kept)),
-        "selected_deep_templates": int(sum(family == len(kernels) for family, _ in kept)),
+        "selected_templates": int(selected_total),
+        "selected_surface_templates": int(selected_surface_total),
+        "selected_deep_templates": int(selected_deep_total),
         "ridge_fraction": float(ridge_fraction),
+        "max_templates_per_window": int(max_templates),
         "windows": window_diagnostics,
     }
 

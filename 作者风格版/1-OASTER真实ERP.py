@@ -80,7 +80,7 @@ assert (subjects_dir / "sample").is_dir(), f"找不到 sample 模板脑：{subje
 
 
 #%%
-# ==================== 3. 读取 EEG 和 MAG，并进行滤波 ====================
+# ==================== 3. 读取 EEG 和 MAG ====================
 # 这里没有用 gradiometer，只保留 EEG 和 magnetometer，和当前真实数据验证保持一致。
 
 raw = mne.io.read_raw_fif(raw_file, preload=False, verbose=False)
@@ -101,20 +101,15 @@ picks = mne.pick_types(
 raw.pick(picks)
 raw.load_data(verbose=False)
 
-line_frequency = float(raw.info.get("line_freq") or 60.0)
-if line_frequency < raw.info["sfreq"] / 2.0:
-    raw.notch_filter([line_frequency], n_jobs=1, verbose=False)
-
-raw.filter(filter_low, filter_high, n_jobs=1, verbose=False)
-
 print("采样率：", raw.info["sfreq"])
 print("保留通道数：", len(raw.ch_names))
 print("原始坏道：", original_bad_channels)
 
 
 #%%
-# ==================== 4. 读取触觉刺激事件 ====================
+# ==================== 4. 读取事件、插值刺激伪迹，再进行滤波 ====================
 # BIDS 的 sample 是相对采样点，MNE 需要加上 raw.first_samp。
+# 必须先去掉0 ms电刺激脉冲再做零相位滤波，避免振铃进入N20窗口。
 
 event_table = pd.read_csv(events_file, sep="\t")
 
@@ -131,6 +126,28 @@ print("first_samp：", first_samp)
 
 assert len(events) > 0, "没有找到 somatosensory 事件"
 assert np.all(np.diff(events[:, 0]) > 0), "事件采样点不是递增的"
+
+artifact_start_offset = int(np.floor(-0.002 * raw.info["sfreq"]))
+artifact_stop_offset = int(np.ceil(0.008 * raw.info["sfreq"]))
+
+for event in events:
+    artifact_center = int(event[0] - raw.first_samp)
+    artifact_start = artifact_center + artifact_start_offset
+    artifact_stop = artifact_center + artifact_stop_offset
+    if artifact_start > 0 and artifact_stop < raw.n_times - 1:
+        artifact_fraction = np.linspace(
+            0.0, 1.0, artifact_stop - artifact_start + 3
+        )[1:-1]
+        raw._data[:, artifact_start : artifact_stop + 1] = (
+            raw._data[:, artifact_start - 1, None] * (1.0 - artifact_fraction)
+            + raw._data[:, artifact_stop + 1, None] * artifact_fraction
+        )
+
+line_frequency = float(raw.info.get("line_freq") or 60.0)
+if line_frequency < raw.info["sfreq"] / 2.0:
+    raw.notch_filter([line_frequency], n_jobs=1, verbose=False)
+
+raw.filter(filter_low, filter_high, n_jobs=1, verbose=False)
 
 
 #%%
@@ -485,6 +502,26 @@ assert 4.0 in kernel_by_scale
 # 最后在所选模板的并集上回归完整ERP，因此保留正负极性和真实基线残差。
 
 erp_baseline = np.arange(len(target_times)) < noise_samples
+erp_window_channel_weights = []
+erp_modality_weights = []
+
+for erp_window in (n20_window, p30_window):
+    modality_power_ratio = np.asarray([
+        np.mean(eeg_data[:, erp_window] ** 2)
+        / max(float(np.mean(eeg_data[:, erp_baseline] ** 2)), np.finfo(float).tiny),
+        np.mean(mag_data[:, erp_window] ** 2)
+        / max(float(np.mean(mag_data[:, erp_baseline] ** 2)), np.finfo(float).tiny),
+    ])
+    modality_excess = np.maximum(modality_power_ratio - 1.0, 0.0)
+    if modality_excess.max() > 0.0:
+        current_modality_weights = np.sqrt(modality_excess / modality_excess.max())
+    else:
+        current_modality_weights = np.ones(2)
+    erp_modality_weights.append(current_modality_weights)
+    erp_window_channel_weights.append(np.r_[
+        np.full(eeg_white.shape[0], current_modality_weights[0]),
+        np.full(mag_white.shape[0], current_modality_weights[1]),
+    ])
 
 oaster_erp_joint, oaster_erp_information = oaster.reconstruct_evoked_oaster_from_whitened(
     joint_white,
@@ -493,11 +530,14 @@ oaster_erp_joint, oaster_erp_information = oaster.reconstruct_evoked_oaster_from
     surface_kernels,
     baseline=erp_baseline,
     active_windows=(n20_window, p30_window),
+    window_channel_weights=erp_window_channel_weights,
     ridge_fraction=oaster_ridge_fraction,
+    max_templates=1,
 )
 
 print("OASTER-ERP结果：", oaster_erp_joint.shape)
 print("OASTER-ERP信息：", oaster_erp_information)
+print("N20/P30 EEG-MAG权重：", erp_modality_weights)
 
 assert oaster_erp_joint.shape == (n_sources, len(target_times))
 assert np.isfinite(oaster_erp_joint).all()

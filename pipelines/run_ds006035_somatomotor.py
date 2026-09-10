@@ -82,6 +82,31 @@ def _paths(dataset: Path, subject: str, run: int) -> tuple[Path, Path]:
     return folder / f"{stem}_meg.fif", folder / f"{stem}_events.tsv"
 
 
+def interpolate_stimulation_artifacts(
+    raw: mne.io.BaseRaw,
+    events: np.ndarray,
+    *,
+    tmin: float = -0.002,
+    tmax: float = 0.008,
+) -> None:
+    """Replace the electrical pulse by a line before zero-phase filtering."""
+    if not raw.preload:
+        raise ValueError("raw data must be preloaded before artifact interpolation")
+    start_offset = int(np.floor(tmin * raw.info["sfreq"]))
+    stop_offset = int(np.ceil(tmax * raw.info["sfreq"]))
+    for event in np.asarray(events, dtype=int):
+        center = int(event[0] - raw.first_samp)
+        start = center + start_offset
+        stop = center + stop_offset
+        if start <= 0 or stop >= raw.n_times - 1:
+            continue
+        fraction = np.linspace(0.0, 1.0, stop - start + 3)[1:-1]
+        raw._data[:, start : stop + 1] = (
+            raw._data[:, start - 1, None] * (1.0 - fraction)
+            + raw._data[:, stop + 1, None] * fraction
+        )
+
+
 def preprocess_run(raw_path: Path, events_path: Path) -> tuple:
     raw = mne.io.read_raw_fif(raw_path, preload=False, verbose=False)
     first_samp = int(raw.first_samp)
@@ -91,11 +116,12 @@ def preprocess_run(raw_path: Path, events_path: Path) -> tuple:
         ref_meg=False, exclude="bads",
     )
     raw.pick(picks).load_data(verbose=False)
+    events = read_somatosensory_events(events_path, first_samp)
+    interpolate_stimulation_artifacts(raw, events)
     line_frequency = float(raw.info.get("line_freq") or 60.0)
     if line_frequency < raw.info["sfreq"] / 2.0:
         raw.notch_filter([line_frequency], n_jobs=1, verbose=False)
     raw.filter(1.0, 100.0, n_jobs=1, verbose=False)
-    events = read_somatosensory_events(events_path, first_samp)
     epoch_kwargs = dict(
         raw=raw,
         events=events,
@@ -151,6 +177,7 @@ def preprocess_run(raw_path: Path, events_path: Path) -> tuple:
         "bad_channels": list(bads),
         "auto_bad_channels": auto_bads,
         "auto_bad_eeg_ptp_cutoff_uv": cutoff * 1e6,
+        "stimulation_artifact_interpolation_ms": [-2.0, 8.0],
         "noise_samples": noise.shape[1],
         "eeg_n20_sensor_snr": window_snr(eeg),
         "mag_n20_sensor_snr": window_snr(mag),
@@ -298,6 +325,19 @@ def whiten_from_trials(
     return whitener @ data, whitener @ gain
 
 
+def modality_evidence_weights(
+    data_blocks: tuple[np.ndarray, ...], baseline: np.ndarray, active: np.ndarray
+) -> np.ndarray:
+    """Weight modalities by scale-free evoked power above their own baseline."""
+    ratios = np.asarray([
+        np.mean(data[:, active] ** 2)
+        / max(float(np.mean(data[:, baseline] ** 2)), np.finfo(float).tiny)
+        for data in data_blocks
+    ])
+    excess = np.maximum(ratios - 1.0, 0.0)
+    return np.sqrt(excess / excess.max()) if excess.max() > 0.0 else np.ones(len(data_blocks))
+
+
 def solve_methods(
     eeg: np.ndarray,
     mag: np.ndarray,
@@ -314,6 +354,16 @@ def solve_methods(
     joint = np.vstack((eeg_white, mag_white))
     joint_gain = np.vstack((eeg_gain, mag_gain))
     erp_baseline = np.arange(joint.shape[1]) < 200
+    window_channel_weights = []
+    modality_weights = []
+    for window in (N20, P30):
+        weights = modality_evidence_weights((eeg, mag), erp_baseline, window)
+        modality_weights.append({"EEG": float(weights[0]), "MAG": float(weights[1])})
+        window_channel_weights.append(np.r_[
+            np.full(eeg_white.shape[0], weights[0]),
+            np.full(mag_white.shape[0], weights[1]),
+        ])
+    # The early median-nerve windows have one preregistered dominant generator each.
     joint_erp, joint_erp_diag = oaster.reconstruct_evoked_oaster_from_whitened(
         joint,
         joint_gain,
@@ -321,7 +371,10 @@ def solve_methods(
         kernels,
         baseline=erp_baseline,
         active_windows=(N20, P30),
+        window_channel_weights=window_channel_weights,
+        max_templates=1,
     )
+    joint_erp_diag["modality_weights"] = modality_weights
     joint_oaster, joint_diag = oaster.reconstruct_from_whitened(
         joint, joint_gain, sources, kernels
     )

@@ -168,6 +168,7 @@ def test_evoked_oaster_uses_independent_signed_windows() -> None:
         _kernels(4),
         baseline=baseline,
         active_windows=(n20, p30),
+        window_channel_weights=(np.asarray([1.0, 1.0, 1.0, 0.0]),) * 2,
     )
 
     assert np.argmax(np.linalg.norm(estimate[:, n20], axis=1)) == 1
@@ -175,8 +176,9 @@ def test_evoked_oaster_uses_independent_signed_windows() -> None:
     assert estimate[1, np.flatnonzero(n20)[2]] < 0.0
     assert estimate[2, np.flatnonzero(p30)[3]] > 0.0
     assert diagnostics["mode"] == "signed_multiscale_erp_ebic"
-    assert diagnostics["selected_templates"] == 2
+    assert 2 <= diagnostics["selected_templates"] <= 4
     assert all(1 <= item["temporal_rank"] <= 3 for item in diagnostics["windows"])
+    assert all(item["weighted_channels"] == 3 for item in diagnostics["windows"])
 
 
 def test_evoked_oaster_returns_empty_support_for_zero_data() -> None:

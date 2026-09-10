@@ -1,8 +1,15 @@
 from pathlib import Path
 
 import numpy as np
+import mne
 
-from pipelines.run_ds006035_somatomotor import N20, read_somatosensory_events, source_metrics
+from pipelines.run_ds006035_somatomotor import (
+    N20,
+    interpolate_stimulation_artifacts,
+    modality_evidence_weights,
+    read_somatosensory_events,
+    source_metrics,
+)
 from pipelines.summarize_ds006035 import METRICS, METHODS, SUBJECTS, negative_transfer, paired_tests
 
 
@@ -19,6 +26,16 @@ def test_events_use_fif_first_sample_and_only_somatosensory(tmp_path: Path) -> N
     events = read_somatosensory_events(path, first_samp=188000)
 
     assert np.array_equal(events, [[188100, 0, 1]])
+
+
+def test_stimulation_artifact_is_interpolated_before_filtering() -> None:
+    info = mne.create_info(["EEG 001"], 1000.0, "eeg")
+    raw = mne.io.RawArray(np.arange(30, dtype=float)[None], info, first_samp=100)
+    raw._data[0, 8:19] = 1e6
+
+    interpolate_stimulation_artifacts(raw, np.asarray([[110, 0, 1]]))
+
+    assert np.allclose(raw._data[0, 8:19], np.arange(8.0, 19.0))
 
 
 def test_laterality_uses_roi_density_not_vertex_count() -> None:
@@ -58,3 +75,16 @@ def test_group_tests_use_paired_subject_values() -> None:
     assert negative_transfer(rows, "n20_left_s1_enrichment_median") == list(SUBJECTS)
     assert test["oaster_wins"] == 0
     assert np.isclose(test["exact_two_sided_sign_p"], 0.0625)
+
+
+def test_modality_weights_are_scale_free_for_meg_units() -> None:
+    baseline = np.arange(8) < 4
+    active = ~baseline
+    strong = np.asarray([[1.0, -1.0, 1.0, -1.0, 3.0, -3.0, 3.0, -3.0]])
+    weak = np.asarray([[1.0, -1.0, 1.0, -1.0, 1.0, -1.0, 1.0, -1.0]])
+
+    weights = modality_evidence_weights(
+        (strong * 1e-6, weak * 1e-13), baseline, active
+    )
+
+    assert np.allclose(weights, [1.0, 0.0])
