@@ -23,6 +23,7 @@ if str(project_root) not in sys.path:
     sys.path.insert(0, str(project_root))
 
 from candidates import oaster_rebuilt as oaster
+import protected_multilayer as protected
 from pipelines import run_ds006035_somatomotor as real_pipeline
 
 
@@ -64,9 +65,10 @@ method_colors = {
     "dSPM": "#D55E00",
     "eLORETA": "#009E73",
 }
+method_markers = {"OASTER ERP": "s", "dSPM": "^", "eLORETA": "D"}
 draw_brain = True
 
-save_dir = project_root / "results" / "real_data" / "erp_four_paradigms_v1"
+save_dir = project_root / "results" / "real_data" / "erp_four_paradigms_v2"
 save_dir.mkdir(parents=True, exist_ok=True)
 
 print("结果保存到：", save_dir)
@@ -268,6 +270,25 @@ for hemi in range(2):
 
 print("sample 源点数：", sample_eeg_forward_fixed["nsource"])
 
+sample_analysis_src = sample_eeg_forward_fixed["src"]
+sample_source_xyz = np.vstack([
+    hemi["rr"][hemi["vertno"]]
+    for hemi in sample_analysis_src
+])
+sample_source_adjacency = mne.spatial_src_adjacency(
+    sample_analysis_src,
+    verbose=False,
+).toarray()
+sample_surface_kernels = protected.connected_euclidean_surface_kernels(
+    sample_source_xyz,
+    sample_source_adjacency,
+    len(sample_source_xyz),
+    scales_mm=oaster.SURFACE_SCALES_MM,
+)
+del sample_source_adjacency
+
+print("sample OASTER 空间模板尺度：", [scale for scale, _ in sample_surface_kernels])
+
 
 #%%
 # ==================== 6. sample 对齐通道，并显式计算 EEG/MAG 白化 ====================
@@ -348,9 +369,9 @@ print("sample EEG/MAG 白化秩：", sample_eeg_rank, sample_mag_rank)
 
 
 #%%
-# ==================== 7. sample 时间域 OASTER ====================
-# 这里不做 Welch 频谱，也不在 active 窗内去均值。
-# 输出保留每一个时刻的正负 ERP 源时序。
+# ==================== 7. sample 多尺度 OASTER-ERP ====================
+# 每个任务只把预先写在参数区的时间窗交给 OASTER；ROI 此时尚未读取。
+# EEG/MAG 权重只根据各自 active 相对基线的传感器功率计算。
 
 sample_records = []
 
@@ -381,12 +402,37 @@ for task_name, task_window, evoked in zip(
     sample_mag_data_white = sample_mag_whitener @ sample_mag_data
     sample_joint_data_white = np.vstack((sample_eeg_data_white, sample_mag_data_white))
 
-    oaster_source, oaster_information = oaster.reconstruct_evoked_from_whitened(
+    sample_erp_baseline = (
+        (evoked.times >= -0.20)
+        & (evoked.times <= -0.01)
+    )
+    sample_erp_active = (
+        (evoked.times >= task_window[0])
+        & (evoked.times <= task_window[1])
+    )
+    sample_modality_weights = real_pipeline.modality_evidence_weights(
+        (sample_eeg_data, sample_mag_data),
+        sample_erp_baseline,
+        sample_erp_active,
+    )
+    sample_channel_weights = np.r_[
+        np.full(sample_eeg_data_white.shape[0], sample_modality_weights[0]),
+        np.full(sample_mag_data_white.shape[0], sample_modality_weights[1]),
+    ]
+
+    oaster_source, oaster_information = oaster.reconstruct_evoked_oaster_from_whitened(
         sample_joint_data_white,
         sample_joint_gain_white,
-        lambda2=lambda2,
-        depth=depth,
+        len(sample_source_xyz),
+        sample_surface_kernels,
+        baseline=sample_erp_baseline,
+        active_windows=(sample_erp_active,),
+        window_channel_weights=(sample_channel_weights,),
     )
+    oaster_information["modality_weights"] = {
+        "EEG": float(sample_modality_weights[0]),
+        "MAG": float(sample_modality_weights[1]),
+    }
 
     sample_records.append({
         "dataset": "MNE sample",
@@ -683,9 +729,28 @@ ds_mag_forward_free = ds_forwards[3]
 
 print("ds006035 源点数：", ds_eeg_forward_fixed["nsource"])
 
+ds_analysis_src = ds_eeg_forward_fixed["src"]
+ds_source_xyz = np.vstack([
+    hemi["rr"][hemi["vertno"]]
+    for hemi in ds_analysis_src
+])
+ds_source_adjacency = mne.spatial_src_adjacency(
+    ds_analysis_src,
+    verbose=False,
+).toarray()
+ds_surface_kernels = protected.connected_euclidean_surface_kernels(
+    ds_source_xyz,
+    ds_source_adjacency,
+    len(ds_source_xyz),
+    scales_mm=oaster.SURFACE_SCALES_MM,
+)
+del ds_source_adjacency
+
+print("ds006035 OASTER 空间模板尺度：", [scale for scale, _ in ds_surface_kernels])
+
 
 #%%
-# ==================== 13. ds006035 显式白化并运行时间域 OASTER ====================
+# ==================== 13. ds006035 显式白化并运行多尺度 OASTER-ERP ====================
 
 ds_records = []
 ds_evoked_list = [ds_wrist_evoked, ds_finger_evoked]
@@ -770,12 +835,58 @@ for task_name, evoked, trial_noise, noise_cov in zip(
     ds_joint_data_white = np.vstack((ds_eeg_data_white, ds_mag_data_white))
     ds_joint_gain_white = np.vstack((ds_eeg_gain_white, ds_mag_gain_white))
 
-    ds_oaster_source, ds_oaster_information = oaster.reconstruct_evoked_from_whitened(
+    if task_name == "腕部刺激":
+        ds_erp_baseline = (
+            (evoked.times >= -0.40)
+            & (evoked.times <= -0.05)
+        )
+        ds_erp_windows = (
+            (evoked.times >= wrist_n20_window[0])
+            & (evoked.times <= wrist_n20_window[1]),
+            (evoked.times >= wrist_p30_window[0])
+            & (evoked.times <= wrist_p30_window[1]),
+        )
+        # N20/P30 各按一个预注册主导发生器验证，与正式 ds006035 链路一致。
+        ds_max_templates = 1
+    else:
+        ds_erp_baseline = (
+            (evoked.times >= -0.55)
+            & (evoked.times <= -0.35)
+        )
+        ds_erp_windows = ((
+            (evoked.times >= finger_window[0])
+            & (evoked.times <= finger_window[1])
+        ),)
+        ds_max_templates = oaster.ERP_MAX_TEMPLATES
+
+    ds_window_channel_weights = []
+    ds_modality_weights = []
+    for ds_erp_active in ds_erp_windows:
+        current_modality_weights = real_pipeline.modality_evidence_weights(
+            (ds_eeg_data, ds_mag_data),
+            ds_erp_baseline,
+            ds_erp_active,
+        )
+        ds_modality_weights.append({
+            "EEG": float(current_modality_weights[0]),
+            "MAG": float(current_modality_weights[1]),
+        })
+        ds_window_channel_weights.append(np.r_[
+            np.full(ds_eeg_data_white.shape[0], current_modality_weights[0]),
+            np.full(ds_mag_data_white.shape[0], current_modality_weights[1]),
+        ])
+
+    ds_oaster_source, ds_oaster_information = oaster.reconstruct_evoked_oaster_from_whitened(
         ds_joint_data_white,
         ds_joint_gain_white,
-        lambda2=lambda2,
-        depth=depth,
+        len(ds_source_xyz),
+        ds_surface_kernels,
+        baseline=ds_erp_baseline,
+        active_windows=ds_erp_windows,
+        window_channel_weights=ds_window_channel_weights,
+        max_templates=ds_max_templates,
     )
+    ds_oaster_information["modality_weights"] = ds_modality_weights
 
     if task_name == "腕部刺激":
         ds_records.append({
@@ -1158,6 +1269,7 @@ for method_name in method_names:
         x + offsets[method_name],
         method_table["target_roi_enrichment"],
         s=76,
+        marker=method_markers[method_name],
         color=method_colors[method_name],
         edgecolor="white",
         linewidth=0.8,
@@ -1168,6 +1280,7 @@ for method_name in method_names:
         x + offsets[method_name],
         method_table["peak_distance_to_target_roi_mm"],
         s=76,
+        marker=method_markers[method_name],
         color=method_colors[method_name],
         edgecolor="white",
         linewidth=0.8,

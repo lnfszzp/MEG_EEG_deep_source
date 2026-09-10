@@ -45,6 +45,7 @@ COLORS = {
     "dSPM Joint": "#CC79A7",
     "eLORETA Joint": "#D55E00",
 }
+MARKERS = dict(zip(METHODS, ("s", "D", "^", "v", "P", "X")))
 TARGET_TIMES = np.r_[np.arange(-250, -50), np.arange(15, 46)].astype(float) / 1000.0
 N20 = (TARGET_TIMES >= 0.018) & (TARGET_TIMES <= 0.024)
 P30 = (TARGET_TIMES >= 0.028) & (TARGET_TIMES <= 0.040)
@@ -464,10 +465,16 @@ def _mean_pairwise(maps: list[np.ndarray], xyz: np.ndarray) -> dict:
     correlations, dice, peak_distances = [], [], []
     for first, second in combinations(maps, 2):
         correlations.append(float(spearmanr(first, second).statistic))
-        count = max(1, int(np.ceil(0.05 * first.size)))
-        a = set(np.argpartition(first, -count)[-count:])
-        b = set(np.argpartition(second, -count)[-count:])
-        dice.append(2.0 * len(a & b) / (len(a) + len(b)))
+        supports = []
+        for values in (first, second):
+            positive = np.flatnonzero(values > 0.0)
+            count = max(1, int(np.ceil(0.05 * positive.size)))
+            supports.append(set(
+                positive[np.argpartition(values[positive], -count)[-count:]]
+                if positive.size else []
+            ))
+        a, b = supports
+        dice.append(2.0 * len(a & b) / (len(a) + len(b)) if a or b else 1.0)
         peak_distances.append(float(np.linalg.norm(xyz[np.argmax(first)] - xyz[np.argmax(second)]) * 1000.0))
     return {
         "run_map_spearman_mean": float(np.mean(correlations)) if correlations else np.nan,
@@ -528,7 +535,7 @@ def plot_comparison(rows: list[dict], output: Path, subject: str) -> None:
             ax.plot(x, values, color="#B8C2CC", linewidth=1.2, alpha=0.7, zorder=1)
         for index, method in enumerate(METHODS):
             values = [float(row[field]) for row in rows if row["method"] == method]
-            ax.scatter(np.full(len(values), index), values, s=55, color=COLORS[method], edgecolor="white", linewidth=0.8, zorder=3)
+            ax.scatter(np.full(len(values), index), values, s=55, marker=MARKERS[method], color=COLORS[method], edgecolor="white", linewidth=0.8, zorder=3)
             ax.plot(index, np.mean(values), marker="_", markersize=22, markeredgewidth=3, color="#202A35", zorder=4)
         ax.set_title(title, fontweight="bold")
         ax.set_xticks(x, METHODS, rotation=22, ha="right")
@@ -663,7 +670,7 @@ def write_report(path: Path, subject: str, rows: list[dict], summary: list[dict]
     lines = [
         f"# ds006035 sub-{subject} 同步 EEG–MEG 初步结果",
         "",
-        f"分析了 run {', '.join(map(str, runs))}。OASTER-ERP 对 N20、P30 分别建立多尺度时间基并用 EBIC 选择空间模板，最后对完整有符号 ERP 回归；原频谱 OASTER 仍使用 −250 至 −51 ms 噪声段和 15–45 ms 频谱证据。主指标固定为 18–24 ms（N20/N20m）。",
+        f"分析了 run {', '.join(map(str, runs))}。OASTER-ERP 对 N20、P30 分别建立多尺度时间基、用 EBIC 选择空间模板并独立完成有符号时域回归；原频谱 OASTER 仍使用 −250 至 −51 ms 噪声段和 15–45 ms 频谱证据。主指标固定为 18–24 ms（N20/N20m）。",
         "这是 MNE sample 模板脑 + 自动刚性配准的流程验证，不是个体 MRI 最终结果；数据没有源真值，因此不计算 AUC/DLE。",
         "",
         f"配准点到模板头表面：均值 {coreg['mean_mm']:.2f} mm，中位数 {coreg['median_mm']:.2f} mm，P95 {coreg['p95_mm']:.2f} mm。",

@@ -668,9 +668,9 @@ def reconstruct_evoked_oaster_from_whitened(
     """Run the sparse multiscale OASTER core on phase-locked evoked responses.
 
     Each preregistered ERP window gets its own observation-selected temporal
-    basis and spatial EBIC search.  The union of accepted templates is then
-    refitted to the complete baseline-centered epoch, preserving waveform sign
-    and a real prestimulus residual instead of forcing the baseline to zero.
+    basis and spatial EBIC search, then its selected templates are refitted to
+    the complete baseline-centered epoch.  Windows stay independent while the
+    waveform sign and a real prestimulus residual are preserved.
     """
     data = np.asarray(data, dtype=float)
     leadfield = np.asarray(leadfield, dtype=float)

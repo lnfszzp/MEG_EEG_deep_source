@@ -499,7 +499,7 @@ assert 4.0 in kernel_by_scale
 #%%
 # ==================== 14. OASTER-ERP：多尺度时间基 + EBIC 空间选择 ====================
 # N20、P30分别从数据中选择时间基和空间模板，避免强迫两个成分共用支持。
-# 最后在所选模板的并集上回归完整ERP，因此保留正负极性和真实基线残差。
+# N20、P30 各自在所选模板上回归完整ERP，因此保留正负极性和真实基线残差。
 
 erp_baseline = np.arange(len(target_times)) < noise_samples
 erp_window_channel_weights = []

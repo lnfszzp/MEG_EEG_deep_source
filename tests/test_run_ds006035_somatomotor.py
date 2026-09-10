@@ -5,6 +5,7 @@ import mne
 
 from pipelines.run_ds006035_somatomotor import (
     N20,
+    _mean_pairwise,
     interpolate_stimulation_artifacts,
     modality_evidence_weights,
     read_somatosensory_events,
@@ -88,3 +89,14 @@ def test_modality_weights_are_scale_free_for_meg_units() -> None:
     )
 
     assert np.allclose(weights, [1.0, 0.0])
+
+
+def test_sparse_dice_does_not_select_tied_zero_vertices() -> None:
+    first = np.zeros(100)
+    second = np.zeros(100)
+    first[0] = 1.0
+    second[1] = 1.0
+
+    result = _mean_pairwise([first, second], np.zeros((100, 3)))
+
+    assert result["run_top5pct_dice_mean"] == 0.0
