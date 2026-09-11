@@ -1327,7 +1327,7 @@ plt.close(figure)
 
 #%%
 # ==================== 18. 七个任务分别渲染解剖脑俯视图 ====================
-# 每张图三行是三种方法，视角固定为 dorsal 真正俯视。
+# 每张图三行是三种方法；左列真正俯视，右列后上视以免枕叶被表面遮住。
 # 不画 ROI、圆或星号；P95 只控制显示，不参与前面的数值指标。
 
 task_slug_by_task = {
@@ -1374,56 +1374,61 @@ if draw_brain:
                 subject=sample_subject,
             )
 
-            brain = brain_stc.plot(
-                subject=sample_subject,
-                subjects_dir=subjects_dir,
-                surface="pial",
-                hemi="both",
-                views="dorsal",
-                initial_time=0.0,
-                time_viewer=False,
-                show_traces=False,
-                time_label=None,
-                colormap="inferno",
-                clim={
-                    "kind": "value",
-                    "lims": [
-                        brain_floor,
-                        (brain_floor + 1.0) / 2.0,
-                        1.0,
-                    ],
-                },
-                smoothing_steps=5,
-                transparent=True,
-                background="white",
-                foreground="black",
-                cortex="classic",
-                colorbar=False,
-                size=(900, 650),
-                backend="pyvistaqt",
-                brain_kwargs={"show": False, "theme": "light"},
-            )
+            for view_name in ["dorsal", "parietal"]:
+                brain = brain_stc.plot(
+                    subject=sample_subject,
+                    subjects_dir=subjects_dir,
+                    surface="pial",
+                    hemi="both",
+                    views=view_name,
+                    initial_time=0.0,
+                    time_viewer=False,
+                    show_traces=False,
+                    time_label=None,
+                    colormap="inferno",
+                    clim={
+                        "kind": "value",
+                        "lims": [
+                            brain_floor,
+                            (brain_floor + 1.0) / 2.0,
+                            1.0,
+                        ],
+                    },
+                    smoothing_steps=5,
+                    transparent=True,
+                    background="white",
+                    foreground="black",
+                    cortex="classic",
+                    colorbar=False,
+                    size=(900, 650),
+                    backend="pyvistaqt",
+                    brain_kwargs={"show": False, "theme": "light"},
+                )
+                brain.plotter.camera.zoom(0.78)
+                brain.plotter.render()
 
-            brain_images.append((
-                method_name,
-                brain.screenshot(mode="rgb", time_viewer=False),
-            ))
-            brain.close()
+                brain_images.append((
+                    method_name,
+                    view_name,
+                    brain.screenshot(mode="rgb", time_viewer=False),
+                ))
+                brain.close()
 
         brain_figure, brain_axes = plt.subplots(
             3,
-            1,
-            figsize=(9, 15),
+            2,
+            figsize=(16, 13),
             layout="constrained",
             facecolor="white",
         )
 
-        for brain_axis, (method_name, brain_image) in zip(
-            brain_axes,
+        for brain_axis, (method_name, view_name, brain_image) in zip(
+            brain_axes.ravel(),
             brain_images,
         ):
             brain_axis.imshow(brain_image)
-            brain_axis.set_title(f"{method_name} | 俯视", fontsize=13)
+            view_chinese = "俯视" if view_name == "dorsal" else "后上视"
+            brain_axis.set_title(f"{method_name} | {view_chinese}", fontsize=13)
             brain_axis.set_axis_off()
 
         brain_figure.suptitle(
@@ -1432,7 +1437,7 @@ if draw_brain:
             fontsize=16,
             fontweight="bold",
         )
-        brain_file = save_dir / f"brain_{task_slug_by_task[task_name]}_dorsal.png"
+        brain_file = save_dir / f"brain_{task_slug_by_task[task_name]}_dorsal_posterior.png"
         brain_figure.savefig(
             brain_file,
             dpi=170,
