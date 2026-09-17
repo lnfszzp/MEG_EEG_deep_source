@@ -20,3 +20,16 @@ def test_author_style_scripts_are_linear_cell_scripts():
 
         assert source.count("#%%") + source.count("# %%") >= 10
         assert not any(isinstance(node, forbidden) for node in ast.walk(tree))
+
+
+def test_four_paradigm_reuses_validated_ds006035_preprocessing():
+    source = SCRIPTS[2].read_text(encoding="utf-8")
+    events = source.index("ds_events = np.zeros")
+    interpolate = source.index("real_pipeline.interpolate_stimulation_artifacts")
+    filtering = source.index("ds_raw.filter")
+
+    assert events < interpolate < filtering
+    assert "tmin=-0.002" in source[interpolate:filtering]
+    assert "tmax=0.008" in source[interpolate:filtering]
+    assert "protected.whitening_matrix(\n        ds_eeg_noise_check" in source
+    assert "protected.whitening_matrix(\n        ds_mag_noise_check" in source

@@ -540,11 +540,6 @@ ds_picks = mne.pick_types(
 ds_raw.pick(ds_picks)
 ds_raw.load_data(verbose=False)
 
-ds_line_frequency = float(ds_raw.info.get("line_freq") or 60.0)
-if ds_line_frequency < ds_raw.info["sfreq"] / 2.0:
-    ds_raw.notch_filter([ds_line_frequency], n_jobs=1, verbose=False)
-ds_raw.filter(filter_low, ds_filter_high, n_jobs=1, verbose=False)
-
 ds_event_table = pd.read_csv(ds_events_file, sep="\t")
 ds_event_value = pd.to_numeric(ds_event_table["value"], errors="coerce")
 ds_event_table = ds_event_table[ds_event_value.isin([16, 32])].copy()
@@ -556,6 +551,19 @@ ds_events[:, 0] = (
     ds_event_table["sample"].astype(float).astype(int).to_numpy() + ds_first_samp
 )
 ds_events[:, 2] = ds_event_table["value"].to_numpy()
+
+# 电刺激脉冲必须在零相位滤波前插值，否则振铃会进入 N20/P30 时间窗。
+real_pipeline.interpolate_stimulation_artifacts(
+    ds_raw,
+    ds_events[ds_events[:, 2] == 32],
+    tmin=-0.002,
+    tmax=0.008,
+)
+
+ds_line_frequency = float(ds_raw.info.get("line_freq") or 60.0)
+if ds_line_frequency < ds_raw.info["sfreq"] / 2.0:
+    ds_raw.notch_filter([ds_line_frequency], n_jobs=1, verbose=False)
+ds_raw.filter(filter_low, ds_filter_high, n_jobs=1, verbose=False)
 
 print("右腕刺激 event32：", int(np.sum(ds_events[:, 2] == 32)))
 print("左指反应 event16：", int(np.sum(ds_events[:, 2] == 16)))
@@ -756,13 +764,11 @@ ds_records = []
 ds_evoked_list = [ds_wrist_evoked, ds_finger_evoked]
 ds_evoked_task_names = ["腕部刺激", "左指反应"]
 ds_noise_list = [ds_wrist_noise, ds_finger_noise]
-ds_noise_cov_list = [ds_wrist_noise_cov, ds_finger_noise_cov]
 
-for task_name, evoked, trial_noise, noise_cov in zip(
+for task_name, evoked, trial_noise in zip(
     ds_evoked_task_names,
     ds_evoked_list,
     ds_noise_list,
-    ds_noise_cov_list,
 ):
     ds_eeg_data, ds_eeg_gain_check, ds_eeg_noise_check = real_pipeline._aligned_modality(
         evoked.data,
@@ -779,54 +785,18 @@ for task_name, evoked, trial_noise, noise_cov in zip(
         eeg=False,
     )
 
-    ds_eeg_channel_names = ds_eeg_forward_fixed["sol"]["row_names"]
-    ds_mag_channel_names = ds_mag_forward_fixed["sol"]["row_names"]
-    ds_eeg_order = np.asarray([
-        evoked.ch_names.index(channel_name)
-        for channel_name in ds_eeg_channel_names
-    ])
-    ds_mag_order = np.asarray([
-        evoked.ch_names.index(channel_name)
-        for channel_name in ds_mag_channel_names
-    ])
-    ds_eeg_info = mne.pick_info(evoked.info, ds_eeg_order, copy=True)
-    ds_mag_info = mne.pick_info(evoked.info, ds_mag_order, copy=True)
-
-    ds_eeg_cov = mne.pick_channels_cov(
-        noise_cov,
-        include=ds_eeg_channel_names,
-        exclude=[],
-        ordered=True,
-        copy=True,
-        verbose=False,
+    # 和正式 pipeline、1-OASTER真实ERP.py 保持一致：每个模态只用自己的
+    # 单试次基线噪声估计白化矩阵，再同时作用到 evoked 和 Gain。
+    ds_eeg_whitener = protected.whitening_matrix(
+        ds_eeg_noise_check,
+        ds_eeg_noise_check.shape[1],
     )
-    ds_mag_cov = mne.pick_channels_cov(
-        noise_cov,
-        include=ds_mag_channel_names,
-        exclude=[],
-        ordered=True,
-        copy=True,
-        verbose=False,
+    ds_mag_whitener = protected.whitening_matrix(
+        ds_mag_noise_check,
+        ds_mag_noise_check.shape[1],
     )
-    ds_eeg_whitener, ds_eeg_white_names, ds_eeg_rank = compute_whitener(
-        ds_eeg_cov,
-        ds_eeg_info,
-        rank="info",
-        pca=True,
-        return_rank=True,
-        verbose=False,
-    )
-    ds_mag_whitener, ds_mag_white_names, ds_mag_rank = compute_whitener(
-        ds_mag_cov,
-        ds_mag_info,
-        rank="info",
-        pca=True,
-        return_rank=True,
-        verbose=False,
-    )
-
-    assert ds_eeg_white_names == ds_eeg_channel_names
-    assert ds_mag_white_names == ds_mag_channel_names
+    ds_eeg_rank = ds_eeg_whitener.shape[0]
+    ds_mag_rank = ds_mag_whitener.shape[0]
 
     ds_eeg_data_white = ds_eeg_whitener @ ds_eeg_data
     ds_mag_data_white = ds_mag_whitener @ ds_mag_data
