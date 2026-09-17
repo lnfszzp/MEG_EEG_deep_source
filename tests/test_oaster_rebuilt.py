@@ -198,6 +198,29 @@ def test_evoked_oaster_returns_empty_support_for_zero_data() -> None:
     assert diagnostics["windows"][0]["temporal_rank"] == 0
 
 
+def test_evoked_ebic_does_not_force_an_unsupported_template() -> None:
+    rng = np.random.default_rng(7)
+    reduced = rng.normal(size=(100, 2))
+    gains = (rng.normal(size=(100, 20)),)
+
+    selected, *_ = oaster._evoked_ebic_surface_templates(
+        reduced,
+        gains,
+        universe=20,
+        max_templates=1,
+    )
+    forced, *_ = oaster._evoked_ebic_surface_templates(
+        reduced,
+        gains,
+        universe=20,
+        max_templates=1,
+        require_one=True,
+    )
+
+    assert selected == []
+    assert len(forced) == 1
+
+
 @pytest.mark.parametrize(("delta", "accepted"), ((-1.0, True), (1.0, False)))
 def test_reconstruct_applies_rescue_conditionally_before_spectral_fusion(
     monkeypatch: pytest.MonkeyPatch, delta: float, accepted: bool

@@ -574,7 +574,7 @@ def _evoked_ebic_surface_templates(
     universe: int,
     max_templates: int = ERP_MAX_TEMPLATES,
     max_correlation: float = 0.98,
-    require_one: bool = True,
+    require_one: bool = False,
 ) -> tuple[list[tuple[int, int]], np.ndarray, float, list[float]]:
     """Select surface templates by conditional residual drops and EBIC."""
     reduced = np.asarray(reduced, dtype=float)
@@ -664,6 +664,7 @@ def reconstruct_evoked_oaster_from_whitened(
     window_channel_weights=None,
     ridge_fraction: float = RIDGE_FRACTION,
     max_templates: int = ERP_MAX_TEMPLATES,
+    require_one: bool = False,
 ) -> tuple[np.ndarray, dict]:
     """Run the sparse multiscale OASTER core on phase-locked evoked responses.
 
@@ -742,6 +743,7 @@ def reconstruct_evoked_oaster_from_whitened(
             weighted_surface_gains,
             universe=universe,
             max_templates=max_templates,
+            require_one=require_one,
         ) if basis.size else ([], np.empty((data.shape[0], 0)), math.inf, [])
         deep_local = -1
         deep_delta = math.inf
@@ -859,6 +861,7 @@ def reconstruct_evoked_oaster_from_whitened(
         "selected_deep_templates": int(selected_deep_total),
         "ridge_fraction": float(ridge_fraction),
         "max_templates_per_window": int(max_templates),
+        "require_one": bool(require_one),
         "windows": window_diagnostics,
     }
 

@@ -1,0 +1,4 @@
+﻿subject,run,raw_file,meg_channels,eeg_channels_before_qc,auto_bad_eeg,response_epochs,stimulus_epochs,dev_head_t_translation_m
+sm09,1,D:\博士\工作＆汇报\源定位\开源数据\v1.0.0\sub-sm09\ses-meeg\meg\sub-sm09_ses-meeg_task-somatomotor_run-1_meg.fif,306,70,EEG 033,38,39,-0.00031650;0.00465749;0.05807783
+sm09,2,D:\博士\工作＆汇报\源定位\开源数据\v1.0.0\sub-sm09\ses-meeg\meg\sub-sm09_ses-meeg_task-somatomotor_run-2_meg.fif,306,70,EEG 033,38,40,-0.00015085;0.00498685;0.05778060
+sm09,3,D:\博士\工作＆汇报\源定位\开源数据\v1.0.0\sub-sm09\ses-meeg\meg\sub-sm09_ses-meeg_task-somatomotor_run-3_meg.fif,306,70,EEG 033,37,38,-0.00013849;0.00492947;0.05701945

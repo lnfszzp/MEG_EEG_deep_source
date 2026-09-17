@@ -1,0 +1,75 @@
+{
+  "dataset": "ds006035",
+  "subject": "sm09",
+  "runs": [
+    1,
+    2,
+    3
+  ],
+  "task": "right median nerve stimulus followed by left index-finger lift",
+  "pairing": "strict one-to-one event32 -> first event16 before next event32",
+  "accepted_reaction_time_seconds": [
+    0.1,
+    0.9
+  ],
+  "artifact_interpolation_seconds": [
+    -0.002,
+    0.008
+  ],
+  "channels": "EEG + 102 magnetometers + 204 gradiometers",
+  "run_policy": "run-specific forward/inverse because dev_head_t differs; trial-weighted aggregation only after projection to the shared sample source grid",
+  "response_baseline_seconds": [
+    -1.5,
+    -1.0
+  ],
+  "stimulus_baseline_seconds": [
+    -0.5,
+    -0.05
+  ],
+  "time_domain_methods": [
+    "OASTER-ERP",
+    "dSPM",
+    "eLORETA"
+  ],
+  "oaster_require_one": false,
+  "time_windows": {
+    "MF_response_-80_-20ms": [
+      "response",
+      -0.08,
+      -0.02
+    ],
+    "MEFI_response_20_60ms": [
+      "response",
+      0.02,
+      0.06
+    ],
+    "MEFII_response_120_180ms": [
+      "response",
+      0.12,
+      0.18
+    ]
+  },
+  "stimulus_m1_overlap_with_response_mf_fraction": 0.788135593220339,
+  "dics_bands_hz": {
+    "mu_8_14Hz": [
+      8.0,
+      14.0
+    ],
+    "beta_15_30Hz": [
+      15.0,
+      29.0
+    ]
+  },
+  "dics_erd_window_seconds": [
+    -0.4,
+    0.2
+  ],
+  "dics_pmbr_window_seconds": [
+    0.5,
+    1.0
+  ],
+  "dics_sample_rate_hz": 200.0,
+  "roi_policy": "right precentral and right postcentral read only after every inverse",
+  "anatomy_limit": "sample template anatomy; not individual anatomical localization",
+  "elapsed_seconds": 553.8656090000004
+}

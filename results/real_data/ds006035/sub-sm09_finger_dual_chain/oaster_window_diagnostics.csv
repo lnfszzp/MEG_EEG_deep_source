@@ -1,0 +1,10 @@
+﻿subject,run,component,temporal_rank,selected_template_count,selected_templates_json,surface_ebic_deltas,require_one
+sm09,1,MF_response_-80_-20ms,2,1,"[{""layer"": ""surface"", ""scale_mm"": 0.0, ""index"": 3594}]",-22.961757267,False
+sm09,1,MEFI_response_20_60ms,1,1,"[{""layer"": ""surface"", ""scale_mm"": 0.0, ""index"": 3594}]",-36.7595992961,False
+sm09,1,MEFII_response_120_180ms,2,1,"[{""layer"": ""surface"", ""scale_mm"": 7.0, ""index"": 628}]",-66.5200084548,False
+sm09,2,MF_response_-80_-20ms,2,0,[],,False
+sm09,2,MEFI_response_20_60ms,1,1,"[{""layer"": ""surface"", ""scale_mm"": 4.0, ""index"": 3035}]",-9.98371343422,False
+sm09,2,MEFII_response_120_180ms,1,0,[],,False
+sm09,3,MF_response_-80_-20ms,1,1,"[{""layer"": ""surface"", ""scale_mm"": 0.0, ""index"": 3594}]",-7.39429198415,False
+sm09,3,MEFI_response_20_60ms,1,1,"[{""layer"": ""surface"", ""scale_mm"": 0.0, ""index"": 3594}]",-16.8852070154,False
+sm09,3,MEFII_response_120_180ms,1,1,"[{""layer"": ""surface"", ""scale_mm"": 0.0, ""index"": 3449}]",-34.360324807,False

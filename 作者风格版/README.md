@@ -2,7 +2,7 @@
 
 这里的脚本按你的习惯写成 `# %%` 分块、从上到下执行的形式。常用参数集中放在开头，关键中间量直接保留在工作区，并在重要步骤后 `print` 或画图检查。
 
-脚本互相独立：`1` 用公开真实 ERP 数据，`2` 用带真值的仿真数据，`3` 验证四类 ERP/ERF，`4` 用 DBS 患者的 MEG 做 beta 频谱定位。编号表示阅读顺序，不要求依次运行。
+脚本互相独立：`1` 用公开真实 ERP 数据，`2` 用带真值的仿真数据，`3` 验证四类 ERP/ERF，`4` 用 DBS 患者的 MEG 做 beta 频谱定位，`5` 专门修正 ds006035 左指运动定位，`6` 从 `5` 的结果快速渲染完整 pial 俯视图。编号表示阅读顺序，不要求依次运行。
 
 ## 怎么运行
 
@@ -66,6 +66,29 @@
 
 脚本使用数据集自带的个体 4-mm FieldTrip 网格和单壳边界，试运行时降为约 8 mm；输出逐源表、预注册双侧感觉运动 ROI 指标、MNI 图，以及仅用于展示的 fsaverage MRI/pial 渲染。真实数据没有仿真真值，因此这里不计算 AUC 或 DLE。
 
+## 5-左指运动双链定位.py
+
+用途：修正 `3-ERP四类任务验证.py` 中把 Finger 只看作 `+20~80 ms` ERP 的问题，并使用 `sm09` 三个 run 做专门的运动定位。
+
+- 每个 run 严格按 `event32 → event16` 一对一配对，保存孤立事件、无效反应时和全部有效 RT；
+- `event32` 的 `-2~+8 ms` 电刺激脉冲在线性插值后才进行 notch/filter；
+- 保留 EEG、102 个 magnetometer 和 204 个 gradiometer；
+- 三个 run 的 `dev_head_t` 不同，因此各自重算 forward、OASTER/dSPM/eLORETA 和 DICS，最后只在共同 sample 源网格上按有效试次数聚合；
+- 时域分别看 response-lock 的 MF `-80~-20 ms`、MEFI `+20~60 ms`、MEFII `+120~180 ms`；stimulus-lock 的 M1 `180~240 ms` 默认关闭，因为本数据中 78.8% 的试次与 response-MF 是同一段物理时间，不能当作独立验证；
+- 频域用单试次共同滤波器 DICS 计算 mu `8~14 Hz`、beta `15~30 Hz` 的运动 ERD 和 PMBR；
+- DICS 的数据副本先抗混叠降采样到 `200 Hz`（最高分析频率仅 `30 Hz`），时域 ERP 保留原始采样率；
+- response 基线固定为安全的 `-1.5~-1.0 s`，stimulus 基线为 `-0.5~-0.05 s`，不再使用旧 Finger `-0.55~-0.35 s`；
+- OASTER 的 EBIC 不支持某个窗时返回“未定位”，不再用 `require_one` 强制制造一个峰；
+- 每个 run/窗的模板 index、尺度、时间秩和 EBIC delta 单独保存到 `oaster_window_diagnostics.csv`；
+- 所有逆解完成后才读取右侧 `precentral` 与 `postcentral`，分别保存 ROI 富集和峰距；
+- 默认不启动三维窗口；把 `draw_brain=True` 后可输出 pooled pial 俯视图。
+
+主要输出目录是 `results/real_data/ds006035/sub-sm09_finger_dual_chain`。脚本计算量较大，建议先逐块运行到时域结果，确认通道和 epoch 数，再运行 DICS 块。
+
+## 6-左指运动结果俯视图.py
+
+用途：直接读取脚本 `5` 已保存的时域和 DICS 源图，不重复计算逆解，渲染六张完整 pial 俯视图以及一张 2×3 总览；同时另存只包含三个 response-lock 主终点的指标表和比较图。图中不叠加五角星、圆圈或 ROI；每张图的 P95 只控制显示，不参与数值评价。
+
 ## 原脚本对应关系
 
 | 作者风格版 | 原来的正式入口/底层代码 | 适用范围 |
@@ -75,6 +98,7 @@
 | `2-OASTER仿真.py` | `generate_strict_blind_manifest.py`、`generate_strict_blind_inputs.py` | 建立冻结 manifest 和批量仿真输入 |
 | `2-OASTER仿真.py` | `run_strict_oaster.py` | 完整场景和 SNR 网格批处理 |
 | `4-DBS频谱定位.py` | MNE common-filter DICS + ds004998 自带 FieldTrip 网格/边界 | DBS-MEG 真实 beta-ERD 基线 |
+| `5-左指运动双链定位.py` | MNE/OASTER run-specific inverse + common-filter DICS | ds006035 三 run 左指运动双链定位 |
 | 作者风格脚本中的 OASTER 段 | `candidates/oaster_rebuilt.py`、`protected_multilayer.py` | 正式算法实现和公共数值检查 |
 | `2-OASTER仿真.py` 的评价段 | `benchmark/metrics.py` | AUC、SD、DLE 的正式实现 |
 | `2-OASTER仿真.py` 的真值/噪声段 | `benchmark/protocol.py` | 冻结真值、波形和噪声协议 |
