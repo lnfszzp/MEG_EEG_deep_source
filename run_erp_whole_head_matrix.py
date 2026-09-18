@@ -47,7 +47,7 @@ SCENARIOS = (
     "deep_plus_surface",
     "deep_plus_two_surface",
 )
-ALGORITHM_VERSIONS = ("v1", "v2")
+ALGORITHM_VERSIONS = ("v1", "v2", "v3")
 MODALITY_WEIGHTINGS = ("equal", "evidence")
 
 
@@ -112,17 +112,21 @@ def _checkpoint_fingerprint(
 
 
 def _oaster_method(algorithm_version: str) -> str:
-    return "OASTER-ERP" if algorithm_version == "v1" else "OASTER-ERP-v2"
+    return {
+        "v1": "OASTER-ERP",
+        "v2": "OASTER-ERP-v2",
+        "v3": "OASTER-ERP-v3",
+    }[algorithm_version]
 
 
 def _resolve_oaster(algorithm_version: str):
     if algorithm_version not in ALGORITHM_VERSIONS:
         raise ValueError(f"algorithm_version must be one of {ALGORITHM_VERSIONS}")
-    name = (
-        "reconstruct_evoked_oaster_from_whitened"
-        if algorithm_version == "v1"
-        else "reconstruct_evoked_oaster_v2_from_whitened"
-    )
+    name = {
+        "v1": "reconstruct_evoked_oaster_from_whitened",
+        "v2": "reconstruct_evoked_oaster_v2_from_whitened",
+        "v3": "reconstruct_evoked_oaster_v3_from_whitened",
+    }[algorithm_version]
     solver = getattr(oaster, name, None)
     if solver is None:
         raise RuntimeError(
@@ -484,6 +488,10 @@ def _write_metadata(
             "joint whitened observations are baseline-corrected before dispatch"
         ),
         "snr_level": "evoked-level after a 40-trial-mean-equivalent noise draw",
+        "deep_detection_rule": {
+            "relative_amplitude_threshold": benchmark_metrics.DEEP_DETECTION_THRESHOLD,
+            "maximum_peak_distance_mm": 10.0,
+        },
         "snr_pairs": [list(pair) for pair, _cases in selected],
         "cases_per_scenario": cases_per_scenario,
         "selected_case_count": sum(len(cases) for _pair, cases in selected),
@@ -542,7 +550,7 @@ def run(
     methods = (oaster_method,) if oaster_only else (oaster_method,) + comparators.METHODS
     oaster_kwargs = (
         {"deep_rescue_delta": float(v2_deep_rescue_delta)}
-        if algorithm_version == "v2"
+        if algorithm_version in {"v2", "v3"}
         else {}
     )
     manifest_path, data_root, output = map(Path, (manifest_path, data_root, output))
@@ -572,7 +580,7 @@ def run(
     }
     penalty_mm = float(np.linalg.norm(np.ptp(shared["vertices"], axis=0)) * 1000.0)
     configuration = f"{algorithm_version}_{modality_weighting}_seed_{seed_root}"
-    if algorithm_version == "v2":
+    if algorithm_version in {"v2", "v3"}:
         rescue_tag = f"{float(v2_deep_rescue_delta):g}".replace("-", "m").replace(".", "p")
         rescue_sha = hashlib.sha256(
             repr(float(v2_deep_rescue_delta)).encode("ascii")

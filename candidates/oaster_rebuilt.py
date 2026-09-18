@@ -199,6 +199,61 @@ def _column_space(matrix: np.ndarray) -> np.ndarray:
     return left[:, singular > tolerance]
 
 
+def _surface_residual_deep_candidate(
+    data: np.ndarray,
+    leadfield: np.ndarray,
+    n_surf: int,
+    surface_design: np.ndarray,
+    baseline: np.ndarray,
+    active: np.ndarray,
+    *,
+    universe: int,
+    threshold: float,
+) -> tuple[np.ndarray, np.ndarray, dict]:
+    """Select one deep template from a full-time surface residual."""
+    surface_space = _column_space(surface_design)
+    residual = data - surface_space @ (surface_space.T @ data)
+    deep_gain = leadfield[:, n_surf:]
+    conditional_gain = deep_gain - surface_space @ (surface_space.T @ deep_gain)
+    basis, basis_diagnostics = _evoked_temporal_basis(residual, baseline, active)
+    diagnostics = {
+        "deep_local": -1,
+        "accepted": False,
+        "ebic_delta": math.inf,
+        "surface_design_rank": int(surface_space.shape[1]),
+        "candidate_universe": int(universe),
+        **{f"residual_{key}": value for key, value in basis_diagnostics.items()},
+    }
+    if not basis.size or not conditional_gain.shape[1]:
+        return residual, conditional_gain, diagnostics
+
+    reduced = residual @ basis.T
+    norms = np.sum(conditional_gain**2, axis=0)
+    valid = norms > np.finfo(float).eps * float(norms.max(initial=0.0))
+    rss_old = float(np.sum(reduced**2))
+    if not np.any(valid) or rss_old <= np.finfo(float).eps:
+        return residual, conditional_gain, diagnostics
+    drops = np.full(conditional_gain.shape[1], -np.inf)
+    drops[valid] = (
+        np.sum((conditional_gain[:, valid].T @ reduced) ** 2, axis=1)
+        / norms[valid]
+    )
+    deep_local = int(np.argmax(drops))
+    rss_new = max(rss_old - min(float(drops[deep_local]), rss_old), np.finfo(float).tiny)
+    n_obs = int(reduced.size)
+    delta = (
+        n_obs * math.log(rss_new / rss_old)
+        + basis.shape[0] * math.log(n_obs)
+        + 2.0 * math.log(int(universe))
+    )
+    diagnostics.update(
+        deep_local=deep_local,
+        accepted=bool(delta < float(threshold)),
+        ebic_delta=float(delta),
+    )
+    return residual, conditional_gain, diagnostics
+
+
 def deep_rescue_trial(
     data: np.ndarray,
     leadfield: np.ndarray,
@@ -834,6 +889,7 @@ def _reconstruct_evoked_oaster_from_whitened(
     joint_selection: bool = False,
     evidence_fraction: float = 0.0,
     joint_deep_rescue_delta: float = ERP_V2_DEEP_RESCUE_DELTA,
+    residual_deep_reselection: bool = False,
 ) -> tuple[np.ndarray, dict]:
     """Run the sparse multiscale OASTER core on phase-locked evoked responses.
 
@@ -859,6 +915,8 @@ def _reconstruct_evoked_oaster_from_whitened(
         raise ValueError("evidence_fraction must be finite and between zero and one")
     if not np.isfinite(joint_deep_rescue_delta):
         raise ValueError("joint_deep_rescue_delta must be finite")
+    if residual_deep_reselection and not joint_selection:
+        raise ValueError("residual deep reselection requires joint selection")
     if joint_selection and int(max_templates) < 1:
         raise ValueError("max_templates must be positive")
     kernels = tuple(kernels)
@@ -919,6 +977,11 @@ def _reconstruct_evoked_oaster_from_whitened(
         reduced = weighted_data @ basis.T
         deep_local = -1
         deep_delta = math.inf
+        initial_joint_selected: list[tuple[int, int]] = []
+        initial_joint_score_deltas: list[float] = []
+        residual_data = weighted_data
+        conditional_deep_gain = weighted_leadfield[:, n_surf:]
+        residual_reselection_diagnostics = None
         if joint_selection and basis.size:
             _primary, _count, joint_details = _ebic_templates(
                 weighted_data,
@@ -935,6 +998,8 @@ def _reconstruct_evoked_oaster_from_whitened(
             )
             selected = list(joint_details["selected"])
             score_deltas = list(joint_details["score_deltas"])
+            initial_joint_selected = list(selected)
+            initial_joint_score_deltas = list(score_deltas)
             for (family, index), delta in zip(selected, score_deltas):
                 if family == len(kernels):
                     deep_local = int(index)
@@ -963,6 +1028,39 @@ def _reconstruct_evoked_oaster_from_whitened(
                 if basis.size
                 else ([], np.empty((data.shape[0], 0)), math.inf, [])
             )
+        if joint_selection and residual_deep_reselection:
+            surface_with_deltas = [
+                (item, delta)
+                for item, delta in zip(selected, score_deltas)
+                if item[0] < len(kernels)
+            ]
+            selected = [item for item, _delta in surface_with_deltas]
+            score_deltas = [delta for _item, delta in surface_with_deltas]
+            design = (
+                np.column_stack([
+                    weighted_surface_gains[family][:, index]
+                    for family, index in selected
+                ])
+                if selected
+                else np.empty((data.shape[0], 0))
+            )
+            residual_data, conditional_deep_gain, residual_reselection_diagnostics = (
+                _surface_residual_deep_candidate(
+                    weighted_data,
+                    weighted_leadfield,
+                    n_surf,
+                    design,
+                    baseline,
+                    window,
+                    universe=universe,
+                    threshold=joint_deep_rescue_delta,
+                )
+            )
+            deep_local = int(residual_reselection_diagnostics["deep_local"])
+            deep_delta = float(residual_reselection_diagnostics["ebic_delta"])
+            if residual_reselection_diagnostics["accepted"]:
+                selected.append((len(kernels), deep_local))
+                score_deltas.append(deep_delta)
         deep_rescue_attempted = False
         deep_rescue_accepted = False
         deep_already_selected = any(
@@ -971,6 +1069,7 @@ def _reconstruct_evoked_oaster_from_whitened(
         if (
             basis.size
             and n_surf < leadfield.shape[1]
+            and not residual_deep_reselection
             and (not joint_selection or not deep_already_selected)
         ):
             deep_rescue_attempted = bool(joint_selection)
@@ -1013,7 +1112,7 @@ def _reconstruct_evoked_oaster_from_whitened(
                     selected.append((len(kernels), deep_local))
                     deep_rescue_accepted = bool(joint_selection)
         if joint_selection and evidence_fraction > 0.0:
-            evidence, evidence_diagnostics = _evoked_multiscale_time_evidence(
+            evidence, raw_evidence_diagnostics = _evoked_multiscale_time_evidence(
                 weighted_data,
                 weighted_leadfield,
                 n_surf,
@@ -1021,6 +1120,26 @@ def _reconstruct_evoked_oaster_from_whitened(
                 baseline=baseline,
                 active=window,
             )
+            if residual_deep_reselection:
+                residual_leadfield = weighted_leadfield.copy()
+                residual_leadfield[:, n_surf:] = conditional_deep_gain
+                deep_evidence, deep_evidence_diagnostics = (
+                    _evoked_multiscale_time_evidence(
+                        residual_data,
+                        residual_leadfield,
+                        n_surf,
+                        kernel_by_scale[4.0],
+                        baseline=baseline,
+                        active=window,
+                    )
+                )
+                evidence[n_surf:] = deep_evidence[n_surf:]
+                evidence_diagnostics = {
+                    "surface_raw": raw_evidence_diagnostics,
+                    "deep_surface_residual": deep_evidence_diagnostics,
+                }
+            else:
+                evidence_diagnostics = raw_evidence_diagnostics
             evidence_by_window.append(evidence)
         else:
             evidence_diagnostics = None
@@ -1053,14 +1172,25 @@ def _reconstruct_evoked_oaster_from_whitened(
             ),
         }
         if joint_selection:
+            first_selected = (
+                initial_joint_selected if residual_deep_reselection else selected
+            )
             window_information.update({
-                "selection": "joint_surface_deep_ebic",
-                "joint_ebic_deltas": score_deltas,
+                "selection": (
+                    "joint_surface_then_residual_deep_ebic_v3"
+                    if residual_deep_reselection
+                    else "joint_surface_deep_ebic"
+                ),
+                "joint_ebic_deltas": (
+                    initial_joint_score_deltas
+                    if residual_deep_reselection
+                    else score_deltas
+                ),
                 "first_selected_layer": (
                     "surface"
-                    if selected and selected[0][0] < len(kernels)
+                    if first_selected and first_selected[0][0] < len(kernels)
                     else "deep"
-                    if selected
+                    if first_selected
                     else None
                 ),
                 "deep_rescue_attempted": deep_rescue_attempted,
@@ -1071,6 +1201,10 @@ def _reconstruct_evoked_oaster_from_whitened(
                 "deep_rescue_ebic_threshold": float(joint_deep_rescue_delta),
                 "time_evidence": evidence_diagnostics,
             })
+            if residual_deep_reselection:
+                window_information["residual_deep_reselection"] = (
+                    residual_reselection_diagnostics
+                )
         window_diagnostics.append(window_information)
 
     estimate = np.zeros((leadfield.shape[1], data.shape[1]))
@@ -1154,11 +1288,19 @@ def _reconstruct_evoked_oaster_from_whitened(
     }
     if joint_selection:
         diagnostics.update({
-            "mode": "signed_multiscale_erp_joint_ebic_v2",
-            "selection": "joint_surface_deep_from_first_step",
+            "mode": (
+                "signed_multiscale_erp_surface_residual_deep_v3"
+                if residual_deep_reselection
+                else "signed_multiscale_erp_joint_ebic_v2"
+            ),
+            "selection": (
+                "joint_surface_then_residual_deep_reselection"
+                if residual_deep_reselection
+                else "joint_surface_deep_from_first_step"
+            ),
             "conditional_candidate_drops": True,
             "joint_search_template_cap_per_window": int(max_templates),
-            "deep_rescue_can_add_one_template": True,
+            "deep_rescue_can_add_one_template": not residual_deep_reselection,
             "max_templates_per_window": int(max_templates) + 1,
             "max_deep_templates_per_window": 1,
             "time_evidence_fraction": float(evidence_fraction),
@@ -1166,6 +1308,8 @@ def _reconstruct_evoked_oaster_from_whitened(
             "time_evidence_layer_balanced": True,
             "time_evidence_fusion": evidence_fusion,
         })
+        if residual_deep_reselection:
+            diagnostics["time_evidence_deep_surface_residual"] = True
     return estimate, diagnostics
 
 
@@ -1227,6 +1371,40 @@ def reconstruct_evoked_oaster_v2_from_whitened(
         joint_selection=True,
         evidence_fraction=evidence_fraction,
         joint_deep_rescue_delta=deep_rescue_delta,
+    )
+
+
+def reconstruct_evoked_oaster_v3_from_whitened(
+    data: np.ndarray,
+    leadfield: np.ndarray,
+    n_surf: int,
+    kernels,
+    *,
+    baseline: np.ndarray,
+    active_windows,
+    window_channel_weights=None,
+    ridge_fraction: float = RIDGE_FRACTION,
+    max_templates: int = ERP_MAX_TEMPLATES,
+    require_one: bool = False,
+    evidence_fraction: float = ERP_TIME_EVIDENCE_FRACTION,
+    deep_rescue_delta: float = ERP_V2_DEEP_RESCUE_DELTA,
+) -> tuple[np.ndarray, dict]:
+    """Run ERP OASTER with surface-residual deep selection and evidence."""
+    return _reconstruct_evoked_oaster_from_whitened(
+        data,
+        leadfield,
+        n_surf,
+        kernels,
+        baseline=baseline,
+        active_windows=active_windows,
+        window_channel_weights=window_channel_weights,
+        ridge_fraction=ridge_fraction,
+        max_templates=max_templates,
+        require_one=require_one,
+        joint_selection=True,
+        evidence_fraction=evidence_fraction,
+        joint_deep_rescue_delta=deep_rescue_delta,
+        residual_deep_reselection=True,
     )
 
 

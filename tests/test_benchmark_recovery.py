@@ -11,6 +11,9 @@ import generate_strict_blind_manifest as strict_manifest
 
 
 class BenchmarkRecoveryTest(unittest.TestCase):
+    def test_deep_detection_threshold_is_frozen_after_development(self):
+        self.assertEqual(metrics.DEEP_DETECTION_THRESHOLD, 0.125)
+
     def test_simulate_case_uses_per_modality_snr_and_legacy_fallback(self):
         shared = {
             "times": np.linspace(0.0, 1.0, 203),

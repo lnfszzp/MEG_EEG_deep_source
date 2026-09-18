@@ -178,6 +178,41 @@ def test_direct_chunk_run_checkpoints_and_summarizes(tmp_path, monkeypatch) -> N
     assert calls == ["reconstruct", "reconstruct"]
 
 
+def test_penalized_deep_distances_count_finite_misses() -> None:
+    row = {
+        "scenario": "deep_only",
+        "has_surface_true": 0,
+        "has_deep_true": 1,
+        "deep_detected": 0,
+        "deep_false_positive": 0,
+        **{
+            name: 5.0
+            for name in (
+                "auc",
+                "auc_tie_corrected",
+                "surface_auc_tie_corrected",
+                "deep_auc_tie_corrected",
+                "rmse",
+                "surface_sd_mm",
+                "surface_dle_mm",
+                "deep_sd_mm",
+                "deep_dle_mm",
+                "deep_score",
+                "deep_peak_distance_mm",
+                "active_count",
+                "surface_active_count",
+                "deep_active_count",
+            )
+        },
+    }
+
+    summary = runner._aggregate([row], penalty_mm=234.0)
+
+    assert summary["deep_dle_mm"] == 5.0
+    assert summary["deep_dle_mm_penalized"] == 234.0
+    assert summary["deep_sd_mm_penalized"] == 234.0
+
+
 def test_case_ids_must_match_manifest_range(tmp_path, monkeypatch) -> None:
     _cases, manifest, digest, data_root, input_root = _fixture(
         tmp_path, [(0, 2)], bad_ids=True

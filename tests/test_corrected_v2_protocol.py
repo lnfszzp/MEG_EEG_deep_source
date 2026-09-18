@@ -10,6 +10,7 @@ import pytest
 from benchmark import protocol
 import generate_corrected_v2_manifest as corrected
 import generate_erp_v2_confirmation_manifest as confirmation
+import generate_erp_v3_development_manifest as full_development
 import generate_strict_blind_manifest as strict
 import run_oaster_dev_matrix as dev_runner
 
@@ -149,3 +150,18 @@ def test_erp_v2_confirmation_uses_only_held_out_sources() -> None:
     )
     assert {case["panel"] for case in manifest} == {confirmation.PANEL}
     assert {case["seed"][0] for case in manifest} == {confirmation.SEED_ROOT}
+
+
+def test_erp_v3_full_development_uses_only_development_sources() -> None:
+    shared = _split_shared(16, corrected_geometry=True)
+    manifest = full_development.make_manifest(shared)
+    digest = strict._manifest_digest(manifest)
+
+    full_development._check(shared, manifest, digest, expected_digest=None)
+    assert len(manifest) == 9212
+    assert manifest[0]["case_number"] == 0
+    assert manifest[-1]["case_number"] == 9211
+    assert {case["panel"] for case in manifest} == {full_development.PANEL}
+    assert {case["seed"][0] for case in manifest} == {
+        full_development.SEED_ROOT
+    }

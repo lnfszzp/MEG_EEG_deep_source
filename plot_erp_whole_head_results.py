@@ -148,6 +148,7 @@ def _summarize_rows(
             "status",
             "has_surface_true",
             "has_deep_true",
+            "deep_detected",
             *raw_metrics,
         }
         missing = required.difference(reader.fieldnames or ())
@@ -168,6 +169,7 @@ def _summarize_rows(
                     "scenario": row["scenario"].strip(),
                     "has_surface_true": int(float(row["has_surface_true"])),
                     "has_deep_true": int(float(row["has_deep_true"])),
+                    "deep_detected": int(float(row["deep_detected"])),
                     **{name: float(row[name]) for name in raw_metrics},
                     **{name: float(row.get(name) or "nan") for name in optional_metrics},
                 }
@@ -209,6 +211,10 @@ def _summarize_rows(
                             [
                                 float(row[name])
                                 if np.isfinite(float(row[name]))
+                                and not (
+                                    layer == "deep"
+                                    and int(row["deep_detected"]) != 1
+                                )
                                 else penalty_mm
                                 for row in expected
                             ]

@@ -638,7 +638,12 @@ def _aggregate(rows: list[dict], penalty_mm: float) -> dict:
         expected_rows = [row for row in rows if int(_number(row, expected_key)) == 1]
         for metric in ("sd_mm", "dle_mm"):
             name = f"{layer}_{metric}"
-            values = [_number(row, name) for row in expected_rows]
+            values = [
+                penalty_mm
+                if layer == "deep" and int(_number(row, "deep_detected")) != 1
+                else _number(row, name)
+                for row in expected_rows
+            ]
             result[name + "_penalized"] = (
                 float(np.mean([value if np.isfinite(value) else penalty_mm for value in values]))
                 if values

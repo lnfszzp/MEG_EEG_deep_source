@@ -61,6 +61,9 @@ results/dev_experiments/**
 !results/dev_experiments/**/*.md
 !results/erp_whole_head/
 results/erp_whole_head/**
+!results/erp_whole_head/development_full_v3/
+!results/erp_whole_head/development_full_v3/manifest.json
+!results/erp_whole_head/development_full_v3/manifest.json.sha256
 !results/erp_whole_head/confirmation_v3/
 !results/erp_whole_head/confirmation_v3/manifest.json
 !results/erp_whole_head/confirmation_v3/manifest.json.sha256

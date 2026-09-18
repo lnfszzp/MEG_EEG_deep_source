@@ -33,6 +33,7 @@ def test_combined_rows_csv_fallback(tmp_path: Path) -> None:
         "status",
         "has_surface_true",
         "has_deep_true",
+        "deep_detected",
         "auc",
         "auc_tie_corrected",
         "rmse",
@@ -59,6 +60,15 @@ def test_combined_rows_csv_fallback(tmp_path: Path) -> None:
                                 "status": "ok",
                                 "has_surface_true": has_surface,
                                 "has_deep_true": has_deep,
+                                "deep_detected": int(
+                                    has_deep
+                                    and not (
+                                        method == "OASTER-ERP"
+                                        and scenario == "deep_only"
+                                        and eeg == plotting.SNR_LEVELS[0]
+                                        and meg == plotting.SNR_LEVELS[0]
+                                    )
+                                ),
                                 "auc": 0.8,
                                 "auc_tie_corrected": 0.9,
                                 "rmse": 0.2,
@@ -75,7 +85,10 @@ def test_combined_rows_csv_fallback(tmp_path: Path) -> None:
     assert len(macro["OASTER-ERP"]) == 49
     assert macro["OASTER-ERP"][0]["auc_tie_corrected"] == 0.9
     assert np.isnan(macro["OASTER-ERP"][0]["surface_auc_tie_corrected"])
-    assert scenarios["deep_only"]["OASTER-ERP"][0]["deep_dle_mm_penalized"] == 8.0
+    assert (
+        scenarios["deep_only"]["OASTER-ERP"][0]["deep_dle_mm_penalized"]
+        == plotting.DEFAULT_MISS_PENALTY_MM
+    )
 
 
 def test_generates_table_and_all_requested_figures(tmp_path: Path) -> None:

@@ -5,8 +5,21 @@ from scipy.spatial import cKDTree
 
 from metrics.user_metrics import An_auc, An_cal_AUC, DLE_an, RMSE, SD
 
+DEEP_DETECTION_THRESHOLD = 0.125
 DEEP_THRESHOLD_CANDIDATES = (
-    0.01, 0.02, 0.05, 0.1, 0.2, 0.3, 0.5, 0.7, 0.8, 0.9, 0.95, 0.99
+    0.01,
+    0.02,
+    0.05,
+    0.1,
+    DEEP_DETECTION_THRESHOLD,
+    0.2,
+    0.3,
+    0.5,
+    0.7,
+    0.8,
+    0.9,
+    0.95,
+    0.99,
 )
 
 AUC_THRESHOLD = 0.01
@@ -137,7 +150,7 @@ def evaluate_estimate(
     cortex: dict,
     *,
     baseline: np.ndarray | None = None,
-    deep_threshold: float = 0.1,
+    deep_threshold: float = DEEP_DETECTION_THRESHOLD,
     support_energy_fraction: float = 0.1,
     deep_radius_mm: float = 10.0,
 ) -> dict[str, float | int]:

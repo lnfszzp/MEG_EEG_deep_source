@@ -474,3 +474,103 @@ def test_reconstruct_applies_rescue_conditionally_before_spectral_fusion(
     assert np.array_equal(estimate, expected_primary + spectral)
     assert diagnostics["deep_rescue_accepted"] is accepted
     assert diagnostics["deep_rescue_ebic_delta"] == delta
+
+
+def test_surface_residual_deep_candidate_removes_surface_collinearity() -> None:
+    baseline = np.zeros(20, dtype=bool)
+    baseline[:10] = True
+    active = ~baseline
+    wave = np.zeros(20)
+    wave[active] = np.sin(np.linspace(0.0, np.pi, active.sum()))
+    surface = np.array([1.0, 0.0, 0.0])
+    true_deep = np.array([0.0, 1.0, 0.0])
+    leadfield = np.column_stack((surface, surface, true_deep))
+    data = surface[:, None] * wave + 0.7 * true_deep[:, None] * wave
+
+    residual, conditional_gain, diagnostics = (
+        oaster._surface_residual_deep_candidate(
+            data,
+            leadfield,
+            1,
+            surface[:, None],
+            baseline,
+            active,
+            universe=5,
+            threshold=-6.0,
+        )
+    )
+
+    assert np.allclose(residual[0], 0.0)
+    assert np.allclose(conditional_gain[:, 0], 0.0)
+    assert diagnostics["deep_local"] == 1
+    assert diagnostics["accepted"] is True
+    assert diagnostics["ebic_delta"] < -6.0
+
+
+def test_evoked_oaster_v3_corrects_a_joint_deep_mislocalization() -> None:
+    baseline = np.arange(60) < 36
+    active = (np.arange(60) >= 40) & (np.arange(60) < 50)
+    surface_wave = np.asarray(
+        [0.0, 1.0, 4.0, 7.0, 5.0, 2.0, 0.5, 0.0, -0.2, 0.0]
+    )
+    surface_wave /= np.linalg.norm(surface_wave)
+    orthogonal_wave = np.asarray(
+        [1.0, -1.0, 1.0, -1.0, 1.0, -1.0, 1.0, -1.0, 1.0, -1.0]
+    )
+    orthogonal_wave -= (orthogonal_wave @ surface_wave) * surface_wave
+    orthogonal_wave /= np.linalg.norm(orthogonal_wave)
+    deep_wave = 0.5 * surface_wave + np.sqrt(0.75) * orthogonal_wave
+
+    leadfield = np.column_stack(
+        (
+            np.eye(4)[:, 0],
+            np.eye(4)[:, 3],
+            np.asarray([1.0, 0.5, 0.2, 0.0]),
+            np.eye(4)[:, 1],
+        )
+    )
+    leadfield /= np.linalg.norm(leadfield, axis=0, keepdims=True)
+    data = np.random.default_rng(0).normal(scale=0.01, size=(4, 60))
+    data[:, active] += (
+        4.0 * leadfield[:, [0]] @ surface_wave[None, :]
+        + 2.0 * leadfield[:, [3]] @ deep_wave[None, :]
+    )
+    kwargs = {
+        "baseline": baseline,
+        "active_windows": (active,),
+        "deep_rescue_delta": -6.0,
+    }
+
+    v2_estimate, v2_diagnostics = (
+        oaster.reconstruct_evoked_oaster_v2_from_whitened(
+            data, leadfield, 2, _kernels(2), **kwargs
+        )
+    )
+    v3_estimate, v3_diagnostics = (
+        oaster.reconstruct_evoked_oaster_v3_from_whitened(
+            data, leadfield, 2, _kernels(2), **kwargs
+        )
+    )
+
+    v2_window = v2_diagnostics["windows"][0]
+    v3_window = v3_diagnostics["windows"][0]
+    assert int(np.argmax(np.linalg.norm(v2_estimate[2:, active], axis=1))) == 0
+    assert v2_window["deep_candidate_local"] == 0
+    assert v2_window["deep_accepted"] is True
+    assert int(np.argmax(np.linalg.norm(v3_estimate[2:, active], axis=1))) == 1
+    assert v3_diagnostics["mode"] == "signed_multiscale_erp_surface_residual_deep_v3"
+    assert v3_diagnostics["deep_rescue_can_add_one_template"] is False
+    assert v3_diagnostics["time_evidence_deep_surface_residual"] is True
+    assert v3_window["selection"] == "joint_surface_then_residual_deep_ebic_v3"
+    assert v3_window["deep_candidate_local"] == 1
+    assert v3_window["deep_accepted"] is True
+    residual = v3_window["residual_deep_reselection"]
+    assert residual["accepted"] is True
+    assert residual["ebic_delta"] < -80.0
+    assert residual["surface_design_rank"] == 1
+    assert residual["residual_temporal_rank"] == 3
+    assert np.linalg.norm(v3_estimate[0, active]) > 0.0
+    assert set(v3_window["time_evidence"]) == {
+        "surface_raw",
+        "deep_surface_residual",
+    }

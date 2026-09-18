@@ -6,6 +6,14 @@ import numpy as np
 import run_erp_whole_head_matrix as runner
 
 
+def test_v3_entry_point_is_explicitly_versioned() -> None:
+    assert runner._oaster_method("v3") == "OASTER-ERP-v3"
+    assert (
+        runner._resolve_oaster("v3")
+        is runner.oaster.reconstruct_evoked_oaster_v3_from_whitened
+    )
+
+
 def _case(number, scenario="surface_only"):
     deep = scenario != "surface_only"
     surface = scenario != "deep_only"
