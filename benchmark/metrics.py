@@ -43,10 +43,25 @@ def _requested_auc(
     return float(np.mean(values))
 
 
-def source_amplitude(source: np.ndarray, active: np.ndarray) -> np.ndarray:
+def source_amplitude(
+    source: np.ndarray,
+    active: np.ndarray,
+    baseline: np.ndarray | None = None,
+) -> np.ndarray:
     source = np.asarray(source, dtype=float)
     active = np.asarray(active, dtype=int)
-    baseline = np.setdiff1d(np.arange(source.shape[1]), active)
+    if baseline is None:
+        baseline = np.setdiff1d(np.arange(source.shape[1]), active)
+    else:
+        baseline = np.asarray(baseline)
+        if baseline.dtype == bool:
+            if baseline.size != source.shape[1]:
+                raise ValueError("baseline mask must match the source time axis")
+            baseline = np.flatnonzero(baseline)
+        else:
+            baseline = baseline.astype(int, copy=False).ravel()
+        if np.intersect1d(active, baseline).size:
+            raise ValueError("active and baseline samples must be disjoint")
     active_power = np.mean(source[:, active] ** 2, axis=1)
     baseline_power = (
         np.mean(source[:, baseline] ** 2, axis=1) if baseline.size else 0.0
@@ -109,6 +124,7 @@ def evaluate_estimate(
     active: np.ndarray,
     cortex: dict,
     *,
+    baseline: np.ndarray | None = None,
     deep_threshold: float = 0.1,
     support_energy_fraction: float = 0.1,
     deep_radius_mm: float = 10.0,
@@ -157,7 +173,7 @@ def evaluate_estimate(
         estimate, truth, positions_m, groups, n_surf, len(positions_m), active, support
     )
 
-    amplitude = source_amplitude(estimate, active)
+    amplitude = source_amplitude(estimate, active, baseline)
     amplitude_peak = float(amplitude.max(initial=0.0))
     deep_peak = float(amplitude[n_surf:].max(initial=0.0))
     deep_score = deep_peak / amplitude_peak if amplitude_peak > 0 else 0.0

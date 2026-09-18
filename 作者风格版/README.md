@@ -2,7 +2,7 @@
 
 这里的脚本按你的习惯写成 `# %%` 分块、从上到下执行的形式。常用参数集中放在开头，关键中间量直接保留在工作区，并在重要步骤后 `print` 或画图检查。
 
-脚本互相独立：`1` 用公开真实 ERP 数据，`2` 用带真值的仿真数据，`3` 验证四类 ERP/ERF，`4` 用 DBS 患者的 MEG 做 beta 频谱定位，`5` 专门修正 ds006035 左指运动定位，`6` 从 `5` 的结果快速渲染完整 pial 俯视图。编号表示阅读顺序，不要求依次运行。
+脚本互相独立：`1` 用公开真实 ERP 数据，`2` 用带真值的仿真数据，`3` 验证四类 ERP/ERF，`4` 用 DBS 患者的 MEG 做 beta 频谱定位，`5` 专门修正 ds006035 左指运动定位，`6` 从 `5` 的结果快速渲染完整 pial 俯视图，`7` 批量运行当前 OASTER-ERP 的全头七方法多 SNR 仿真。编号表示阅读顺序，不要求依次运行。
 
 ## 怎么运行
 
@@ -89,6 +89,12 @@
 
 用途：直接读取脚本 `5` 已保存的逐 run 源图，不重复计算逆解。每个时间窗先取三种方法共同可定位的 run，再用完全相同的试次权重聚合，渲染为 3×3 匹配比较图；DICS beta 结果单独成图，不与 ERP 方法作优劣比较。同时保存匹配后的源图、ROI 指标表、比较图和 `oaster_detection_rate.csv`。各图分别峰值归一化，P95 只控制显示，因此脑图只定性比较峰位和空间模式，不比较振幅或激活范围；共同集指标描述“成功定位后定到哪里”，全部 run 的定位成功率描述“能否稳定定位”，两者必须同时报告。
 
+## 7-ERP全头七方法多SNR仿真.py
+
+用途：运行当前相位锁定 OASTER-ERP 和七个固定对比方法的完整仿真。脚本集中展示 manifest、几何、MNE sample、输出路径、7×7 EEG/MEG SNR 和 worker 参数，然后调用正式批处理，不复制算法。
+
+默认覆盖纯表层、纯深层、深层加单表层、深层加双表层四种情况；每个 SNR 使用全部 186 个位置配置，共 49 个 SNR 组合。这里的“全头”是双侧 68 个皮层分区代表位置和 16 个双侧丘脑点，不等于把 7498 个皮层顶点逐点作为真值。结果按 SNR 组合断点保存，重跑脚本会校验并跳过完整检查点；结束后自动检查结果行数并生成 An_auc、SD、DLE 图和八方法对比表。
+
 ## 原脚本对应关系
 
 | 作者风格版 | 原来的正式入口/底层代码 | 适用范围 |
@@ -99,6 +105,7 @@
 | `2-OASTER仿真.py` | `run_strict_oaster.py` | 完整场景和 SNR 网格批处理 |
 | `4-DBS频谱定位.py` | MNE common-filter DICS + ds004998 自带 FieldTrip 网格/边界 | DBS-MEG 真实 beta-ERD 基线 |
 | `5-左指运动双链定位.py` | MNE/OASTER run-specific inverse + common-filter DICS | ds006035 三 run 左指运动双链定位 |
+| `7-ERP全头七方法多SNR仿真.py` | `run_erp_whole_head_matrix.py`、`plot_erp_whole_head_results.py` | 当前 ERP 算法、七个对比方法和 49 组 EEG×MEG SNR |
 | 作者风格脚本中的 OASTER 段 | `candidates/oaster_rebuilt.py`、`protected_multilayer.py` | 正式算法实现和公共数值检查 |
 | `2-OASTER仿真.py` 的评价段 | `benchmark/metrics.py` | AUC、SD、DLE 的正式实现 |
 | `2-OASTER仿真.py` 的真值/噪声段 | `benchmark/protocol.py` | 冻结真值、波形和噪声协议 |

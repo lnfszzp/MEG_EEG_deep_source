@@ -212,7 +212,7 @@ python .\plot_strict_brain_maps.py `
 
 ## 8. 指标口径
 
-- AUC：优先报告原请求的 `An_cal_AUC`，并同时保留 tied-rank 修正版 `An_auc`（结果字段 `auc_tie_corrected`）。
+- AUC：优先报告原请求的 tied-rank `An_auc`（结果字段 `auc_tie_corrected`），并同时保留 `An_cal_AUC`（结果字段 `auc`）作为补充口径。
 - 空间指标：分别计算表层与深层的 SD、DLE，不用一个总体值掩盖两类源的差异。
 - 深部检测：同时报告敏感度、纯表层特异度及其 balanced accuracy。
 - 统计比较：只对完整、可比的方法做配对 bootstrap、Wilcoxon + Holm 校正、Friedman 检验与排名；N/A 方法不参与。
