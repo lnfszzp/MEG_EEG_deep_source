@@ -1,0 +1,4 @@
+﻿component,successful_runs,total_runs,success_rate_pct
+MEFII_response_120_180ms,2,3,66.66666666666667
+MEFI_response_20_60ms,3,3,100.0
+MF_response_-80_-20ms,2,3,66.66666666666667

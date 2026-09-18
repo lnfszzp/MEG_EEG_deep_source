@@ -1103,6 +1103,21 @@ np.savez_compressed(
     **time_npz,
 )
 
+# 逐 run 源图单独保存，后续公平比较时可让所有方法使用完全相同的 run/试次数。
+time_run_npz = {
+    f"run_{run}__{component_name}__{method_name}": source_map
+    for (run, component_name, method_name), source_map in time_run_maps.items()
+}
+np.savez_compressed(
+    save_dir / "time_domain_run_source_maps.npz",
+    vertices_lh=source_vertices[0],
+    vertices_rh=source_vertices[1],
+    source_xyz=source_xyz,
+    right_precentral_mask=roi_masks["right_precentral"],
+    right_postcentral_mask=roi_masks["right_postcentral"],
+    **time_run_npz,
+)
+
 
 #%%
 # ==================== 13. 保存 DICS 指标，明确输出 beta PMBR ====================

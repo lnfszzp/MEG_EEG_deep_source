@@ -24,9 +24,9 @@ result_dir = (
     / "sub-sm09_finger_dual_chain"
 )
 
-time_file = result_dir / "time_domain_pooled_source_maps.npz"
+time_file = result_dir / "time_domain_run_source_maps.npz"
 dics_file = result_dir / "dics_pooled_source_maps.npz"
-assert time_file.is_file(), f"找不到时域源图：{time_file}"
+assert time_file.is_file(), f"找不到逐 run 时域源图，请先重跑脚本 5：{time_file}"
 assert dics_file.is_file(), f"找不到频域源图：{dics_file}"
 assert (subjects_dir / subject).is_dir(), f"找不到 sample 解剖：{subjects_dir}"
 
@@ -38,44 +38,161 @@ mne.set_log_level("warning")
 
 
 #%%
-time_maps = np.load(time_file)
+time_run_maps = np.load(time_file)
 dics_maps = np.load(dics_file)
-vertices = [time_maps["vertices_lh"], time_maps["vertices_rh"]]
+time_metrics = pd.read_csv(result_dir / "time_domain_method_comparison.csv")
+vertices = [time_run_maps["vertices_lh"], time_run_maps["vertices_rh"]]
 assert np.array_equal(vertices[0], dics_maps["vertices_lh"])
 assert np.array_equal(vertices[1], dics_maps["vertices_rh"])
 
-brain_jobs = [
+methods = ("OASTER-ERP", "dSPM", "eLORETA")
+components = (
+    ("MF_response_-80_-20ms", "MF：-80~-20 ms"),
+    ("MEFI_response_20_60ms", "MEFI：20~60 ms"),
+    ("MEFII_response_120_180ms", "MEFII：120~180 ms"),
+)
+single_run_metrics = time_metrics[
+    time_metrics["aggregation"].astype(str) == "single_run"
+].copy()
+single_run_metrics["run"] = single_run_metrics["run"].astype(int)
+oaster_detection = single_run_metrics[
+    single_run_metrics["method"] == "OASTER-ERP"
+].drop_duplicates(["component", "run"])[
+    ["component", "run", "localization_available"]
+]
+oaster_detection["localization_available"] = (
+    oaster_detection["localization_available"].astype(str).str.lower().eq("true")
+)
+oaster_detection = oaster_detection.groupby("component", as_index=False).agg(
+    successful_runs=("localization_available", "sum"),
+    total_runs=("run", "nunique"),
+)
+oaster_detection["success_rate_pct"] = (
+    100.0 * oaster_detection["successful_runs"] / oaster_detection["total_runs"]
+)
+oaster_detection.to_csv(
+    result_dir / "oaster_detection_rate.csv",
+    index=False,
+    encoding="utf-8-sig",
+)
+oaster_detection_by_component = oaster_detection.set_index("component")
+
+# 每一行先求三种方法共同可定位的 run，再用相同试次数权重聚合。
+matched_maps = {}
+matched_rows = []
+matched_summary = {}
+source_xyz = time_run_maps["source_xyz"]
+roi_masks = {
+    "right_precentral": time_run_maps["right_precentral_mask"].astype(bool),
+    "right_postcentral": time_run_maps["right_postcentral_mask"].astype(bool),
+}
+for component, component_title in components:
+    component_metrics = single_run_metrics[single_run_metrics["component"] == component]
+    candidate_runs = sorted(component_metrics["run"].unique())
+    common_runs = []
+    for run in candidate_runs:
+        all_methods_available = True
+        for method in methods:
+            available = component_metrics[
+                (component_metrics["run"] == run)
+                & (component_metrics["method"] == method)
+            ]["localization_available"]
+            available = available.astype(str).str.lower().eq("true")
+            all_methods_available &= bool(len(available)) and bool(available.all())
+        if all_methods_available:
+            common_runs.append(int(run))
+    assert common_runs, f"{component} 没有三种方法共同可比较的 run"
+
+    run_weights = []
+    for run in common_runs:
+        trial_counts = component_metrics[
+            component_metrics["run"] == run
+        ]["n_trials"].unique()
+        assert len(trial_counts) == 1, f"{component} run-{run} 三法试次数不一致"
+        run_weights.append(trial_counts[0])
+    run_weights = np.asarray(run_weights, dtype=float)
+    matched_summary[component] = {
+        "title": component_title,
+        "runs": common_runs,
+        "n_trials": int(run_weights.sum()),
+    }
+    for method in methods:
+        run_maps = np.asarray([
+            time_run_maps[f"run_{run}__{component}__{method}"]
+            for run in common_runs
+        ])
+        source_map = np.sqrt(np.average(run_maps**2, axis=0, weights=run_weights))
+        matched_maps[(component, method)] = source_map
+        peak_index = int(np.argmax(source_map))
+        source_power = source_map**2
+        total_power = float(source_power.sum())
+        for roi, roi_mask in roi_masks.items():
+            roi_power = float(source_power[roi_mask].sum())
+            matched_rows.append({
+                "component": component,
+                "method": method,
+                "matched_runs": ";".join(str(run) for run in common_runs),
+                "n_trials": int(run_weights.sum()),
+                "comparison_scope": "conditional_on_common_successful_runs",
+                "oaster_successful_runs": int(
+                    oaster_detection_by_component.loc[component, "successful_runs"]
+                ),
+                "oaster_total_runs": int(
+                    oaster_detection_by_component.loc[component, "total_runs"]
+                ),
+                "oaster_success_rate_pct": float(
+                    oaster_detection_by_component.loc[component, "success_rate_pct"]
+                ),
+                "roi": roi,
+                "roi_mass_pct": 100.0 * roi_power / total_power,
+                "roi_enrichment": (roi_power / total_power) / float(roi_mask.mean()),
+                "peak_distance_to_roi_mm": float(
+                    np.min(np.linalg.norm(
+                        source_xyz[roi_mask] - source_xyz[peak_index], axis=1
+                    )) * 1000.0
+                ),
+            })
+
+matched_metrics = pd.DataFrame(matched_rows)
+matched_metrics.to_csv(
+    result_dir / "time_domain_matched_method_comparison.csv",
+    index=False,
+    encoding="utf-8-sig",
+)
+matched_npz = {
+    f"{component}__{method}": source_map
+    for (component, method), source_map in matched_maps.items()
+}
+np.savez_compressed(
+    result_dir / "time_domain_matched_source_maps.npz",
+    vertices_lh=vertices[0],
+    vertices_rh=vertices[1],
+    **matched_npz,
+)
+
+time_brain_jobs = []
+for component, component_title in components:
+    summary = matched_summary[component]
+    runs_text = ",".join(str(run) for run in summary["runs"])
+    for method in methods:
+        time_brain_jobs.append((
+            f"matched_{component}_{method}",
+            f"{component_title}\n{method}（runs {runs_text}；n={summary['n_trials']}）",
+            matched_maps[(component, method)],
+        ))
+dics_brain_jobs = [
     (
-        "01_OASTER_MF",
-        "OASTER-ERP：运动前 MF（-80~-20 ms）",
-        time_maps["MF_response_-80_-20ms__OASTER-ERP"],
-    ),
-    (
-        "02_eLORETA_MF",
-        "eLORETA：运动前 MF（-80~-20 ms）",
-        time_maps["MF_response_-80_-20ms__eLORETA"],
-    ),
-    (
-        "03_dSPM_MEFI",
-        "dSPM：运动后 MEFI（20~60 ms）",
-        time_maps["MEFI_response_20_60ms__dSPM"],
-    ),
-    (
-        "04_eLORETA_MEFI",
-        "eLORETA：运动后 MEFI（20~60 ms）",
-        time_maps["MEFI_response_20_60ms__eLORETA"],
-    ),
-    (
-        "05_DICS_beta_ERD",
+        "DICS_beta_ERD",
         "DICS：beta-ERD（-400~200 ms）",
         np.maximum(dics_maps["beta_15_30Hz__ERD"], 0.0),
     ),
     (
-        "06_DICS_beta_PMBR",
+        "DICS_beta_PMBR",
         "DICS：beta-PMBR（500~1000 ms）",
         np.maximum(dics_maps["beta_15_30Hz__PMBR"], 0.0),
     ),
 ]
+brain_jobs = time_brain_jobs + dics_brain_jobs
 
 
 #%%
@@ -127,68 +244,72 @@ for file_stem, title, source_map in brain_jobs:
 
 
 #%%
-figure, axes = plt.subplots(2, 3, figsize=(16.0, 9.8), layout="constrained")
-for axis, (image_file, title) in zip(axes.ravel(), brain_image_files):
+figure, axes = plt.subplots(3, 3, figsize=(15.5, 14.0), layout="constrained")
+for axis, (image_file, title) in zip(axes.ravel(), brain_image_files[:9]):
     axis.imshow(plt.imread(image_file))
     axis.set_title(title, fontsize=13)
     axis.axis("off")
 
 figure.suptitle(
-    "ds006035 sub-sm09 左指运动源定位：完整 pial 俯视图",
+    "ds006035 sub-sm09：同一时间窗、同一 run 与试次的时域比较",
     fontsize=17,
 )
 figure.text(
     0.5,
     0.006,
-    "三 run 独立 forward/inverse 后聚合；显示阈值为各图 P95，仅用于展示；当前使用 sample 模板解剖。",
+    "每行三法使用相同 response-lock 窗与匹配 runs；逐图峰值归一化并使用 P95，仅定性比较峰位和空间模式。"
+    " OASTER 全 run 成功率：MF 2/3，MEFI 3/3，MEFII 2/3。",
     ha="center",
     fontsize=10,
     color="#444444",
 )
-montage_file = result_dir / "finger_localization_pial_dorsal_montage.png"
-figure.savefig(montage_file, dpi=220, bbox_inches="tight", facecolor="white")
+time_montage_file = result_dir / "time_domain_same_window_pial_dorsal_montage.png"
+figure.savefig(time_montage_file, dpi=220, bbox_inches="tight", facecolor="white")
 plt.close(figure)
 
-assert len(brain_image_files) == 6
-assert montage_file.is_file()
-print("俯视脑图总览：", montage_file)
+figure, axes = plt.subplots(1, 2, figsize=(11.0, 5.5), layout="constrained")
+for axis, (image_file, title) in zip(axes.ravel(), brain_image_files[9:]):
+    axis.imshow(plt.imread(image_file))
+    axis.set_title(title, fontsize=13)
+    axis.axis("off")
+figure.suptitle("beta 频域定位（补充证据，不与 ERP 方法作优劣比较）", fontsize=16)
+dics_montage_file = result_dir / "dics_beta_pial_dorsal_montage.png"
+figure.savefig(dics_montage_file, dpi=220, bbox_inches="tight", facecolor="white")
+plt.close(figure)
+
+assert len(brain_image_files) == 11
+assert time_montage_file.is_file()
+assert dics_montage_file.is_file()
+print("同窗、同 run、同试次时域比较：", time_montage_file)
+print("DICS 频域图：", dics_montage_file)
+print("OASTER 定位成功率：", result_dir / "oaster_detection_rate.csv")
 
 
 #%%
 # 只画三个 response-lock 主终点；旧的 Stim-M1 行保留在原始 CSV 中供审计。
-primary_components = [
-    "MF_response_-80_-20ms",
-    "MEFI_response_20_60ms",
-    "MEFII_response_120_180ms",
-]
+primary_components = [component for component, _ in components]
 primary_labels = ["MF\n-80~-20", "MEFI\n20~60", "MEFII\n120~180"]
 method_colors = {
     "OASTER-ERP": "#0072B2",
     "dSPM": "#D55E00",
     "eLORETA": "#009E73",
 }
-time_metrics = pd.read_csv(result_dir / "time_domain_method_comparison.csv")
-primary_metrics = time_metrics[
-    time_metrics["component"].isin(primary_components)
-].copy()
-primary_metrics.to_csv(
+matched_metrics.to_csv(
     result_dir / "time_domain_primary_metrics.csv",
     index=False,
     encoding="utf-8-sig",
 )
-pooled = primary_metrics[
-    primary_metrics["run"].astype(str) == "pooled_1_2_3"
-]
 
 figure, axes = plt.subplots(2, 2, figsize=(13.5, 8.8), sharex=True, layout="constrained")
+figure.get_layout_engine().set(rect=(0.0, 0.055, 1.0, 0.94))
 x = np.arange(len(primary_components), dtype=float)
 for column, (roi, roi_title) in enumerate((
     ("right_precentral", "右侧 precentral（M1）"),
     ("right_postcentral", "右侧 postcentral（S1）"),
 )):
     for method, color in method_colors.items():
-        selected = pooled[
-            (pooled["roi"] == roi) & (pooled["method"] == method)
+        selected = matched_metrics[
+            (matched_metrics["roi"] == roi) & (matched_metrics["method"] == method)
         ].set_index("component").loc[primary_components]
         axes[0, column].plot(
             x, selected["roi_enrichment"], marker="o", linewidth=2.0,
@@ -209,8 +330,16 @@ for axis in axes.ravel():
     axis.spines[["top", "right"]].set_visible(False)
 axes[0, 0].legend(frameon=False, ncol=3, loc="upper left")
 figure.suptitle(
-    "sub-sm09 三 run 左指运动：response-lock 主终点",
+    "sub-sm09 左指运动：同窗、同 run、同试次的 response-lock 主终点",
     fontsize=15,
+)
+figure.text(
+    0.5,
+    0.005,
+    "共同成功 run 上的条件性定位指标；OASTER 全 run 成功率：MF 2/3，MEFI 3/3，MEFII 2/3。",
+    ha="center",
+    fontsize=10,
+    color="#444444",
 )
 primary_figure_file = result_dir / "time_domain_primary_method_comparison.png"
 figure.savefig(primary_figure_file, dpi=220, bbox_inches="tight", facecolor="white")

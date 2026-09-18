@@ -14,8 +14,8 @@
 
 | 链路 | 主要数值 | 判断 |
 |---|---:|---|
-| eLORETA，MF -80~-20 ms | 右 precentral 富集 1.86；峰距 5.3 mm | 支持运动前右侧中央区活动 |
-| dSPM，MF -80~-20 ms | 右 precentral 富集 1.61；峰距 12.1 mm | 与 eLORETA 方向一致 |
+| eLORETA，MF -80~-20 ms（匹配 runs 1、3） | 右 precentral 富集 1.66；峰距 5.3 mm | 支持运动前右侧中央区活动 |
+| dSPM，MF -80~-20 ms（匹配 runs 1、3） | 右 precentral 富集 1.49；峰距 15.4 mm | 与 eLORETA 方向一致 |
 | dSPM，MEFI 20~60 ms | 右 precentral 富集 2.98；峰位于 precentral | 清楚，但不把它单独解释成纯感觉反馈 |
 | eLORETA，MEFI 20~60 ms | 右 postcentral 富集 3.43；峰位于 postcentral | 最符合运动后感觉反馈 |
 | DICS，beta-ERD | 右 precentral 富集 17.49、质量 54.7%；右 postcentral 富集 4.25 | 强烈支持右侧感觉运动网络 |
@@ -34,6 +34,8 @@ MEFII 的 pooled 全局峰落到左 posterior-cingulate/superior-frontal，尽�
 1. response-lock 的 MF/MEFI 用 dSPM、eLORETA定位锁相运动场；
 2. beta-ERD 与 beta-PMBR 用共同滤波器 DICS 定位非锁相感觉运动功率；
 3. OASTER-ERP 保留为对照，在解决跨窗固定模板问题前不用于宣称运动皮层定位成功。
+
+算法的脑图比较使用 `time_domain_same_window_pial_dorsal_montage.png`：每一行固定同一个 response-lock 时间窗，并先取 OASTER-ERP、dSPM、eLORETA 三法共同可定位的 run，再让三法用相同 run 和相同试次数权重聚合。MF/MEFII 匹配 runs 1、3（n=75），MEFI 匹配 runs 1–3（n=113）。各方法量纲不同，因此分别做峰值归一化并使用 P95 显示规则；该图只定性比较峰位和空间模式，不比较振幅或激活范围。定量比较见 `time_domain_matched_method_comparison.csv`；OASTER 未通过 EBIC 的 run 另见 `oaster_detection_rate.csv`，不能在共同集比较中被隐去。DICS 结果保存在 `dics_beta_pial_dorsal_montage.png`，只作为频域补充证据，不与 ERP 方法直接排名。
 
 ## 限制
 

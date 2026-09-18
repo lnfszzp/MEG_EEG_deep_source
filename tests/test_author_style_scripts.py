@@ -68,6 +68,8 @@ def test_finger_dual_chain_has_safe_pairing_and_both_inverse_chains():
     assert "require_one=False" in source
     assert 'peak_label = "not_localized"' in source
     assert "if not time_run_available[key]" in source
+    assert 'time_domain_run_source_maps.npz' in source
+    assert 'right_precentral_mask=roi_masks["right_precentral"]' in source
     assert 'oaster_window_diagnostics.csv' in source
     assert 'method="dSPM"' in source
     assert 'method="eLORETA"' in source
@@ -85,7 +87,16 @@ def test_finger_brain_render_reads_saved_maps_without_recomputing_inverse():
     assert 'views="dorsal"' in source
     assert 'surface="pial"' in source
     assert 'brain.save_image' in source
-    assert 'finger_localization_pial_dorsal_montage.png' in source
+    assert 'time_domain_same_window_pial_dorsal_montage.png' in source
+    assert 'dics_beta_pial_dorsal_montage.png' in source
+    assert 'brain_image_files[:9]' in source
+    assert 'time_domain_matched_source_maps.npz' in source
+    assert 'time_domain_matched_method_comparison.csv' in source
+    assert 'oaster_detection_rate.csv' in source
+    assert 'conditional_on_common_successful_runs' in source
+    assert '三法试次数不一致' in source
+    assert 'common_runs' in source
+    assert '同一时间窗、同一 run 与试次' in source
     assert 'time_domain_primary_method_comparison.png' in source
     assert 'make_forward_solution' not in source
     assert 'apply_inverse' not in source
