@@ -55,6 +55,20 @@ class UserMetricsRegressionTest(unittest.TestCase):
             DLE_an(deep_source, [np.array([2])], deep_positions, index_base=1), 0.0
         )
 
+    def test_dle_is_undefined_when_one_true_group_has_no_estimated_energy(self):
+        positions = np.c_[np.arange(4, dtype=float), np.zeros((4, 2))]
+        source = np.array([[1.0], [0.0], [0.0], [0.0]])
+        self.assertTrue(
+            np.isnan(
+                DLE_an(
+                    source,
+                    [np.array([0]), np.array([3])],
+                    positions,
+                    index_base=0,
+                )
+            )
+        )
+
     def test_mesh_adjacency_formats_and_small_disconnected_parcels(self):
         vertices = np.zeros((4, 3))
         sparse_graph = sparse.eye(4, format="csr")

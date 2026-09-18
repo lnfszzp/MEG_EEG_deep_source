@@ -32,6 +32,8 @@ ERP_NULL_QUANTILE = 0.99
 ERP_MAX_TEMPORAL_RANK = 3
 ERP_MAX_TEMPLATES = 6
 ERP_DEEP_EBIC_DELTA = -6.0
+ERP_TIME_EVIDENCE_FRACTION = 0.05
+ERP_V2_DEEP_RESCUE_DELTA = -6.0
 
 
 # Recovered exact from the later protected_multilayer.py transcript fragment.
@@ -285,7 +287,13 @@ def _ebic_templates(
     kernels,
     basis: np.ndarray,
     ridge_fraction: float = RIDGE_FRACTION,
-) -> tuple[np.ndarray, int]:
+    *,
+    max_templates: int | None = None,
+    max_deep: int | None = None,
+    require_one: bool = False,
+    return_details: bool = False,
+    conditional_drops: bool = False,
+):
     """Greedily select 0/4/7-mm surface or deep templates until EBIC stops."""
     data = np.asarray(data, dtype=float)
     leadfield = np.asarray(leadfield, dtype=float)
@@ -298,8 +306,14 @@ def _ebic_templates(
         raise ValueError("n_surf is outside the leadfield source axis")
 
     result = np.zeros((leadfield.shape[1], data.shape[1]))
+    empty_details = {
+        "selected": [],
+        "score_deltas": [],
+        "initial_score": math.inf,
+        "final_score": math.inf,
+    }
     if basis.size == 0:
-        return result, 0
+        return (result, 0, empty_details) if return_details else (result, 0)
     reduced = data @ basis.T
     surface = [
         (kernel, np.asarray(leadfield[:, :n_surf] @ kernel))
@@ -310,16 +324,46 @@ def _ebic_templates(
         candidates.append(leadfield[:, n_surf:])
     norms = [np.maximum(np.sum(gain**2, axis=0), 1e-30) for gain in candidates]
     selected: list[tuple[int, int]] = []
+    score_deltas: list[float] = []
     columns: list[np.ndarray] = []
     residual = reduced.copy()
     n_obs = reduced.size
     universe = sum(gain.shape[1] for gain in candidates)
     score = n_obs * np.log(np.sum(residual**2) / n_obs + np.finfo(float).eps)
+    initial_score = float(score)
 
-    while len(columns) < min(reduced.shape):
+    limit = min(reduced.shape)
+    if max_templates is not None:
+        limit = min(limit, int(max_templates))
+    while len(columns) < limit:
+        if conditional_drops and columns:
+            design = np.column_stack(columns)
+            orthogonal = np.linalg.qr(design, mode="reduced")[0]
+        else:
+            orthogonal = np.empty((reduced.shape[0], 0))
         best = None
         for family, gain in enumerate(candidates):
-            drops = np.sum((gain.T @ residual) ** 2, axis=1) / norms[family]
+            if (
+                family == len(surface)
+                and max_deep is not None
+                and sum(old_family == family for old_family, _old_index in selected)
+                >= int(max_deep)
+            ):
+                continue
+            if conditional_drops:
+                conditional_gain = gain - orthogonal @ (orthogonal.T @ gain)
+                conditional_norm = np.sum(conditional_gain**2, axis=0)
+                tolerance = (
+                    np.finfo(float).eps * float(conditional_norm.max(initial=0.0))
+                )
+                valid = conditional_norm > tolerance
+                drops = np.full(gain.shape[1], -np.inf)
+                drops[valid] = (
+                    np.sum((conditional_gain[:, valid].T @ residual) ** 2, axis=1)
+                    / conditional_norm[valid]
+                )
+            else:
+                drops = np.sum((gain.T @ residual) ** 2, axis=1) / norms[family]
             for old_family, old_index in selected:
                 old = candidates[old_family][:, old_index]
                 correlation = np.abs(gain.T @ old) / np.sqrt(
@@ -343,15 +387,26 @@ def _ebic_templates(
             + count * basis.shape[0] * np.log(n_obs)
             + 2.0 * count * np.log(universe)
         )
-        if trial_score >= score:
+        score_delta = float(trial_score - score)
+        forced_single = bool(score_delta >= 0.0 and not columns and require_one)
+        if trial_score >= score and not forced_single:
             break
         score = trial_score
         selected.append((family, index))
+        score_deltas.append(score_delta)
         columns.append(candidates[family][:, index])
         residual = trial_residual
+        if forced_single:
+            break
 
     if not columns:
-        return result, 0
+        details = {
+            "selected": [],
+            "score_deltas": [],
+            "initial_score": initial_score,
+            "final_score": float(score),
+        }
+        return (result, 0, details) if return_details else (result, 0)
     design = np.column_stack(columns)
     gram = design.T @ design
     ridge = max(float(ridge_fraction) * np.trace(gram) / len(columns), 1e-12)
@@ -364,7 +419,13 @@ def _ebic_templates(
             result[:n_surf] += spatial[:, None] * coefficients[row]
         else:
             result[n_surf + index] += coefficients[row]
-    return result, len(selected)
+    details = {
+        "selected": list(selected),
+        "score_deltas": score_deltas,
+        "initial_score": initial_score,
+        "final_score": float(score),
+    }
+    return (result, len(selected), details) if return_details else (result, len(selected))
 
 
 def reconstruct_from_whitened(
@@ -653,7 +714,112 @@ def _evoked_ebic_surface_templates(
     return selected, design, float(score), score_deltas
 
 
-def reconstruct_evoked_oaster_from_whitened(
+def _evoked_multiscale_time_evidence(
+    data: np.ndarray,
+    leadfield: np.ndarray,
+    n_surf: int,
+    surface_kernel: sparse.spmatrix,
+    *,
+    baseline: np.ndarray,
+    active: np.ndarray,
+) -> tuple[np.ndarray, dict]:
+    """Make continuous signed evidence from active-over-baseline projections."""
+    data = np.asarray(data, dtype=float)
+    leadfield = np.asarray(leadfield, dtype=float)
+    baseline = np.asarray(baseline, dtype=bool).ravel()
+    active = np.asarray(active, dtype=bool).ravel()
+    if data.ndim != 2 or leadfield.ndim != 2 or data.shape[0] != leadfield.shape[0]:
+        raise ValueError("data and leadfield must share the channel axis")
+    if baseline.size != data.shape[1] or active.size != data.shape[1]:
+        raise ValueError("baseline and active must match the data time axis")
+    if not baseline.any() or not active.any() or np.any(baseline & active):
+        raise ValueError("baseline and active must be non-empty and disjoint")
+    if surface_kernel.shape != (n_surf, n_surf):
+        raise ValueError("surface_kernel must match n_surf")
+
+    surface_gain = np.asarray(leadfield[:, :n_surf] @ surface_kernel)
+    template_gain = np.column_stack((surface_gain, leadfield[:, n_surf:]))
+    norm = np.maximum(np.linalg.norm(template_gain, axis=0), np.finfo(float).eps)
+    projection = (template_gain.T @ data) / norm[:, None]
+    baseline_power = np.mean(projection[:, baseline] ** 2, axis=1)
+    active_power = np.mean(projection[:, active] ** 2, axis=1)
+    standard_error = np.sqrt(
+        2.0
+        * baseline_power**2
+        * (1.0 / int(np.sum(baseline)) + 1.0 / int(np.sum(active)))
+    )
+    scores = np.maximum(active_power - baseline_power, 0.0) / np.maximum(
+        standard_error, np.finfo(float).eps
+    )
+    coefficients = projection / norm[:, None]
+    active_norm = np.linalg.norm(coefficients[:, active], axis=1)
+    coefficients *= scores[:, None] / np.maximum(
+        active_norm, np.finfo(float).eps
+    )[:, None]
+    evidence = np.vstack(
+        (surface_kernel @ coefficients[:n_surf], coefficients[n_surf:])
+    )
+    return evidence, {
+        "positive_candidates": int(np.sum(scores > 0.0)),
+        "score_max": float(scores.max(initial=0.0)),
+        "score_median_positive": float(np.median(scores[scores > 0.0]))
+        if np.any(scores > 0.0)
+        else 0.0,
+    }
+
+
+def _add_scaled_evoked_evidence(
+    primary: np.ndarray,
+    evidence: np.ndarray,
+    fraction: float,
+    active: np.ndarray,
+    *,
+    n_surf: int | None = None,
+) -> tuple[np.ndarray, dict]:
+    """Fuse signed ERP evidence at a fixed fraction of the sparse active peak."""
+    primary = np.asarray(primary, dtype=float)
+    evidence = np.asarray(evidence, dtype=float)
+    active = np.asarray(active, dtype=bool).ravel()
+    if primary.shape != evidence.shape or primary.ndim != 2:
+        raise ValueError("primary and evidence must have the same source-matrix shape")
+    if active.size != primary.shape[1] or not active.any():
+        raise ValueError("active must be a non-empty mask on the time axis")
+    if not np.isfinite(fraction) or not 0.0 <= fraction <= 1.0:
+        raise ValueError("fraction must be finite and between zero and one")
+    if n_surf is not None and not 0 < int(n_surf) <= primary.shape[0]:
+        raise ValueError("n_surf is outside the source axis")
+    primary_peak = float(np.linalg.norm(primary[:, active], axis=1).max(initial=0.0))
+    evidence_peak = float(np.linalg.norm(evidence[:, active], axis=1).max(initial=0.0))
+    boundaries = (
+        ((0, primary.shape[0]),)
+        if n_surf is None or int(n_surf) == primary.shape[0]
+        else ((0, int(n_surf)), (int(n_surf), primary.shape[0]))
+    )
+    fused = primary.copy()
+    scales = []
+    peaks = []
+    for start, stop in boundaries:
+        layer_peak = float(
+            np.linalg.norm(evidence[start:stop, active], axis=1).max(initial=0.0)
+        )
+        scale = (
+            fraction * primary_peak / layer_peak
+            if layer_peak > 0.0 and primary_peak > 0.0 and fraction > 0.0
+            else 0.0
+        )
+        fused[start:stop] += scale * evidence[start:stop]
+        peaks.append(layer_peak)
+        scales.append(float(scale))
+    return fused, {
+        "primary_active_peak": primary_peak,
+        "evidence_active_peak": evidence_peak,
+        "evidence_scale": max(scales, default=0.0),
+        "evidence_layer_peaks": peaks,
+        "evidence_layer_scales": scales,
+    }
+
+
+def _reconstruct_evoked_oaster_from_whitened(
     data: np.ndarray,
     leadfield: np.ndarray,
     n_surf: int,
@@ -665,6 +831,9 @@ def reconstruct_evoked_oaster_from_whitened(
     ridge_fraction: float = RIDGE_FRACTION,
     max_templates: int = ERP_MAX_TEMPLATES,
     require_one: bool = False,
+    joint_selection: bool = False,
+    evidence_fraction: float = 0.0,
+    joint_deep_rescue_delta: float = ERP_V2_DEEP_RESCUE_DELTA,
 ) -> tuple[np.ndarray, dict]:
     """Run the sparse multiscale OASTER core on phase-locked evoked responses.
 
@@ -686,6 +855,12 @@ def reconstruct_evoked_oaster_from_whitened(
         raise ValueError("n_surf is outside the leadfield source axis")
     if not np.isfinite(ridge_fraction) or ridge_fraction < 0.0:
         raise ValueError("ridge_fraction must be finite and non-negative")
+    if not np.isfinite(evidence_fraction) or not 0.0 <= evidence_fraction <= 1.0:
+        raise ValueError("evidence_fraction must be finite and between zero and one")
+    if not np.isfinite(joint_deep_rescue_delta):
+        raise ValueError("joint_deep_rescue_delta must be finite")
+    if joint_selection and int(max_templates) < 1:
+        raise ValueError("max_templates must be positive")
     kernels = tuple(kernels)
     if not kernels:
         raise ValueError("at least one surface kernel is required")
@@ -723,9 +898,13 @@ def reconstruct_evoked_oaster_from_whitened(
     surface_gains = tuple(
         np.asarray(leadfield[:, :n_surf] @ kernel) for _scale, kernel in kernels
     )
+    kernel_by_scale = dict(kernels)
+    if joint_selection and evidence_fraction > 0.0 and 4.0 not in kernel_by_scale:
+        raise ValueError("v2 time-domain evidence requires a 4-mm surface kernel")
     universe = int(sum(gain.shape[1] for gain in surface_gains))
     universe += int(leadfield.shape[1] - n_surf)
     selected_by_window: list[list[tuple[int, int]]] = []
+    evidence_by_window: list[np.ndarray] = []
     window_diagnostics = []
 
     for window_number, (window, weights) in enumerate(zip(windows, channel_weights)):
@@ -738,16 +917,63 @@ def reconstruct_evoked_oaster_from_whitened(
             weighted_data, baseline, window
         )
         reduced = weighted_data @ basis.T
-        selected, design, score, score_deltas = _evoked_ebic_surface_templates(
-            reduced,
-            weighted_surface_gains,
-            universe=universe,
-            max_templates=max_templates,
-            require_one=require_one,
-        ) if basis.size else ([], np.empty((data.shape[0], 0)), math.inf, [])
         deep_local = -1
         deep_delta = math.inf
-        if basis.size and n_surf < leadfield.shape[1]:
+        if joint_selection and basis.size:
+            _primary, _count, joint_details = _ebic_templates(
+                weighted_data,
+                weighted_leadfield,
+                n_surf,
+                kernels,
+                basis,
+                ridge_fraction,
+                max_templates=max_templates,
+                max_deep=1,
+                require_one=require_one,
+                return_details=True,
+                conditional_drops=True,
+            )
+            selected = list(joint_details["selected"])
+            score_deltas = list(joint_details["score_deltas"])
+            for (family, index), delta in zip(selected, score_deltas):
+                if family == len(kernels):
+                    deep_local = int(index)
+                    deep_delta = float(delta)
+                    break
+            design = (
+                np.column_stack([
+                    weighted_surface_gains[family][:, index]
+                    if family < len(kernels)
+                    else weighted_leadfield[:, n_surf + index]
+                    for family, index in selected
+                ])
+                if selected
+                else np.empty((data.shape[0], 0))
+            )
+            score = float(joint_details["final_score"])
+        else:
+            selected, design, score, score_deltas = (
+                _evoked_ebic_surface_templates(
+                    reduced,
+                    weighted_surface_gains,
+                    universe=universe,
+                    max_templates=max_templates,
+                    require_one=require_one,
+                )
+                if basis.size
+                else ([], np.empty((data.shape[0], 0)), math.inf, [])
+            )
+        deep_rescue_attempted = False
+        deep_rescue_accepted = False
+        deep_already_selected = any(
+            family == len(kernels) for family, _index in selected
+        )
+        if (
+            basis.size
+            and n_surf < leadfield.shape[1]
+            and (not joint_selection or not deep_already_selected)
+        ):
+            deep_rescue_attempted = bool(joint_selection)
             if design.shape[1]:
                 coefficients = np.linalg.lstsq(design, reduced, rcond=None)[0]
                 residual = reduced - design @ coefficients
@@ -778,17 +1004,39 @@ def reconstruct_evoked_oaster_from_whitened(
                     + 2.0 * count * math.log(universe)
                 )
                 deep_delta = float(trial_score - score)
-                if deep_delta < ERP_DEEP_EBIC_DELTA:
+                threshold = (
+                    float(joint_deep_rescue_delta)
+                    if joint_selection
+                    else ERP_DEEP_EBIC_DELTA
+                )
+                if deep_delta < threshold:
                     selected.append((len(kernels), deep_local))
+                    deep_rescue_accepted = bool(joint_selection)
+        if joint_selection and evidence_fraction > 0.0:
+            evidence, evidence_diagnostics = _evoked_multiscale_time_evidence(
+                weighted_data,
+                weighted_leadfield,
+                n_surf,
+                kernel_by_scale[4.0],
+                baseline=baseline,
+                active=window,
+            )
+            evidence_by_window.append(evidence)
+        else:
+            evidence_diagnostics = None
         selected_by_window.append(selected)
-        window_diagnostics.append({
+        window_information = {
             "window": window_number,
             **basis_diagnostics,
             "channel_weight_min": float(weights.min()),
             "channel_weight_max": float(weights.max()),
             "weighted_channels": int(np.sum(weights > 0.0)),
             "selected_surface_templates": int(sum(family < len(kernels) for family, _ in selected)),
-            "surface_ebic_deltas": score_deltas,
+            "surface_ebic_deltas": [
+                delta
+                for (family, _index), delta in zip(selected, score_deltas)
+                if family < len(kernels)
+            ],
             "selected_templates": [
                 {
                     "layer": "surface" if family < len(kernels) else "deep",
@@ -799,8 +1047,31 @@ def reconstruct_evoked_oaster_from_whitened(
             ],
             "deep_candidate_local": deep_local,
             "deep_ebic_delta": deep_delta,
-            "deep_accepted": bool(selected and selected[-1] == (len(kernels), deep_local)),
-        })
+            "deep_accepted": any(
+                family == len(kernels) and index == deep_local
+                for family, index in selected
+            ),
+        }
+        if joint_selection:
+            window_information.update({
+                "selection": "joint_surface_deep_ebic",
+                "joint_ebic_deltas": score_deltas,
+                "first_selected_layer": (
+                    "surface"
+                    if selected and selected[0][0] < len(kernels)
+                    else "deep"
+                    if selected
+                    else None
+                ),
+                "deep_rescue_attempted": deep_rescue_attempted,
+                "deep_rescue_accepted": deep_rescue_accepted,
+                "deep_rescue_ebic_delta": deep_delta
+                if deep_rescue_attempted
+                else math.inf,
+                "deep_rescue_ebic_threshold": float(joint_deep_rescue_delta),
+                "time_evidence": evidence_diagnostics,
+            })
+        window_diagnostics.append(window_information)
 
     estimate = np.zeros((leadfield.shape[1], data.shape[1]))
     baseline_estimates = []
@@ -853,7 +1124,24 @@ def reconstruct_evoked_oaster_from_whitened(
     if baseline_estimates:
         estimate[:, baseline] = np.mean(baseline_estimates, axis=0)
 
-    return estimate, {
+    if joint_selection and evidence_fraction > 0.0:
+        time_evidence = np.zeros_like(estimate)
+        evidence_baselines = []
+        for window, evidence in zip(windows, evidence_by_window):
+            time_evidence[:, window] = evidence[:, window]
+            evidence_baselines.append(evidence[:, baseline])
+        time_evidence[:, baseline] = np.mean(evidence_baselines, axis=0)
+        estimate, evidence_fusion = _add_scaled_evoked_evidence(
+            estimate,
+            time_evidence,
+            evidence_fraction,
+            occupied,
+            n_surf=n_surf,
+        )
+    else:
+        evidence_fusion = None
+
+    diagnostics = {
         "mode": "signed_multiscale_erp_ebic",
         "surface_scales_mm": [float(scale) for scale, _kernel in kernels],
         "selected_templates": int(selected_total),
@@ -864,6 +1152,82 @@ def reconstruct_evoked_oaster_from_whitened(
         "require_one": bool(require_one),
         "windows": window_diagnostics,
     }
+    if joint_selection:
+        diagnostics.update({
+            "mode": "signed_multiscale_erp_joint_ebic_v2",
+            "selection": "joint_surface_deep_from_first_step",
+            "conditional_candidate_drops": True,
+            "joint_search_template_cap_per_window": int(max_templates),
+            "deep_rescue_can_add_one_template": True,
+            "max_templates_per_window": int(max_templates) + 1,
+            "max_deep_templates_per_window": 1,
+            "time_evidence_fraction": float(evidence_fraction),
+            "time_evidence_surface_scale_mm": 4.0,
+            "time_evidence_layer_balanced": True,
+            "time_evidence_fusion": evidence_fusion,
+        })
+    return estimate, diagnostics
+
+
+def reconstruct_evoked_oaster_from_whitened(
+    data: np.ndarray,
+    leadfield: np.ndarray,
+    n_surf: int,
+    kernels,
+    *,
+    baseline: np.ndarray,
+    active_windows,
+    window_channel_weights=None,
+    ridge_fraction: float = RIDGE_FRACTION,
+    max_templates: int = ERP_MAX_TEMPLATES,
+    require_one: bool = False,
+) -> tuple[np.ndarray, dict]:
+    """Run the original surface-first sparse OASTER ERP core."""
+    return _reconstruct_evoked_oaster_from_whitened(
+        data,
+        leadfield,
+        n_surf,
+        kernels,
+        baseline=baseline,
+        active_windows=active_windows,
+        window_channel_weights=window_channel_weights,
+        ridge_fraction=ridge_fraction,
+        max_templates=max_templates,
+        require_one=require_one,
+    )
+
+
+def reconstruct_evoked_oaster_v2_from_whitened(
+    data: np.ndarray,
+    leadfield: np.ndarray,
+    n_surf: int,
+    kernels,
+    *,
+    baseline: np.ndarray,
+    active_windows,
+    window_channel_weights=None,
+    ridge_fraction: float = RIDGE_FRACTION,
+    max_templates: int = ERP_MAX_TEMPLATES,
+    require_one: bool = False,
+    evidence_fraction: float = ERP_TIME_EVIDENCE_FRACTION,
+    deep_rescue_delta: float = ERP_V2_DEEP_RESCUE_DELTA,
+) -> tuple[np.ndarray, dict]:
+    """Run ERP OASTER with joint deep/surface EBIC and continuous evidence."""
+    return _reconstruct_evoked_oaster_from_whitened(
+        data,
+        leadfield,
+        n_surf,
+        kernels,
+        baseline=baseline,
+        active_windows=active_windows,
+        window_channel_weights=window_channel_weights,
+        ridge_fraction=ridge_fraction,
+        max_templates=max_templates,
+        require_one=require_one,
+        joint_selection=True,
+        evidence_fraction=evidence_fraction,
+        joint_deep_rescue_delta=deep_rescue_delta,
+    )
 
 
 def reconstruct(

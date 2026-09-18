@@ -82,8 +82,13 @@ def _noise(
     return clean + noise, float(actual)
 
 
-def simulate_case(shared: dict, case: dict) -> tuple:
+def simulate_case(
+    shared: dict, case: dict, *, seed_root: int = ERP_SEED_ROOT
+) -> tuple:
     """Return EEG, MEG, truth, groups, masks, indices, and audit metadata."""
+    seed_root = int(seed_root)
+    if seed_root < 0:
+        raise ValueError("seed_root must be non-negative")
     times = np.asarray(shared["times"], dtype=float).ravel()
     baseline, active = _masks(times)
     surface_parts = [
@@ -150,7 +155,7 @@ def simulate_case(shared: dict, case: dict) -> tuple:
     case_key = int.from_bytes(
         hashlib.sha256(str(case["case_id"]).encode("utf-8")).digest()[:8], "little"
     )
-    eeg_seed, meg_seed = np.random.SeedSequence([ERP_SEED_ROOT, case_key]).spawn(2)
+    eeg_seed, meg_seed = np.random.SeedSequence([seed_root, case_key]).spawn(2)
     eeg_target = float(case.get("eeg_snr_db", case["snr_db"]))
     meg_target = float(case.get("meg_snr_db", case["snr_db"]))
     eeg, eeg_actual = _noise(
@@ -206,7 +211,7 @@ def simulate_case(shared: dict, case: dict) -> tuple:
         "noise_model": "colored Gaussian 40-trial-mean equivalent",
         "baseline_corrected_before_snr_scaling": True,
         "waveform_model": "phase-locked transient ERP without sinusoidal carrier",
-        "seed_root": ERP_SEED_ROOT,
+        "seed_root": seed_root,
         "seed_case_key": case_key,
     }
     return (

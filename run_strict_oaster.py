@@ -59,6 +59,8 @@ CHUNK_PATTERN = re.compile(r"^strict_(\d+)_(\d+)\.mat$")
 METRIC_FIELDS = (
     "auc",
     "auc_tie_corrected",
+    "surface_auc_tie_corrected",
+    "deep_auc_tie_corrected",
     "rmse",
     "surface_sd_mm",
     "surface_dle_mm",
@@ -70,6 +72,8 @@ METRIC_FIELDS = (
     "deep_detected",
     "deep_false_positive",
     "active_count",
+    "surface_active_count",
+    "deep_active_count",
 )
 ROW_FIELDS = (
     "manifest_sha256",
@@ -99,6 +103,8 @@ ROW_FIELDS = (
 SUMMARY_METRICS = (
     "auc",
     "auc_tie_corrected",
+    "surface_auc_tie_corrected",
+    "deep_auc_tie_corrected",
     "rmse",
     "surface_sd_mm",
     "surface_dle_mm",
@@ -111,6 +117,8 @@ SUMMARY_METRICS = (
     "deep_score",
     "deep_peak_distance_mm",
     "active_count",
+    "surface_active_count",
+    "deep_active_count",
 )
 
 
@@ -610,6 +618,8 @@ def _aggregate(rows: list[dict], penalty_mm: float) -> dict:
     for name in (
         "auc",
         "auc_tie_corrected",
+        "surface_auc_tie_corrected",
+        "deep_auc_tie_corrected",
         "rmse",
         "surface_sd_mm",
         "surface_dle_mm",
@@ -618,6 +628,8 @@ def _aggregate(rows: list[dict], penalty_mm: float) -> dict:
         "deep_score",
         "deep_peak_distance_mm",
         "active_count",
+        "surface_active_count",
+        "deep_active_count",
     ):
         result[name] = _mean(_number(row, name) for row in rows)
 

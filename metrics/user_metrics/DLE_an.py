@@ -25,6 +25,8 @@ def DLE_an(S, S0, pos, *, index_base):
     distances = []
     for index, center in enumerate(centers):
         vertices = np.flatnonzero(vertex_owner == index)
+        if not np.any(energy[vertices]):
+            return np.nan
         best = vertices[np.argmax(energy[vertices])]
         distances.append(np.linalg.norm(center - positions[best]))
     return float(np.mean(distances))

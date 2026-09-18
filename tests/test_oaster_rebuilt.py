@@ -198,6 +198,192 @@ def test_evoked_oaster_returns_empty_support_for_zero_data() -> None:
     assert diagnostics["windows"][0]["temporal_rank"] == 0
 
 
+def test_evoked_oaster_v2_lets_deep_source_compete_from_first_step() -> None:
+    rng = np.random.default_rng(19)
+    leadfield = np.eye(4)
+    data = rng.normal(scale=0.01, size=(4, 50))
+    baseline = np.arange(50) < 30
+    active = (np.arange(50) >= 34) & (np.arange(50) < 42)
+    data[3, active] += np.asarray([0.0, 1.0, 4.0, 7.0, 5.0, 2.0, 0.5, 0.0])
+
+    estimate, diagnostics = oaster.reconstruct_evoked_oaster_v2_from_whitened(
+        data,
+        leadfield,
+        3,
+        _kernels(3),
+        baseline=baseline,
+        active_windows=(active,),
+    )
+
+    assert np.argmax(np.linalg.norm(estimate[:, active], axis=1)) == 3
+    assert diagnostics["selected_deep_templates"] == 1
+    assert diagnostics["windows"][0]["first_selected_layer"] == "deep"
+    assert diagnostics["max_deep_templates_per_window"] == 1
+    assert diagnostics["conditional_candidate_drops"] is True
+
+
+def test_conditional_drops_recover_a_correlated_second_template() -> None:
+    leadfield = np.asarray(
+        [[1.0, 1.0, 0.0], [0.0, 0.25, 1.0], [0.0, 0.0, 3.0]]
+    )
+    data = np.zeros((3, 3))
+    data[:, 0] = np.asarray([20.0, 1.0, 0.0])
+    data[:, 1] = np.asarray([20.0, -1.0, 0.0])
+    basis = np.asarray([[1.0, 0.0, 0.0], [0.0, 1.0, 0.0]])
+    kernels = ((0.0, sparse.eye(3, format="csc")),)
+
+    _raw, raw_count = oaster._ebic_templates(
+        data, leadfield, 3, kernels, basis
+    )
+    _conditional, conditional_count = oaster._ebic_templates(
+        data,
+        leadfield,
+        3,
+        kernels,
+        basis,
+        conditional_drops=True,
+    )
+    _tiny, tiny_count = oaster._ebic_templates(
+        data,
+        1e-12 * leadfield,
+        3,
+        kernels,
+        basis,
+        conditional_drops=True,
+    )
+
+    assert raw_count == 1
+    assert conditional_count == 2
+    assert tiny_count == conditional_count
+
+
+def test_legacy_template_selection_keeps_tiny_observable_columns() -> None:
+    data = np.asarray([[100.0, 0.0], [0.0, 1.0]])
+    basis = np.eye(2)
+    kernels = ((0.0, sparse.eye(2, format="csc")),)
+
+    _estimate, count = oaster._ebic_templates(
+        data,
+        1e-9 * np.eye(2),
+        2,
+        kernels,
+        basis,
+    )
+
+    assert count == 2
+
+
+def test_evoked_evidence_cannot_replace_an_empty_sparse_estimate() -> None:
+    active = np.asarray([False, True, True])
+    fused, diagnostics = oaster._add_scaled_evoked_evidence(
+        np.zeros((2, 3)),
+        np.ones((2, 3)),
+        0.05,
+        active,
+    )
+
+    assert np.array_equal(fused, np.zeros((2, 3)))
+    assert diagnostics["evidence_scale"] == 0.0
+
+
+def test_evoked_evidence_balances_surface_and_deep_layers() -> None:
+    active = np.asarray([False, True, True])
+    primary = np.asarray([[0.0, 2.0, 0.0], [0.0, 0.0, 0.0]])
+    evidence = np.asarray([[0.0, 100.0, 0.0], [0.0, 1.0, 0.0]])
+
+    fused, diagnostics = oaster._add_scaled_evoked_evidence(
+        primary,
+        evidence,
+        0.05,
+        active,
+        n_surf=1,
+    )
+
+    increments = fused - primary
+    assert np.isclose(np.linalg.norm(increments[0, active]), 0.1)
+    assert np.isclose(np.linalg.norm(increments[1, active]), 0.1)
+    assert len(diagnostics["evidence_layer_scales"]) == 2
+
+
+def test_evoked_oaster_v2_rescues_one_deep_source_after_surface_rank_fills() -> None:
+    leadfield = np.eye(3)
+    data = np.zeros((3, 50))
+    baseline = np.arange(50) < 30
+    active = (np.arange(50) >= 34) & (np.arange(50) < 42)
+    data[0, active] = 10.0
+    data[2, active] = 4.0
+
+    estimate, diagnostics = oaster.reconstruct_evoked_oaster_v2_from_whitened(
+        data,
+        leadfield,
+        2,
+        _kernels(2),
+        baseline=baseline,
+        active_windows=(active,),
+        max_templates=1,
+    )
+
+    window = diagnostics["windows"][0]
+    assert window["temporal_rank"] >= 1
+    assert window["first_selected_layer"] == "surface"
+    assert window["deep_rescue_attempted"] is True
+    assert window["deep_rescue_accepted"] is True
+    assert window["deep_rescue_ebic_delta"] < 0.0
+    assert diagnostics["selected_deep_templates"] == 1
+    assert np.linalg.norm(estimate[2, active]) > 0.0
+
+    rejected, strict = oaster.reconstruct_evoked_oaster_v2_from_whitened(
+        data,
+        leadfield,
+        2,
+        _kernels(2),
+        baseline=baseline,
+        active_windows=(active,),
+        max_templates=1,
+        deep_rescue_delta=-1e9,
+    )
+    assert strict["windows"][0]["deep_rescue_accepted"] is False
+    assert strict["windows"][0]["deep_rescue_ebic_threshold"] == -1e9
+    assert strict["selected_deep_templates"] == 0
+    assert np.linalg.norm(rejected[2, active]) < np.linalg.norm(estimate[2, active])
+
+
+def test_evoked_oaster_v2_preserves_a_multiscale_surface_patch() -> None:
+    rng = np.random.default_rng(23)
+    n_surf = 5
+    leadfield = np.eye(6)
+    identity = sparse.eye(n_surf, format="csc")
+    patch = identity.copy().tolil()
+    patch[:, 2] = np.asarray([0.0, 0.25, 1.0, 0.25, 0.0])[:, None]
+    kernels = (
+        (0.0, identity.copy()),
+        (4.0, patch.tocsc()),
+        (7.0, identity.copy()),
+    )
+    data = rng.normal(scale=0.01, size=(6, 50))
+    baseline = np.arange(50) < 30
+    active = (np.arange(50) >= 34) & (np.arange(50) < 42)
+    waveform = np.asarray([0.0, 1.0, 4.0, 7.0, 5.0, 2.0, 0.5, 0.0])
+    data[:n_surf, active] += np.asarray([0.0, 0.25, 1.0, 0.25, 0.0])[:, None] * waveform
+
+    estimate, diagnostics = oaster.reconstruct_evoked_oaster_v2_from_whitened(
+        data,
+        leadfield,
+        n_surf,
+        kernels,
+        baseline=baseline,
+        active_windows=(active,),
+    )
+
+    energy = np.linalg.norm(estimate[:, active], axis=1)
+    assert np.argmax(energy) == 2
+    assert energy[1] > 0.0 and energy[3] > 0.0
+    assert diagnostics["selected_surface_templates"] >= 1
+    assert diagnostics["selected_deep_templates"] == 0
+    assert diagnostics["windows"][0]["first_selected_layer"] == "surface"
+    assert diagnostics["time_evidence_fusion"]["evidence_scale"] > 0.0
+
+
 def test_evoked_ebic_does_not_force_an_unsupported_template() -> None:
     rng = np.random.default_rng(7)
     reduced = rng.normal(size=(100, 2))

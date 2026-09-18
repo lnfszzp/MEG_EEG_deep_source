@@ -69,12 +69,16 @@ SCENARIO_LABELS = {
 
 def _case_title(case: dict) -> str:
     scenario = str(case["scenario"])
-    return (
+    title = (
         f"Case {int(case['case_number']):05d} | "
         f"{SCENARIO_LABELS.get(scenario, scenario.replace('_', ' ').title())} | "
         f"EEG SNR {int(case['eeg_snr_db']):+d} dB | "
         f"MEG SNR {int(case['meg_snr_db']):+d} dB"
     )
+    limits = case.get("active_window_s")
+    if limits is not None:
+        title += f" | ERP window {1000 * float(limits[0]):g}–{1000 * float(limits[1]):g} ms"
+    return title
 
 
 def _legend_handles(energy_label: str = "Estimated source energy") -> list:
@@ -375,7 +379,12 @@ def _source_projection(
     relative_threshold: float,
     display_percentile: float,
 ) -> tuple[np.ndarray, np.ndarray]:
-    active = np.arange(strict_plot.strict.protocol.ACTIVE_START, source.shape[1])
+    active = np.asarray(
+        loaded.get(
+            "active", np.arange(strict_plot.strict.protocol.ACTIVE_START, source.shape[1])
+        ),
+        dtype=int,
+    )
     amplitude = benchmark_metrics.source_amplitude(source, active)
     relative, keep = _display_mask(amplitude, relative_threshold, display_percentile)
     positions_mri = apply_trans(
@@ -552,9 +561,19 @@ def render_surface_method(
     *,
     relative_threshold: float = 0.10,
     is_truth: bool = False,
+    surface_name: str = "inflated",
+    hemi: str = "split",
+    views: tuple[str, ...] = ("lateral", "medial"),
+    view_layout: str = "horizontal",
+    size: tuple[int, int] = (1200, 800),
 ) -> Path:
     """Render either a cortical estimate or the separate simulation truth."""
-    active = np.arange(strict_plot.strict.protocol.ACTIVE_START, estimate.shape[1])
+    active = np.asarray(
+        loaded.get(
+            "active", np.arange(strict_plot.strict.protocol.ACTIVE_START, estimate.shape[1])
+        ),
+        dtype=int,
+    )
     amplitude = benchmark_metrics.source_amplitude(estimate, active)
     n_surf = int(loaded["geometry"]["n_surf"])
     cortical = amplitude[:n_surf]
@@ -569,14 +588,14 @@ def render_surface_method(
     brain = None
     try:
         brain = stc.plot(
-            surface="inflated",
-            hemi="split",
+            surface=surface_name,
+            hemi=hemi,
             colormap="inferno",
             time_label=None,
             smoothing_steps=10,
             transparent=True,
             subjects_dir=surface["subjects_dir"],
-            size=(1200, 800),
+            size=size,
             clim=clim,
             background="white",
             foreground="black",
@@ -584,8 +603,8 @@ def render_surface_method(
             initial_time=0.0,
             time_viewer=False,
             show_traces=False,
-            views=("lateral", "medial"),
-            view_layout="horizontal",
+            views=views,
+            view_layout=view_layout,
             backend="pyvistaqt",
             brain_kwargs={"show": False, "theme": "light"},
         )
@@ -596,10 +615,9 @@ def render_surface_method(
     case = loaded["case"]
     notes = []
     threshold_note = (
-        f"continuous truth heat >= {relative_threshold:.0%} of cortical peak"
+        f"truth heat ≥ {relative_threshold:.0%} cortical peak"
         if is_truth
-        else f"display >= max({relative_threshold:.0%} peak, P95); "
-        "color controls from P95/P97/P99"
+        else f"cutoff max({relative_threshold:.0%} peak, P95); inferno P95/P97/P99"
     )
     if not is_truth:
         notes.append("Simulation truth is separate.")
@@ -660,10 +678,12 @@ def render_anatomy_surface_pair(
     output: Path,
     dpi: int,
     title: str,
+    *,
+    crop_fraction: float = 0.15,
 ) -> Path:
     """Place the anatomical and cortical renders together without duplicate headers."""
     images = [plt.imread(path) for path in (mri_path, surface_path)]
-    images = [image[int(image.shape[0] * 0.15) :] for image in images]
+    images = [image[int(image.shape[0] * crop_fraction) :] for image in images]
     ratios = [image.shape[1] / image.shape[0] for image in images]
     fig, axes = plt.subplots(
         1,

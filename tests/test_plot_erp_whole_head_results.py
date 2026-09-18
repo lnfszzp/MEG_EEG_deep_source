@@ -1,6 +1,8 @@
 import csv
 from pathlib import Path
 
+import numpy as np
+
 import plot_erp_whole_head_results as plotting
 
 
@@ -72,13 +74,14 @@ def test_combined_rows_csv_fallback(tmp_path: Path) -> None:
     assert tuple(macro) == plotting.METHODS
     assert len(macro["OASTER-ERP"]) == 49
     assert macro["OASTER-ERP"][0]["auc_tie_corrected"] == 0.9
+    assert np.isnan(macro["OASTER-ERP"][0]["surface_auc_tie_corrected"])
     assert scenarios["deep_only"]["OASTER-ERP"][0]["deep_dle_mm_penalized"] == 8.0
 
 
 def test_generates_table_and_all_requested_figures(tmp_path: Path) -> None:
     outputs = plotting.generate((OASTER, COMPARATORS), tmp_path / "erp_figures")
 
-    assert len(outputs) == 12
+    assert len(outputs) == 13
     assert all(path.is_file() and path.stat().st_size > 50 for path in outputs)
     assert all(path.stat().st_size > 1_000 for path in outputs[5:])
     assert all("figures_v20" not in str(path) for path in outputs)
@@ -87,4 +90,22 @@ def test_generates_table_and_all_requested_figures(tmp_path: Path) -> None:
     assert [row["method"] for row in rows] == list(plotting.METHODS)
     assert all(row["primary_metric"] == "An_auc (auc_tie_corrected)" for row in rows)
     assert all(row["snr_pair_count"] == "49" for row in rows)
+    assert "surface_auc_tie_corrected_mean" in rows[0]
     assert outputs[5].read_bytes().startswith(b"\x89PNG\r\n\x1a\n")
+
+
+def test_layer_auc_plot_uses_defined_scenarios_and_tolerates_missing_ones(
+    tmp_path: Path,
+) -> None:
+    _, scenarios = plotting.load_results((OASTER, COMPARATORS))
+    for scenario in plotting.SCENARIOS:
+        for method in plotting.METHODS:
+            for row in scenarios[scenario][method]:
+                row["surface_auc_tie_corrected"] = (
+                    0.91 if scenario != "deep_only" else np.nan
+                )
+                row["deep_auc_tie_corrected"] = (
+                    0.92 if scenario != "surface_only" else np.nan
+                )
+    output = plotting.plot_layer_auc(scenarios, tmp_path / "layer_auc.png")
+    assert output.read_bytes().startswith(b"\x89PNG\r\n\x1a\n")

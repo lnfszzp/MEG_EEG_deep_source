@@ -1,15 +1,18 @@
 """Run the phase-locked ERP whole-head benchmark on one shared observation.
 
-Each manifest case is simulated once, jointly whitened once, and then sent to
-OASTER-ERP and the same seven fixed-grid comparators.  One atomic checkpoint is
-written per EEG/MEG SNR pair so interrupted runs resume without recomputation.
+Each manifest case is simulated once, independently whitened once per modality,
+and then sent to OASTER-ERP and the same seven fixed-grid comparators. One atomic
+checkpoint is written per EEG/MEG SNR pair so interrupted runs can resume.
 """
 
 from __future__ import annotations
 
 import argparse
+import hashlib
+import importlib.metadata
 import json
 import os
+import platform
 import time
 from collections import defaultdict
 from concurrent.futures import ThreadPoolExecutor
@@ -44,6 +47,107 @@ SCENARIOS = (
     "deep_plus_surface",
     "deep_plus_two_surface",
 )
+ALGORITHM_VERSIONS = ("v1", "v2")
+MODALITY_WEIGHTINGS = ("equal", "evidence")
+
+
+def _code_fingerprint(paths) -> str:
+    digest = hashlib.sha256()
+    for path in paths:
+        digest.update(hashlib.sha256(Path(path).read_bytes()).digest())
+    return digest.hexdigest()
+
+
+def _shared_fingerprint(shared: dict) -> str:
+    """Bind checkpoints to every numeric input used to simulate or reconstruct."""
+    digest = hashlib.sha256()
+    for name in (
+        "gain_eeg",
+        "gain_meg",
+        "vertices",
+        "adjacency",
+        "times",
+        "noise_factor_eeg",
+        "noise_factor_meg",
+        "n_surf",
+        "n_deep",
+    ):
+        values = np.ascontiguousarray(np.asarray(shared[name]))
+        digest.update(name.encode("ascii"))
+        digest.update(values.dtype.str.encode("ascii"))
+        digest.update(np.asarray(values.shape, dtype=np.int64).tobytes())
+        digest.update(values.tobytes())
+    return digest.hexdigest()
+
+
+def _environment_versions() -> dict[str, str]:
+    return {
+        "python": platform.python_version(),
+        **{
+            package: importlib.metadata.version(package)
+            for package in ("numpy", "scipy", "mne")
+        },
+        **{
+            name: os.environ.get(name, "")
+            for name in ("OMP_NUM_THREADS", "MKL_NUM_THREADS", "OPENBLAS_NUM_THREADS")
+        },
+    }
+
+
+def _checkpoint_fingerprint(
+    manifest_sha256: str,
+    code_fingerprint: str,
+    shared_fingerprint: str,
+    environment: dict[str, str],
+) -> str:
+    payload = {
+        "manifest": manifest_sha256,
+        "code": code_fingerprint,
+        "shared": shared_fingerprint,
+        "environment": environment,
+    }
+    return hashlib.sha256(
+        json.dumps(payload, sort_keys=True, separators=(",", ":")).encode("utf-8")
+    ).hexdigest()
+
+
+def _oaster_method(algorithm_version: str) -> str:
+    return "OASTER-ERP" if algorithm_version == "v1" else "OASTER-ERP-v2"
+
+
+def _resolve_oaster(algorithm_version: str):
+    if algorithm_version not in ALGORITHM_VERSIONS:
+        raise ValueError(f"algorithm_version must be one of {ALGORITHM_VERSIONS}")
+    name = (
+        "reconstruct_evoked_oaster_from_whitened"
+        if algorithm_version == "v1"
+        else "reconstruct_evoked_oaster_v2_from_whitened"
+    )
+    solver = getattr(oaster, name, None)
+    if solver is None:
+        raise RuntimeError(
+            f"OASTER {algorithm_version} entry point is unavailable: {name}"
+        )
+    return solver
+
+
+def _modality_evidence_weights(
+    data_blocks: tuple[np.ndarray, ...], baseline: np.ndarray, active: np.ndarray
+) -> np.ndarray:
+    """Return scale-free active-over-baseline weights from observations only."""
+    ratios = np.asarray(
+        [
+            np.mean(block[:, active] ** 2)
+            / max(float(np.mean(block[:, baseline] ** 2)), np.finfo(float).tiny)
+            for block in data_blocks
+        ]
+    )
+    excess = np.maximum(ratios - 1.0, 0.0)
+    return (
+        np.sqrt(excess / excess.max())
+        if excess.max() > 0.0
+        else np.ones(len(data_blocks))
+    )
 
 
 def _pair_path(parts: Path, pair: tuple[int, int]) -> Path:
@@ -160,6 +264,10 @@ def _success_row(
 
 def _score_case(case: dict, runtime: dict, manifest_sha256: str) -> dict[str, dict]:
     base = _base_row(case, manifest_sha256)
+    algorithm_version = str(runtime.get("algorithm_version", "v1"))
+    oaster_method = _oaster_method(algorithm_version)
+    methods = tuple(runtime.get("methods", (oaster_method,) + comparators.METHODS))
+    modality_weighting = str(runtime.get("modality_weighting", "equal"))
     setup_started = time.perf_counter()
     try:
         (
@@ -171,34 +279,70 @@ def _score_case(case: dict, runtime: dict, manifest_sha256: str) -> dict[str, di
             active_windows,
             active,
             _simulation_metadata,
-        ) = erp_protocol.simulate_case(runtime["shared"], case)
-        data, gain = comparator_methods.joint_whiten(
-            eeg,
-            meg,
-            runtime["shared"]["gain_eeg"],
-            runtime["shared"]["gain_meg"],
+        ) = erp_protocol.simulate_case(
+            runtime["shared"],
+            case,
+            seed_root=int(runtime.get("seed_root", erp_protocol.ERP_SEED_ROOT)),
         )
+        if modality_weighting == "evidence":
+            eeg_white, eeg_gain = comparator_methods.whiten(
+                eeg, runtime["shared"]["gain_eeg"]
+            )
+            meg_white, meg_gain = comparator_methods.whiten(
+                meg, runtime["shared"]["gain_meg"]
+            )
+            data = np.vstack((eeg_white, meg_white))
+            gain = np.vstack((eeg_gain, meg_gain))
+            retained_rows = (eeg_white.shape[0], meg_white.shape[0])
+        elif modality_weighting == "equal":
+            data, gain = comparator_methods.joint_whiten(
+                eeg,
+                meg,
+                runtime["shared"]["gain_eeg"],
+                runtime["shared"]["gain_meg"],
+            )
+            retained_rows = None
+        else:
+            raise ValueError(
+                f"modality_weighting must be one of {MODALITY_WEIGHTINGS}"
+            )
         data -= data[:, baseline].mean(axis=1, keepdims=True)
+        window_channel_weights = None
+        if retained_rows is not None:
+            split = retained_rows[0]
+            blocks = (data[:split], data[split:])
+            window_channel_weights = []
+            for window in active_windows:
+                weights = _modality_evidence_weights(blocks, baseline, window)
+                window_channel_weights.append(
+                    np.r_[
+                        np.full(retained_rows[0], weights[0]),
+                        np.full(retained_rows[1], weights[1]),
+                    ]
+                )
     except Exception as exc:
         elapsed = time.perf_counter() - setup_started
-        return {method: _error_row(base, method, exc, elapsed) for method in METHODS}
+        return {method: _error_row(base, method, exc, elapsed) for method in methods}
     setup_elapsed = time.perf_counter() - setup_started
     rows: dict[str, dict] = {}
 
     started = time.perf_counter()
     try:
-        estimate, diagnostics = oaster.reconstruct_evoked_oaster_from_whitened(
+        solver = runtime.get("oaster_solver") or _resolve_oaster(algorithm_version)
+        estimate, diagnostics = solver(
             data,
             gain,
             runtime["shared"]["n_surf"],
             runtime["kernels"],
             baseline=baseline,
             active_windows=active_windows,
+            window_channel_weights=window_channel_weights,
             require_one=False,
+            **runtime.get("oaster_kwargs", {}),
         )
-        rows["OASTER-ERP"] = _success_row(
+        rows[oaster_method] = _success_row(
             base,
-            "OASTER-ERP",
+            oaster_method,
             estimate,
             truth,
             groups,
@@ -212,9 +356,12 @@ def _score_case(case: dict, runtime: dict, manifest_sha256: str) -> dict[str, di
             selected_templates=int(diagnostics["selected_templates"]),
         )
     except Exception as exc:
-        rows["OASTER-ERP"] = _error_row(
-            base, "OASTER-ERP", exc, setup_elapsed + time.perf_counter() - started
+        rows[oaster_method] = _error_row(
+            base, oaster_method, exc, setup_elapsed + time.perf_counter() - started
         )
+
+    if methods == (oaster_method,):
+        return rows
 
     started = time.perf_counter()
     try:
@@ -265,13 +412,16 @@ def _score_case(case: dict, runtime: dict, manifest_sha256: str) -> dict[str, di
 
 
 def _valid_pair(
-    rows: list[dict], cases: list[dict], manifest_sha256: str
+    rows: list[dict],
+    cases: list[dict],
+    manifest_sha256: str,
+    methods: tuple[str, ...] = METHODS,
 ) -> bool:
     try:
         expected = [
             (str(case["case_id"]), method)
             for case in cases
-            for method in METHODS
+            for method in methods
         ]
         return (
             len(rows) == len(expected)
@@ -292,6 +442,15 @@ def _write_metadata(
     selected: list[tuple[tuple[int, int], list[dict]]],
     cases_per_scenario: int | None,
     workers: int,
+    algorithm_version: str,
+    modality_weighting: str,
+    seed_root: int,
+    methods: tuple[str, ...],
+    oaster_kwargs: dict,
+    code_fingerprint: str,
+    shared_fingerprint: str,
+    environment: dict[str, str],
+    checkpoint_fingerprint: str,
 ) -> None:
     payload = {
         "manifest": str(manifest_path.resolve()),
@@ -299,8 +458,27 @@ def _write_metadata(
         "data_root": str(data_root.resolve()),
         "sample_path": None if sample_path is None else str(sample_path.resolve()),
         "protocol": "phase-locked-erp-v1",
-        "methods": METHODS,
-        "observation_rule": "simulate once and joint_whiten once per case for all methods",
+        "methods": methods,
+        "oaster_algorithm_version": algorithm_version,
+        "oaster_modality_weighting": modality_weighting,
+        "oaster_modality_weighting_rule": (
+            "equal weights"
+            if modality_weighting == "equal"
+            else (
+                "sqrt(normalized positive active/baseline power-ratio excess) "
+                "from retained whitened EEG/MAG observation rows"
+            )
+        ),
+        "erp_seed_root": seed_root,
+        "oaster_kwargs": oaster_kwargs,
+        "checkpoint_code_fingerprint": code_fingerprint,
+        "checkpoint_shared_fingerprint": shared_fingerprint,
+        "checkpoint_environment": environment,
+        "checkpoint_fingerprint": checkpoint_fingerprint,
+        "observation_rule": (
+            "simulate once and independently whiten EEG/MAG once; comparators use "
+            "the same unweighted stacked data and gain"
+        ),
         "window_rule": (
             "one fixed baseline and active ERP window shared by all methods; "
             "joint whitened observations are baseline-corrected before dispatch"
@@ -322,6 +500,8 @@ def _write_metadata(
                 "oaster_algorithm": oaster.__file__,
                 "comparator_algorithms": comparator_methods.__file__,
                 "metrics": benchmark_metrics.__file__,
+                "archive_io": archive.__file__,
+                "comparator_summaries": comparators.__file__,
             }
         ),
     }
@@ -342,9 +522,29 @@ def run(
     cases_per_scenario: int | None = None,
     workers: int = 1,
     force: bool = False,
+    algorithm_version: str = "v1",
+    modality_weighting: str = "equal",
+    seed_root: int = erp_protocol.ERP_SEED_ROOT,
+    oaster_only: bool = False,
+    v2_deep_rescue_delta: float = oaster.ERP_V2_DEEP_RESCUE_DELTA,
 ) -> None:
     if workers < 1:
         raise ValueError("workers must be positive")
+    if modality_weighting not in MODALITY_WEIGHTINGS:
+        raise ValueError(f"modality_weighting must be one of {MODALITY_WEIGHTINGS}")
+    seed_root = int(seed_root)
+    if seed_root < 0:
+        raise ValueError("seed_root must be non-negative")
+    if not np.isfinite(v2_deep_rescue_delta):
+        raise ValueError("v2_deep_rescue_delta must be finite")
+    solver = _resolve_oaster(algorithm_version)
+    oaster_method = _oaster_method(algorithm_version)
+    methods = (oaster_method,) if oaster_only else (oaster_method,) + comparators.METHODS
+    oaster_kwargs = (
+        {"deep_rescue_delta": float(v2_deep_rescue_delta)}
+        if algorithm_version == "v2"
+        else {}
+    )
     manifest_path, data_root, output = map(Path, (manifest_path, data_root, output))
     sample_path = None if sample_path is None else Path(sample_path)
     cases, manifest_sha256 = archive._load_manifest(manifest_path)
@@ -360,16 +560,52 @@ def run(
         shared["n_surf"],
         scales_mm=oaster.SURFACE_SCALES_MM,
     )
-    runtime = {"shared": shared, "kernels": kernels}
+    runtime = {
+        "shared": shared,
+        "kernels": kernels,
+        "algorithm_version": algorithm_version,
+        "oaster_solver": solver,
+        "modality_weighting": modality_weighting,
+        "seed_root": seed_root,
+        "methods": methods,
+        "oaster_kwargs": oaster_kwargs,
+    }
     penalty_mm = float(np.linalg.norm(np.ptp(shared["vertices"], axis=0)) * 1000.0)
-    parts = output / "parts"
+    configuration = f"{algorithm_version}_{modality_weighting}_seed_{seed_root}"
+    if algorithm_version == "v2":
+        rescue_tag = f"{float(v2_deep_rescue_delta):g}".replace("-", "m").replace(".", "p")
+        rescue_sha = hashlib.sha256(
+            repr(float(v2_deep_rescue_delta)).encode("ascii")
+        ).hexdigest()[:8]
+        configuration += f"_rescue_{rescue_tag}_{rescue_sha}"
+    fingerprint_paths = (
+        __file__,
+        erp_protocol.__file__,
+        protocol.__file__,
+        protected.__file__,
+        oaster.__file__,
+        comparator_methods.__file__,
+        benchmark_metrics.__file__,
+        archive.__file__,
+        comparators.__file__,
+    )
+    code_fingerprint = _code_fingerprint(fingerprint_paths)
+    shared_fingerprint = _shared_fingerprint(shared)
+    environment = _environment_versions()
+    checkpoint_fingerprint = _checkpoint_fingerprint(
+        manifest_sha256,
+        code_fingerprint,
+        shared_fingerprint,
+        environment,
+    )
+    parts = output / f"parts_{configuration}_run_{checkpoint_fingerprint[:12]}"
     parts.mkdir(parents=True, exist_ok=True)
     (output / "completion.json").unlink(missing_ok=True)
 
     for pair, pair_cases in selected:
         path = _pair_path(parts, pair)
         existing = archive._read_csv(path)
-        if not force and _valid_pair(existing, pair_cases, manifest_sha256):
+        if not force and _valid_pair(existing, pair_cases, manifest_sha256, methods):
             print(f"SNR EEG={pair[0]:+d}, MEG={pair[1]:+d}: verified checkpoint", flush=True)
             continue
         arguments = [(case, runtime, manifest_sha256) for case in pair_cases]
@@ -378,25 +614,27 @@ def run(
         else:
             with ThreadPoolExecutor(max_workers=workers) as pool:
                 scored = list(pool.map(lambda argument: _score_case(*argument), arguments))
-        rows = [result[method] for result in scored for method in METHODS]
+        rows = [result[method] for result in scored for method in methods]
         archive._atomic_csv(path, rows, archive.ROW_FIELDS)
-        if not _valid_pair(rows, pair_cases, manifest_sha256):
+        if not _valid_pair(rows, pair_cases, manifest_sha256, methods):
             failures = [row for row in rows if row["status"] != "ok"]
             detail = failures[0]["error"] if failures else "checkpoint ordering mismatch"
             raise RuntimeError(f"SNR pair {pair} failed: {detail}")
         print(
             f"SNR EEG={pair[0]:+d}, MEG={pair[1]:+d}: "
-            f"scored {len(pair_cases)} cases x {len(METHODS)} methods",
+            f"scored {len(pair_cases)} cases x {len(methods)} methods",
             flush=True,
         )
 
+    if _code_fingerprint(fingerprint_paths) != code_fingerprint:
+        raise RuntimeError("benchmark code changed while the run was in progress")
     combined = []
     for pair, pair_cases in selected:
         rows = archive._read_csv(_pair_path(parts, pair))
-        if not _valid_pair(rows, pair_cases, manifest_sha256):
+        if not _valid_pair(rows, pair_cases, manifest_sha256, methods):
             raise RuntimeError(f"incomplete checkpoint for SNR pair {pair}")
         combined.extend(rows)
-    combined.sort(key=lambda row: (int(row["case_number"]), METHODS.index(row["method"])))
+    combined.sort(key=lambda row: (int(row["case_number"]), methods.index(row["method"])))
     archive._atomic_csv(output / "rows.csv", combined, archive.ROW_FIELDS)
     comparators._summaries(combined, output, penalty_mm)
     _write_metadata(
@@ -408,14 +646,23 @@ def run(
         selected,
         cases_per_scenario,
         workers,
+        algorithm_version,
+        modality_weighting,
+        seed_root,
+        methods,
+        oaster_kwargs,
+        code_fingerprint,
+        shared_fingerprint,
+        environment,
+        checkpoint_fingerprint,
     )
     archive._write_completion(
         output,
         combined,
-        expected_row_count=sum(len(cases) for _pair, cases in selected) * len(METHODS),
+        expected_row_count=sum(len(cases) for _pair, cases in selected) * len(methods),
         manifest_sha256=manifest_sha256,
         chunk_count=len(selected),
-        methods=METHODS,
+        methods=methods,
     )
 
 
@@ -435,6 +682,19 @@ def main() -> None:
     )
     parser.add_argument("--cases-per-scenario", type=int)
     parser.add_argument(
+        "--algorithm-version", choices=ALGORITHM_VERSIONS, default="v1"
+    )
+    parser.add_argument(
+        "--modality-weighting", choices=MODALITY_WEIGHTINGS, default="equal"
+    )
+    parser.add_argument("--seed-root", type=int, default=erp_protocol.ERP_SEED_ROOT)
+    parser.add_argument("--oaster-only", action="store_true")
+    parser.add_argument(
+        "--v2-deep-rescue-delta",
+        type=float,
+        default=oaster.ERP_V2_DEEP_RESCUE_DELTA,
+    )
+    parser.add_argument(
         "--workers", type=int, default=max(1, min(4, os.cpu_count() or 1))
     )
     parser.add_argument("--force", action="store_true")
@@ -449,6 +709,11 @@ def main() -> None:
             cases_per_scenario=args.cases_per_scenario,
             workers=args.workers,
             force=args.force,
+            algorithm_version=args.algorithm_version,
+            modality_weighting=args.modality_weighting,
+            seed_root=args.seed_root,
+            oaster_only=args.oaster_only,
+            v2_deep_rescue_delta=args.v2_deep_rescue_delta,
         )
     except ValueError as exc:
         parser.error(str(exc))

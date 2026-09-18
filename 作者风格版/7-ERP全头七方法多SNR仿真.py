@@ -4,6 +4,7 @@
 # 每个 case 的同一份 ERP 数据会同时交给 OASTER-ERP 和七个对比方法。
 
 from pathlib import Path
+from collections import Counter
 import csv
 import json
 import os
@@ -15,17 +16,22 @@ import time
 # ==================== 1. 参数区：平时主要改这里 ====================
 
 project_root = Path(r"D:\博士\工作＆汇报\源定位\新建文件夹")
-manifest_path = project_root / "results" / "corrected_v2" / "strict_blind" / "manifest.json"
+manifest_path = project_root / "results" / "erp_whole_head" / "confirmation_v3" / "manifest.json"
 geometry_root = project_root / "corrected_v2" / "generated"
 sample_data_path = Path(r"D:\mne_data\MNE-sample-data")
-save_root = project_root / "results" / "erp_whole_head" / "current_method_v1"
+save_root = project_root / "results" / "erp_whole_head" / "confirmation_v3" / "all_methods"
+
+algorithm_version = "v2"
+modality_weighting = "evidence"
+seed_root = 20261002
+deep_rescue_delta = -6.0
 
 # EEG 和 MEG 分别取 7 个 SNR，共 7 x 7 = 49 种组合。
 snr_levels = (-10, -5, 0, 5, 10, 15, 20)
 snr_pairs = [(eeg_snr, meg_snr) for eeg_snr in snr_levels for meg_snr in snr_levels]
 
-# None 表示每个 SNR 都使用 manifest 中全部 186 个全头位置配置，不抽样。
-# 当前“全头”覆盖双侧 68 个皮层分区代表位置和 16 个双侧丘脑位置。
+# None 表示每个 SNR 都使用独立确认集中的全部 369 个配置，不抽样。
+# 四种场景：纯表层 136、纯深层 30、深层+单表层 136、深层+双表层 67。
 cases_per_scenario = None
 workers = max(1, min(4, os.cpu_count() or 1))
 
@@ -39,16 +45,35 @@ assert manifest_path.is_file(), f"找不到 manifest：{manifest_path}"
 assert geometry_root.is_dir(), f"找不到几何和 forward：{geometry_root}"
 assert sample_data_path.is_dir(), f"找不到 MNE sample 数据：{sample_data_path}"
 
+manifest_cases = json.loads(manifest_path.read_text(encoding="utf-8"))
+manifest_pair_counts = Counter(
+    (int(case["eeg_snr_db"]), int(case["meg_snr_db"])) for case in manifest_cases
+)
+assert len(manifest_cases) == 49 * 369
+assert manifest_pair_counts == Counter({pair: 369 for pair in snr_pairs})
+assert {case["scenario"] for case in manifest_cases} == {
+    "surface_only",
+    "deep_only",
+    "deep_plus_surface",
+    "deep_plus_two_surface",
+}
+
 if str(project_root) not in sys.path:
     sys.path.insert(0, str(project_root))
 
 import plot_erp_whole_head_results as result_plot
 import run_erp_whole_head_matrix as simulation
 
+expected_methods = (simulation._oaster_method(algorithm_version),) + simulation.comparators.METHODS
+expected_case_count = 49 * 369
+expected_row_count = expected_case_count * len(expected_methods)
+
 print("结果保存到：", save_root)
 print("SNR：", snr_levels)
 print("SNR 组合数：", len(snr_pairs))
-print("方法：", simulation.METHODS)
+print("每个 SNR 的配置数：369")
+print("独立确认 case 总数：", expected_case_count)
+print("方法：", expected_methods)
 print("并行 worker：", workers)
 
 
@@ -68,6 +93,10 @@ simulation.run(
     cases_per_scenario=cases_per_scenario,
     workers=workers,
     force=force,
+    algorithm_version=algorithm_version,
+    modality_weighting=modality_weighting,
+    seed_root=seed_root,
+    v2_deep_rescue_delta=deep_rescue_delta,
 )
 
 print("总运行时间（小时）：", (time.perf_counter() - started) / 3600.0)
@@ -92,21 +121,32 @@ error_count = 0
 finished_methods = set()
 finished_snr_pairs = set()
 finished_scenarios = set()
+rows_per_snr_pair = Counter()
+finished_case_ids = set()
 
 with rows_path.open(encoding="utf-8-sig", newline="") as stream:
     for row in csv.DictReader(stream):
+        snr_pair = (int(row["eeg_snr_db"]), int(row["meg_snr_db"]))
         row_count += 1
         error_count += row["status"] != "ok"
         finished_methods.add(row["method"])
-        finished_snr_pairs.add((int(row["eeg_snr_db"]), int(row["meg_snr_db"])))
+        finished_snr_pairs.add(snr_pair)
         finished_scenarios.add(row["scenario"])
+        rows_per_snr_pair[snr_pair] += 1
+        finished_case_ids.add(row["case_id"])
 
 assert completion["status"] == "complete"
-assert row_count == completion["expected_row_count"]
+assert completion["expected_row_count"] == expected_row_count
+assert row_count == expected_row_count
 assert error_count == 0
 assert finished_snr_pairs == set(snr_pairs)
-assert finished_methods == set(simulation.METHODS)
+assert rows_per_snr_pair == Counter(
+    {pair: 369 * len(expected_methods) for pair in snr_pairs}
+)
+assert len(finished_case_ids) == expected_case_count
+assert finished_methods == set(expected_methods)
 assert finished_scenarios == set(simulation.SCENARIOS)
+assert metadata["selected_case_count"] == expected_case_count
 
 print("完成状态：", completion["status"])
 print("成功结果行：", row_count, "/", completion["expected_row_count"])
@@ -127,4 +167,3 @@ products = result_plot.generate([save_root], output=figure_root)
 print("图和表保存到：", figure_root)
 for product in products:
     print("  ", product)
-

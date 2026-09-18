@@ -9,6 +9,7 @@ import pytest
 
 from benchmark import protocol
 import generate_corrected_v2_manifest as corrected
+import generate_erp_v2_confirmation_manifest as confirmation
 import generate_strict_blind_manifest as strict
 import run_oaster_dev_matrix as dev_runner
 
@@ -131,3 +132,20 @@ def test_legacy_manifest_and_output_tree_are_protected() -> None:
     assert hashlib.sha256(payload).hexdigest() == strict.EXPECTED_SHA256
     with pytest.raises(ValueError, match="legacy result tree"):
         corrected._guard_output(strict.OUTPUT)
+
+
+def test_erp_v2_confirmation_uses_only_held_out_sources() -> None:
+    shared = _split_shared(16, corrected_geometry=True)
+    manifest = confirmation.make_manifest(shared)
+    digest = strict._manifest_digest(manifest)
+
+    confirmation._check(shared, manifest, digest, expected_digest=None)
+    assert len(manifest) == 18081
+    assert manifest[0]["case_number"] == 0
+    assert manifest[-1]["case_number"] == 18080
+    assert not (
+        {case["configuration_number"] for case in manifest}
+        & set(confirmation.EXCLUDED_CONFIGURATION_NUMBERS)
+    )
+    assert {case["panel"] for case in manifest} == {confirmation.PANEL}
+    assert {case["seed"][0] for case in manifest} == {confirmation.SEED_ROOT}

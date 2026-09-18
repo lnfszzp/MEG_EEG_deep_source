@@ -79,6 +79,25 @@ def test_masks_exact_snr_and_reproducibility(shared: dict) -> None:
     assert meg_snr == pytest.approx(10.0, abs=1e-12)
 
 
+def test_seed_root_can_create_an_independent_noise_confirmation(shared: dict) -> None:
+    case = _case("surface_only")
+    original = erp_protocol.simulate_case(shared, case)
+    explicit_default = erp_protocol.simulate_case(
+        shared, case, seed_root=erp_protocol.ERP_SEED_ROOT
+    )
+    development = erp_protocol.simulate_case(shared, case, seed_root=123)
+
+    np.testing.assert_array_equal(original[0], explicit_default[0])
+    np.testing.assert_array_equal(original[1], explicit_default[1])
+    np.testing.assert_array_equal(original[2], development[2])
+    assert not np.array_equal(original[0], development[0])
+    assert not np.array_equal(original[1], development[1])
+    assert original[7]["seed_root"] == erp_protocol.ERP_SEED_ROOT
+    assert development[7]["seed_root"] == 123
+    with pytest.raises(ValueError, match="seed_root"):
+        erp_protocol.simulate_case(shared, case, seed_root=-1)
+
+
 def test_source_amplitude_uses_the_registered_baseline_only() -> None:
     source = np.zeros((1, 10))
     source[:, :2] = 2.0

@@ -80,6 +80,18 @@ def _groups_for_layer(
     return result
 
 
+def _tie_corrected_auc(
+    truth: np.ndarray, energy: np.ndarray, *, undefined: float
+) -> float:
+    target = np.sum(truth**2, axis=1) > 0
+    positives = int(target.sum())
+    if not positives or positives == target.size:
+        return undefined
+    if not np.any(energy):
+        return 0.5
+    return float(An_auc(np.c_[target, energy]))
+
+
 def _layer_metrics(
     estimate: np.ndarray,
     truth: np.ndarray,
@@ -156,14 +168,15 @@ def evaluate_estimate(
 
     # A zero estimate carries no global ranking information. Keep the neutral
     # supplemental AUC and limiting normalized squared error.
-    auc_tie_corrected = 0.5
+    auc_tie_corrected = _tie_corrected_auc(active_truth, energy, undefined=0.5)
+    surface_auc_tie_corrected = _tie_corrected_auc(
+        active_truth[:n_surf], energy[:n_surf], undefined=np.nan
+    )
+    deep_auc_tie_corrected = _tie_corrected_auc(
+        active_truth[n_surf:], energy[n_surf:], undefined=np.nan
+    )
     rmse = 1.0
     if peak > 0:
-        target = np.sum(active_truth**2, axis=1) > 0
-        positives = int(target.sum())
-        negatives = int((~target).sum())
-        if positives and negatives:
-            auc_tie_corrected = An_auc(np.c_[target, energy])
         rmse = float(RMSE(active_estimate, active_truth))
 
     surface_sd, surface_dle = _layer_metrics(
@@ -199,6 +212,8 @@ def evaluate_estimate(
         # corrected global tied-rank AUC supplied by the vendored An_auc.
         "auc": auc,
         "auc_tie_corrected": auc_tie_corrected,
+        "surface_auc_tie_corrected": surface_auc_tie_corrected,
+        "deep_auc_tie_corrected": deep_auc_tie_corrected,
         "rmse": rmse,
         "surface_sd_mm": surface_sd,
         "deep_sd_mm": deep_sd,
@@ -210,6 +225,8 @@ def evaluate_estimate(
         "deep_detected": int(detected),
         "deep_false_positive": int((not has_deep) and deep_positive),
         "active_count": int(support.sum()),
+        "surface_active_count": int(support[:n_surf].sum()),
+        "deep_active_count": int(support[n_surf:].sum()),
     }
 
 

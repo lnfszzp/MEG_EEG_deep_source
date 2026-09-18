@@ -108,6 +108,8 @@ def _read(path: Path, scenario_table: bool) -> list[dict[str, float | str]]:
                     *(metric for metric, _ in DISTANCE_METRICS),
                 ):
                     parsed[name] = float(row.get(name, "nan"))
+                for name in ("surface_auc_tie_corrected", "deep_auc_tie_corrected"):
+                    parsed[name] = float(row.get(name) or "nan")
             except (TypeError, ValueError) as exc:
                 raise ValueError(f"{path}:{line}: invalid numeric value") from exc
             if not np.isfinite(float(parsed["auc_tie_corrected"])):
@@ -135,6 +137,7 @@ def _summarize_rows(
         "deep_sd_mm",
         "deep_dle_mm",
     )
+    optional_metrics = ("surface_auc_tie_corrected", "deep_auc_tie_corrected")
     with path.open(encoding="utf-8-sig", newline="") as stream:
         reader = csv.DictReader(stream)
         required = {
@@ -166,6 +169,7 @@ def _summarize_rows(
                     "has_surface_true": int(float(row["has_surface_true"])),
                     "has_deep_true": int(float(row["has_deep_true"])),
                     **{name: float(row[name]) for name in raw_metrics},
+                    **{name: float(row.get(name) or "nan") for name in optional_metrics},
                 }
             except (TypeError, ValueError) as exc:
                 raise ValueError(f"{path}:{line}: invalid numeric value") from exc
@@ -190,7 +194,10 @@ def _summarize_rows(
             "scenario": scenario,
         }
         summary.update(
-            {name: _finite_mean([float(row[name]) for row in rows]) for name in raw_metrics}
+            {
+                name: _finite_mean([float(row[name]) for row in rows])
+                for name in (*raw_metrics, *optional_metrics)
+            }
         )
         for layer in ("surface", "deep"):
             expected = [row for row in rows if int(row[f"has_{layer}_true"]) == 1]
@@ -218,7 +225,13 @@ def _summarize_rows(
             (str(row["method"]), int(row["eeg_snr_db"]), int(row["meg_snr_db"]))
         ].append(row)
     macro_rows = []
-    summary_metrics = ("auc", "auc_tie_corrected", "rmse", *(name for name, _ in DISTANCE_METRICS))
+    summary_metrics = (
+        "auc",
+        "auc_tie_corrected",
+        *optional_metrics,
+        "rmse",
+        *(name for name, _ in DISTANCE_METRICS),
+    )
     for (method, eeg, meg), rows in sorted(pair_groups.items()):
         macro_rows.append(
             {
@@ -322,6 +335,8 @@ def write_comparison_table(macro: dict[str, list[dict]], path: Path) -> Path:
         "an_auc_min",
         "an_auc_max",
         "an_auc_ge_0_90_pairs",
+        "surface_auc_tie_corrected_mean",
+        "deep_auc_tie_corrected_mean",
         "auc_mean",
         "rmse_mean",
         *(f"{metric}_mean" for metric, _ in DISTANCE_METRICS),
@@ -342,6 +357,12 @@ def write_comparison_table(macro: dict[str, list[dict]], path: Path) -> Path:
                 "an_auc_min": an_auc.min(),
                 "an_auc_max": an_auc.max(),
                 "an_auc_ge_0_90_pairs": int(np.count_nonzero(an_auc >= 0.9)),
+                "surface_auc_tie_corrected_mean": _finite_mean(
+                    [row.get("surface_auc_tie_corrected", np.nan) for row in rows]
+                ),
+                "deep_auc_tie_corrected_mean": _finite_mean(
+                    [row.get("deep_auc_tie_corrected", np.nan) for row in rows]
+                ),
                 "auc_mean": np.nanmean([row["auc"] for row in rows]),
                 "rmse_mean": np.nanmean([row["rmse"] for row in rows]),
             }
@@ -367,6 +388,8 @@ def write_scenario_table(
         "an_auc_min",
         "an_auc_max",
         "an_auc_ge_0_90_pairs",
+        "surface_auc_tie_corrected_mean",
+        "deep_auc_tie_corrected_mean",
     )
     path.parent.mkdir(parents=True, exist_ok=True)
     with path.open("w", encoding="utf-8-sig", newline="") as stream:
@@ -388,6 +411,18 @@ def write_scenario_table(
                         "an_auc_min": values.min(),
                         "an_auc_max": values.max(),
                         "an_auc_ge_0_90_pairs": int(np.count_nonzero(values >= 0.9)),
+                        "surface_auc_tie_corrected_mean": _finite_mean(
+                            [
+                                row.get("surface_auc_tie_corrected", np.nan)
+                                for row in scenarios[scenario][method]
+                            ]
+                        ),
+                        "deep_auc_tie_corrected_mean": _finite_mean(
+                            [
+                                row.get("deep_auc_tie_corrected", np.nan)
+                                for row in scenarios[scenario][method]
+                            ]
+                        ),
                     }
                 )
     return path
@@ -602,6 +637,74 @@ def plot_layer_distances(macro: dict[str, list[dict]], path: Path) -> Path:
     return _save(figure, path)
 
 
+def plot_layer_auc(
+    scenarios: dict[str, dict[str, list[dict]]], path: Path
+) -> Path:
+    figure, axes = plt.subplots(1, 2, figsize=(15.0, 5.8), sharey=True, layout="constrained")
+    x = np.arange(len(METHODS), dtype=float)
+    scenario_colors = ("#4477AA", "#EE6677", "#228833", "#AA3377")
+    for axis, layer, title in (
+        (axes[0], "surface", "表层 AUC / Surface AUC"),
+        (axes[1], "deep", "深层 AUC / Deep AUC"),
+    ):
+        available = []
+        for scenario, color in zip(SCENARIOS, scenario_colors, strict=True):
+            arrays = [
+                np.asarray(
+                    [
+                        row.get(f"{layer}_auc_tie_corrected", np.nan)
+                        for row in scenarios[scenario][method]
+                    ],
+                    dtype=float,
+                )
+                for method in METHODS
+            ]
+            if not any(np.isfinite(values).any() for values in arrays):
+                continue
+            means = [_finite_mean(values) for values in arrays]
+            errors = [
+                float(values[np.isfinite(values)].std(ddof=1))
+                if np.isfinite(values).sum() > 1
+                else 0.0
+                for values in arrays
+            ]
+            offset = 0.14 * (len(available) - 1)
+            axis.errorbar(
+                x + offset,
+                means,
+                yerr=errors,
+                fmt="o",
+                color=color,
+                capsize=2.5,
+                label=SCENARIO_TITLES[scenario],
+            )
+            available.append(scenario)
+        if not available:
+            axis.text(
+                0.5,
+                0.5,
+                "旧结果无分层 AUC / Layer AUC unavailable",
+                ha="center",
+                va="center",
+                transform=axis.transAxes,
+            )
+        axis.axhline(0.9, color="#555555", linestyle="--", linewidth=1)
+        axis.set_title(title)
+        axis.set_xticks(x, [DISPLAY.get(method, method) for method in METHODS], rotation=22, ha="right")
+        axis.set_ylim(0.0, 1.02)
+        axis.grid(axis="y")
+        axis.set_axisbelow(True)
+        if available:
+            axis.legend(fontsize=7, frameon=False)
+    axes[0].set_ylabel("An_auc（点=49个SNR格等权均值；误差棒=格间SD）")
+    figure.suptitle(
+        "分层 An_auc：全局 An_auc 不能替代深层 AUC / Global An_auc does not replace deep AUC",
+        fontsize=14,
+        fontweight="semibold",
+    )
+    return _save(figure, path)
+
+
 def generate(
     input_dirs: Sequence[Path],
     output: Path | None = None,
@@ -634,6 +737,7 @@ def generate(
     products.extend(
         (
             plot_robustness(macro, output / "an_auc_snr_robustness.png"),
+            plot_layer_auc(scenarios, output / "layer_auc.png"),
             plot_layer_distances(macro, output / "layer_sd_dle.png"),
         )
     )

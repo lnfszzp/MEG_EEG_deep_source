@@ -27,9 +27,12 @@ def _case(number, scenario="surface_only"):
 
 def _metrics(case):
     deep = case["deep_index"] is not None
+    surface = bool(case["surface_centers"])
     return {
         "auc": 0.9,
         "auc_tie_corrected": 0.9,
+        "surface_auc_tie_corrected": 0.9,
+        "deep_auc_tie_corrected": 0.9 if deep else np.nan,
         "rmse": 0.1,
         "surface_sd_mm": 1.0,
         "surface_dle_mm": 1.0,
@@ -41,6 +44,8 @@ def _metrics(case):
         "deep_detected": int(deep),
         "deep_false_positive": 0,
         "active_count": 1,
+        "surface_active_count": int(not deep or surface),
+        "deep_active_count": int(deep),
     }
 
 
@@ -72,8 +77,9 @@ def test_one_simulation_and_one_window_are_shared(monkeypatch):
     truth = np.zeros((2, 6))
     observations = {"simulate": 0, "active": [], "score_active": []}
 
-    def simulate(shared, received):
+    def simulate(shared, received, *, seed_root):
         assert received is case
+        assert seed_root == runner.erp_protocol.ERP_SEED_ROOT
         observations["simulate"] += 1
         return (
             np.ones((2, 6)),
@@ -94,6 +100,7 @@ def test_one_simulation_and_one_window_are_shared(monkeypatch):
         assert np.array_equal(kwargs["baseline"], baseline_mask)
         assert len(kwargs["active_windows"]) == 1
         assert np.array_equal(kwargs["active_windows"][0], window)
+        assert kwargs["window_channel_weights"] is None
         return np.zeros_like(truth), {
             "selected_templates": 0,
             "windows": [{"temporal_rank": 1}],
@@ -124,7 +131,10 @@ def test_one_simulation_and_one_window_are_shared(monkeypatch):
     monkeypatch.setattr(runner.erp_protocol, "simulate_case", simulate)
     monkeypatch.setattr(runner.comparator_methods, "joint_whiten", joint)
     monkeypatch.setattr(
-        runner.oaster, "reconstruct_evoked_oaster_from_whitened", oaster
+        runner.oaster,
+        "reconstruct_evoked_oaster_from_whitened",
+        oaster,
+        raising=False,
     )
     monkeypatch.setattr(runner.comparator_methods, "minimum_norm_family", family)
     monkeypatch.setattr(runner.comparator_methods, "lcmv", active_method)
@@ -153,6 +163,151 @@ def test_one_simulation_and_one_window_are_shared(monkeypatch):
     assert all(np.array_equal(value, active) for value in observations["score_active"])
 
 
+def test_observation_evidence_weights_are_scale_free():
+    baseline = np.array([1, 1, 0, 0], dtype=bool)
+    active = ~baseline
+    eeg = np.array([[1.0, 1.0, np.sqrt(5.0), np.sqrt(5.0)]])
+    mag = np.array([[1.0, 1.0, np.sqrt(2.0), np.sqrt(2.0)]])
+
+    weights = runner._modality_evidence_weights((eeg, mag * 1e-12), baseline, active)
+
+    np.testing.assert_allclose(weights, [1.0, 0.5])
+
+
+def test_v2_evidence_dispatch_uses_retained_whitened_rows(monkeypatch):
+    case = _case(0)
+    baseline = np.array([1, 1, 0, 0], dtype=bool)
+    active_mask = ~baseline
+    truth = np.zeros((2, 4))
+    captured = {}
+
+    monkeypatch.setattr(
+        runner.erp_protocol,
+        "simulate_case",
+        lambda _shared, _case, *, seed_root: (
+            np.ones((3, 4)),
+            np.ones((4, 4)),
+            truth,
+            [np.array([0])],
+            baseline,
+            (active_mask,),
+            np.flatnonzero(active_mask),
+            {"seed_root": seed_root},
+        ),
+    )
+
+    calls = iter(
+        (
+            (np.array([[-1.0, 1.0, 3.0, -3.0]]), np.ones((1, 2))),
+            (np.array([[-1.0, 1.0, 2.0, -2.0]] * 2), np.ones((2, 2))),
+        )
+    )
+    monkeypatch.setattr(
+        runner.comparator_methods, "whiten", lambda _data, _gain: next(calls)
+    )
+
+    def v2(data, gain, n_surf, kernels, **kwargs):
+        captured["weights"] = kwargs["window_channel_weights"][0]
+        assert kwargs["deep_rescue_delta"] == -2.0
+        return np.zeros_like(truth), {
+            "selected_templates": 0,
+            "windows": [{"temporal_rank": 1}],
+        }
+
+    monkeypatch.setattr(
+        runner.comparator_methods,
+        "minimum_norm_family",
+        lambda _data, _gain: {
+            name: np.zeros_like(truth)
+            for name in runner.comparators.MINIMUM_NORM_METHODS
+        },
+    )
+    for name in ("lcmv", "dipole_fit", "rap_music"):
+        monkeypatch.setattr(
+            runner.comparator_methods,
+            name,
+            lambda _data, _gain, _active: np.zeros_like(truth),
+        )
+    monkeypatch.setattr(
+        runner.benchmark_metrics,
+        "evaluate_estimate",
+        lambda *_args, **_kwargs: _metrics(case),
+    )
+    runtime = {
+        "shared": {
+            "gain_eeg": np.ones((3, 2)),
+            "gain_meg": np.ones((4, 2)),
+            "vertices": np.zeros((2, 3)),
+            "n_surf": 1,
+            "auc_cortex": {},
+        },
+        "kernels": (),
+        "algorithm_version": "v2",
+        "oaster_solver": v2,
+        "modality_weighting": "evidence",
+        "seed_root": 321,
+        "methods": ("OASTER-ERP-v2",) + runner.comparators.METHODS,
+        "oaster_kwargs": {"deep_rescue_delta": -2.0},
+    }
+
+    rows = runner._score_case(case, runtime, "digest")
+
+    assert tuple(rows) == runtime["methods"]
+    assert all(row["status"] == "ok" for row in rows.values())
+    assert captured["weights"].shape == (3,)
+    np.testing.assert_allclose(captured["weights"], [1.0, 0.61237244, 0.61237244])
+
+
+def test_oaster_only_returns_before_comparators(monkeypatch):
+    case = _case(0)
+    baseline = np.array([1, 1, 0, 0], dtype=bool)
+    active = ~baseline
+    truth = np.zeros((2, 4))
+    monkeypatch.setattr(
+        runner.erp_protocol,
+        "simulate_case",
+        lambda *_args, **_kwargs: (
+            np.ones((1, 4)), np.ones((1, 4)), truth, [np.array([0])],
+            baseline, (active,), np.flatnonzero(active), {},
+        ),
+    )
+    monkeypatch.setattr(
+        runner.comparator_methods,
+        "joint_whiten",
+        lambda *_args: (np.ones((2, 4)), np.ones((2, 2))),
+    )
+    monkeypatch.setattr(
+        runner.comparator_methods,
+        "minimum_norm_family",
+        lambda *_args: (_ for _ in ()).throw(AssertionError("comparators ran")),
+    )
+    monkeypatch.setattr(
+        runner.benchmark_metrics,
+        "evaluate_estimate",
+        lambda *_args, **_kwargs: _metrics(case),
+    )
+    runtime = {
+        "shared": {
+            "gain_eeg": np.ones((1, 2)),
+            "gain_meg": np.ones((1, 2)),
+            "vertices": np.zeros((2, 3)),
+            "n_surf": 1,
+            "auc_cortex": {},
+        },
+        "kernels": (),
+        "oaster_solver": lambda *_args, **_kwargs: (
+            truth,
+            {"selected_templates": 0, "windows": [{"temporal_rank": 1}]},
+        ),
+        "methods": ("OASTER-ERP",),
+    }
+
+    rows = runner._score_case(case, runtime, "digest")
+
+    assert tuple(rows) == ("OASTER-ERP",)
+    assert rows["OASTER-ERP"]["status"] == "ok"
+
+
 def test_pair_checkpoint_resumes_without_rescoring(tmp_path, monkeypatch):
     cases = [_case(index, scenario) for index, scenario in enumerate(runner.SCENARIOS)]
     manifest = tmp_path / "manifest.json"
@@ -162,8 +317,13 @@ def test_pair_checkpoint_resumes_without_rescoring(tmp_path, monkeypatch):
         f"{digest} {manifest.name}\n", encoding="ascii"
     )
     shared = {
+        "gain_eeg": np.ones((1, 2)),
+        "gain_meg": np.ones((1, 2)),
         "vertices": np.array([[0.0, 0.0, 0.0], [0.1, 0.0, 0.0]]),
         "adjacency": np.eye(2),
+        "times": np.arange(4, dtype=float),
+        "noise_factor_eeg": np.eye(1),
+        "noise_factor_meg": np.eye(1),
         "n_surf": 1,
         "n_deep": 1,
         "auc_cortex": {},
@@ -175,6 +335,9 @@ def test_pair_checkpoint_resumes_without_rescoring(tmp_path, monkeypatch):
         lambda *_args, **_kwargs: (),
     )
     monkeypatch.setattr(runner.archive, "_provenance", lambda *_args: {})
+    fingerprint = ["a" * 64]
+    monkeypatch.setattr(runner, "_code_fingerprint", lambda _paths: fingerprint[0])
+    monkeypatch.setattr(runner, "_resolve_oaster", lambda _version: object())
     scored = []
 
     def score(case, runtime, manifest_sha256):
@@ -206,7 +369,25 @@ def test_pair_checkpoint_resumes_without_rescoring(tmp_path, monkeypatch):
         "summary_by_snr_pair_case_weighted.csv",
     ):
         assert (output / name).exists()
+    metadata = json.loads((output / "metadata.json").read_text(encoding="utf-8"))
+    assert metadata["oaster_algorithm_version"] == "v1"
+    assert metadata["oaster_modality_weighting"] == "equal"
+    assert metadata["erp_seed_root"] == runner.erp_protocol.ERP_SEED_ROOT
+    assert len(metadata["checkpoint_shared_fingerprint"]) == 64
+    assert len(metadata["checkpoint_fingerprint"]) == 64
+    assert {"python", "numpy", "scipy", "mne"} <= set(
+        metadata["checkpoint_environment"]
+    )
 
     scored.clear()
     runner.run(manifest, tmp_path, None, output, workers=1)
     assert scored == []
+
+    shared["gain_eeg"][0, 0] = 2.0
+    runner.run(manifest, tmp_path, None, output, workers=1)
+    assert scored == [case["case_id"] for case in cases]
+
+    scored.clear()
+    fingerprint[0] = "b" * 64
+    runner.run(manifest, tmp_path, None, output, workers=1)
+    assert scored == [case["case_id"] for case in cases]

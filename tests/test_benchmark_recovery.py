@@ -74,10 +74,58 @@ class BenchmarkRecoveryTest(unittest.TestCase):
         self.assertIs(metrics.An_cal_AUC, An_cal_AUC)
         self.assertAlmostEqual(result["auc"], 1.0)
         self.assertAlmostEqual(result["auc_tie_corrected"], 1.0)
+        self.assertAlmostEqual(result["surface_auc_tie_corrected"], 1.0)
+        self.assertAlmostEqual(result["deep_auc_tie_corrected"], 1.0)
         self.assertAlmostEqual(result["surface_sd_mm"], 0.0)
         self.assertAlmostEqual(result["deep_sd_mm"], 0.0)
         self.assertAlmostEqual(result["surface_dle_mm"], 0.0)
         self.assertAlmostEqual(result["deep_dle_mm"], 0.0)
+        self.assertEqual(result["surface_active_count"], 1)
+        self.assertEqual(result["deep_active_count"], 1)
+
+    def test_layer_auc_handles_zero_estimate_and_undefined_classes(self):
+        positions = np.c_[np.arange(6) / 1000.0, np.zeros((6, 2))]
+        truth = np.zeros((6, 1))
+        truth[[0, 3], 0] = 1.0
+        cortex = {"Vertices": positions, "Faces": sparse.eye(6, format="csr")}
+
+        result = metrics.evaluate_estimate(
+            np.zeros_like(truth),
+            truth,
+            positions,
+            [np.array([0]), np.array([3])],
+            3,
+            np.array([0]),
+            cortex,
+        )
+        self.assertEqual(result["surface_auc_tie_corrected"], 0.5)
+        self.assertEqual(result["deep_auc_tie_corrected"], 0.5)
+        self.assertEqual(result["surface_active_count"], 0)
+        self.assertEqual(result["deep_active_count"], 0)
+
+        truth[3] = 0.0
+        result = metrics.evaluate_estimate(
+            np.zeros_like(truth),
+            truth,
+            positions,
+            [np.array([0])],
+            3,
+            np.array([0]),
+            cortex,
+        )
+        self.assertTrue(np.isnan(result["deep_auc_tie_corrected"]))
+
+        truth[:3] = 1.0
+        result = metrics.evaluate_estimate(
+            np.zeros_like(truth),
+            truth,
+            positions,
+            [np.arange(3)],
+            3,
+            np.array([0]),
+            cortex,
+        )
+        self.assertTrue(np.isnan(result["surface_auc_tie_corrected"]))
 
     def test_repository_relative_defaults_and_frozen_digest(self):
         root = Path(__file__).resolve().parents[1]
