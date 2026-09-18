@@ -13,6 +13,7 @@ import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import numpy as np
+from scipy.stats import friedmanchisquare, wilcoxon
 
 
 SNR_LEVELS = (-10, -5, 0, 5, 10, 15, 20)
@@ -98,7 +99,14 @@ def _read(path: Path, scenario_table: bool) -> list[dict[str, float | str]]:
                 }
                 if scenario_table:
                     parsed["scenario"] = row["scenario"].strip()
-                for name in ("auc", "rmse", *(metric for metric, _ in DISTANCE_METRICS)):
+                for name in (
+                    "auc",
+                    "rmse",
+                    "deep_sensitivity",
+                    "deep_specificity",
+                    "deep_balanced_accuracy",
+                    *(metric for metric, _ in DISTANCE_METRICS),
+                ):
                     parsed[name] = float(row.get(name, "nan"))
             except (TypeError, ValueError) as exc:
                 raise ValueError(f"{path}:{line}: invalid numeric value") from exc
@@ -347,6 +355,144 @@ def write_comparison_table(macro: dict[str, list[dict]], path: Path) -> Path:
     return path
 
 
+def write_scenario_table(
+    scenarios: dict[str, dict[str, list[dict]]], path: Path
+) -> Path:
+    fields = (
+        "scenario",
+        "method",
+        "snr_pair_count",
+        "an_auc_mean",
+        "an_auc_sd",
+        "an_auc_min",
+        "an_auc_max",
+        "an_auc_ge_0_90_pairs",
+    )
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with path.open("w", encoding="utf-8-sig", newline="") as stream:
+        writer = csv.DictWriter(stream, fieldnames=fields)
+        writer.writeheader()
+        for scenario in SCENARIOS:
+            for method in METHODS:
+                values = np.asarray(
+                    [row["auc_tie_corrected"] for row in scenarios[scenario][method]],
+                    dtype=float,
+                )
+                writer.writerow(
+                    {
+                        "scenario": scenario,
+                        "method": method,
+                        "snr_pair_count": values.size,
+                        "an_auc_mean": values.mean(),
+                        "an_auc_sd": values.std(ddof=1),
+                        "an_auc_min": values.min(),
+                        "an_auc_max": values.max(),
+                        "an_auc_ge_0_90_pairs": int(np.count_nonzero(values >= 0.9)),
+                    }
+                )
+    return path
+
+
+def write_deep_detection_table(macro: dict[str, list[dict]], path: Path) -> Path:
+    fields = (
+        "method",
+        "deep_sensitivity_mean",
+        "deep_specificity_mean",
+        "deep_balanced_accuracy_mean",
+    )
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with path.open("w", encoding="utf-8-sig", newline="") as stream:
+        writer = csv.DictWriter(stream, fieldnames=fields)
+        writer.writeheader()
+        for method in METHODS:
+            writer.writerow(
+                {
+                    "method": method,
+                    **{
+                        f"{name}_mean": _finite_mean(
+                            [float(row.get(name, np.nan)) for row in macro[method]]
+                        )
+                        for name in (
+                            "deep_sensitivity",
+                            "deep_specificity",
+                            "deep_balanced_accuracy",
+                        )
+                    },
+                }
+            )
+    return path
+
+
+def write_paired_statistics(macro: dict[str, list[dict]], path: Path) -> Path:
+    reference = np.asarray(
+        [row["auc_tie_corrected"] for row in macro["OASTER-ERP"]], dtype=float
+    )
+    rng = np.random.default_rng(20260918)
+    rows = []
+    for method in METHODS[1:]:
+        comparator = np.asarray(
+            [row["auc_tie_corrected"] for row in macro[method]], dtype=float
+        )
+        difference = reference - comparator
+        bootstrap = difference[
+            rng.integers(0, difference.size, size=(10_000, difference.size))
+        ].mean(axis=1)
+        statistic, p_value = wilcoxon(difference, alternative="two-sided", method="auto")
+        rows.append(
+            {
+                "comparison": f"OASTER-ERP - {method}",
+                "snr_pair_count": difference.size,
+                "mean_difference": difference.mean(),
+                "mean_difference_ci95_low": np.quantile(bootstrap, 0.025),
+                "mean_difference_ci95_high": np.quantile(bootstrap, 0.975),
+                "median_difference": np.median(difference),
+                "cohen_dz": difference.mean() / difference.std(ddof=1),
+                "wins": int(np.count_nonzero(difference > 0.0)),
+                "ties": int(np.count_nonzero(difference == 0.0)),
+                "losses": int(np.count_nonzero(difference < 0.0)),
+                "wilcoxon_statistic": statistic,
+                "wilcoxon_p": p_value,
+            }
+        )
+    order = np.argsort([row["wilcoxon_p"] for row in rows])
+    running = 0.0
+    for rank, index in enumerate(order):
+        running = max(running, (len(rows) - rank) * rows[index]["wilcoxon_p"])
+        rows[index]["holm_adjusted_p"] = min(1.0, running)
+
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with path.open("w", encoding="utf-8-sig", newline="") as stream:
+        writer = csv.DictWriter(stream, fieldnames=rows[0].keys())
+        writer.writeheader()
+        writer.writerows(rows)
+    return path
+
+
+def write_omnibus_test(macro: dict[str, list[dict]], path: Path) -> Path:
+    statistic, p_value = friedmanchisquare(
+        *(
+            [row["auc_tie_corrected"] for row in macro[method]]
+            for method in METHODS
+        )
+    )
+    fields = ("test", "unit", "method_count", "snr_pair_count", "statistic", "p")
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with path.open("w", encoding="utf-8-sig", newline="") as stream:
+        writer = csv.DictWriter(stream, fieldnames=fields)
+        writer.writeheader()
+        writer.writerow(
+            {
+                "test": "Friedman",
+                "unit": "SNR pair; descriptive, not subject-level inference",
+                "method_count": len(METHODS),
+                "snr_pair_count": len(macro[METHODS[0]]),
+                "statistic": statistic,
+                "p": p_value,
+            }
+        )
+    return path
+
+
 def plot_heatmaps(
     rows_by_method: dict[str, list[dict]], path: Path, title: str
 ) -> Path:
@@ -467,6 +613,10 @@ def generate(
     output = Path(output) if output is not None else inputs[0] / "figures_erp_whole_head"
     products = [
         write_comparison_table(macro, output / "eight_method_comparison.csv"),
+        write_scenario_table(scenarios, output / "scenario_method_comparison.csv"),
+        write_deep_detection_table(macro, output / "deep_detection_comparison.csv"),
+        write_paired_statistics(macro, output / "oaster_paired_statistics.csv"),
+        write_omnibus_test(macro, output / "snr_grid_omnibus_test.csv"),
         plot_heatmaps(
             macro,
             output / "an_auc_all_49_pairs.png",

@@ -1,0 +1,247 @@
+{
+  "manifest": "D:\\博士\\工作＆汇报\\源定位\\新建文件夹\\results\\corrected_v2\\strict_blind\\manifest.json",
+  "manifest_sha256": "8147726ec34b548fba6f25fe6c05dd55933e4cf458c7c2cec94c31a9d7c5e60c",
+  "data_root": "D:\\博士\\工作＆汇报\\源定位\\新建文件夹\\corrected_v2\\generated",
+  "sample_path": "D:\\mne_data\\MNE-sample-data",
+  "protocol": "phase-locked-erp-v1",
+  "methods": [
+    "OASTER-ERP",
+    "MNE",
+    "dSPM",
+    "sLORETA",
+    "eLORETA",
+    "LCMV",
+    "Dipole fitting (grid)",
+    "RAP-MUSIC"
+  ],
+  "observation_rule": "simulate once and joint_whiten once per case for all methods",
+  "window_rule": "one fixed baseline and active ERP window shared by all methods; joint whitened observations are baseline-corrected before dispatch",
+  "snr_level": "evoked-level after a 40-trial-mean-equivalent noise draw",
+  "snr_pairs": [
+    [
+      -10,
+      -10
+    ],
+    [
+      -10,
+      -5
+    ],
+    [
+      -10,
+      0
+    ],
+    [
+      -10,
+      5
+    ],
+    [
+      -10,
+      10
+    ],
+    [
+      -10,
+      15
+    ],
+    [
+      -10,
+      20
+    ],
+    [
+      -5,
+      -10
+    ],
+    [
+      -5,
+      -5
+    ],
+    [
+      -5,
+      0
+    ],
+    [
+      -5,
+      5
+    ],
+    [
+      -5,
+      10
+    ],
+    [
+      -5,
+      15
+    ],
+    [
+      -5,
+      20
+    ],
+    [
+      0,
+      -10
+    ],
+    [
+      0,
+      -5
+    ],
+    [
+      0,
+      0
+    ],
+    [
+      0,
+      5
+    ],
+    [
+      0,
+      10
+    ],
+    [
+      0,
+      15
+    ],
+    [
+      0,
+      20
+    ],
+    [
+      5,
+      -10
+    ],
+    [
+      5,
+      -5
+    ],
+    [
+      5,
+      0
+    ],
+    [
+      5,
+      5
+    ],
+    [
+      5,
+      10
+    ],
+    [
+      5,
+      15
+    ],
+    [
+      5,
+      20
+    ],
+    [
+      10,
+      -10
+    ],
+    [
+      10,
+      -5
+    ],
+    [
+      10,
+      0
+    ],
+    [
+      10,
+      5
+    ],
+    [
+      10,
+      10
+    ],
+    [
+      10,
+      15
+    ],
+    [
+      10,
+      20
+    ],
+    [
+      15,
+      -10
+    ],
+    [
+      15,
+      -5
+    ],
+    [
+      15,
+      0
+    ],
+    [
+      15,
+      5
+    ],
+    [
+      15,
+      10
+    ],
+    [
+      15,
+      15
+    ],
+    [
+      15,
+      20
+    ],
+    [
+      20,
+      -10
+    ],
+    [
+      20,
+      -5
+    ],
+    [
+      20,
+      0
+    ],
+    [
+      20,
+      5
+    ],
+    [
+      20,
+      10
+    ],
+    [
+      20,
+      15
+    ],
+    [
+      20,
+      20
+    ]
+  ],
+  "cases_per_scenario": null,
+  "selected_case_count": 9114,
+  "checkpoint": "one atomically replaced CSV per EEG/MEG SNR pair",
+  "workers": 1,
+  "blas_threads": {
+    "OMP_NUM_THREADS": "1",
+    "MKL_NUM_THREADS": "1",
+    "OPENBLAS_NUM_THREADS": "1"
+  },
+  "provenance": {
+    "git_commit_at_merge": "3d5e476f6003e20b4a097545df71283dc67c4b04",
+    "python": "3.13.15",
+    "packages": {
+      "numpy": "2.5.2",
+      "scipy": "1.18.1",
+      "h5py": "3.16.0",
+      "matplotlib": "3.11.1",
+      "mne": "1.12.1",
+      "nibabel": "5.4.2"
+    },
+    "code_sha256": {
+      "runner": "b6ddfdb88207096edafab599b5b444866dbbf5e67823009fec2f50e070f9f2fe",
+      "erp_protocol": "e4199b11ad39e5e83aa8e8cb3f1e2d34ff17dfdbb091e3b19c6d394739117f16",
+      "oaster_algorithm": "feedb4a958733a410bec7e0881d6eb648d09fc203e7b660ea284183b699295de",
+      "comparator_algorithms": "1625c67d91d20112d711a3d77de175ed0509c1acfa45c1561845f6761c307dcf",
+      "metrics": "28545dace3910a3e82e7e996ff04b8213202c3278e70a816b0e24cf670081356"
+    },
+    "bitwise_cross_environment_reproducibility_claimed": false
+  }
+}

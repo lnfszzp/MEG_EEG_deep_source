@@ -78,12 +78,13 @@ def test_combined_rows_csv_fallback(tmp_path: Path) -> None:
 def test_generates_table_and_all_requested_figures(tmp_path: Path) -> None:
     outputs = plotting.generate((OASTER, COMPARATORS), tmp_path / "erp_figures")
 
-    assert len(outputs) == 8
-    assert all(path.is_file() and path.stat().st_size > 1_000 for path in outputs)
+    assert len(outputs) == 12
+    assert all(path.is_file() and path.stat().st_size > 50 for path in outputs)
+    assert all(path.stat().st_size > 1_000 for path in outputs[5:])
     assert all("figures_v20" not in str(path) for path in outputs)
     with outputs[0].open(encoding="utf-8-sig", newline="") as stream:
         rows = list(csv.DictReader(stream))
     assert [row["method"] for row in rows] == list(plotting.METHODS)
     assert all(row["primary_metric"] == "An_auc (auc_tie_corrected)" for row in rows)
     assert all(row["snr_pair_count"] == "49" for row in rows)
-    assert outputs[1].read_bytes().startswith(b"\x89PNG\r\n\x1a\n")
+    assert outputs[5].read_bytes().startswith(b"\x89PNG\r\n\x1a\n")
