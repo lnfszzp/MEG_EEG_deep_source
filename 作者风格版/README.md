@@ -93,9 +93,13 @@
 
 用途：运行当前相位锁定 OASTER-ERP 和七个固定对比方法的完整仿真。脚本集中展示 manifest、几何、MNE sample、输出路径、7×7 EEG/MEG SNR 和 worker 参数，然后调用正式批处理，不复制算法。
 
-默认覆盖纯表层、纯深层、深层加单表层、深层加双表层四种情况；每个 SNR 使用全部 186 个位置配置，共 49 个 SNR 组合。这里的“全头”是双侧 68 个皮层分区代表位置和 16 个双侧丘脑点，不等于把 7498 个皮层顶点逐点作为真值。结果按 SNR 组合断点保存，重跑脚本会校验并跳过完整检查点；结束后自动检查结果行数并生成 An_auc、SD、DLE 图和八方法对比表。
+默认覆盖纯表层、纯深层、深层加单表层、深层加双表层四种情况；独立确认集的每个 SNR 使用全部 369 个位置配置（136、30、136、67），共 49 个 SNR 组合、18,081 个仿真 case。确认位置与开发集空间分离；这里的“全头”是双侧皮层分区代表位置和双侧丘脑点，不等于把全部 7498 个皮层顶点逐点作为真值。结果按 SNR 组合断点保存，重跑脚本会校验并跳过完整检查点；结束后自动检查 144,648 行结果并生成 An_auc、SD、DLE 图、配置级配对统计和八方法对比表。
 
-完整实跑结果位于 `results/erp_whole_head/current_method_v1`：72,912 行全部成功。当前 OASTER-ERP 的 49 个 SNR 四场景宏平均 An_auc 为 0.823559，主要短板是深源漏检；详见该目录的 `REPORT.md`。
+冻结开发集结果位于 `results/erp_whole_head/development_full_v3`，独立确认集结果写入 `results/erp_whole_head/confirmation_v3/all_methods`。算法和深源阈值在读取确认集结果前已经冻结，确认集只用于一次最终评价。
+
+## 8-ERP四种情形脑空间定位图.py
+
+用途：在同一 EEG/MEG SNR、同一位置序号下，依次画纯表层、纯深层、深层加单表层、深层加双表层四种情形。每种情形都把仿真真值单独画出，不把真值标记叠在算法图上；含深层源时同时输出 MRI 解剖渲染和完整 dorsal 俯视 pial 皮层渲染。脚本最后检查每张图并生成 `INDEX.md`。
 
 ## 原脚本对应关系
 
@@ -108,6 +112,7 @@
 | `4-DBS频谱定位.py` | MNE common-filter DICS + ds004998 自带 FieldTrip 网格/边界 | DBS-MEG 真实 beta-ERD 基线 |
 | `5-左指运动双链定位.py` | MNE/OASTER run-specific inverse + common-filter DICS | ds006035 三 run 左指运动双链定位 |
 | `7-ERP全头七方法多SNR仿真.py` | `run_erp_whole_head_matrix.py`、`plot_erp_whole_head_results.py` | 当前 ERP 算法、七个对比方法和 49 组 EEG×MEG SNR |
+| `8-ERP四种情形脑空间定位图.py` | `plot_erp_brain_maps.py`、`plot_strict_brain_maps.py` | 四种仿真情形的独立真值图、MRI 解剖图和完整俯视皮层图 |
 | 作者风格脚本中的 OASTER 段 | `candidates/oaster_rebuilt.py`、`protected_multilayer.py` | 正式算法实现和公共数值检查 |
 | `2-OASTER仿真.py` 的评价段 | `benchmark/metrics.py` | AUC、SD、DLE 的正式实现 |
 | `2-OASTER仿真.py` 的真值/噪声段 | `benchmark/protocol.py` | 冻结真值、波形和噪声协议 |
