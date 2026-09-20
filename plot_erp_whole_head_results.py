@@ -514,7 +514,12 @@ def write_configuration_cluster_statistics(
     rows_paths: Sequence[Path], path: Path
 ) -> Path:
     """Pair methods by simulated source configuration, averaging its 49 SNR cells."""
-    grouped: dict[tuple[str, str, str], list[float]] = defaultdict(list)
+    metrics = (
+        "auc_tie_corrected",
+        "surface_auc_tie_corrected",
+        "deep_auc_tie_corrected",
+    )
+    grouped: dict[tuple[str, str, str, str], list[float]] = defaultdict(list)
     for rows_path in rows_paths:
         with rows_path.open(encoding="utf-8-sig", newline="") as stream:
             reader = csv.DictReader(stream)
@@ -528,96 +533,128 @@ def write_configuration_cluster_statistics(
             missing = required.difference(reader.fieldnames or ())
             if missing:
                 raise ValueError(f"{rows_path}: missing columns {sorted(missing)}")
+            available_metrics = [
+                metric for metric in metrics if metric in (reader.fieldnames or ())
+            ]
             for line, row in enumerate(reader, 2):
                 method = _canonical_method(row["method"])
                 if method not in METHODS:
                     continue
                 if row["status"] != "ok":
                     raise ValueError(f"{rows_path}:{line}: non-ok row for {method}")
-                try:
-                    value = float(row["auc_tie_corrected"])
-                except (TypeError, ValueError) as exc:
-                    raise ValueError(f"{rows_path}:{line}: invalid An_auc") from exc
-                if not np.isfinite(value):
-                    raise ValueError(f"{rows_path}:{line}: An_auc is not finite")
-                grouped[(row["scenario"].strip(), method, row["configuration_id"])].append(
-                    value
-                )
+                for metric in available_metrics:
+                    try:
+                        value = float(row.get(metric) or "nan")
+                    except (TypeError, ValueError) as exc:
+                        raise ValueError(
+                            f"{rows_path}:{line}: invalid {metric}"
+                        ) from exc
+                    if not np.isfinite(value):
+                        if metric == "auc_tie_corrected":
+                            raise ValueError(f"{rows_path}:{line}: An_auc is not finite")
+                        continue
+                    grouped[
+                        (
+                            metric,
+                            row["scenario"].strip(),
+                            method,
+                            row["configuration_id"],
+                        )
+                    ].append(value)
 
     rows = []
-    for scenario in ("all", *SCENARIOS):
-        means: dict[str, dict[str, float]] = {}
-        repetitions: list[int] = []
-        for method in METHODS:
-            selected = {
-                configuration: values
-                for (row_scenario, row_method, configuration), values in grouped.items()
-                if row_method == method
-                and (scenario == "all" or row_scenario == scenario)
-            }
-            means[method] = {
-                configuration: float(np.mean(values))
-                for configuration, values in selected.items()
-            }
-            repetitions.extend(map(len, selected.values()))
-        reference_ids = set(means["OASTER-ERP"])
-        if not reference_ids:
-            raise ValueError(f"no OASTER rows found for scenario {scenario}")
-        if min(repetitions) != 49 or max(repetitions) != 49:
-            raise ValueError(
-                f"{scenario}: expected 49 SNR rows per method/configuration; "
-                f"found {min(repetitions)}..{max(repetitions)}"
-            )
-        scope_rows = []
-        rng = np.random.default_rng(20260918)
-        for method in METHODS[1:]:
-            if set(means[method]) != reference_ids:
-                raise ValueError(f"{scenario}/{method}: configuration IDs do not match OASTER")
-            difference = np.asarray(
-                [means["OASTER-ERP"][key] - means[method][key] for key in sorted(reference_ids)],
-                dtype=float,
-            )
-            bootstrap = difference[
-                rng.integers(0, difference.size, size=(10_000, difference.size))
-            ].mean(axis=1)
-            if np.all(difference == 0.0):
-                statistic, p_value = 0.0, 1.0
-            else:
-                statistic, p_value = wilcoxon(
-                    difference, alternative="two-sided", method="auto"
-                )
-            standard_deviation = difference.std(ddof=1)
-            scope_rows.append(
-                {
-                    "scenario": scenario,
-                    "comparison": f"OASTER-ERP - {method}",
-                    "analysis_unit": "source configuration (49 SNR cells averaged)",
-                    "configuration_count": difference.size,
-                    "mean_difference": difference.mean(),
-                    "mean_difference_ci95_low": np.quantile(bootstrap, 0.025),
-                    "mean_difference_ci95_high": np.quantile(bootstrap, 0.975),
-                    "median_difference": np.median(difference),
-                    "cohen_dz": (
-                        difference.mean() / standard_deviation
-                        if standard_deviation > 0.0
-                        else float("nan")
-                    ),
-                    "wins": int(np.count_nonzero(difference > 0.0)),
-                    "ties": int(np.count_nonzero(difference == 0.0)),
-                    "losses": int(np.count_nonzero(difference < 0.0)),
-                    "wilcoxon_statistic": statistic,
-                    "wilcoxon_p": p_value,
+    for metric in metrics:
+        for scenario in ("all", *SCENARIOS):
+            means: dict[str, dict[str, float]] = {}
+            selected_by_method: dict[str, dict[str, list[float]]] = {}
+            for method in METHODS:
+                selected = {
+                    configuration: values
+                    for (
+                        row_metric,
+                        row_scenario,
+                        row_method,
+                        configuration,
+                    ), values in grouped.items()
+                    if row_metric == metric
+                    and row_method == method
+                    and (scenario == "all" or row_scenario == scenario)
                 }
-            )
-        order = np.argsort([row["wilcoxon_p"] for row in scope_rows])
-        running = 0.0
-        for rank, index in enumerate(order):
-            running = max(
-                running,
-                (len(scope_rows) - rank) * scope_rows[index]["wilcoxon_p"],
-            )
-            scope_rows[index]["holm_adjusted_p"] = min(1.0, running)
-        rows.extend(scope_rows)
+                selected_by_method[method] = selected
+                means[method] = {
+                    configuration: float(np.mean(values))
+                    for configuration, values in selected.items()
+                }
+            reference_ids = set(means["OASTER-ERP"])
+            if not reference_ids:
+                continue
+            for method in METHODS[1:]:
+                if set(means[method]) != reference_ids:
+                    raise ValueError(
+                        f"{metric}/{scenario}/{method}: configuration IDs do not match OASTER"
+                    )
+            repetitions = [
+                len(values)
+                for selected in selected_by_method.values()
+                for values in selected.values()
+            ]
+            if min(repetitions) != 49 or max(repetitions) != 49:
+                raise ValueError(
+                    f"{metric}/{scenario}: expected 49 SNR rows per method/configuration; "
+                    f"found {min(repetitions)}..{max(repetitions)}"
+                )
+            scope_rows = []
+            rng = np.random.default_rng(20260918)
+            for method in METHODS[1:]:
+                difference = np.asarray(
+                    [
+                        means["OASTER-ERP"][key] - means[method][key]
+                        for key in sorted(reference_ids)
+                    ],
+                    dtype=float,
+                )
+                bootstrap = difference[
+                    rng.integers(0, difference.size, size=(10_000, difference.size))
+                ].mean(axis=1)
+                if np.all(difference == 0.0):
+                    statistic, p_value = 0.0, 1.0
+                else:
+                    statistic, p_value = wilcoxon(
+                        difference, alternative="two-sided", method="auto"
+                    )
+                standard_deviation = difference.std(ddof=1)
+                scope_rows.append(
+                    {
+                        "metric": metric,
+                        "scenario": scenario,
+                        "comparison": f"OASTER-ERP - {method}",
+                        "analysis_unit": "source configuration (49 SNR cells averaged)",
+                        "configuration_count": difference.size,
+                        "mean_difference": difference.mean(),
+                        "mean_difference_ci95_low": np.quantile(bootstrap, 0.025),
+                        "mean_difference_ci95_high": np.quantile(bootstrap, 0.975),
+                        "median_difference": np.median(difference),
+                        "cohen_dz": (
+                            difference.mean() / standard_deviation
+                            if standard_deviation > 0.0
+                            else float("nan")
+                        ),
+                        "wins": int(np.count_nonzero(difference > 0.0)),
+                        "ties": int(np.count_nonzero(difference == 0.0)),
+                        "losses": int(np.count_nonzero(difference < 0.0)),
+                        "wilcoxon_statistic": statistic,
+                        "wilcoxon_p": p_value,
+                    }
+                )
+            order = np.argsort([row["wilcoxon_p"] for row in scope_rows])
+            running = 0.0
+            for rank, index in enumerate(order):
+                running = max(
+                    running,
+                    (len(scope_rows) - rank) * scope_rows[index]["wilcoxon_p"],
+                )
+                scope_rows[index]["holm_adjusted_p"] = min(1.0, running)
+            rows.extend(scope_rows)
 
     path.parent.mkdir(parents=True, exist_ok=True)
     with path.open("w", encoding="utf-8-sig", newline="") as stream:

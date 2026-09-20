@@ -108,6 +108,7 @@ def test_generates_table_and_all_requested_figures(tmp_path: Path) -> None:
     with outputs[5].open(encoding="utf-8-sig", newline="") as stream:
         statistics = list(csv.DictReader(stream))
     assert {row["scenario"] for row in statistics} == {"all", *plotting.SCENARIOS}
+    assert {row["metric"] for row in statistics} == {"auc_tie_corrected"}
     assert all(
         row["analysis_unit"] == "source configuration (49 SNR cells averaged)"
         for row in statistics
