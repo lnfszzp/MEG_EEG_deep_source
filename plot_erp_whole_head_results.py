@@ -482,6 +482,7 @@ def write_paired_statistics(macro: dict[str, list[dict]], path: Path) -> Path:
         rows.append(
             {
                 "comparison": f"OASTER-ERP - {method}",
+                "analysis_unit": "SNR pair; descriptive, not independent subjects",
                 "snr_pair_count": difference.size,
                 "mean_difference": difference.mean(),
                 "mean_difference_ci95_low": np.quantile(bootstrap, 0.025),
@@ -500,6 +501,123 @@ def write_paired_statistics(macro: dict[str, list[dict]], path: Path) -> Path:
     for rank, index in enumerate(order):
         running = max(running, (len(rows) - rank) * rows[index]["wilcoxon_p"])
         rows[index]["holm_adjusted_p"] = min(1.0, running)
+
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with path.open("w", encoding="utf-8-sig", newline="") as stream:
+        writer = csv.DictWriter(stream, fieldnames=rows[0].keys())
+        writer.writeheader()
+        writer.writerows(rows)
+    return path
+
+
+def write_configuration_cluster_statistics(
+    rows_paths: Sequence[Path], path: Path
+) -> Path:
+    """Pair methods by simulated source configuration, averaging its 49 SNR cells."""
+    grouped: dict[tuple[str, str, str], list[float]] = defaultdict(list)
+    for rows_path in rows_paths:
+        with rows_path.open(encoding="utf-8-sig", newline="") as stream:
+            reader = csv.DictReader(stream)
+            required = {
+                "configuration_id",
+                "scenario",
+                "method",
+                "status",
+                "auc_tie_corrected",
+            }
+            missing = required.difference(reader.fieldnames or ())
+            if missing:
+                raise ValueError(f"{rows_path}: missing columns {sorted(missing)}")
+            for line, row in enumerate(reader, 2):
+                method = _canonical_method(row["method"])
+                if method not in METHODS:
+                    continue
+                if row["status"] != "ok":
+                    raise ValueError(f"{rows_path}:{line}: non-ok row for {method}")
+                try:
+                    value = float(row["auc_tie_corrected"])
+                except (TypeError, ValueError) as exc:
+                    raise ValueError(f"{rows_path}:{line}: invalid An_auc") from exc
+                if not np.isfinite(value):
+                    raise ValueError(f"{rows_path}:{line}: An_auc is not finite")
+                grouped[(row["scenario"].strip(), method, row["configuration_id"])].append(
+                    value
+                )
+
+    rows = []
+    for scenario in ("all", *SCENARIOS):
+        means: dict[str, dict[str, float]] = {}
+        repetitions: list[int] = []
+        for method in METHODS:
+            selected = {
+                configuration: values
+                for (row_scenario, row_method, configuration), values in grouped.items()
+                if row_method == method
+                and (scenario == "all" or row_scenario == scenario)
+            }
+            means[method] = {
+                configuration: float(np.mean(values))
+                for configuration, values in selected.items()
+            }
+            repetitions.extend(map(len, selected.values()))
+        reference_ids = set(means["OASTER-ERP"])
+        if not reference_ids:
+            raise ValueError(f"no OASTER rows found for scenario {scenario}")
+        if min(repetitions) != 49 or max(repetitions) != 49:
+            raise ValueError(
+                f"{scenario}: expected 49 SNR rows per method/configuration; "
+                f"found {min(repetitions)}..{max(repetitions)}"
+            )
+        scope_rows = []
+        rng = np.random.default_rng(20260918)
+        for method in METHODS[1:]:
+            if set(means[method]) != reference_ids:
+                raise ValueError(f"{scenario}/{method}: configuration IDs do not match OASTER")
+            difference = np.asarray(
+                [means["OASTER-ERP"][key] - means[method][key] for key in sorted(reference_ids)],
+                dtype=float,
+            )
+            bootstrap = difference[
+                rng.integers(0, difference.size, size=(10_000, difference.size))
+            ].mean(axis=1)
+            if np.all(difference == 0.0):
+                statistic, p_value = 0.0, 1.0
+            else:
+                statistic, p_value = wilcoxon(
+                    difference, alternative="two-sided", method="auto"
+                )
+            standard_deviation = difference.std(ddof=1)
+            scope_rows.append(
+                {
+                    "scenario": scenario,
+                    "comparison": f"OASTER-ERP - {method}",
+                    "analysis_unit": "source configuration (49 SNR cells averaged)",
+                    "configuration_count": difference.size,
+                    "mean_difference": difference.mean(),
+                    "mean_difference_ci95_low": np.quantile(bootstrap, 0.025),
+                    "mean_difference_ci95_high": np.quantile(bootstrap, 0.975),
+                    "median_difference": np.median(difference),
+                    "cohen_dz": (
+                        difference.mean() / standard_deviation
+                        if standard_deviation > 0.0
+                        else float("nan")
+                    ),
+                    "wins": int(np.count_nonzero(difference > 0.0)),
+                    "ties": int(np.count_nonzero(difference == 0.0)),
+                    "losses": int(np.count_nonzero(difference < 0.0)),
+                    "wilcoxon_statistic": statistic,
+                    "wilcoxon_p": p_value,
+                }
+            )
+        order = np.argsort([row["wilcoxon_p"] for row in scope_rows])
+        running = 0.0
+        for rank, index in enumerate(order):
+            running = max(
+                running,
+                (len(scope_rows) - rank) * scope_rows[index]["wilcoxon_p"],
+            )
+            scope_rows[index]["holm_adjusted_p"] = min(1.0, running)
+        rows.extend(scope_rows)
 
     path.parent.mkdir(parents=True, exist_ok=True)
     with path.open("w", encoding="utf-8-sig", newline="") as stream:
@@ -726,12 +844,21 @@ def generate(
         write_deep_detection_table(macro, output / "deep_detection_comparison.csv"),
         write_paired_statistics(macro, output / "oaster_paired_statistics.csv"),
         write_omnibus_test(macro, output / "snr_grid_omnibus_test.csv"),
+    ]
+    rows_paths = [directory / ROWS_NAME for directory in inputs]
+    if all(path.is_file() for path in rows_paths):
+        products.append(
+            write_configuration_cluster_statistics(
+                rows_paths, output / "configuration_clustered_statistics.csv"
+            )
+        )
+    products.append(
         plot_heatmaps(
             macro,
             output / "an_auc_all_49_pairs.png",
             "八种方法：全49组EEG × MEG SNR的An_auc / All 49 SNR pairs",
-        ),
-    ]
+        )
+    )
     products.extend(
         plot_heatmaps(
             scenarios[scenario],

@@ -94,9 +94,9 @@ def test_combined_rows_csv_fallback(tmp_path: Path) -> None:
 def test_generates_table_and_all_requested_figures(tmp_path: Path) -> None:
     outputs = plotting.generate((OASTER, COMPARATORS), tmp_path / "erp_figures")
 
-    assert len(outputs) == 13
+    assert len(outputs) == 14
     assert all(path.is_file() and path.stat().st_size > 50 for path in outputs)
-    assert all(path.stat().st_size > 1_000 for path in outputs[5:])
+    assert all(path.stat().st_size > 1_000 for path in outputs[6:])
     assert all("figures_v20" not in str(path) for path in outputs)
     with outputs[0].open(encoding="utf-8-sig", newline="") as stream:
         rows = list(csv.DictReader(stream))
@@ -104,7 +104,15 @@ def test_generates_table_and_all_requested_figures(tmp_path: Path) -> None:
     assert all(row["primary_metric"] == "An_auc (auc_tie_corrected)" for row in rows)
     assert all(row["snr_pair_count"] == "49" for row in rows)
     assert "surface_auc_tie_corrected_mean" in rows[0]
-    assert outputs[5].read_bytes().startswith(b"\x89PNG\r\n\x1a\n")
+    assert outputs[5].name == "configuration_clustered_statistics.csv"
+    with outputs[5].open(encoding="utf-8-sig", newline="") as stream:
+        statistics = list(csv.DictReader(stream))
+    assert {row["scenario"] for row in statistics} == {"all", *plotting.SCENARIOS}
+    assert all(
+        row["analysis_unit"] == "source configuration (49 SNR cells averaged)"
+        for row in statistics
+    )
+    assert outputs[6].read_bytes().startswith(b"\x89PNG\r\n\x1a\n")
 
 
 def test_layer_auc_plot_uses_defined_scenarios_and_tolerates_missing_ones(
