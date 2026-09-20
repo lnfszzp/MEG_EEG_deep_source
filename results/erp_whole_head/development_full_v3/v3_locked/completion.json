@@ -1,0 +1,12 @@
+{
+  "status": "complete",
+  "row_count": 9212,
+  "expected_row_count": 9212,
+  "error_count": 0,
+  "manifest_sha256": "0989782ea769bc0a698e8e6f250795ee829398afc5984a904eeb9544a32432b5",
+  "chunk_count": 49,
+  "method_count": 1,
+  "methods": [
+    "OASTER-ERP-v3"
+  ]
+}

@@ -64,6 +64,14 @@ results/erp_whole_head/**
 !results/erp_whole_head/development_full_v3/
 !results/erp_whole_head/development_full_v3/manifest.json
 !results/erp_whole_head/development_full_v3/manifest.json.sha256
+!results/erp_whole_head/development_full_v3/v2_reference/
+!results/erp_whole_head/development_full_v3/v2_reference/summary*.csv
+!results/erp_whole_head/development_full_v3/v2_reference/metadata.json
+!results/erp_whole_head/development_full_v3/v2_reference/completion.json
+!results/erp_whole_head/development_full_v3/v3_locked/
+!results/erp_whole_head/development_full_v3/v3_locked/summary*.csv
+!results/erp_whole_head/development_full_v3/v3_locked/metadata.json
+!results/erp_whole_head/development_full_v3/v3_locked/completion.json
 !results/erp_whole_head/confirmation_v3/
 !results/erp_whole_head/confirmation_v3/manifest.json
 !results/erp_whole_head/confirmation_v3/manifest.json.sha256

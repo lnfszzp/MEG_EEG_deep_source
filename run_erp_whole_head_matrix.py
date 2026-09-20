@@ -698,7 +698,9 @@ def main() -> None:
     parser.add_argument("--seed-root", type=int, default=erp_protocol.ERP_SEED_ROOT)
     parser.add_argument("--oaster-only", action="store_true")
     parser.add_argument(
+        "--deep-rescue-delta",
         "--v2-deep-rescue-delta",
+        dest="deep_rescue_delta",
         type=float,
         default=oaster.ERP_V2_DEEP_RESCUE_DELTA,
     )
@@ -721,7 +723,7 @@ def main() -> None:
             modality_weighting=args.modality_weighting,
             seed_root=args.seed_root,
             oaster_only=args.oaster_only,
-            v2_deep_rescue_delta=args.v2_deep_rescue_delta,
+            v2_deep_rescue_delta=args.deep_rescue_delta,
         )
     except ValueError as exc:
         parser.error(str(exc))

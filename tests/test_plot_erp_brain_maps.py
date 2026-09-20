@@ -5,6 +5,15 @@ import numpy as np
 import plot_erp_brain_maps as maps
 
 
+def test_defaults_use_v3_full_development_only() -> None:
+    assert maps.DEFAULT_MANIFEST.parts[-2:] == (
+        "development_full_v3",
+        "manifest.json",
+    )
+    assert "confirmation" not in str(maps.DEFAULT_MANIFEST)
+    assert maps.OASTER_METHOD == "OASTER-ERP-v3"
+
+
 def test_reconstruct_captures_the_exact_runner_observation_and_estimates(monkeypatch) -> None:
     eeg = np.arange(10.0).reshape(2, 5)
     meg = eeg + 20.0
@@ -55,6 +64,8 @@ def test_reconstruct_captures_the_exact_runner_observation_and_estimates(monkeyp
     assert result["active"] is active
     assert tuple(result["estimates"]) == maps.METHODS
     assert calls["seed_root"] == 20261001
+    assert calls["runtime"]["algorithm_version"] == "v3"
+    assert calls["runtime"]["oaster_solver"] is maps.erp_run._resolve_oaster("v3")
     assert calls["runtime"]["modality_weighting"] == "evidence"
     assert calls["runtime"]["oaster_kwargs"] == {"deep_rescue_delta": -6.0}
     assert calls["manifest_sha256"] == "manifest-sha"
@@ -67,3 +78,14 @@ def test_reconstruct_captures_the_exact_runner_observation_and_estimates(monkeyp
             "active_window_s": [0.02, 0.12],
         }
     )
+
+
+def test_algorithm_display_uses_one_global_amplitude_floor() -> None:
+    source = np.zeros((20, 4))
+    source[0, 2:] = 1.0
+    source[1:17, 2:] = 0.05
+    source[17, 2:] = 0.20
+
+    displayed = maps._global_threshold_source(source, np.array([2, 3]), 0.10)
+
+    assert np.array_equal(np.flatnonzero(np.any(displayed, axis=1)), [0, 17])

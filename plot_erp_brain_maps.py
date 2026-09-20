@@ -22,14 +22,14 @@ from candidates import oaster_rebuilt as oaster
 
 ROOT = Path(__file__).resolve().parent
 DEFAULT_MANIFEST = (
-    ROOT / "results" / "erp_whole_head" / "development_multisite_v2" / "manifest.json"
+    ROOT / "results" / "erp_whole_head" / "development_full_v3" / "manifest.json"
 )
 DEFAULT_OUTPUT = (
-    ROOT / "results" / "erp_whole_head" / "development_multisite_v2" / "brain_maps"
+    ROOT / "results" / "erp_whole_head" / "development_full_v3" / "brain_maps"
 )
-OASTER_METHOD = erp_run._oaster_method("v2")
+OASTER_METHOD = erp_run._oaster_method("v3")
 METHODS = (OASTER_METHOD, *comparators.METHODS)
-METHOD_SLUGS = {OASTER_METHOD: "oaster_erp_v2", **comparators.METHOD_SLUGS}
+METHOD_SLUGS = {OASTER_METHOD: "oaster_erp_v3", **comparators.METHOD_SLUGS}
 
 
 def reconstruct_case(
@@ -57,8 +57,8 @@ def reconstruct_case(
     runtime = {
         "shared": shared,
         "kernels": kernels,
-        "algorithm_version": "v2",
-        "oaster_solver": erp_run._resolve_oaster("v2"),
+        "algorithm_version": "v3",
+        "oaster_solver": erp_run._resolve_oaster("v3"),
         "modality_weighting": "evidence",
         "seed_root": int(seed_root),
         "methods": METHODS,
@@ -84,6 +84,18 @@ def reconstruct_case(
         "estimates": estimates,
         "rows": [rows[method] for method in METHODS],
     }
+
+
+def _global_threshold_source(
+    source: np.ndarray, active: np.ndarray, relative_threshold: float
+) -> np.ndarray:
+    """Hide rows below one whole-source-space amplitude threshold."""
+    amplitude = brain_maps.benchmark_metrics.source_amplitude(source, active)
+    peak = float(amplitude.max(initial=0.0))
+    keep = amplitude >= relative_threshold * peak if peak > 0.0 else np.zeros_like(
+        amplitude, dtype=bool
+    )
+    return np.where(keep[:, None], source, 0.0)
 
 
 def plot_erp_brain_maps(
@@ -211,9 +223,12 @@ def plot_erp_brain_maps(
     combined_paths = []
     for method in METHODS:
         slug = METHOD_SLUGS[method]
+        display_estimate = _global_threshold_source(
+            result["estimates"][method], result["active"], relative_threshold
+        )
         mri_path = brain_maps.render_method(
             method,
-            result["estimates"][method],
+            display_estimate,
             metric_by_method[method],
             loaded,
             anatomy,
@@ -224,7 +239,7 @@ def plot_erp_brain_maps(
         )
         surface_path = brain_maps.render_surface_method(
             method,
-            result["estimates"][method],
+            display_estimate,
             loaded,
             surface,
             case_dir / f"{slug}_surface_top.png",
@@ -274,7 +289,7 @@ def plot_erp_brain_maps(
                 "manifest": str(Path(manifest_path).resolve()),
                 "manifest_sha256": manifest_sha256,
                 "erp_seed_root": seed_root,
-                "algorithm_version": "v2",
+                "algorithm_version": "v3",
                 "modality_weighting": "evidence",
                 "deep_rescue_delta": deep_rescue_delta,
                 "methods": list(METHODS),
@@ -285,6 +300,7 @@ def plot_erp_brain_maps(
                 },
                 "truth_is_separate": True,
                 "algorithm_truth_overlay": "none",
+                "algorithm_global_source_amplitude_floor": relative_threshold,
                 "cortical_render": "complete dorsal pial; both hemispheres; classic cortex; inferno; white background; no image cropping",
                 "deep_case_render": "each truth/method has anatomical MRI plus cortical render",
                 "display_rule": brain_maps._display_rule(

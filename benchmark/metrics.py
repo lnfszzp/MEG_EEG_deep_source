@@ -5,12 +5,13 @@ from scipy.spatial import cKDTree
 
 from metrics.user_metrics import An_auc, An_cal_AUC, DLE_an, RMSE, SD
 
-DEEP_DETECTION_THRESHOLD = 0.125
+DEEP_DETECTION_THRESHOLD = 0.14
 DEEP_THRESHOLD_CANDIDATES = (
     0.01,
     0.02,
     0.05,
     0.1,
+    0.125,
     DEEP_DETECTION_THRESHOLD,
     0.2,
     0.3,

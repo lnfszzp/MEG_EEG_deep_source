@@ -21,7 +21,7 @@ geometry_root = project_root / "corrected_v2" / "generated"
 sample_data_path = Path(r"D:\mne_data\MNE-sample-data")
 save_root = project_root / "results" / "erp_whole_head" / "confirmation_v3" / "all_methods"
 
-algorithm_version = "v2"
+algorithm_version = "v3"
 modality_weighting = "evidence"
 seed_root = 20261002
 deep_rescue_delta = -6.0
@@ -67,6 +67,8 @@ import run_erp_whole_head_matrix as simulation
 expected_methods = (simulation._oaster_method(algorithm_version),) + simulation.comparators.METHODS
 expected_case_count = 49 * 369
 expected_row_count = expected_case_count * len(expected_methods)
+deep_detection_threshold = simulation.benchmark_metrics.DEEP_DETECTION_THRESHOLD
+assert deep_detection_threshold == 0.14
 
 print("结果保存到：", save_root)
 print("SNR：", snr_levels)
@@ -74,6 +76,7 @@ print("SNR 组合数：", len(snr_pairs))
 print("每个 SNR 的配置数：369")
 print("独立确认 case 总数：", expected_case_count)
 print("方法：", expected_methods)
+print("深源判定相对幅值阈值：", deep_detection_threshold)
 print("并行 worker：", workers)
 
 

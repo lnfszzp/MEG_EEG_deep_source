@@ -1,0 +1,265 @@
+{
+  "manifest": "D:\\博士\\工作＆汇报\\源定位\\新建文件夹\\results\\erp_whole_head\\development_full_v3\\manifest.json",
+  "manifest_sha256": "0989782ea769bc0a698e8e6f250795ee829398afc5984a904eeb9544a32432b5",
+  "data_root": "D:\\博士\\工作＆汇报\\源定位\\新建文件夹\\corrected_v2\\generated",
+  "sample_path": "D:\\mne_data\\MNE-sample-data",
+  "protocol": "phase-locked-erp-v1",
+  "methods": [
+    "OASTER-ERP-v3"
+  ],
+  "oaster_algorithm_version": "v3",
+  "oaster_modality_weighting": "evidence",
+  "oaster_modality_weighting_rule": "sqrt(normalized positive active/baseline power-ratio excess) from retained whitened EEG/MAG observation rows",
+  "erp_seed_root": 20260921,
+  "oaster_kwargs": {
+    "deep_rescue_delta": -6.0
+  },
+  "checkpoint_code_fingerprint": "6e8c2b01597661b693e93e2c86ee1f61d3093bca7db67a3e98082ef5431d3bb1",
+  "checkpoint_shared_fingerprint": "a97e6991fde1cedfac66857d5c07683c43af62f16ad19bfa31ea7199a9083556",
+  "checkpoint_environment": {
+    "python": "3.13.15",
+    "numpy": "2.5.2",
+    "scipy": "1.18.1",
+    "mne": "1.12.1",
+    "OMP_NUM_THREADS": "1",
+    "MKL_NUM_THREADS": "1",
+    "OPENBLAS_NUM_THREADS": "1"
+  },
+  "checkpoint_fingerprint": "341c2442364ecac3a7482b52a49829b3725cfc7982816e4ceaff94fd72896cd9",
+  "observation_rule": "simulate once and independently whiten EEG/MAG once; comparators use the same unweighted stacked data and gain",
+  "window_rule": "one fixed baseline and active ERP window shared by all methods; joint whitened observations are baseline-corrected before dispatch",
+  "snr_level": "evoked-level after a 40-trial-mean-equivalent noise draw",
+  "deep_detection_rule": {
+    "relative_amplitude_threshold": 0.125,
+    "maximum_peak_distance_mm": 10.0
+  },
+  "snr_pairs": [
+    [
+      -10,
+      -10
+    ],
+    [
+      -10,
+      -5
+    ],
+    [
+      -10,
+      0
+    ],
+    [
+      -10,
+      5
+    ],
+    [
+      -10,
+      10
+    ],
+    [
+      -10,
+      15
+    ],
+    [
+      -10,
+      20
+    ],
+    [
+      -5,
+      -10
+    ],
+    [
+      -5,
+      -5
+    ],
+    [
+      -5,
+      0
+    ],
+    [
+      -5,
+      5
+    ],
+    [
+      -5,
+      10
+    ],
+    [
+      -5,
+      15
+    ],
+    [
+      -5,
+      20
+    ],
+    [
+      0,
+      -10
+    ],
+    [
+      0,
+      -5
+    ],
+    [
+      0,
+      0
+    ],
+    [
+      0,
+      5
+    ],
+    [
+      0,
+      10
+    ],
+    [
+      0,
+      15
+    ],
+    [
+      0,
+      20
+    ],
+    [
+      5,
+      -10
+    ],
+    [
+      5,
+      -5
+    ],
+    [
+      5,
+      0
+    ],
+    [
+      5,
+      5
+    ],
+    [
+      5,
+      10
+    ],
+    [
+      5,
+      15
+    ],
+    [
+      5,
+      20
+    ],
+    [
+      10,
+      -10
+    ],
+    [
+      10,
+      -5
+    ],
+    [
+      10,
+      0
+    ],
+    [
+      10,
+      5
+    ],
+    [
+      10,
+      10
+    ],
+    [
+      10,
+      15
+    ],
+    [
+      10,
+      20
+    ],
+    [
+      15,
+      -10
+    ],
+    [
+      15,
+      -5
+    ],
+    [
+      15,
+      0
+    ],
+    [
+      15,
+      5
+    ],
+    [
+      15,
+      10
+    ],
+    [
+      15,
+      15
+    ],
+    [
+      15,
+      20
+    ],
+    [
+      20,
+      -10
+    ],
+    [
+      20,
+      -5
+    ],
+    [
+      20,
+      0
+    ],
+    [
+      20,
+      5
+    ],
+    [
+      20,
+      10
+    ],
+    [
+      20,
+      15
+    ],
+    [
+      20,
+      20
+    ]
+  ],
+  "cases_per_scenario": null,
+  "selected_case_count": 9212,
+  "checkpoint": "one atomically replaced CSV per EEG/MEG SNR pair",
+  "workers": 8,
+  "blas_threads": {
+    "OMP_NUM_THREADS": "1",
+    "MKL_NUM_THREADS": "1",
+    "OPENBLAS_NUM_THREADS": "1"
+  },
+  "provenance": {
+    "git_commit_at_merge": "f30ef25bd97d2d0dcce36d9587a0587a8cc107f7",
+    "python": "3.13.15",
+    "packages": {
+      "numpy": "2.5.2",
+      "scipy": "1.18.1",
+      "h5py": "3.16.0",
+      "matplotlib": "3.11.1",
+      "mne": "1.12.1",
+      "nibabel": "5.4.2"
+    },
+    "code_sha256": {
+      "runner": "5828c8bdef4c6c3e42d9045eb3be3a2f3573f12b771d9a783cc5a3ec2caf7600",
+      "erp_protocol": "f74f9b1dd33036105d50d4ccd6242c1a068cb090fe4a234eb7736f8071e16647",
+      "oaster_algorithm": "4032f015ed06df64df3ad10d128b67605c49fb76a2e5bef302ed5160519e00f0",
+      "comparator_algorithms": "1625c67d91d20112d711a3d77de175ed0509c1acfa45c1561845f6761c307dcf",
+      "metrics": "6a5d3c3c5d37bbdc8456a682a65d2408bd44146512e7aa8373c94e6fab772bc9",
+      "archive_io": "9a63e37a0b32265732e03f24751191e8734df4be2585fb8dec7e30a1d0195e47",
+      "comparator_summaries": "d3e7986430461081cd5f24cd973f3c4e68d2a49e7221afd0aa2342df3b3e81b5"
+    },
+    "bitwise_cross_environment_reproducibility_claimed": false
+  }
+}
