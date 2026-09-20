@@ -1,0 +1,187 @@
+{
+  "case": {
+    "case_id": "erp-v3-confirmation-08946-surface_only-eeg+05-meg+05",
+    "case_number": 8946,
+    "configuration_id": "erp-v3-confirmation-source-090-surface_only",
+    "configuration_number": 90,
+    "correlation": null,
+    "deep_index": null,
+    "deep_local": null,
+    "deep_surface_ratio": null,
+    "eeg_snr_db": 5,
+    "location": 90,
+    "meg_snr_db": 5,
+    "pair_index": 24,
+    "panel": "erp_v3_confirmation",
+    "replicate": 0,
+    "scenario": "surface_only",
+    "scenario_code": 0,
+    "seed": [
+      20261002,
+      24,
+      0,
+      90
+    ],
+    "snr_db": 5,
+    "source_case_id": "test-0090-surface_only-snr00",
+    "surface_centers": [
+      4125
+    ],
+    "active_window_s": [
+      0.02,
+      0.12
+    ]
+  },
+  "manifest": "D:\\博士\\工作＆汇报\\源定位\\新建文件夹\\results\\erp_whole_head\\confirmation_v3\\manifest.json",
+  "manifest_sha256": "929b6f2b227ac6230883275cfff20d671e2d5f9549e6c87973ebc9479b5d37b9",
+  "erp_seed_root": 20261002,
+  "algorithm_version": "v3",
+  "modality_weighting": "evidence",
+  "deep_rescue_delta": -6.0,
+  "methods": [
+    "OASTER-ERP-v3",
+    "MNE",
+    "dSPM",
+    "sLORETA",
+    "eLORETA",
+    "LCMV",
+    "Dipole fitting (grid)",
+    "RAP-MUSIC"
+  ],
+  "active_samples": [
+    212,
+    213,
+    214,
+    215,
+    216,
+    217,
+    218,
+    219,
+    220,
+    221,
+    222,
+    223,
+    224,
+    225,
+    226,
+    227,
+    228,
+    229,
+    230,
+    231,
+    232,
+    233,
+    234,
+    235,
+    236,
+    237,
+    238,
+    239,
+    240,
+    241,
+    242,
+    243,
+    244,
+    245,
+    246,
+    247,
+    248,
+    249,
+    250,
+    251,
+    252,
+    253,
+    254,
+    255,
+    256,
+    257,
+    258,
+    259,
+    260,
+    261,
+    262,
+    263,
+    264,
+    265,
+    266,
+    267,
+    268,
+    269,
+    270,
+    271,
+    272
+  ],
+  "observation_sha256": {
+    "EEG": "f7de7852c7524945a30d994b93453073fab6d942a1490c725da249e072afddb8",
+    "MEG": "25c531f0d6c11ba5eb0b5ba03dcfbfb15ddf030a90f2a2088df839d3a9409c2a"
+  },
+  "truth_is_separate": true,
+  "algorithm_truth_overlay": "none",
+  "algorithm_global_source_amplitude_floor": 0.1,
+  "cortical_render": "complete dorsal pial; both hemispheres; classic cortex; inferno; white background; no image cropping",
+  "deep_case_render": "each truth/method has anatomical MRI plus cortical render",
+  "display_rule": "top 5% (P95) + 10% peak floor",
+  "simulation_metadata": {
+    "case_id": "erp-v3-confirmation-08946-surface_only-eeg+05-meg+05",
+    "protocol": "phase-locked-erp-v1",
+    "event_sample": 200,
+    "n_times": 601,
+    "n_trials": 40,
+    "active_window_s": [
+      0.02,
+      0.12
+    ],
+    "baseline_window_s": [
+      -0.18,
+      -0.02
+    ],
+    "groups": [
+      [
+        4048,
+        4125,
+        4161,
+        4162,
+        4188,
+        4253,
+        4280,
+        4281,
+        4307,
+        4308,
+        4310,
+        4336,
+        4364,
+        4365,
+        4366,
+        4430
+      ]
+    ],
+    "correlation_target": 0.0,
+    "correlation_actual": [
+      [
+        1.0
+      ]
+    ],
+    "waveform_assignment": [
+      0
+    ],
+    "deep_surface_ratio_actual": null,
+    "target_snr_db": {
+      "eeg": 5.0,
+      "meg": 5.0
+    },
+    "actual_snr_db": {
+      "eeg": 5.0,
+      "meg": 5.000000000000001
+    },
+    "implied_single_trial_snr_db": {
+      "eeg": -11.020599913279622,
+      "meg": -11.020599913279622
+    },
+    "snr_level": "evoked-level",
+    "noise_model": "colored Gaussian 40-trial-mean equivalent",
+    "baseline_corrected_before_snr_scaling": true,
+    "waveform_model": "phase-locked transient ERP without sinusoidal carrier",
+    "seed_root": 20261002,
+    "seed_case_key": 15373243773222947079
+  }
+}

@@ -34,6 +34,7 @@
 - `FINAL_RESULTS.md`：恢复证据、开发实验、严格矩阵、复现命令和解释边界的总报告。
 - `VISUAL_STATISTICAL_REPORT.md`：新增指标图、统计结论、比较表和脑空间投影的集中索引。
 - `SOURCE_SPACE_AUDIT.md`：四类场景、完整 SNR 矩阵、表层覆盖及非皮层坐标问题的审计。
+- `ERP_V3_CONFIRMATION_RESULTS.md`：修正深层源空间后的 OASTER-ERP v3 独立确认集；18,081 个 case、八方法、49 组 EEG×MEG SNR、配置级统计和四种情形脑图。
 
 历史 V15–V18 入口仍依赖当时 `benchmark/results/scores.csv` 所索引的逐例 SISSES 源估计；这些输入没有保存在 Git 历史或现存严格盲测归档中。因此仓库可以核对已提交的历史汇总、审查并在输入补齐后运行后处理链，但目前不能从零重跑 V15–V18。无需历史 SISSES 输入的 OASTER、七种 Python 对比方法、严格矩阵与绘图入口均可直接运行。
 
