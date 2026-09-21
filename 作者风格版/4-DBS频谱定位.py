@@ -9,6 +9,7 @@
 from pathlib import Path
 import csv
 import json
+import os
 import time
 
 import matplotlib
@@ -82,7 +83,7 @@ save_dir = (
     project_root
     / "results"
     / "real_data"
-    / "ds004998_dbs_v2"
+    / os.environ.get("OASTER_DBS_SAVE_ROOT", "ds004998_dbs_v2")
     / f"sub-{subject}_{task}_{medication}_run-{run}"
 )
 save_dir.mkdir(parents=True, exist_ok=True)

@@ -1,0 +1,269 @@
+{
+  "analysis_revision": "common-lcmv-covariance-v3",
+  "dataset": "D:\\博士\\工作＆汇报\\源定位\\开源数据\\v1.0.0",
+  "subject": "sm12",
+  "run": 3,
+  "event": "somatosensory/right wrist stimulation (32)",
+  "windows_ms": {
+    "n20": [
+      18,
+      24
+    ],
+    "p30": [
+      28,
+      40
+    ]
+  },
+  "baseline_ms": [
+    -250,
+    -51
+  ],
+  "methods": [
+    "OASTER-ERP-v3",
+    "MNE",
+    "dSPM",
+    "sLORETA",
+    "eLORETA",
+    "LCMV",
+    "Dipole fitting (grid)",
+    "RAP-MUSIC"
+  ],
+  "source_space": "MNE sample ico4 cortical surface, no deep volume source",
+  "comparators": "benchmark.methods (same implementation as ERP simulation)",
+  "active_indices": {
+    "n20": [
+      203,
+      204,
+      205,
+      206,
+      207,
+      208,
+      209
+    ],
+    "p30": [
+      213,
+      214,
+      215,
+      216,
+      217,
+      218,
+      219,
+      220,
+      221,
+      222,
+      223,
+      224,
+      225
+    ]
+  },
+  "lcmv_covariance_window_ms": [
+    15,
+    45
+  ],
+  "shared_whitened_data_shape": [
+    164,
+    231
+  ],
+  "shared_whitened_gain_shape": [
+    164,
+    4699
+  ],
+  "oaster_modality_weights": [
+    [
+      1.0,
+      0.9314889506254
+    ],
+    [
+      0.870098539811848,
+      1.0
+    ]
+  ],
+  "oaster_diagnostics": {
+    "mode": "signed_multiscale_erp_surface_residual_deep_v3",
+    "surface_scales_mm": [
+      0.0,
+      4.0,
+      7.0
+    ],
+    "selected_templates": 2,
+    "selected_surface_templates": 2,
+    "selected_deep_templates": 0,
+    "ridge_fraction": 0.03,
+    "max_templates_per_window": 7,
+    "require_one": false,
+    "windows": [
+      {
+        "window": 0,
+        "active_samples": 7,
+        "temporal_rank": 1,
+        "null_edges": [
+          5.037220912979386,
+          5.027207223792673,
+          4.942356492527036
+        ],
+        "channel_weight_min": 0.9314889506254,
+        "channel_weight_max": 1.0,
+        "weighted_channels": 164,
+        "selected_surface_templates": 1,
+        "surface_ebic_deltas": [
+          -30.271655134219742
+        ],
+        "selected_templates": [
+          {
+            "layer": "surface",
+            "scale_mm": 7.0,
+            "index": 797
+          }
+        ],
+        "deep_candidate_local": -1,
+        "deep_ebic_delta": Infinity,
+        "deep_accepted": false,
+        "selection": "joint_surface_then_residual_deep_ebic_v3",
+        "joint_ebic_deltas": [
+          -30.271655134219742
+        ],
+        "first_selected_layer": "surface",
+        "deep_rescue_attempted": false,
+        "deep_rescue_accepted": false,
+        "deep_rescue_ebic_delta": Infinity,
+        "deep_rescue_ebic_threshold": -6.0,
+        "time_evidence": {
+          "surface_raw": {
+            "positive_candidates": 2724,
+            "score_max": 203.16706200794187,
+            "score_median_positive": 2.7185411191381483
+          },
+          "deep_surface_residual": {
+            "positive_candidates": 2651,
+            "score_max": 66.19747234877389,
+            "score_median_positive": 3.1333580973747823
+          }
+        },
+        "residual_deep_reselection": {
+          "deep_local": -1,
+          "accepted": false,
+          "ebic_delta": Infinity,
+          "surface_design_rank": 1,
+          "candidate_universe": 14097,
+          "residual_active_samples": 7,
+          "residual_temporal_rank": 1,
+          "residual_null_edges": [
+            5.032054590432158,
+            5.022117662125312,
+            4.93668020603876
+          ]
+        }
+      },
+      {
+        "window": 1,
+        "active_samples": 13,
+        "temporal_rank": 1,
+        "null_edges": [
+          5.751883732336915,
+          5.716959857126617,
+          5.586100114171755
+        ],
+        "channel_weight_min": 0.870098539811848,
+        "channel_weight_max": 1.0,
+        "weighted_channels": 164,
+        "selected_surface_templates": 1,
+        "surface_ebic_deltas": [
+          -235.50530337999356
+        ],
+        "selected_templates": [
+          {
+            "layer": "surface",
+            "scale_mm": 4.0,
+            "index": 797
+          }
+        ],
+        "deep_candidate_local": -1,
+        "deep_ebic_delta": Infinity,
+        "deep_accepted": false,
+        "selection": "joint_surface_then_residual_deep_ebic_v3",
+        "joint_ebic_deltas": [
+          -235.50530337999356
+        ],
+        "first_selected_layer": "surface",
+        "deep_rescue_attempted": false,
+        "deep_rescue_accepted": false,
+        "deep_rescue_ebic_delta": Infinity,
+        "deep_rescue_ebic_threshold": -6.0,
+        "time_evidence": {
+          "surface_raw": {
+            "positive_candidates": 3409,
+            "score_max": 2852.8148403540845,
+            "score_median_positive": 8.833651700684396
+          },
+          "deep_surface_residual": {
+            "positive_candidates": 2631,
+            "score_max": 137.07120395777343,
+            "score_median_positive": 4.778508613007972
+          }
+        },
+        "residual_deep_reselection": {
+          "deep_local": -1,
+          "accepted": false,
+          "ebic_delta": Infinity,
+          "surface_design_rank": 1,
+          "candidate_universe": 14097,
+          "residual_active_samples": 13,
+          "residual_temporal_rank": 1,
+          "residual_null_edges": [
+            5.732224790666474,
+            5.693677893290566,
+            5.545974125924003
+          ]
+        }
+      }
+    ],
+    "selection": "joint_surface_then_residual_deep_reselection",
+    "conditional_candidate_drops": true,
+    "joint_search_template_cap_per_window": 6,
+    "deep_rescue_can_add_one_template": false,
+    "max_deep_templates_per_window": 1,
+    "time_evidence_fraction": 0.05,
+    "time_evidence_surface_scale_mm": 4.0,
+    "time_evidence_layer_balanced": true,
+    "time_evidence_fusion": {
+      "primary_active_peak": 6.499834548769881e-08,
+      "evidence_active_peak": 4191.430633795764,
+      "evidence_scale": 7.753718380021983e-13,
+      "evidence_layer_peaks": [
+        4191.430633795764
+      ],
+      "evidence_layer_scales": [
+        7.753718380021983e-13
+      ]
+    },
+    "time_evidence_deep_surface_residual": true
+  },
+  "qc": {
+    "epochs": 39,
+    "events": 40,
+    "first_samp": 49000,
+    "bad_channels": [
+      "EEG 033",
+      "EEG 034",
+      "EEG 056",
+      "EEG 065"
+    ],
+    "auto_bad_channels": [],
+    "auto_bad_eeg_ptp_cutoff_uv": 110.53568607834522,
+    "stimulation_artifact_interpolation_ms": [
+      -2.0,
+      8.0
+    ],
+    "noise_samples": 13689,
+    "eeg_n20_sensor_snr": 1.7547163369268102,
+    "mag_n20_sensor_snr": 2.1887154295691262
+  },
+  "coregistration": {
+    "mean_mm": 2.8331180651130716,
+    "median_mm": 2.7315260189785193,
+    "p95_mm": 5.895852686774907,
+    "max_mm": 12.487527813498147
+  },
+  "elapsed_seconds": 20.185853599978145,
+  "caveat": "No source truth, no AUC/DLE. Template anatomy is exploratory."
+}

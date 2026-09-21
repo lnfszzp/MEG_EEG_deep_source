@@ -1,0 +1,66 @@
+{
+  "dataset": "ds004998",
+  "subject": "0cGdk9",
+  "task": "HoldL",
+  "medication": "MedOn",
+  "run": 1,
+  "raw_file": "D:\\博士\\工作＆汇报\\源定位\\开源数据\\ds004998\\sub-0cGdk9\\ses-PeriOp\\meg\\sub-0cGdk9_ses-PeriOp_task-HoldL_acq-MedOn_run-1_meg.fif",
+  "analysis": "exploratory DICS versus LCMV beta ERD source-power contrast",
+  "inverse_channels": "planar gradiometers only",
+  "lfp_policy": "EEG001-EEG008 are STN-LFP contacts and were excluded from the inverse",
+  "grid_original_inside_points": 37163,
+  "grid_subsampled_points_before_bem_check": 4651,
+  "grid_points_after_bem_check": 4231,
+  "rest_epochs": 238,
+  "hold_epochs": 298,
+  "equal_epochs_per_condition": 238,
+  "epoch_seconds": 2.0,
+  "epoch_overlap_seconds": 1.0,
+  "beta_hz": [
+    13.0,
+    30.0
+  ],
+  "dics_regularization": 0.05,
+  "peak_mni_mm": [
+    46.000000000000014,
+    -15.999999999999996,
+    56.000000000000014
+  ],
+  "peak_rest_vs_hold_erd_db": 1.8790982060764585,
+  "registered_right_motor_roi_center_mni_mm": [
+    38.0,
+    -28.0,
+    50.0
+  ],
+  "registered_left_motor_roi_center_mni_mm": [
+    -38.0,
+    -28.0,
+    50.0
+  ],
+  "registered_motor_roi_radius_mm": 25.0,
+  "peak_to_right_motor_center_mm": 15.620499351813324,
+  "peak_to_right_motor_roi_boundary_mm": 0.0,
+  "right_roi_mean_positive_erd_db": 1.2064238649795984,
+  "left_roi_mean_positive_erd_db": 1.1110567921030685,
+  "right_roi_aggregated_power_ratio_db": 1.2004584946501566,
+  "left_roi_aggregated_power_ratio_db": 1.0923349099260768,
+  "roi_laterality_index": 0.04115118397431701,
+  "p95_right_source_count": 97,
+  "p95_left_source_count": 115,
+  "p95_count_laterality_index": -0.08490566037735849,
+  "p95_right_roi_source_count": 70,
+  "p95_left_roi_source_count": 62,
+  "display_percentile": 95.0,
+  "display_threshold_erd_db": 1.1226736991751007,
+  "template_anatomy_for_display_only": "D:\\mne_data\\MNE-sample-data\\subjects\\fsaverage\\mri\\T1.mgz",
+  "interpretation_limit": "One complete run only; no source truth or DBS contact coordinates. Peak-to-motor-ROI distance is not localization error, and these maps do not establish STN localization.",
+  "bem_limit": "The provided FieldTrip singleshell boundary was solved as an MNE one-layer BEM; this is a runnable bridge, not a numerical reproduction of the Nolte singleshell solver.",
+  "elapsed_seconds": 160.19829139998183,
+  "methods": [
+    "DICS multitaper CSD",
+    "LCMV beta-band covariance"
+  ],
+  "lcmv_source_table_file": "D:\\博士\\工作＆汇报\\源定位\\新建文件夹\\results\\real_data\\ds004998_dbs_v3_multimethod\\sub-0cGdk9_HoldL_MedOn_run-1\\lcmv_beta_source_table.csv",
+  "comparison_file": "D:\\博士\\工作＆汇报\\源定位\\新建文件夹\\results\\real_data\\ds004998_dbs_v3_multimethod\\sub-0cGdk9_HoldL_MedOn_run-1\\dics_lcmv_beta_method_comparison.csv",
+  "comparison_figure_file": "D:\\博士\\工作＆汇报\\源定位\\新建文件夹\\results\\real_data\\ds004998_dbs_v3_multimethod\\sub-0cGdk9_HoldL_MedOn_run-1\\dics_lcmv_beta_same_slices_mri.png"
+}

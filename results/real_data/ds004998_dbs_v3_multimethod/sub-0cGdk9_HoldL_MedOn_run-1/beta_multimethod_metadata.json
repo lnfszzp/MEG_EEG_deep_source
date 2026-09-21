@@ -1,0 +1,42 @@
+{
+  "dataset": "ds004998",
+  "subject": "0cGdk9",
+  "task": "HoldL",
+  "medication": "MedOn",
+  "run": 1,
+  "methods_computed": [
+    "DICS",
+    "LCMV",
+    "MNE",
+    "dSPM",
+    "sLORETA",
+    "eLORETA"
+  ],
+  "methods_requiring_adaptation": [
+    "Dipole fitting (grid)",
+    "RAP-MUSIC",
+    "OASTER spectral"
+  ],
+  "channels": 202,
+  "equal_epochs_per_condition": 238,
+  "source_points": 4231,
+  "beta_hz": [
+    13.0,
+    30.0
+  ],
+  "inverse_noise_reference": "pooled rest/Hold beta covariance, not independent empty-room noise",
+  "inverse_lambda2": 0.1111111111111111,
+  "inverse_depth": 0.8,
+  "normalization_checks": {
+    "dSPM": {
+      "max_abs_erd_difference_db_vs_mne": 4.603739611752644e-11,
+      "same_erd_as_mne_tolerance_1e-6_db": true
+    },
+    "sLORETA": {
+      "max_abs_erd_difference_db_vs_mne": 4.539785214419112e-11,
+      "same_erd_as_mne_tolerance_1e-6_db": true
+    }
+  },
+  "interpretation_limit": "One run, no source truth: peak-to-ROI is not DLE; method-specific P95 does not compare absolute power or extent; fsaverage anatomy only for display.",
+  "elapsed_seconds": 170.98032290005358
+}
