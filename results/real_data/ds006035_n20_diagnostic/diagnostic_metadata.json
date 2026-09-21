@@ -1,0 +1,131 @@
+{
+  "dataset": "D:\\博士\\工作＆汇报\\源定位\\开源数据\\v1.0.0",
+  "source_maps": "D:\\博士\\工作＆汇报\\源定位\\新建文件夹\\results\\real_data\\ds006035_erp_eight_methods",
+  "cases": [
+    {
+      "case": "sub-sm09_run-1",
+      "role": "development / S1 miss",
+      "epochs": 40,
+      "events": 40,
+      "sensor_lines": {
+        "eeg": {
+          "channels": 69,
+          "selected": "EEG 047",
+          "n20_window_mean": -1.4097129753036128,
+          "baseline_rms": 2.0031140390376043,
+          "unit": "µV"
+        },
+        "mag": {
+          "channels": 102,
+          "selected": "MEG 0431",
+          "n20_window_mean": -168.1866183985155,
+          "baseline_rms": 23.138136739249585,
+          "unit": "fT"
+        }
+      },
+      "source_metrics": {
+        "OASTER-ERP-v3": {
+          "peak_label": "supramarginal-lh",
+          "peak_to_left_s1_mm": 8.091261528970584,
+          "left_s1_enrichment": 0.09827332637764838
+        },
+        "dSPM": {
+          "peak_label": "postcentral-lh",
+          "peak_to_left_s1_mm": 0.0,
+          "left_s1_enrichment": 3.991759250726042
+        }
+      },
+      "sensor_figure": "sub-sm09_run-1_signed_evoked_topomaps.png",
+      "source_figure": "sub-sm09_run-1_n20_pial_inflated_dorsal.png"
+    },
+    {
+      "case": "sub-sm04_run-1",
+      "role": "prior validation cohort / S1 miss",
+      "epochs": 40,
+      "events": 40,
+      "sensor_lines": {
+        "eeg": {
+          "channels": 68,
+          "selected": "EEG 045",
+          "n20_window_mean": -6.157938016528405,
+          "baseline_rms": 1.2535518168269577,
+          "unit": "µV"
+        },
+        "mag": {
+          "channels": 102,
+          "selected": "MEG 0431",
+          "n20_window_mean": -169.66797045267106,
+          "baseline_rms": 33.20407944456829,
+          "unit": "fT"
+        }
+      },
+      "source_metrics": {
+        "OASTER-ERP-v3": {
+          "peak_label": "paracentral-lh",
+          "peak_to_left_s1_mm": 3.9069005070807536,
+          "left_s1_enrichment": 0.05346758951590438
+        },
+        "dSPM": {
+          "peak_label": "superiorparietal-rh",
+          "peak_to_left_s1_mm": 20.24312271090311,
+          "left_s1_enrichment": 2.0076571793225613
+        }
+      },
+      "sensor_figure": "sub-sm04_run-1_signed_evoked_topomaps.png",
+      "source_figure": "sub-sm04_run-1_n20_pial_inflated_dorsal.png"
+    },
+    {
+      "case": "sub-sm12_run-1",
+      "role": "prior validation cohort / S1 hit",
+      "epochs": 40,
+      "events": 40,
+      "sensor_lines": {
+        "eeg": {
+          "channels": 63,
+          "selected": "EEG 004",
+          "n20_window_mean": -5.295530003429837,
+          "baseline_rms": 1.9198342587221024,
+          "unit": "µV"
+        },
+        "mag": {
+          "channels": 102,
+          "selected": "MEG 1821",
+          "n20_window_mean": -204.1437872505985,
+          "baseline_rms": 29.390013556220158,
+          "unit": "fT"
+        }
+      },
+      "source_metrics": {
+        "OASTER-ERP-v3": {
+          "peak_label": "postcentral-lh",
+          "peak_to_left_s1_mm": 0.0,
+          "left_s1_enrichment": 36.93845610007208
+        },
+        "dSPM": {
+          "peak_label": "postcentral-lh",
+          "peak_to_left_s1_mm": 0.0,
+          "left_s1_enrichment": 5.561634935397148
+        }
+      },
+      "sensor_figure": "sub-sm12_run-1_signed_evoked_topomaps.png",
+      "source_figure": "sub-sm12_run-1_n20_pial_inflated_dorsal.png"
+    }
+  ],
+  "event": "right wrist somatosensory electrical stimulus",
+  "source_window_ms": [
+    18,
+    24
+  ],
+  "topomap_times_ms": [
+    20,
+    35
+  ],
+  "trace_rule": "post-hoc largest absolute 18-24 ms mean among all good EEG or MAG channels; descriptive only",
+  "display": "per-method peak normalization; shared 5% floor and [0.05,0.5,1] colormap; not used for metrics",
+  "limitations": [
+    "No measured source ground truth: neither S1 enrichment nor peak distance is an accuracy score.",
+    "sm09/run-1 is development; sm04/run-1 and sm12/run-1 are a previously examined validation cohort, not a fresh independent test.",
+    "MNE sample template cortex, not participant MRI; coordinate error can dominate small peak distances.",
+    "A visible evoked deflection at 20 ms does not prove that an inverse method localized its generator."
+  ]
+}
