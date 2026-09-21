@@ -11,6 +11,7 @@
 
 from pathlib import Path
 import json
+import os
 import sys
 import time
 
@@ -62,7 +63,7 @@ save_dir = (
     / "results"
     / "real_data"
     / "ds006035"
-    / f"sub-{subject}_finger_dual_chain"
+    / os.environ.get("OASTER_FINGER_SAVE_ROOT", f"sub-{subject}_finger_dual_chain")
 )
 save_dir.mkdir(parents=True, exist_ok=True)
 
