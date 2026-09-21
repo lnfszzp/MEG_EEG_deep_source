@@ -1,6 +1,6 @@
 #%%
 # ds004998 不是 DBS 刺激 ERP，而是帕金森患者的连续 MEG + STN-LFP 记录。
-# 这一版只做最小、可核查的频谱定位基线：sub-0cGdk9，左手 Hold，服药后。
+# 这一版在同一记录、通道、源网格和 beta 对比下并排检查 DICS 与 LCMV。
 # 写法仍按你的习惯：参数在前，从上到下运行，不定义自己的函数。
 #
 # 很重要：FIF 里的 EEG001-EEG008 实际是 DBS 电极触点，不是头皮 EEG。
@@ -82,7 +82,7 @@ save_dir = (
     project_root
     / "results"
     / "real_data"
-    / "ds004998_dbs_v1"
+    / "ds004998_dbs_v2"
     / f"sub-{subject}_{task}_{medication}_run-{run}"
 )
 save_dir.mkdir(parents=True, exist_ok=True)
@@ -939,4 +939,263 @@ print("MNI 三维图：", scatter_figure_file)
 print("模板 MRI 图：", anatomy_figure_file)
 print("模板 pial 图：", surface_figure_file)
 print("运行摘要：", summary_file)
-print("总耗时（秒）：", summary["elapsed_seconds"])
+print("DICS 阶段耗时（秒）：", summary["elapsed_seconds"])
+
+
+#%%
+# ==================== 18. 同一批 epoch 的 beta-band LCMV 功率对照 ====================
+
+# DICS 是 13–30 Hz CSD，LCMV 是同频段带通后的时间协方差；两者都用
+# pooled rest/Hold 建立一个共同滤波器，再分别估计条件功率。
+rest_beta_epochs = rest_equal.copy().filter(
+    l_freq=beta_low_hz, h_freq=beta_high_hz, n_jobs=1, verbose=False
+)
+hold_beta_epochs = hold_equal.copy().filter(
+    l_freq=beta_low_hz, h_freq=beta_high_hz, n_jobs=1, verbose=False
+)
+common_beta_epochs = mne.concatenate_epochs(
+    [rest_beta_epochs, hold_beta_epochs], on_mismatch="raise", verbose=False
+)
+rest_beta_cov = mne.compute_covariance(rest_beta_epochs, method="empirical", verbose=False)
+hold_beta_cov = mne.compute_covariance(hold_beta_epochs, method="empirical", verbose=False)
+common_beta_cov = mne.compute_covariance(common_beta_epochs, method="empirical", verbose=False)
+
+lcmv_filters = mne.beamformer.make_lcmv(
+    common_beta_epochs.info,
+    forward,
+    common_beta_cov,
+    reg=dics_regularization,
+    noise_cov=None,
+    pick_ori="max-power",
+    rank="info",
+    weight_norm="unit-noise-gain",
+    reduce_rank=True,
+    inversion="matrix",
+    verbose=False,
+)
+lcmv_rest_stc = mne.beamformer.apply_lcmv_cov(rest_beta_cov, lcmv_filters, verbose=False)
+lcmv_hold_stc = mne.beamformer.apply_lcmv_cov(hold_beta_cov, lcmv_filters, verbose=False)
+assert np.array_equal(lcmv_rest_stc.vertices[0], used_local_indices)
+assert np.array_equal(lcmv_hold_stc.vertices[0], used_local_indices)
+
+lcmv_rest_power = np.asarray(lcmv_rest_stc.data[:, 0], dtype=float)
+lcmv_hold_power = np.asarray(lcmv_hold_stc.data[:, 0], dtype=float)
+assert np.all(np.isfinite(lcmv_rest_power)) and np.all(np.isfinite(lcmv_hold_power))
+lcmv_power_floor = max(
+    float(np.median(np.r_[lcmv_rest_power, lcmv_hold_power])) * 1e-12,
+    np.finfo(float).tiny,
+)
+lcmv_erd_db = 10.0 * np.log10(
+    (lcmv_rest_power + lcmv_power_floor)
+    / (lcmv_hold_power + lcmv_power_floor)
+)
+lcmv_source_table_file = save_dir / "lcmv_beta_source_table.csv"
+with lcmv_source_table_file.open("w", encoding="utf-8-sig", newline="") as table_handle:
+    writer = csv.writer(table_handle)
+    writer.writerow((
+        "source_index", "original_4mm_grid_index", "mni_x_mm", "mni_y_mm", "mni_z_mm",
+        "rest_beta_power", "hold_beta_power", "hold_vs_rest_db", "rest_vs_hold_erd_db",
+    ))
+    for source_index in range(len(lcmv_erd_db)):
+        writer.writerow((
+            source_index,
+            int(used_global_indices[source_index]),
+            *mni_positions_mm[source_index].tolist(),
+            float(lcmv_rest_power[source_index]),
+            float(lcmv_hold_power[source_index]),
+            float(-lcmv_erd_db[source_index]),
+            float(lcmv_erd_db[source_index]),
+        ))
+lcmv_peak_index = int(np.argmax(lcmv_erd_db))
+lcmv_positive_erd = np.maximum(lcmv_erd_db, 0.0)
+lcmv_threshold_db = float(np.percentile(lcmv_erd_db, display_percentile))
+lcmv_high_erd = lcmv_erd_db >= lcmv_threshold_db
+lcmv_right_mean = float(lcmv_positive_erd[right_motor_roi].mean())
+lcmv_left_mean = float(lcmv_positive_erd[left_motor_roi].mean())
+lcmv_right_count = int(np.sum(lcmv_high_erd & (mni_positions_mm[:, 0] > 0)))
+lcmv_left_count = int(np.sum(lcmv_high_erd & (mni_positions_mm[:, 0] < 0)))
+
+comparison_rows = [
+    {
+        "method": "DICS",
+        "estimator": "multitaper_CSD_13-30Hz",
+        "peak_mni_x_mm": float(peak_mni_mm[0]),
+        "peak_mni_y_mm": float(peak_mni_mm[1]),
+        "peak_mni_z_mm": float(peak_mni_mm[2]),
+        "peak_erd_db": peak_erd_db,
+        "peak_to_right_roi_center_mm": peak_to_right_motor_center_mm,
+        "peak_to_right_roi_boundary_mm": peak_to_right_motor_roi_mm,
+        "right_roi_mean_positive_erd_db": right_roi_mean_erd_db,
+        "left_roi_mean_positive_erd_db": left_roi_mean_erd_db,
+        "roi_laterality_index": roi_laterality_index,
+        "p95_right_count": right_high_count,
+        "p95_left_count": left_high_count,
+        "p95_count_laterality_index": high_count_laterality_index,
+        "display_p95_threshold_db": display_threshold_db,
+    },
+    {
+        "method": "LCMV",
+        "estimator": "bandpass_covariance_13-30Hz",
+        "peak_mni_x_mm": float(mni_positions_mm[lcmv_peak_index, 0]),
+        "peak_mni_y_mm": float(mni_positions_mm[lcmv_peak_index, 1]),
+        "peak_mni_z_mm": float(mni_positions_mm[lcmv_peak_index, 2]),
+        "peak_erd_db": float(lcmv_erd_db[lcmv_peak_index]),
+        "peak_to_right_roi_center_mm": float(right_motor_distance_mm[lcmv_peak_index]),
+        "peak_to_right_roi_boundary_mm": float(
+            max(0.0, right_motor_distance_mm[lcmv_peak_index] - motor_roi_radius_mm)
+        ),
+        "right_roi_mean_positive_erd_db": lcmv_right_mean,
+        "left_roi_mean_positive_erd_db": lcmv_left_mean,
+        "roi_laterality_index": float(
+            (lcmv_right_mean - lcmv_left_mean)
+            / (lcmv_right_mean + lcmv_left_mean + np.finfo(float).eps)
+        ),
+        "p95_right_count": lcmv_right_count,
+        "p95_left_count": lcmv_left_count,
+        "p95_count_laterality_index": float(
+            (lcmv_right_count - lcmv_left_count)
+            / max(lcmv_right_count + lcmv_left_count, 1)
+        ),
+        "display_p95_threshold_db": lcmv_threshold_db,
+    },
+]
+for row in comparison_rows:
+    row.update({
+        "subject": subject,
+        "task": task,
+        "medication": medication,
+        "run": run,
+        "equal_epochs_per_condition": equal_epoch_count,
+        "inverse_channels": len(raw.ch_names),
+        "shared_source_points": len(mni_positions_mm),
+    })
+
+comparison_file = save_dir / "dics_lcmv_beta_method_comparison.csv"
+with comparison_file.open("w", encoding="utf-8-sig", newline="") as comparison_handle:
+    comparison_writer = csv.DictWriter(comparison_handle, fieldnames=list(comparison_rows[0]))
+    comparison_writer.writeheader()
+    comparison_writer.writerows(comparison_rows)
+with comparison_file.open(encoding="utf-8-sig", newline="") as comparison_handle:
+    saved_rows = list(csv.DictReader(comparison_handle))
+assert [row["method"] for row in saved_rows] == ["DICS", "LCMV"]
+assert len({row["equal_epochs_per_condition"] for row in saved_rows}) == 1
+assert len({row["shared_source_points"] for row in saved_rows}) == 1
+
+comparison_figure_file = None
+if draw_template_anatomy:
+    # 两行使用完全相同的模板 MRI 切面；每种方法只在各自 P95+ 内归一化显示。
+    center_mri_mm = mne.transforms.apply_trans(
+        mni_to_fsaverage_mri, right_motor_center_mni_mm / 1000.0
+    ) * 1000.0
+    center_voxel = np.rint(
+        nib.affines.apply_affine(
+            np.linalg.inv(fsaverage_t1.header.get_vox2ras_tkr()), center_mri_mm
+        )
+    ).astype(int)
+    assert np.all(center_voxel >= 0) and np.all(center_voxel < fsaverage_volume.shape)
+    fig, axes = plt.subplots(2, 3, figsize=(15, 9), facecolor="white")
+    for method_row, source_erd_db, axis_row in zip(
+        comparison_rows,
+        (rest_vs_hold_erd_db, lcmv_erd_db),
+        axes,
+    ):
+        threshold_db = max(float(method_row["display_p95_threshold_db"]), 0.0)
+        peak_db = float(method_row["peak_erd_db"])
+        weights = np.clip(
+            (source_erd_db - threshold_db)
+            / max(peak_db - threshold_db, np.finfo(float).eps),
+            0.0,
+            1.0,
+        )
+        activation_volume = np.zeros(fsaverage_volume.shape, dtype=np.float32)
+        np.maximum.at(
+            activation_volume,
+            (valid_indices[:, 0], valid_indices[:, 1], valid_indices[:, 2]),
+            weights[valid_voxels],
+        )
+        activation_volume = gaussian_filter(activation_volume, sigma=4.0)
+        activation_volume /= max(float(activation_volume.max()), np.finfo(float).eps)
+        x_voxel, y_voxel, z_voxel = center_voxel
+        anatomy_slices = (
+            fsaverage_volume[x_voxel, :, :].T,
+            fsaverage_volume[:, y_voxel, :].T,
+            fsaverage_volume[:, :, z_voxel].T,
+        )
+        activation_slices = (
+            activation_volume[x_voxel, :, :].T,
+            activation_volume[:, y_voxel, :].T,
+            activation_volume[:, :, z_voxel].T,
+        )
+        for axis, anatomy_slice, activation_slice, plane in zip(
+            axis_row, anatomy_slices, activation_slices, ("Sagittal", "Coronal", "Axial")
+        ):
+            low, high = np.percentile(anatomy_slice[anatomy_slice > 0], [1, 99])
+            axis.imshow(np.clip((anatomy_slice - low) / (high - low), 0, 1),
+                        cmap="gray", origin="lower")
+            axis.imshow(np.ma.masked_less(activation_slice, 0.06),
+                        cmap="inferno", origin="lower", vmin=0, vmax=1, alpha=0.82)
+            axis.set_title(f"{method_row['method']} | {plane}", fontweight="bold")
+            axis.set_axis_off()
+    fig.suptitle(
+        f"Exploratory beta ERD | sub-{subject} {task} {medication} run-{run}\n"
+        "DICS vs LCMV | same MRI slices at preregistered right sensorimotor ROI | P95+ per method",
+        fontsize=13,
+        fontweight="bold",
+    )
+    fig.subplots_adjust(left=0.01, right=0.99, bottom=0.01, top=0.85, wspace=0.02)
+    comparison_figure_file = save_dir / "dics_lcmv_beta_same_slices_mri.png"
+    fig.savefig(comparison_figure_file, dpi=190, facecolor="white", bbox_inches="tight")
+    plt.close(fig)
+
+print("探索性 beta-ERD 方法比较表：", comparison_file)
+print("LCMV 逐源表：", lcmv_source_table_file)
+print("同切面模板 MRI 对比图：", comparison_figure_file)
+print("限制：只有一条完整 run、没有 STN 触点坐标；这里不是 DBS 电极定位。")
+
+summary.update({
+    "analysis": "exploratory DICS versus LCMV beta ERD source-power contrast",
+    "methods": ["DICS multitaper CSD", "LCMV beta-band covariance"],
+    "lcmv_source_table_file": str(lcmv_source_table_file),
+    "comparison_file": str(comparison_file),
+    "comparison_figure_file": str(comparison_figure_file) if comparison_figure_file else None,
+    "elapsed_seconds": float(time.perf_counter() - all_started),
+    "interpretation_limit": (
+        "One complete run only; no source truth or DBS contact coordinates. "
+        "Peak-to-motor-ROI distance is not localization error, and these maps "
+        "do not establish STN localization."
+    ),
+})
+with summary_file.open("w", encoding="utf-8") as summary_handle:
+    json.dump(summary, summary_handle, ensure_ascii=False, indent=2)
+
+report_lines = [
+    "# ds004998 DBS-MEG：DICS 与 LCMV 探索性 beta-ERD 对照",
+    "",
+    f"- 数据：sub-{subject} / {task} / {medication} / run-{run}；本地只有这一条完整可分析记录。",
+    f"- 共同输入：{equal_epoch_count} 个 rest 和 {equal_epoch_count} 个 Hold epoch，"
+    f"{len(raw.ch_names)} 个 planar grad，{len(mni_positions_mm)} 个个体体积源点。",
+    "- DICS：13–30 Hz multitaper CSD；LCMV：13–30 Hz 带通协方差。"
+    "两者均由合并条件建立共同滤波器，再计算 rest/Hold 的功率比。",
+    "- 峰位与 ROI 数值见 `dics_lcmv_beta_method_comparison.csv`；"
+    "相同模板 MRI 切面图见 `dics_lcmv_beta_same_slices_mri.png`。",
+    "- 两方法逐源数据分别见 `dics_beta_source_table.csv` 和 `lcmv_beta_source_table.csv`。",
+    f"- DICS 峰 MNI [{peak_mni_mm[0]:.0f}, {peak_mni_mm[1]:.0f}, {peak_mni_mm[2]:.0f}] mm，"
+    f"距右感觉运动 ROI 中心 {peak_to_right_motor_center_mm:.2f} mm；"
+    f"LCMV 峰 [{mni_positions_mm[lcmv_peak_index, 0]:.0f}, "
+    f"{mni_positions_mm[lcmv_peak_index, 1]:.0f}, "
+    f"{mni_positions_mm[lcmv_peak_index, 2]:.0f}] mm，"
+    f"距中心 {right_motor_distance_mm[lcmv_peak_index]:.2f} mm。",
+    f"- ROI laterality index：DICS {roi_laterality_index:+.4f}；"
+    f"LCMV {comparison_rows[1]['roi_laterality_index']:+.4f}；两者均有明显双侧 ERD。",
+    "- 图中的 P95 是各方法独立的显示阈值，不可凭面积/颜色亮度比较绝对源功率。",
+    "",
+    "这里只比较一条真实记录的 beta 去同步空间模式；没有仿真真值，"
+    "不能计算 AUC/DLE，也不能以峰到预注册感觉运动 ROI 的距离冒充定位误差。",
+    "STN-LFP 被排除在 MEG 逆解外，且没有 DBS 触点坐标；这些结果不证明 STN 或 DBS 电极定位。",
+    "fsaverage MRI/pial 仅供显示，不是患者个体解剖。",
+    "MNE 一层 BEM 桥接不等于原 FieldTrip Nolte 单壳数值解。",
+    "",
+    f"- 总耗时：{summary['elapsed_seconds']:.1f} 秒。",
+]
+(save_dir / "REPORT.md").write_text("\n".join(report_lines) + "\n", encoding="utf-8")
+print("DICS 与 LCMV 总耗时（秒）：", summary["elapsed_seconds"])

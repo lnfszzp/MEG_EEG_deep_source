@@ -62,9 +62,9 @@
 
 ## 4-DBS频谱定位.py
 
-用途：在 ds004998 的完整 `sub-0cGdk9 / HoldL / MedOn / run-1` 上，以共同滤波器 DICS 比较静息和左臂持续用力的 13–30 Hz beta 功率。FIF 中名为 `EEG001-EEG008` 的通道实际是 STN-LFP 触点，本脚本明确不把它们当头皮 EEG，也不让它们进入逆解。
+用途：在 ds004998 的完整 `sub-0cGdk9 / HoldL / MedOn / run-1` 上，以共同滤波器 DICS 和 beta 带通协方差 LCMV 比较静息和左臂持续用力的 13–30 Hz 功率。两者使用相同的平衡 epoch、通道、forward、个体源网格与预注册 ROI；FIF 中名为 `EEG001-EEG008` 的通道实际是 STN-LFP 触点，不进入 MEG 逆解。
 
-脚本使用数据集自带的个体 4-mm FieldTrip 网格和单壳边界，试运行时降为约 8 mm；输出逐源表、预注册双侧感觉运动 ROI 指标、MNI 图，以及仅用于展示的 fsaverage MRI/pial 渲染。真实数据没有仿真真值，因此这里不计算 AUC 或 DLE。
+脚本使用数据集自带的个体 4-mm FieldTrip 网格和单壳边界，试运行时降为约 8 mm；输出到 `results/real_data/ds004998_dbs_v2`，不覆盖原 `v1` DICS 结果。新增两方法比较表、逐源 DICS/LCMV 数据及同一模板 MRI 切面的图。真实数据没有仿真真值或 DBS 触点坐标，因此这里不计算 AUC/DLE，也不声称定位了 DBS 电极。
 
 ## 5-左指运动双链定位.py
 

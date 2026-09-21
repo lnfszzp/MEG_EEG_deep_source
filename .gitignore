@@ -107,6 +107,7 @@ results/erp_whole_head/**
 !results/position_validation/threshold_sweep.csv
 !results/real_data/
 !results/real_data/ds006035/
+!results/real_data/ds006035/method_selection_comparison.md
 !results/real_data/ds006035/group_final/
 !results/real_data/ds006035/group_final/GROUP_REPORT.md
 !results/real_data/ds006035/group_final/*.csv
@@ -120,6 +121,12 @@ results/erp_whole_head/**
 !results/real_data/ds004998_dbs_v1/**/*.json
 !results/real_data/ds004998_dbs_v1/**/*.md
 !results/real_data/ds004998_dbs_v1/**/*.png
+!results/real_data/ds004998_dbs_v2/
+!results/real_data/ds004998_dbs_v2/**/
+!results/real_data/ds004998_dbs_v2/**/*.csv
+!results/real_data/ds004998_dbs_v2/**/*.json
+!results/real_data/ds004998_dbs_v2/**/*.md
+!results/real_data/ds004998_dbs_v2/**/*.png
 !results/v11/
 !results/v11/metrics.csv
 !results/v11/grid_resolution.csv
