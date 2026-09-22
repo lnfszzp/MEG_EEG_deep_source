@@ -1,0 +1,61 @@
+{
+  "inputs": {
+    "v3": "D:\\博士\\工作＆汇报\\源定位\\新建文件夹\\results\\erp_whole_head\\development_full_v3\\v3_locked",
+    "v4": "D:\\博士\\工作＆汇报\\源定位\\新建文件夹\\results\\erp_whole_head\\adaptive_v4\\pilot_five_snr_all_methods",
+    "v5": "D:\\博士\\工作＆汇报\\源定位\\新建文件夹\\results\\erp_whole_head\\adaptive_v5\\pilot_five_snr_all_methods"
+  },
+  "input_hashes": {
+    "v3": {
+      "rows.csv": "12c24dec7339e9669da7acaba5747883dd3a27dc68a9c80a68b73c22061f91fa",
+      "metadata.json": "b70296fa2620f521edbf8a697ac0c1a98409ef7dc1002bb7b8cf1c80e2393748",
+      "completion.json": "12f3e939ce87787c54ef215bb26772dff1c1a3ed2986ba3e7213d1ccf82b185e"
+    },
+    "v4": {
+      "rows.csv": "c9899c75b960aef8425b443f942250a522e5c1cf7da1eeefce51ded941ebbadc",
+      "metadata.json": "9791997cbe3d9d34b72f2bb3038402318a2a3742ce4c99b76dc3e83185fd4fdf",
+      "completion.json": "042cedf393a4c1cb2dacfda98afff6255d34796132f7bb13c1f6b98981c8446f"
+    },
+    "v5": {
+      "rows.csv": "d8a7f57c051642dcc0462a6ae0a4bda9b145a02b81de590a213decdce7c61e46",
+      "metadata.json": "c68e9e04315c60364575707d9d976396909911dd806df88b0219acf716c82ad9",
+      "completion.json": "aac99afab17ffa023cd811f1e837cee0533bcbd10b2ea425cff19baf56c30727"
+    }
+  },
+  "matched_case_count": 20,
+  "matched_row_count": 60,
+  "manifest_sha256": "0989782ea769bc0a698e8e6f250795ee829398afc5984a904eeb9544a32432b5",
+  "seed_root": 20260921,
+  "modality_weighting": "evidence",
+  "shared_fingerprint": "a97e6991fde1cedfac66857d5c07683c43af62f16ad19bfa31ea7199a9083556",
+  "n_surf": 7498,
+  "n_deep": 16,
+  "missing_distance_penalty_mm": 234.02911185627735,
+  "comparison_deep_threshold": 0.14,
+  "deep_radius_mm": 10.0,
+  "metric_labels": {
+    "auc": "An_cal_AUC parcel/group AUC",
+    "auc_tie_corrected": "An_auc tie-aware whole-grid AUC"
+  },
+  "metric_compatibility": "Git audit confirms v3 metric source differs only in deep threshold and candidate list; user metric implementations unchanged",
+  "algorithm_parameters": {
+    "v3": {
+      "deep_rescue_delta": -6.0
+    },
+    "v4": {
+      "mrf_strength": 0.5,
+      "edge_fraction": 0.5,
+      "noise_multiplier": 1.0
+    },
+    "v5": {
+      "mrf_strength": 0.5,
+      "edge_fraction": 0.5,
+      "noise_multiplier": 1.0,
+      "calibration": "layer",
+      "temporal_mode": "smooth",
+      "solver_kind": "admm"
+    }
+  },
+  "scope": "4 configurations repeated across 5 SNR pairs; no independent-subject CI or p-values",
+  "not_an_equivalent_ablation": "v3 uses fixed multiscale templates and added temporal evidence; v4/v5 use graph reweighting. v5 also changes temporal basis, layer calibration and numerical stopping criteria.",
+  "script_sha256": "33804366cb36a2d3b6512cdeacfae9c78cc2001363ee574105ce3ca92a1720a2"
+}
