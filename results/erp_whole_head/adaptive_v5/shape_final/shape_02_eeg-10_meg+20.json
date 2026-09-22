@@ -1,0 +1,397 @@
+{
+  "parcel": "lateraloccipital-lh",
+  "shape": "thin_path",
+  "center": 284,
+  "surface_indices": [
+    120,
+    212,
+    337,
+    338,
+    361,
+    385,
+    410,
+    411,
+    439,
+    539
+  ],
+  "surface_count": 10,
+  "deep_index": null,
+  "case_id": "shape_02_eeg-10_meg+20",
+  "seed": [
+    20260922,
+    2,
+    2
+  ],
+  "eeg_snr_db": -10,
+  "meg_snr_db": 20,
+  "actual_snr_db": [
+    -9.999999999999998,
+    20.0
+  ],
+  "diagnostics": {
+    "v3": {
+      "mode": "signed_multiscale_erp_surface_residual_deep_v3",
+      "surface_scales_mm": [
+        0.0,
+        4.0,
+        7.0
+      ],
+      "selected_templates": 4,
+      "selected_surface_templates": 3,
+      "selected_deep_templates": 1,
+      "ridge_fraction": 0.03,
+      "max_templates_per_window": 7,
+      "require_one": false,
+      "windows": [
+        {
+          "window": 0,
+          "active_samples": 61,
+          "temporal_rank": 3,
+          "null_edges": [
+            13.883497619844853,
+            12.645974174120987,
+            16.533154359786568
+          ],
+          "channel_weight_min": 0.06921980832474467,
+          "channel_weight_max": 1.0,
+          "weighted_channels": 157,
+          "selected_surface_templates": 3,
+          "surface_ebic_deltas": [
+            -1162.4194709336693,
+            -797.2777875745328,
+            -139.78858304749383
+          ],
+          "selected_templates": [
+            {
+              "layer": "surface",
+              "scale_mm": 7.0,
+              "index": 361
+            },
+            {
+              "layer": "surface",
+              "scale_mm": 4.0,
+              "index": 358
+            },
+            {
+              "layer": "surface",
+              "scale_mm": 4.0,
+              "index": 18
+            },
+            {
+              "layer": "deep",
+              "scale_mm": null,
+              "index": 0
+            }
+          ],
+          "deep_candidate_local": 0,
+          "deep_ebic_delta": -50.33369669796503,
+          "deep_accepted": true,
+          "selection": "joint_surface_then_residual_deep_ebic_v3",
+          "joint_ebic_deltas": [
+            -1162.4194709336693,
+            -797.2777875745328,
+            -139.78858304749383
+          ],
+          "first_selected_layer": "surface",
+          "deep_rescue_attempted": false,
+          "deep_rescue_accepted": false,
+          "deep_rescue_ebic_delta": Infinity,
+          "deep_rescue_ebic_threshold": -6.0,
+          "time_evidence": {
+            "surface_raw": {
+              "positive_candidates": 7514,
+              "score_max": 45757.12361332758,
+              "score_median_positive": 1716.4078717125806
+            },
+            "deep_surface_residual": {
+              "positive_candidates": 7514,
+              "score_max": 160.59718147959117,
+              "score_median_positive": 18.601740504496888
+            }
+          },
+          "residual_deep_reselection": {
+            "deep_local": 0,
+            "accepted": true,
+            "ebic_delta": -50.33369669796503,
+            "surface_design_rank": 3,
+            "candidate_universe": 22510,
+            "residual_active_samples": 61,
+            "residual_temporal_rank": 3,
+            "residual_null_edges": [
+              13.86144343031983,
+              12.366173881091362,
+              16.19419807841843
+            ]
+          }
+        }
+      ],
+      "selection": "joint_surface_then_residual_deep_reselection",
+      "conditional_candidate_drops": true,
+      "joint_search_template_cap_per_window": 6,
+      "deep_rescue_can_add_one_template": false,
+      "max_deep_templates_per_window": 1,
+      "time_evidence_fraction": 0.05,
+      "time_evidence_surface_scale_mm": 4.0,
+      "time_evidence_layer_balanced": true,
+      "time_evidence_fusion": {
+        "primary_active_peak": 0.6475174914163537,
+        "evidence_active_peak": 133679.1673967473,
+        "evidence_scale": 0.00043656293077099,
+        "evidence_layer_peaks": [
+          133679.1673967473,
+          74.16084208899831
+        ],
+        "evidence_layer_scales": [
+          2.4219087537199503e-07,
+          0.00043656293077099
+        ]
+      },
+      "time_evidence_deep_surface_residual": true
+    },
+    "v5": {
+      "mode": "joint_layer_calibrated_adaptive_graph",
+      "selected_templates": [],
+      "spatial_templates_used": false,
+      "graph_edges": 21320,
+      "deep_graph_edges": 0,
+      "mrf_strength": 0.5,
+      "calibration": "layer",
+      "temporal_mode": "smooth",
+      "solver_kind": "admm",
+      "solver_settings": {
+        "outer_iterations": 20,
+        "tolerance": 0.001,
+        "max_iter": 2000,
+        "max_inner_retries": 2,
+        "outer_tolerance": 0.01
+      },
+      "weighting_coordinates": "MRF_current_innovation",
+      "windows": [
+        {
+          "active_samples": 61,
+          "temporal_rank": 10,
+          "temporal_selection": "amplitude_independent_smooth_subspace",
+          "smoothing_fraction": 0.1,
+          "attenuation_floor": 0.01,
+          "source_lambda_surface": 12.970395068466077,
+          "source_lambda_deep": 3.827362675692514,
+          "source_lambda_global_reference": 12.970395068466077,
+          "edge_lambda": 1.14038487597747,
+          "noise_projection_blocks": 16,
+          "response_condition": 80.40757846114673,
+          "null_rule": "separate layer maxima of baseline matched-filter norms; empirical regularization, not p-values",
+          "solver": {
+            "history": [
+              {
+                "outer": 0,
+                "iterations": 1850,
+                "retries": 0,
+                "converged": true,
+                "primal_relative": 0.00023700823183226297,
+                "dual_relative": 5.8893287856496526e-05,
+                "surrogate_reference": 309581.0519533796,
+                "surrogate_objective": 9790.285188310985,
+                "surrogate_roundoff": 8.798822703777762e-09,
+                "primal_dual_gap": 9.59984098859968,
+                "primal_dual_gap_relative": 0.0009805476351252072,
+                "dual_scale": 0.9993343412158433,
+                "dual_candidate": "admm_linear_residual",
+                "source_dual_violation": 0.0,
+                "log_objective": 4026.802045037693,
+                "local_stationarity_gap_relative": 0.8538607784587036,
+                "relative_change": 1.0,
+                "accepted_step": 1.0,
+                "rho": 2.0,
+                "rho_updates": 1,
+                "active_rows": 36
+              },
+              {
+                "outer": 1,
+                "iterations": 3225,
+                "retries": 1,
+                "converged": true,
+                "primal_relative": 3.1772742704504526e-05,
+                "dual_relative": 7.053258985503203e-06,
+                "surrogate_reference": 2677.1908340793275,
+                "surrogate_objective": 2266.7671995925643,
+                "surrogate_roundoff": 7.609033997594359e-11,
+                "primal_dual_gap": 2.2021158740276405,
+                "primal_dual_gap_relative": 0.0009714786213703178,
+                "dual_scale": 0.9982409264047747,
+                "dual_candidate": "admm_linear_residual",
+                "source_dual_violation": 0.0,
+                "log_objective": 3240.7301150767466,
+                "local_stationarity_gap_relative": 0.8243605056332154,
+                "relative_change": 0.43285057176811975,
+                "accepted_step": 1.0,
+                "rho": 2.0,
+                "rho_updates": 2,
+                "active_rows": 18
+              },
+              {
+                "outer": 2,
+                "iterations": 3225,
+                "retries": 1,
+                "converged": true,
+                "primal_relative": 8.419889743492e-06,
+                "dual_relative": 6.106266162247477e-06,
+                "surrogate_reference": 2010.0469056543475,
+                "surrogate_objective": 1930.1725378166084,
+                "surrogate_roundoff": 5.712896909399056e-11,
+                "primal_dual_gap": 1.6617684970319715,
+                "primal_dual_gap_relative": 0.0008609429802124048,
+                "dual_scale": 0.9982763053868704,
+                "dual_candidate": "admm_linear_residual",
+                "source_dual_violation": 0.0,
+                "log_objective": 3145.7780511652504,
+                "local_stationarity_gap_relative": 0.5837694060210357,
+                "relative_change": 0.5192869831618121,
+                "accepted_step": 1.0,
+                "rho": 2.0,
+                "rho_updates": 0,
+                "active_rows": 18
+              },
+              {
+                "outer": 3,
+                "iterations": 1300,
+                "retries": 0,
+                "converged": true,
+                "primal_relative": 9.240607222541954e-05,
+                "dual_relative": 6.229844962751218e-05,
+                "surrogate_reference": 1893.3823322022818,
+                "surrogate_objective": 1890.0932084102553,
+                "surrogate_roundoff": 5.3813162486513925e-11,
+                "primal_dual_gap": 1.8713635309961774,
+                "primal_dual_gap_relative": 0.0009900906064681163,
+                "dual_scale": 0.9998394676619506,
+                "dual_candidate": "admm_linear_residual",
+                "source_dual_violation": 0.0,
+                "log_objective": 3140.9376999898077,
+                "local_stationarity_gap_relative": 0.2615758348352732,
+                "relative_change": 0.07798154011208926,
+                "accepted_step": 1.0,
+                "rho": 1.0,
+                "rho_updates": 1,
+                "active_rows": 18
+              },
+              {
+                "outer": 4,
+                "iterations": 1250,
+                "retries": 0,
+                "converged": true,
+                "primal_relative": 3.696560844570844e-05,
+                "dual_relative": 1.3862017962378023e-05,
+                "surrogate_reference": 1881.3143573601574,
+                "surrogate_objective": 1880.6958360170083,
+                "surrogate_roundoff": 5.347017001213764e-11,
+                "primal_dual_gap": 0.3808599953974863,
+                "primal_dual_gap_relative": 0.00020251014975610437,
+                "dual_scale": 0.9998662295620417,
+                "dual_candidate": "admm_linear_residual",
+                "source_dual_violation": 0.0,
+                "log_objective": 3140.1256840662763,
+                "local_stationarity_gap_relative": 0.048904923798019646,
+                "relative_change": 0.02841038795226378,
+                "accepted_step": 1.0,
+                "rho": 1.0,
+                "rho_updates": 0,
+                "active_rows": 18
+              },
+              {
+                "outer": 5,
+                "iterations": 425,
+                "retries": 0,
+                "converged": true,
+                "primal_relative": 4.4286805090867876e-05,
+                "dual_relative": 4.013149564856668e-05,
+                "surrogate_reference": 1878.3098219982694,
+                "surrogate_objective": 1878.3049931050507,
+                "surrogate_roundoff": 5.3384775981108686e-11,
+                "primal_dual_gap": 1.3223468494195458,
+                "primal_dual_gap_relative": 0.0007040107193845856,
+                "dual_scale": 0.9989892118607027,
+                "dual_candidate": "admm_linear_residual",
+                "source_dual_violation": 0.0,
+                "log_objective": 3140.0881824548637,
+                "local_stationarity_gap_relative": 0.02817915064237853,
+                "relative_change": 0.009982943378297172,
+                "accepted_step": 1.0,
+                "rho": 1.0,
+                "rho_updates": 0,
+                "active_rows": 18
+              },
+              {
+                "outer": 6,
+                "iterations": 350,
+                "retries": 0,
+                "converged": true,
+                "primal_relative": 3.495935397865062e-05,
+                "dual_relative": 8.810502384479046e-06,
+                "surrogate_reference": 1877.4571172186913,
+                "surrogate_objective": 1877.441288708344,
+                "surrogate_roundoff": 5.33605406536336e-11,
+                "primal_dual_gap": 1.2804857070882463,
+                "primal_dual_gap_relative": 0.0006820376833031111,
+                "dual_scale": 0.9987165352688211,
+                "dual_candidate": "admm_linear_residual",
+                "source_dual_violation": 0.0,
+                "log_objective": 3140.0681901389926,
+                "local_stationarity_gap_relative": 0.008767365984396678,
+                "relative_change": 0.003737198986341533,
+                "accepted_step": 1.0,
+                "rho": 1.0,
+                "rho_updates": 0,
+                "active_rows": 18
+              },
+              {
+                "outer": 7,
+                "iterations": 375,
+                "retries": 0,
+                "converged": true,
+                "primal_relative": 2.4380576815357716e-05,
+                "dual_relative": 7.137228483469375e-06,
+                "surrogate_reference": 1877.2480795634087,
+                "surrogate_objective": 1877.216527698528,
+                "surrogate_roundoff": 5.3354599446135147e-11,
+                "primal_dual_gap": 1.6117370967599527,
+                "primal_dual_gap_relative": 0.0008585781517361486,
+                "dual_scale": 0.9982799885945011,
+                "dual_candidate": "admm_linear_residual",
+                "source_dual_violation": 0.0,
+                "log_objective": 3140.035837209942,
+                "local_stationarity_gap_relative": 0.00084922149272239,
+                "relative_change": 0.002871199666805175,
+                "accepted_step": 1.0,
+                "rho": 1.0,
+                "rho_updates": 0,
+                "active_rows": 18
+              }
+            ],
+            "converged": true,
+            "inner_converged": true,
+            "outer_converged": true,
+            "final_stationarity_gap_relative": 0.00084922149272239,
+            "numerical_stall": false,
+            "descent_guard_triggered": false,
+            "amplitude_epsilon": 3.0683348978506633,
+            "edge_epsilon": 3.0683348978506633,
+            "amplitude_weight_range": [
+              0.02987333805347954,
+              1.0
+            ],
+            "edge_weight_range": [
+              0.037918627683038914,
+              1.0
+            ],
+            "rho_initial": 1.0,
+            "rho_final": 1.0,
+            "rho_updates": 4,
+            "outer_tolerance": 0.01,
+            "adaptive_rho": true,
+            "convergence_note": "Feasible primal-dual bound for the current convex MM surrogate; no global-optimality claim for log-sum."
+          }
+        }
+      ]
+    }
+  }
+}
