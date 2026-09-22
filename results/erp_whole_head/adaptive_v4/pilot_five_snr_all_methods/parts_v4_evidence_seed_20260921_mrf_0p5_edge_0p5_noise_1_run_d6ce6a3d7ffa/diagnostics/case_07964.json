@@ -1,0 +1,96 @@
+{
+  "case_id": "erp-v3-development-07964-deep_only-eeg+20-meg-10",
+  "method": "OASTER-ERP-v4",
+  "manifest_sha256": "0989782ea769bc0a698e8e6f250795ee829398afc5984a904eeb9544a32432b5",
+  "parameters": {
+    "mrf_strength": 0.5,
+    "edge_fraction": 0.5,
+    "noise_multiplier": 1.0
+  },
+  "diagnostics": {
+    "mode": "adaptive_source_and_edge_logsum_full_grid",
+    "windows": [
+      {
+        "active_samples": 61,
+        "temporal_rank": 3,
+        "null_edges": [
+          13.35537712009503,
+          11.003935045195592,
+          14.062934106605157
+        ],
+        "source_lambda": 9.13237415754772,
+        "edge_lambda": 0.8029378685892683,
+        "solver": {
+          "history": [
+            {
+              "outer": 0,
+              "iterations": 1031,
+              "converged": true,
+              "primal_relative": 0.00029994687380033774,
+              "dual_relative": 0.00028417147280253015,
+              "log_objective": 567.6866283767005,
+              "relative_change": 1.0,
+              "objective_descent_slack": 0.0,
+              "active_rows": 1,
+              "rho": 2.0,
+              "rho_updates": 1
+            },
+            {
+              "outer": 1,
+              "iterations": 948,
+              "converged": true,
+              "primal_relative": 0.00021255055563477657,
+              "dual_relative": 0.0002974166627773722,
+              "log_objective": 465.7917860019488,
+              "relative_change": 0.08395714598996057,
+              "objective_descent_slack": 0.17030598851301013,
+              "active_rows": 1,
+              "rho": 2.0,
+              "rho_updates": 4
+            }
+          ],
+          "converged": false,
+          "inner_converged": true,
+          "outer_converged": false,
+          "descent_guard_triggered": true,
+          "descent_guard_step": {
+            "outer": 2,
+            "iterations": 26,
+            "previous_log_objective": 465.7917860019488,
+            "proposed_log_objective": 466.22758387307834,
+            "allowed_increase": 0.13973753580058462,
+            "inner_converged": true,
+            "primal_relative": 0.00029160296427908824,
+            "dual_relative": 0.00013952642942084204
+          },
+          "rho_initial": 1.0,
+          "rho_final": 2.0,
+          "rho_updates": 5,
+          "outer_tolerance": 0.01,
+          "adaptive_rho": true,
+          "objective_descent_tolerance": 0.0003,
+          "objective_descent_slack_rule": "tolerance * max(1, previous_log_objective)",
+          "convergence_note": "Finite residual/change tolerances; no global-optimality claim.",
+          "amplitude_epsilon": 19.613346922198904,
+          "edge_epsilon": 0.017290738013879255,
+          "amplitude_weight_range": [
+            0.04380090041751821,
+            1.0
+          ],
+          "edge_weight_range": [
+            0.2645043642618406,
+            1.0
+          ]
+        },
+        "response_condition": 19.385847508435585,
+        "null_rule": "99th percentile of up to 16 overlapping baseline projections; heuristic, not p-value"
+      }
+    ],
+    "selected_templates": [],
+    "graph_edges": 21320,
+    "deep_graph_edges": 0,
+    "spatial_templates_used": false,
+    "mrf_strength": 0.5,
+    "weighting_coordinates": "MRF_current_innovation"
+  }
+}

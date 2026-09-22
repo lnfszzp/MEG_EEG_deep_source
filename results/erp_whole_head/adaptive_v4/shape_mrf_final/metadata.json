@@ -1,0 +1,3920 @@
+{
+  "scope": "12-case non-Gaussian supplementary shape challenge, not the full-head seven-comparator benchmark",
+  "seed_root": 20260922,
+  "snr_pairs": [
+    [
+      -10,
+      -10
+    ],
+    [
+      5,
+      5
+    ],
+    [
+      -10,
+      20
+    ]
+  ],
+  "snr_level": "evoked",
+  "source_amplitude": "uniform within each connected surface patch; no Gaussian spatial truth",
+  "deep_surface_ratio": 0.5,
+  "v4_parameters": {
+    "mrf_strength": 0.5,
+    "edge_fraction": 0.5,
+    "noise_multiplier": 1.0
+  },
+  "code_sha256": {
+    "run_adaptive_shape_challenge.py": "71c1b3731a63a98406c488cb5de5e1ab7e11ac356040d676794ce1235259179c",
+    "candidates\\oaster_adaptive.py": "c95e8dd3906aa3a6fafd68112ead976b6505dcea82927b6face63b2f2318582e",
+    "candidates\\oaster_rebuilt.py": "4032f015ed06df64df3ad10d128b67605c49fb76a2e5bef302ed5160519e00f0",
+    "benchmark\\erp_protocol.py": "f74f9b1dd33036105d50d4ccd6242c1a068cb090fe4a234eb7736f8071e16647",
+    "benchmark\\methods.py": "1625c67d91d20112d711a3d77de175ed0509c1acfa45c1561845f6761c307dcf",
+    "benchmark\\metrics.py": "f07a42e26dc2118c418744e3a4971c5fcd3037b7b93e26a7e2e4e899400986d8"
+  },
+  "gain_sha256": {
+    "gain_eeg": "382f792c273fc62a160b30c636b9bf7a2f5e6eb1e67efba408281f445058d7a5",
+    "gain_meg": "faca09a9d5ad559f5878ed85b421699f776bdd4aa3cc32dcadd4f45c09e18855"
+  },
+  "complete": true,
+  "case_count": 12,
+  "cases": [
+    {
+      "parcel": "postcentral-lh",
+      "shape": "uniform_1hop",
+      "center": 1540,
+      "surface_indices": [
+        1454,
+        1455,
+        1458,
+        1540,
+        1580,
+        1663,
+        1693
+      ],
+      "surface_count": 7,
+      "deep_index": null,
+      "case_id": "shape_00_eeg-10_meg-10",
+      "seed": [
+        20260922,
+        0,
+        0
+      ],
+      "eeg_snr_db": -10,
+      "meg_snr_db": -10,
+      "actual_snr_db": [
+        -9.999999999999998,
+        -9.999999999999998
+      ],
+      "diagnostics": {
+        "v3": {
+          "mode": "signed_multiscale_erp_surface_residual_deep_v3",
+          "surface_scales_mm": [
+            0.0,
+            4.0,
+            7.0
+          ],
+          "selected_templates": 2,
+          "selected_surface_templates": 2,
+          "selected_deep_templates": 0,
+          "ridge_fraction": 0.03,
+          "max_templates_per_window": 7,
+          "require_one": false,
+          "windows": [
+            {
+              "window": 0,
+              "active_samples": 61,
+              "temporal_rank": 3,
+              "null_edges": [
+                15.21012396443574,
+                13.837080723501249,
+                17.95152689797033
+              ],
+              "channel_weight_min": 0.6790048674545214,
+              "channel_weight_max": 1.0,
+              "weighted_channels": 157,
+              "selected_surface_templates": 2,
+              "surface_ebic_deltas": [
+                -80.39504314782619,
+                -0.7856059376715621
+              ],
+              "selected_templates": [
+                {
+                  "layer": "surface",
+                  "scale_mm": 0.0,
+                  "index": 1572
+                },
+                {
+                  "layer": "surface",
+                  "scale_mm": 0.0,
+                  "index": 3937
+                }
+              ],
+              "deep_candidate_local": 14,
+              "deep_ebic_delta": 35.0119930517076,
+              "deep_accepted": false,
+              "selection": "joint_surface_then_residual_deep_ebic_v3",
+              "joint_ebic_deltas": [
+                -80.39504314782619,
+                -0.7856059376715621
+              ],
+              "first_selected_layer": "surface",
+              "deep_rescue_attempted": false,
+              "deep_rescue_accepted": false,
+              "deep_rescue_ebic_delta": Infinity,
+              "deep_rescue_ebic_threshold": -6.0,
+              "time_evidence": {
+                "surface_raw": {
+                  "positive_candidates": 7514,
+                  "score_max": 67.44657118505363,
+                  "score_median_positive": 11.718024135951051
+                },
+                "deep_surface_residual": {
+                  "positive_candidates": 7514,
+                  "score_max": 23.402583250589437,
+                  "score_median_positive": 9.41439686223341
+                }
+              },
+              "residual_deep_reselection": {
+                "deep_local": 14,
+                "accepted": false,
+                "ebic_delta": 35.0119930517076,
+                "surface_design_rank": 2,
+                "candidate_universe": 22510,
+                "residual_active_samples": 61,
+                "residual_temporal_rank": 3,
+                "residual_null_edges": [
+                  15.163011592851474,
+                  13.814556563400552,
+                  17.93274236181953
+                ]
+              }
+            }
+          ],
+          "selection": "joint_surface_then_residual_deep_reselection",
+          "conditional_candidate_drops": true,
+          "joint_search_template_cap_per_window": 6,
+          "deep_rescue_can_add_one_template": false,
+          "max_deep_templates_per_window": 1,
+          "time_evidence_fraction": 0.05,
+          "time_evidence_surface_scale_mm": 4.0,
+          "time_evidence_layer_balanced": true,
+          "time_evidence_fusion": {
+            "primary_active_peak": 1.3044757004139915,
+            "evidence_active_peak": 178.45508709122058,
+            "evidence_scale": 0.006471386544026706,
+            "evidence_layer_peaks": [
+              178.45508709122058,
+              10.078796031880245
+            ],
+            "evidence_layer_scales": [
+              0.0003654913182013088,
+              0.006471386544026706
+            ]
+          },
+          "time_evidence_deep_surface_residual": true
+        },
+        "v4": {
+          "mode": "adaptive_source_and_edge_logsum_full_grid",
+          "windows": [
+            {
+              "active_samples": 61,
+              "temporal_rank": 3,
+              "null_edges": [
+                15.21012396443574,
+                13.837080723501249,
+                17.95152689797033
+              ],
+              "source_lambda": 8.071095492365664,
+              "edge_lambda": 0.7096279784446266,
+              "solver": {
+                "history": [
+                  {
+                    "outer": 0,
+                    "iterations": 1069,
+                    "converged": true,
+                    "primal_relative": 0.0002986855536522535,
+                    "dual_relative": 0.0001830062264082874,
+                    "log_objective": 1074.8500285700325,
+                    "relative_change": 1.0,
+                    "objective_descent_slack": 0.0,
+                    "active_rows": 107,
+                    "rho": 4.0,
+                    "rho_updates": 2
+                  },
+                  {
+                    "outer": 1,
+                    "iterations": 880,
+                    "converged": true,
+                    "primal_relative": 0.00029877170905356063,
+                    "dual_relative": 0.00021256030219479695,
+                    "log_objective": 915.7236553732274,
+                    "relative_change": 0.6437898719188717,
+                    "objective_descent_slack": 0.3224550085710097,
+                    "active_rows": 74,
+                    "rho": 4.0,
+                    "rho_updates": 4
+                  },
+                  {
+                    "outer": 2,
+                    "iterations": 701,
+                    "converged": true,
+                    "primal_relative": 0.00029901705275257607,
+                    "dual_relative": 0.00013146746449483904,
+                    "log_objective": 860.994996975891,
+                    "relative_change": 0.503158704149791,
+                    "objective_descent_slack": 0.2747170966119682,
+                    "active_rows": 68,
+                    "rho": 2.0,
+                    "rho_updates": 3
+                  },
+                  {
+                    "outer": 3,
+                    "iterations": 790,
+                    "converged": true,
+                    "primal_relative": 0.0002992473981931339,
+                    "dual_relative": 0.00023693718189494095,
+                    "log_objective": 824.1159740120178,
+                    "relative_change": 0.5228239075829855,
+                    "objective_descent_slack": 0.2582984990927673,
+                    "active_rows": 59,
+                    "rho": 2.0,
+                    "rho_updates": 2
+                  },
+                  {
+                    "outer": 4,
+                    "iterations": 612,
+                    "converged": true,
+                    "primal_relative": 0.0002995083445714184,
+                    "dual_relative": 0.0001556338411623724,
+                    "log_objective": 812.9675043442764,
+                    "relative_change": 0.2337257533618834,
+                    "objective_descent_slack": 0.2472347922036053,
+                    "active_rows": 55,
+                    "rho": 2.0,
+                    "rho_updates": 2
+                  },
+                  {
+                    "outer": 5,
+                    "iterations": 370,
+                    "converged": true,
+                    "primal_relative": 0.0002951372886208038,
+                    "dual_relative": 0.00029872217124767627,
+                    "log_objective": 812.5116936511317,
+                    "relative_change": 0.06677770667338016,
+                    "objective_descent_slack": 0.2438902513032829,
+                    "active_rows": 55,
+                    "rho": 1.0,
+                    "rho_updates": 1
+                  },
+                  {
+                    "outer": 6,
+                    "iterations": 306,
+                    "converged": true,
+                    "primal_relative": 0.0002998086441040359,
+                    "dual_relative": 0.00026487785465862214,
+                    "log_objective": 808.1846523793527,
+                    "relative_change": 0.16199204158062536,
+                    "objective_descent_slack": 0.2437535080953395,
+                    "active_rows": 55,
+                    "rho": 1.0,
+                    "rho_updates": 0
+                  },
+                  {
+                    "outer": 7,
+                    "iterations": 350,
+                    "converged": true,
+                    "primal_relative": 0.0002984246478585558,
+                    "dual_relative": 0.0002512413379030257,
+                    "log_objective": 802.0734610308615,
+                    "relative_change": 0.14291284889310188,
+                    "objective_descent_slack": 0.24245539571380578,
+                    "active_rows": 52,
+                    "rho": 1.0,
+                    "rho_updates": 0
+                  },
+                  {
+                    "outer": 8,
+                    "iterations": 155,
+                    "converged": true,
+                    "primal_relative": 0.0002428197943083418,
+                    "dual_relative": 0.00029839809924823947,
+                    "log_objective": 802.0491255145623,
+                    "relative_change": 0.012393160481679634,
+                    "objective_descent_slack": 0.24062203830925843,
+                    "active_rows": 52,
+                    "rho": 1.0,
+                    "rho_updates": 0
+                  },
+                  {
+                    "outer": 9,
+                    "iterations": 71,
+                    "converged": true,
+                    "primal_relative": 0.00023512475330162214,
+                    "dual_relative": 0.00029416371789782415,
+                    "log_objective": 802.0465155230603,
+                    "relative_change": 0.006408237873041966,
+                    "objective_descent_slack": 0.24061473765436867,
+                    "active_rows": 52,
+                    "rho": 1.0,
+                    "rho_updates": 0
+                  }
+                ],
+                "converged": true,
+                "inner_converged": true,
+                "outer_converged": true,
+                "descent_guard_triggered": false,
+                "descent_guard_step": null,
+                "rho_initial": 1.0,
+                "rho_final": 1.0,
+                "rho_updates": 14,
+                "outer_tolerance": 0.01,
+                "adaptive_rho": true,
+                "objective_descent_tolerance": 0.0003,
+                "objective_descent_slack_rule": "tolerance * max(1, previous_log_objective)",
+                "convergence_note": "Finite residual/change tolerances; no global-optimality claim.",
+                "amplitude_epsilon": 0.06672253291700374,
+                "edge_epsilon": 0.06672238999000123,
+                "amplitude_weight_range": [
+                  0.008022729542622474,
+                  1.0
+                ],
+                "edge_weight_range": [
+                  0.00802271249492847,
+                  1.0
+                ]
+              },
+              "response_condition": 1.2522139346287735,
+              "null_rule": "99th percentile of up to 16 overlapping baseline projections; heuristic, not p-value"
+            }
+          ],
+          "selected_templates": [],
+          "graph_edges": 21320,
+          "deep_graph_edges": 0,
+          "spatial_templates_used": false,
+          "mrf_strength": 0.5,
+          "weighting_coordinates": "MRF_current_innovation"
+        }
+      }
+    },
+    {
+      "parcel": "postcentral-lh",
+      "shape": "uniform_1hop",
+      "center": 1540,
+      "surface_indices": [
+        1454,
+        1455,
+        1458,
+        1540,
+        1580,
+        1663,
+        1693
+      ],
+      "surface_count": 7,
+      "deep_index": null,
+      "case_id": "shape_00_eeg+05_meg+05",
+      "seed": [
+        20260922,
+        0,
+        1
+      ],
+      "eeg_snr_db": 5,
+      "meg_snr_db": 5,
+      "actual_snr_db": [
+        4.999999999999999,
+        4.999999999999999
+      ],
+      "diagnostics": {
+        "v3": {
+          "mode": "signed_multiscale_erp_surface_residual_deep_v3",
+          "surface_scales_mm": [
+            0.0,
+            4.0,
+            7.0
+          ],
+          "selected_templates": 1,
+          "selected_surface_templates": 1,
+          "selected_deep_templates": 0,
+          "ridge_fraction": 0.03,
+          "max_templates_per_window": 7,
+          "require_one": false,
+          "windows": [
+            {
+              "window": 0,
+              "active_samples": 61,
+              "temporal_rank": 3,
+              "null_edges": [
+                17.518683210925133,
+                15.44839572153429,
+                20.12189523262894
+              ],
+              "channel_weight_min": 0.9954049260856853,
+              "channel_weight_max": 1.0,
+              "weighted_channels": 157,
+              "selected_surface_templates": 1,
+              "surface_ebic_deltas": [
+                -1447.9550421054103
+              ],
+              "selected_templates": [
+                {
+                  "layer": "surface",
+                  "scale_mm": 4.0,
+                  "index": 1540
+                }
+              ],
+              "deep_candidate_local": 0,
+              "deep_ebic_delta": 30.75268588980085,
+              "deep_accepted": false,
+              "selection": "joint_surface_then_residual_deep_ebic_v3",
+              "joint_ebic_deltas": [
+                -1447.9550421054103
+              ],
+              "first_selected_layer": "surface",
+              "deep_rescue_attempted": false,
+              "deep_rescue_accepted": false,
+              "deep_rescue_ebic_delta": Infinity,
+              "deep_rescue_ebic_threshold": -6.0,
+              "time_evidence": {
+                "surface_raw": {
+                  "positive_candidates": 7514,
+                  "score_max": 1332.4670588905637,
+                  "score_median_positive": 19.562747573557314
+                },
+                "deep_surface_residual": {
+                  "positive_candidates": 7514,
+                  "score_max": 29.625676991609616,
+                  "score_median_positive": 8.44382869919221
+                }
+              },
+              "residual_deep_reselection": {
+                "deep_local": 0,
+                "accepted": false,
+                "ebic_delta": 30.75268588980085,
+                "surface_design_rank": 1,
+                "candidate_universe": 22510,
+                "residual_active_samples": 61,
+                "residual_temporal_rank": 3,
+                "residual_null_edges": [
+                  17.517260456274254,
+                  15.360154429801463,
+                  20.03498576368623
+                ]
+              }
+            }
+          ],
+          "selection": "joint_surface_then_residual_deep_reselection",
+          "conditional_candidate_drops": true,
+          "joint_search_template_cap_per_window": 6,
+          "deep_rescue_can_add_one_template": false,
+          "max_deep_templates_per_window": 1,
+          "time_evidence_fraction": 0.05,
+          "time_evidence_surface_scale_mm": 4.0,
+          "time_evidence_layer_balanced": true,
+          "time_evidence_fusion": {
+            "primary_active_peak": 0.520312185000984,
+            "evidence_active_peak": 3748.987912808235,
+            "evidence_scale": 0.002608563423564888,
+            "evidence_layer_peaks": [
+              3748.987912808235,
+              9.973155728180846
+            ],
+            "evidence_layer_scales": [
+              6.939368665651905e-06,
+              0.002608563423564888
+            ]
+          },
+          "time_evidence_deep_surface_residual": true
+        },
+        "v4": {
+          "mode": "adaptive_source_and_edge_logsum_full_grid",
+          "windows": [
+            {
+              "active_samples": 61,
+              "temporal_rank": 3,
+              "null_edges": [
+                17.518683210925133,
+                15.44839572153429,
+                20.12189523262894
+              ],
+              "source_lambda": 9.125058514580553,
+              "edge_lambda": 0.8022946616126289,
+              "solver": {
+                "history": [
+                  {
+                    "outer": 0,
+                    "iterations": 1963,
+                    "converged": true,
+                    "primal_relative": 0.00029958147312859565,
+                    "dual_relative": 0.00012672205049207928,
+                    "log_objective": 683.7977771727419,
+                    "relative_change": 1.0,
+                    "objective_descent_slack": 0.0,
+                    "active_rows": 40,
+                    "rho": 4.0,
+                    "rho_updates": 2
+                  },
+                  {
+                    "outer": 1,
+                    "iterations": 906,
+                    "converged": true,
+                    "primal_relative": 0.0002998191451052665,
+                    "dual_relative": 9.792010823703058e-05,
+                    "log_objective": 602.7709874343668,
+                    "relative_change": 0.36439098869515874,
+                    "objective_descent_slack": 0.20513933315182256,
+                    "active_rows": 23,
+                    "rho": 2.0,
+                    "rho_updates": 1
+                  },
+                  {
+                    "outer": 2,
+                    "iterations": 587,
+                    "converged": true,
+                    "primal_relative": 0.0002963552915279153,
+                    "dual_relative": 0.000295429843425167,
+                    "log_objective": 590.7777806802394,
+                    "relative_change": 0.08571582289218956,
+                    "objective_descent_slack": 0.18083129623031002,
+                    "active_rows": 20,
+                    "rho": 2.0,
+                    "rho_updates": 2
+                  },
+                  {
+                    "outer": 3,
+                    "iterations": 716,
+                    "converged": true,
+                    "primal_relative": 0.0002995373958868884,
+                    "dual_relative": 0.00010151864802479756,
+                    "log_objective": 578.7449147795744,
+                    "relative_change": 0.09406802524581237,
+                    "objective_descent_slack": 0.1772333342040718,
+                    "active_rows": 18,
+                    "rho": 2.0,
+                    "rho_updates": 2
+                  },
+                  {
+                    "outer": 4,
+                    "iterations": 779,
+                    "converged": true,
+                    "primal_relative": 0.00029944847291658644,
+                    "dual_relative": 8.640862701429569e-05,
+                    "log_objective": 577.8901655902915,
+                    "relative_change": 0.03370704677841115,
+                    "objective_descent_slack": 0.1736234744338723,
+                    "active_rows": 18,
+                    "rho": 2.0,
+                    "rho_updates": 6
+                  },
+                  {
+                    "outer": 5,
+                    "iterations": 517,
+                    "converged": true,
+                    "primal_relative": 0.00029873207832520424,
+                    "dual_relative": 8.27001906014481e-05,
+                    "log_objective": 577.7849898391815,
+                    "relative_change": 0.010700982096300972,
+                    "objective_descent_slack": 0.17336704967708744,
+                    "active_rows": 18,
+                    "rho": 1.0,
+                    "rho_updates": 3
+                  },
+                  {
+                    "outer": 6,
+                    "iterations": 217,
+                    "converged": true,
+                    "primal_relative": 0.000298453435907997,
+                    "dual_relative": 0.0002557488881412614,
+                    "log_objective": 577.7786181148372,
+                    "relative_change": 0.007487165869273168,
+                    "objective_descent_slack": 0.17333549695175446,
+                    "active_rows": 18,
+                    "rho": 1.0,
+                    "rho_updates": 0
+                  }
+                ],
+                "converged": true,
+                "inner_converged": true,
+                "outer_converged": true,
+                "descent_guard_triggered": false,
+                "descent_guard_step": null,
+                "rho_initial": 1.0,
+                "rho_final": 1.0,
+                "rho_updates": 16,
+                "outer_tolerance": 0.01,
+                "adaptive_rho": true,
+                "objective_descent_tolerance": 0.0003,
+                "objective_descent_slack_rule": "tolerance * max(1, previous_log_objective)",
+                "convergence_note": "Finite residual/change tolerances; no global-optimality claim.",
+                "amplitude_epsilon": 0.2742886791597709,
+                "edge_epsilon": 0.27428812722597634,
+                "amplitude_weight_range": [
+                  0.030183497032457627,
+                  1.0
+                ],
+                "edge_weight_range": [
+                  0.03018343812934362,
+                  1.0
+                ]
+              },
+              "response_condition": 10.205118671482913,
+              "null_rule": "99th percentile of up to 16 overlapping baseline projections; heuristic, not p-value"
+            }
+          ],
+          "selected_templates": [],
+          "graph_edges": 21320,
+          "deep_graph_edges": 0,
+          "spatial_templates_used": false,
+          "mrf_strength": 0.5,
+          "weighting_coordinates": "MRF_current_innovation"
+        }
+      }
+    },
+    {
+      "parcel": "postcentral-lh",
+      "shape": "uniform_1hop",
+      "center": 1540,
+      "surface_indices": [
+        1454,
+        1455,
+        1458,
+        1540,
+        1580,
+        1663,
+        1693
+      ],
+      "surface_count": 7,
+      "deep_index": null,
+      "case_id": "shape_00_eeg-10_meg+20",
+      "seed": [
+        20260922,
+        0,
+        2
+      ],
+      "eeg_snr_db": -10,
+      "meg_snr_db": 20,
+      "actual_snr_db": [
+        -10.0,
+        20.0
+      ],
+      "diagnostics": {
+        "v3": {
+          "mode": "signed_multiscale_erp_surface_residual_deep_v3",
+          "surface_scales_mm": [
+            0.0,
+            4.0,
+            7.0
+          ],
+          "selected_templates": 3,
+          "selected_surface_templates": 3,
+          "selected_deep_templates": 0,
+          "ridge_fraction": 0.03,
+          "max_templates_per_window": 7,
+          "require_one": false,
+          "windows": [
+            {
+              "window": 0,
+              "active_samples": 61,
+              "temporal_rank": 3,
+              "null_edges": [
+                13.79140705715467,
+                12.913867279273308,
+                16.45683441760034
+              ],
+              "channel_weight_min": 0.07709594726812209,
+              "channel_weight_max": 1.0,
+              "weighted_channels": 157,
+              "selected_surface_templates": 3,
+              "surface_ebic_deltas": [
+                -2630.4509893724203,
+                -70.85465335044569,
+                -16.383915277974097
+              ],
+              "selected_templates": [
+                {
+                  "layer": "surface",
+                  "scale_mm": 4.0,
+                  "index": 1540
+                },
+                {
+                  "layer": "surface",
+                  "scale_mm": 7.0,
+                  "index": 3488
+                },
+                {
+                  "layer": "surface",
+                  "scale_mm": 7.0,
+                  "index": 33
+                }
+              ],
+              "deep_candidate_local": 4,
+              "deep_ebic_delta": 13.141620712719408,
+              "deep_accepted": false,
+              "selection": "joint_surface_then_residual_deep_ebic_v3",
+              "joint_ebic_deltas": [
+                -2630.4509893724203,
+                -70.85465335044569,
+                -16.383915277974097
+              ],
+              "first_selected_layer": "surface",
+              "deep_rescue_attempted": false,
+              "deep_rescue_accepted": false,
+              "deep_rescue_ebic_delta": Infinity,
+              "deep_rescue_ebic_threshold": -6.0,
+              "time_evidence": {
+                "surface_raw": {
+                  "positive_candidates": 7514,
+                  "score_max": 29986.47380088715,
+                  "score_median_positive": 1026.9056903239873
+                },
+                "deep_surface_residual": {
+                  "positive_candidates": 7514,
+                  "score_max": 23.154483271979448,
+                  "score_median_positive": 11.49149637738951
+                }
+              },
+              "residual_deep_reselection": {
+                "deep_local": 4,
+                "accepted": false,
+                "ebic_delta": 13.141620712719408,
+                "surface_design_rank": 3,
+                "candidate_universe": 22510,
+                "residual_active_samples": 61,
+                "residual_temporal_rank": 3,
+                "residual_null_edges": [
+                  13.776836300193741,
+                  12.81843681543509,
+                  16.27247650011809
+                ]
+              }
+            }
+          ],
+          "selection": "joint_surface_then_residual_deep_reselection",
+          "conditional_candidate_drops": true,
+          "joint_search_template_cap_per_window": 6,
+          "deep_rescue_can_add_one_template": false,
+          "max_deep_templates_per_window": 1,
+          "time_evidence_fraction": 0.05,
+          "time_evidence_surface_scale_mm": 4.0,
+          "time_evidence_layer_balanced": true,
+          "time_evidence_fusion": {
+            "primary_active_peak": 0.5179782906176705,
+            "evidence_active_peak": 86562.52050708928,
+            "evidence_scale": 0.0018999963684320858,
+            "evidence_layer_peaks": [
+              86562.52050708928,
+              13.631033701530608
+            ],
+            "evidence_layer_scales": [
+              2.991931655775026e-07,
+              0.0018999963684320858
+            ]
+          },
+          "time_evidence_deep_surface_residual": true
+        },
+        "v4": {
+          "mode": "adaptive_source_and_edge_logsum_full_grid",
+          "windows": [
+            {
+              "active_samples": 61,
+              "temporal_rank": 3,
+              "null_edges": [
+                13.79140705715467,
+                12.913867279273308,
+                16.45683441760034
+              ],
+              "source_lambda": 13.205301088992213,
+              "edge_lambda": 1.1610383157277628,
+              "solver": {
+                "history": [
+                  {
+                    "outer": 0,
+                    "iterations": 2000,
+                    "converged": false,
+                    "primal_relative": 0.00035085317123505433,
+                    "dual_relative": 8.12594062552351e-05,
+                    "log_objective": 2385.046938108115,
+                    "relative_change": 1.0,
+                    "objective_descent_slack": 0.0,
+                    "active_rows": 109,
+                    "rho": 2.0,
+                    "rho_updates": 1
+                  },
+                  {
+                    "outer": 1,
+                    "iterations": 1182,
+                    "converged": true,
+                    "primal_relative": 0.00029951482780948206,
+                    "dual_relative": 0.00016641195983263312,
+                    "log_objective": 1725.508166794053,
+                    "relative_change": 0.5415733278269393,
+                    "objective_descent_slack": 0.7155140814324343,
+                    "active_rows": 65,
+                    "rho": 2.0,
+                    "rho_updates": 2
+                  },
+                  {
+                    "outer": 2,
+                    "iterations": 838,
+                    "converged": true,
+                    "primal_relative": 0.0002995675310085391,
+                    "dual_relative": 0.00013709205895881578,
+                    "log_objective": 1427.4916269241196,
+                    "relative_change": 0.3886573224249042,
+                    "objective_descent_slack": 0.5176524500382159,
+                    "active_rows": 28,
+                    "rho": 2.0,
+                    "rho_updates": 2
+                  },
+                  {
+                    "outer": 3,
+                    "iterations": 786,
+                    "converged": true,
+                    "primal_relative": 0.00029973053076717804,
+                    "dual_relative": 0.00024383040562046923,
+                    "log_objective": 1361.7657257113783,
+                    "relative_change": 0.11690641806723306,
+                    "objective_descent_slack": 0.42824748807723584,
+                    "active_rows": 27,
+                    "rho": 1.0,
+                    "rho_updates": 1
+                  },
+                  {
+                    "outer": 4,
+                    "iterations": 723,
+                    "converged": true,
+                    "primal_relative": 0.00029960780872851305,
+                    "dual_relative": 0.0002689333609527403,
+                    "log_objective": 1301.17925847527,
+                    "relative_change": 0.07714831698457113,
+                    "objective_descent_slack": 0.40852971771341345,
+                    "active_rows": 22,
+                    "rho": 1.0,
+                    "rho_updates": 0
+                  },
+                  {
+                    "outer": 5,
+                    "iterations": 372,
+                    "converged": true,
+                    "primal_relative": 0.000270070717597804,
+                    "dual_relative": 0.0002990729363328824,
+                    "log_objective": 1299.8501134657752,
+                    "relative_change": 0.020805928687520934,
+                    "objective_descent_slack": 0.39035377754258094,
+                    "active_rows": 27,
+                    "rho": 1.0,
+                    "rho_updates": 0
+                  },
+                  {
+                    "outer": 6,
+                    "iterations": 234,
+                    "converged": true,
+                    "primal_relative": 0.00025503617555977146,
+                    "dual_relative": 0.0002989013044768229,
+                    "log_objective": 1298.4946846098294,
+                    "relative_change": 0.012098625956009601,
+                    "objective_descent_slack": 0.38995503403973253,
+                    "active_rows": 27,
+                    "rho": 1.0,
+                    "rho_updates": 0
+                  },
+                  {
+                    "outer": 7,
+                    "iterations": 163,
+                    "converged": true,
+                    "primal_relative": 0.00023834593502952684,
+                    "dual_relative": 0.00029864961807066627,
+                    "log_objective": 1297.8557863724145,
+                    "relative_change": 0.008727815876877848,
+                    "objective_descent_slack": 0.38954840538294877,
+                    "active_rows": 27,
+                    "rho": 1.0,
+                    "rho_updates": 0
+                  }
+                ],
+                "converged": false,
+                "inner_converged": false,
+                "outer_converged": true,
+                "descent_guard_triggered": false,
+                "descent_guard_step": null,
+                "rho_initial": 1.0,
+                "rho_final": 1.0,
+                "rho_updates": 6,
+                "outer_tolerance": 0.01,
+                "adaptive_rho": true,
+                "objective_descent_tolerance": 0.0003,
+                "objective_descent_slack_rule": "tolerance * max(1, previous_log_objective)",
+                "convergence_note": "Finite residual/change tolerances; no global-optimality claim.",
+                "amplitude_epsilon": 0.5355544781471248,
+                "edge_epsilon": 0.5355544781471248,
+                "amplitude_weight_range": [
+                  0.011108088936881118,
+                  1.0
+                ],
+                "edge_weight_range": [
+                  0.011108088936881118,
+                  1.0
+                ]
+              },
+              "response_condition": 43.85921132495771,
+              "null_rule": "99th percentile of up to 16 overlapping baseline projections; heuristic, not p-value"
+            }
+          ],
+          "selected_templates": [],
+          "graph_edges": 21320,
+          "deep_graph_edges": 0,
+          "spatial_templates_used": false,
+          "mrf_strength": 0.5,
+          "weighting_coordinates": "MRF_current_innovation"
+        }
+      }
+    },
+    {
+      "parcel": "superiorfrontal-rh",
+      "shape": "uniform_3hop",
+      "center": 6511,
+      "surface_indices": [
+        6052,
+        6054,
+        6085,
+        6147,
+        6179,
+        6214,
+        6216,
+        6240,
+        6291,
+        6298,
+        6375,
+        6376,
+        6377,
+        6379,
+        6380,
+        6457,
+        6487,
+        6492,
+        6510,
+        6511,
+        6512,
+        6514,
+        6606,
+        6611,
+        6613,
+        6629,
+        6630,
+        6653,
+        6732,
+        6736,
+        6738,
+        6765,
+        6766,
+        6845,
+        6870,
+        6872,
+        6898
+      ],
+      "surface_count": 37,
+      "deep_index": null,
+      "case_id": "shape_01_eeg-10_meg-10",
+      "seed": [
+        20260922,
+        1,
+        0
+      ],
+      "eeg_snr_db": -10,
+      "meg_snr_db": -10,
+      "actual_snr_db": [
+        -9.999999999999998,
+        -9.999999999999998
+      ],
+      "diagnostics": {
+        "v3": {
+          "mode": "signed_multiscale_erp_surface_residual_deep_v3",
+          "surface_scales_mm": [
+            0.0,
+            4.0,
+            7.0
+          ],
+          "selected_templates": 2,
+          "selected_surface_templates": 2,
+          "selected_deep_templates": 0,
+          "ridge_fraction": 0.03,
+          "max_templates_per_window": 7,
+          "require_one": false,
+          "windows": [
+            {
+              "window": 0,
+              "active_samples": 61,
+              "temporal_rank": 3,
+              "null_edges": [
+                15.585446810248659,
+                14.692298987118086,
+                18.56366697841866
+              ],
+              "channel_weight_min": 0.7116038948413344,
+              "channel_weight_max": 1.0,
+              "weighted_channels": 157,
+              "selected_surface_templates": 2,
+              "surface_ebic_deltas": [
+                -96.49491402661113,
+                -4.612931622632004
+              ],
+              "selected_templates": [
+                {
+                  "layer": "surface",
+                  "scale_mm": 4.0,
+                  "index": 6487
+                },
+                {
+                  "layer": "surface",
+                  "scale_mm": 0.0,
+                  "index": 4046
+                }
+              ],
+              "deep_candidate_local": 9,
+              "deep_ebic_delta": 33.549518166925296,
+              "deep_accepted": false,
+              "selection": "joint_surface_then_residual_deep_ebic_v3",
+              "joint_ebic_deltas": [
+                -96.49491402661113,
+                -4.612931622632004
+              ],
+              "first_selected_layer": "surface",
+              "deep_rescue_attempted": false,
+              "deep_rescue_accepted": false,
+              "deep_rescue_ebic_delta": Infinity,
+              "deep_rescue_ebic_threshold": -6.0,
+              "time_evidence": {
+                "surface_raw": {
+                  "positive_candidates": 7514,
+                  "score_max": 79.31322420590074,
+                  "score_median_positive": 12.393994495622806
+                },
+                "deep_surface_residual": {
+                  "positive_candidates": 7514,
+                  "score_max": 24.384918476479026,
+                  "score_median_positive": 9.163939432691135
+                }
+              },
+              "residual_deep_reselection": {
+                "deep_local": 9,
+                "accepted": false,
+                "ebic_delta": 33.549518166925296,
+                "surface_design_rank": 2,
+                "candidate_universe": 22510,
+                "residual_active_samples": 61,
+                "residual_temporal_rank": 3,
+                "residual_null_edges": [
+                  15.577487784971742,
+                  14.60688602091432,
+                  18.516924224834224
+                ]
+              }
+            }
+          ],
+          "selection": "joint_surface_then_residual_deep_reselection",
+          "conditional_candidate_drops": true,
+          "joint_search_template_cap_per_window": 6,
+          "deep_rescue_can_add_one_template": false,
+          "max_deep_templates_per_window": 1,
+          "time_evidence_fraction": 0.05,
+          "time_evidence_surface_scale_mm": 4.0,
+          "time_evidence_layer_balanced": true,
+          "time_evidence_fusion": {
+            "primary_active_peak": 1.3580767380605183,
+            "evidence_active_peak": 266.27442306325327,
+            "evidence_scale": 0.008689082654804942,
+            "evidence_layer_peaks": [
+              266.27442306325327,
+              7.814845318047013
+            ],
+            "evidence_layer_scales": [
+              0.0002550144926495453,
+              0.008689082654804942
+            ]
+          },
+          "time_evidence_deep_surface_residual": true
+        },
+        "v4": {
+          "mode": "adaptive_source_and_edge_logsum_full_grid",
+          "windows": [
+            {
+              "active_samples": 61,
+              "temporal_rank": 3,
+              "null_edges": [
+                15.585446810248659,
+                14.692298987118086,
+                18.56366697841866
+              ],
+              "source_lambda": 8.017358893145804,
+              "edge_lambda": 0.704903341707402,
+              "solver": {
+                "history": [
+                  {
+                    "outer": 0,
+                    "iterations": 1236,
+                    "converged": true,
+                    "primal_relative": 0.00029955284251831067,
+                    "dual_relative": 0.00019317129489077303,
+                    "log_objective": 922.2513281529974,
+                    "relative_change": 1.0,
+                    "objective_descent_slack": 0.0,
+                    "active_rows": 121,
+                    "rho": 4.0,
+                    "rho_updates": 2
+                  },
+                  {
+                    "outer": 1,
+                    "iterations": 1734,
+                    "converged": true,
+                    "primal_relative": 0.0002997964186627694,
+                    "dual_relative": 8.776401121907779e-05,
+                    "log_objective": 728.005800726072,
+                    "relative_change": 0.6893742146312023,
+                    "objective_descent_slack": 0.2766753984458992,
+                    "active_rows": 60,
+                    "rho": 2.0,
+                    "rho_updates": 3
+                  },
+                  {
+                    "outer": 2,
+                    "iterations": 997,
+                    "converged": true,
+                    "primal_relative": 0.00029981707858990045,
+                    "dual_relative": 0.00019118402009981288,
+                    "log_objective": 684.4051604314493,
+                    "relative_change": 0.6722194377837412,
+                    "objective_descent_slack": 0.2184017402178216,
+                    "active_rows": 51,
+                    "rho": 2.0,
+                    "rho_updates": 2
+                  },
+                  {
+                    "outer": 3,
+                    "iterations": 769,
+                    "converged": true,
+                    "primal_relative": 0.0002994490003742064,
+                    "dual_relative": 0.00012954464082973082,
+                    "log_objective": 667.7540308502506,
+                    "relative_change": 0.4157289260209527,
+                    "objective_descent_slack": 0.20532154812943476,
+                    "active_rows": 49,
+                    "rho": 1.0,
+                    "rho_updates": 1
+                  },
+                  {
+                    "outer": 4,
+                    "iterations": 597,
+                    "converged": true,
+                    "primal_relative": 0.00029983266306582424,
+                    "dual_relative": 0.00020251090635467145,
+                    "log_objective": 657.9312760254223,
+                    "relative_change": 0.21209984206764615,
+                    "objective_descent_slack": 0.20032620925507516,
+                    "active_rows": 43,
+                    "rho": 1.0,
+                    "rho_updates": 0
+                  },
+                  {
+                    "outer": 5,
+                    "iterations": 333,
+                    "converged": true,
+                    "primal_relative": 0.0002994995188062692,
+                    "dual_relative": 0.00016469819628368948,
+                    "log_objective": 655.5933671399252,
+                    "relative_change": 0.09046970620911776,
+                    "objective_descent_slack": 0.19737938280762668,
+                    "active_rows": 41,
+                    "rho": 1.0,
+                    "rho_updates": 0
+                  },
+                  {
+                    "outer": 6,
+                    "iterations": 232,
+                    "converged": true,
+                    "primal_relative": 0.0002991215197688396,
+                    "dual_relative": 0.00020657054019325742,
+                    "log_objective": 655.2472763745398,
+                    "relative_change": 0.0594650603980446,
+                    "objective_descent_slack": 0.19667801014197756,
+                    "active_rows": 41,
+                    "rho": 1.0,
+                    "rho_updates": 0
+                  },
+                  {
+                    "outer": 7,
+                    "iterations": 228,
+                    "converged": true,
+                    "primal_relative": 0.0002990716892704766,
+                    "dual_relative": 0.0002446440923714253,
+                    "log_objective": 652.4424926879345,
+                    "relative_change": 0.06595883646766458,
+                    "objective_descent_slack": 0.1965741829123619,
+                    "active_rows": 41,
+                    "rho": 1.0,
+                    "rho_updates": 0
+                  },
+                  {
+                    "outer": 8,
+                    "iterations": 342,
+                    "converged": true,
+                    "primal_relative": 0.00029885110198787674,
+                    "dual_relative": 8.550548774870136e-05,
+                    "log_objective": 648.2230593226599,
+                    "relative_change": 0.04362033291075868,
+                    "objective_descent_slack": 0.19573274780638034,
+                    "active_rows": 35,
+                    "rho": 0.5,
+                    "rho_updates": 1
+                  },
+                  {
+                    "outer": 9,
+                    "iterations": 393,
+                    "converged": true,
+                    "primal_relative": 0.000298636155891018,
+                    "dual_relative": 0.000124407850789239,
+                    "log_objective": 646.6480840590275,
+                    "relative_change": 0.02683162926096966,
+                    "objective_descent_slack": 0.19446691779679795,
+                    "active_rows": 35,
+                    "rho": 1.0,
+                    "rho_updates": 1
+                  },
+                  {
+                    "outer": 10,
+                    "iterations": 24,
+                    "converged": true,
+                    "primal_relative": 0.00029902561032962665,
+                    "dual_relative": 0.00029020478678448345,
+                    "log_objective": 646.5301164411926,
+                    "relative_change": 0.0023504579439656333,
+                    "objective_descent_slack": 0.19399442521770824,
+                    "active_rows": 35,
+                    "rho": 1.0,
+                    "rho_updates": 0
+                  }
+                ],
+                "converged": true,
+                "inner_converged": true,
+                "outer_converged": true,
+                "descent_guard_triggered": false,
+                "descent_guard_step": null,
+                "rho_initial": 1.0,
+                "rho_final": 1.0,
+                "rho_updates": 10,
+                "outer_tolerance": 0.01,
+                "adaptive_rho": true,
+                "objective_descent_tolerance": 0.0003,
+                "objective_descent_slack_rule": "tolerance * max(1, previous_log_objective)",
+                "convergence_note": "Finite residual/change tolerances; no global-optimality claim.",
+                "amplitude_epsilon": 0.06954650644209241,
+                "edge_epsilon": 0.06954650644209241,
+                "amplitude_weight_range": [
+                  0.00394798245556007,
+                  1.0
+                ],
+                "edge_weight_range": [
+                  0.002792087490998513,
+                  1.0
+                ]
+              },
+              "response_condition": 1.299656041151693,
+              "null_rule": "99th percentile of up to 16 overlapping baseline projections; heuristic, not p-value"
+            }
+          ],
+          "selected_templates": [],
+          "graph_edges": 21320,
+          "deep_graph_edges": 0,
+          "spatial_templates_used": false,
+          "mrf_strength": 0.5,
+          "weighting_coordinates": "MRF_current_innovation"
+        }
+      }
+    },
+    {
+      "parcel": "superiorfrontal-rh",
+      "shape": "uniform_3hop",
+      "center": 6511,
+      "surface_indices": [
+        6052,
+        6054,
+        6085,
+        6147,
+        6179,
+        6214,
+        6216,
+        6240,
+        6291,
+        6298,
+        6375,
+        6376,
+        6377,
+        6379,
+        6380,
+        6457,
+        6487,
+        6492,
+        6510,
+        6511,
+        6512,
+        6514,
+        6606,
+        6611,
+        6613,
+        6629,
+        6630,
+        6653,
+        6732,
+        6736,
+        6738,
+        6765,
+        6766,
+        6845,
+        6870,
+        6872,
+        6898
+      ],
+      "surface_count": 37,
+      "deep_index": null,
+      "case_id": "shape_01_eeg+05_meg+05",
+      "seed": [
+        20260922,
+        1,
+        1
+      ],
+      "eeg_snr_db": 5,
+      "meg_snr_db": 5,
+      "actual_snr_db": [
+        5.000000000000001,
+        5.000000000000001
+      ],
+      "diagnostics": {
+        "v3": {
+          "mode": "signed_multiscale_erp_surface_residual_deep_v3",
+          "surface_scales_mm": [
+            0.0,
+            4.0,
+            7.0
+          ],
+          "selected_templates": 2,
+          "selected_surface_templates": 2,
+          "selected_deep_templates": 0,
+          "ridge_fraction": 0.03,
+          "max_templates_per_window": 7,
+          "require_one": false,
+          "windows": [
+            {
+              "window": 0,
+              "active_samples": 61,
+              "temporal_rank": 3,
+              "null_edges": [
+                16.025187078824324,
+                14.289455268659987,
+                18.25545835228305
+              ],
+              "channel_weight_min": 0.8361022582311571,
+              "channel_weight_max": 1.0,
+              "weighted_channels": 157,
+              "selected_surface_templates": 2,
+              "surface_ebic_deltas": [
+                -1231.7930196622674,
+                -295.8288966342576
+              ],
+              "selected_templates": [
+                {
+                  "layer": "surface",
+                  "scale_mm": 7.0,
+                  "index": 6653
+                },
+                {
+                  "layer": "surface",
+                  "scale_mm": 4.0,
+                  "index": 6179
+                }
+              ],
+              "deep_candidate_local": 0,
+              "deep_ebic_delta": 30.79845051935358,
+              "deep_accepted": false,
+              "selection": "joint_surface_then_residual_deep_ebic_v3",
+              "joint_ebic_deltas": [
+                -1231.7930196622674,
+                -295.8288966342576
+              ],
+              "first_selected_layer": "surface",
+              "deep_rescue_attempted": false,
+              "deep_rescue_accepted": false,
+              "deep_rescue_ebic_delta": Infinity,
+              "deep_rescue_ebic_threshold": -6.0,
+              "time_evidence": {
+                "surface_raw": {
+                  "positive_candidates": 7514,
+                  "score_max": 1681.2219184463452,
+                  "score_median_positive": 42.28644146272442
+                },
+                "deep_surface_residual": {
+                  "positive_candidates": 7513,
+                  "score_max": 22.53475196744952,
+                  "score_median_positive": 7.532048223705295
+                }
+              },
+              "residual_deep_reselection": {
+                "deep_local": 0,
+                "accepted": false,
+                "ebic_delta": 30.79845051935358,
+                "surface_design_rank": 2,
+                "candidate_universe": 22510,
+                "residual_active_samples": 61,
+                "residual_temporal_rank": 3,
+                "residual_null_edges": [
+                  16.014994947962613,
+                  14.206000960368526,
+                  18.14333329755757
+                ]
+              }
+            }
+          ],
+          "selection": "joint_surface_then_residual_deep_reselection",
+          "conditional_candidate_drops": true,
+          "joint_search_template_cap_per_window": 6,
+          "deep_rescue_can_add_one_template": false,
+          "max_deep_templates_per_window": 1,
+          "time_evidence_fraction": 0.05,
+          "time_evidence_surface_scale_mm": 4.0,
+          "time_evidence_layer_balanced": true,
+          "time_evidence_fusion": {
+            "primary_active_peak": 0.41597886454776023,
+            "evidence_active_peak": 5808.961725630591,
+            "evidence_scale": 0.0024553179763221263,
+            "evidence_layer_peaks": [
+              5808.961725630591,
+              8.470977457079998
+            ],
+            "evidence_layer_scales": [
+              3.580492385690523e-06,
+              0.0024553179763221263
+            ]
+          },
+          "time_evidence_deep_surface_residual": true
+        },
+        "v4": {
+          "mode": "adaptive_source_and_edge_logsum_full_grid",
+          "windows": [
+            {
+              "active_samples": 61,
+              "temporal_rank": 3,
+              "null_edges": [
+                16.025187078824324,
+                14.289455268659987,
+                18.25545835228305
+              ],
+              "source_lambda": 9.493269639063746,
+              "edge_lambda": 0.8346685712206844,
+              "solver": {
+                "history": [
+                  {
+                    "outer": 0,
+                    "iterations": 1822,
+                    "converged": true,
+                    "primal_relative": 0.00029994199647489177,
+                    "dual_relative": 9.449031183995667e-05,
+                    "log_objective": 696.8209760162329,
+                    "relative_change": 1.0,
+                    "objective_descent_slack": 0.0,
+                    "active_rows": 94,
+                    "rho": 4.0,
+                    "rho_updates": 2
+                  },
+                  {
+                    "outer": 1,
+                    "iterations": 1115,
+                    "converged": true,
+                    "primal_relative": 0.0002998054386338332,
+                    "dual_relative": 0.00014435041787009658,
+                    "log_objective": 618.5388085500967,
+                    "relative_change": 0.40709730303496344,
+                    "objective_descent_slack": 0.20904629280486983,
+                    "active_rows": 74,
+                    "rho": 2.0,
+                    "rho_updates": 1
+                  },
+                  {
+                    "outer": 2,
+                    "iterations": 1583,
+                    "converged": true,
+                    "primal_relative": 0.00029981375732642494,
+                    "dual_relative": 0.00011870846215348931,
+                    "log_objective": 577.2391471045598,
+                    "relative_change": 0.35505397668199473,
+                    "objective_descent_slack": 0.185561642565029,
+                    "active_rows": 40,
+                    "rho": 2.0,
+                    "rho_updates": 2
+                  },
+                  {
+                    "outer": 3,
+                    "iterations": 883,
+                    "converged": true,
+                    "primal_relative": 0.0002998491354073066,
+                    "dual_relative": 9.668786550111926e-05,
+                    "log_objective": 534.015579293359,
+                    "relative_change": 0.17548492260563034,
+                    "objective_descent_slack": 0.17317174413136793,
+                    "active_rows": 21,
+                    "rho": 2.0,
+                    "rho_updates": 2
+                  },
+                  {
+                    "outer": 4,
+                    "iterations": 380,
+                    "converged": true,
+                    "primal_relative": 0.00026405829948749466,
+                    "dual_relative": 0.00029998840146218544,
+                    "log_objective": 529.9551467412197,
+                    "relative_change": 0.06372606364908093,
+                    "objective_descent_slack": 0.16020467378800768,
+                    "active_rows": 21,
+                    "rho": 2.0,
+                    "rho_updates": 0
+                  },
+                  {
+                    "outer": 5,
+                    "iterations": 464,
+                    "converged": true,
+                    "primal_relative": 0.00029961748101709954,
+                    "dual_relative": 6.363451081683598e-05,
+                    "log_objective": 524.9855770233504,
+                    "relative_change": 0.020899081349263698,
+                    "objective_descent_slack": 0.1589865440223659,
+                    "active_rows": 15,
+                    "rho": 2.0,
+                    "rho_updates": 0
+                  },
+                  {
+                    "outer": 6,
+                    "iterations": 10,
+                    "converged": true,
+                    "primal_relative": 0.00029712410744898125,
+                    "dual_relative": 0.00029070761599250686,
+                    "log_objective": 524.9874934016262,
+                    "relative_change": 0.0004458081154663185,
+                    "objective_descent_slack": 0.1574956731070051,
+                    "active_rows": 15,
+                    "rho": 2.0,
+                    "rho_updates": 0
+                  }
+                ],
+                "converged": true,
+                "inner_converged": true,
+                "outer_converged": true,
+                "descent_guard_triggered": false,
+                "descent_guard_step": null,
+                "rho_initial": 1.0,
+                "rho_final": 2.0,
+                "rho_updates": 7,
+                "outer_tolerance": 0.01,
+                "adaptive_rho": true,
+                "objective_descent_tolerance": 0.0003,
+                "objective_descent_slack_rule": "tolerance * max(1, previous_log_objective)",
+                "convergence_note": "Finite residual/change tolerances; no global-optimality claim.",
+                "amplitude_epsilon": 0.20617651446855617,
+                "edge_epsilon": 0.2061765057233413,
+                "amplitude_weight_range": [
+                  0.025029158690139244,
+                  1.0
+                ],
+                "edge_weight_range": [
+                  0.025029157655070557,
+                  1.0
+                ]
+              },
+              "response_condition": 9.849433416159977,
+              "null_rule": "99th percentile of up to 16 overlapping baseline projections; heuristic, not p-value"
+            }
+          ],
+          "selected_templates": [],
+          "graph_edges": 21320,
+          "deep_graph_edges": 0,
+          "spatial_templates_used": false,
+          "mrf_strength": 0.5,
+          "weighting_coordinates": "MRF_current_innovation"
+        }
+      }
+    },
+    {
+      "parcel": "superiorfrontal-rh",
+      "shape": "uniform_3hop",
+      "center": 6511,
+      "surface_indices": [
+        6052,
+        6054,
+        6085,
+        6147,
+        6179,
+        6214,
+        6216,
+        6240,
+        6291,
+        6298,
+        6375,
+        6376,
+        6377,
+        6379,
+        6380,
+        6457,
+        6487,
+        6492,
+        6510,
+        6511,
+        6512,
+        6514,
+        6606,
+        6611,
+        6613,
+        6629,
+        6630,
+        6653,
+        6732,
+        6736,
+        6738,
+        6765,
+        6766,
+        6845,
+        6870,
+        6872,
+        6898
+      ],
+      "surface_count": 37,
+      "deep_index": null,
+      "case_id": "shape_01_eeg-10_meg+20",
+      "seed": [
+        20260922,
+        1,
+        2
+      ],
+      "eeg_snr_db": -10,
+      "meg_snr_db": 20,
+      "actual_snr_db": [
+        -10.0,
+        20.0
+      ],
+      "diagnostics": {
+        "v3": {
+          "mode": "signed_multiscale_erp_surface_residual_deep_v3",
+          "surface_scales_mm": [
+            0.0,
+            4.0,
+            7.0
+          ],
+          "selected_templates": 3,
+          "selected_surface_templates": 3,
+          "selected_deep_templates": 0,
+          "ridge_fraction": 0.03,
+          "max_templates_per_window": 7,
+          "require_one": false,
+          "windows": [
+            {
+              "window": 0,
+              "active_samples": 61,
+              "temporal_rank": 3,
+              "null_edges": [
+                13.908564847331283,
+                12.549012986668439,
+                16.424401005137256
+              ],
+              "channel_weight_min": 0.0850033833879386,
+              "channel_weight_max": 1.0,
+              "weighted_channels": 157,
+              "selected_surface_templates": 3,
+              "surface_ebic_deltas": [
+                -1798.9260977402748,
+                -621.0103801211943,
+                -141.95646681878782
+              ],
+              "selected_templates": [
+                {
+                  "layer": "surface",
+                  "scale_mm": 7.0,
+                  "index": 6511
+                },
+                {
+                  "layer": "surface",
+                  "scale_mm": 0.0,
+                  "index": 6897
+                },
+                {
+                  "layer": "surface",
+                  "scale_mm": 0.0,
+                  "index": 1649
+                }
+              ],
+              "deep_candidate_local": 3,
+              "deep_ebic_delta": 3.5373411480759707,
+              "deep_accepted": false,
+              "selection": "joint_surface_then_residual_deep_ebic_v3",
+              "joint_ebic_deltas": [
+                -1798.9260977402748,
+                -621.0103801211943,
+                -141.95646681878782
+              ],
+              "first_selected_layer": "surface",
+              "deep_rescue_attempted": false,
+              "deep_rescue_accepted": false,
+              "deep_rescue_ebic_delta": Infinity,
+              "deep_rescue_ebic_threshold": -6.0,
+              "time_evidence": {
+                "surface_raw": {
+                  "positive_candidates": 7514,
+                  "score_max": 29683.15104651716,
+                  "score_median_positive": 841.3140202089506
+                },
+                "deep_surface_residual": {
+                  "positive_candidates": 7514,
+                  "score_max": 25.473347464473072,
+                  "score_median_positive": 11.595629593991134
+                }
+              },
+              "residual_deep_reselection": {
+                "deep_local": 3,
+                "accepted": false,
+                "ebic_delta": 3.5373411480759707,
+                "surface_design_rank": 3,
+                "candidate_universe": 22510,
+                "residual_active_samples": 61,
+                "residual_temporal_rank": 3,
+                "residual_null_edges": [
+                  13.90301531210852,
+                  12.422050404954534,
+                  16.08713162838109
+                ]
+              }
+            }
+          ],
+          "selection": "joint_surface_then_residual_deep_reselection",
+          "conditional_candidate_drops": true,
+          "joint_search_template_cap_per_window": 6,
+          "deep_rescue_can_add_one_template": false,
+          "max_deep_templates_per_window": 1,
+          "time_evidence_fraction": 0.05,
+          "time_evidence_surface_scale_mm": 4.0,
+          "time_evidence_layer_balanced": true,
+          "time_evidence_fusion": {
+            "primary_active_peak": 0.5482518351446738,
+            "evidence_active_peak": 116168.89423893466,
+            "evidence_scale": 0.001614662058013776,
+            "evidence_layer_peaks": [
+              116168.89423893466,
+              16.977293558848096
+            ],
+            "evidence_layer_scales": [
+              2.359718747158928e-07,
+              0.001614662058013776
+            ]
+          },
+          "time_evidence_deep_surface_residual": true
+        },
+        "v4": {
+          "mode": "adaptive_source_and_edge_logsum_full_grid",
+          "windows": [
+            {
+              "active_samples": 61,
+              "temporal_rank": 3,
+              "null_edges": [
+                13.908564847331283,
+                12.549012986668439,
+                16.424401005137256
+              ],
+              "source_lambda": 10.573454582978032,
+              "edge_lambda": 0.9296407418289081,
+              "solver": {
+                "history": [
+                  {
+                    "outer": 0,
+                    "iterations": 2000,
+                    "converged": false,
+                    "primal_relative": 0.000126021850950522,
+                    "dual_relative": 0.0004374055050466319,
+                    "log_objective": 1902.3584115937817,
+                    "relative_change": 1.0,
+                    "objective_descent_slack": 0.0,
+                    "active_rows": 101,
+                    "rho": 4.0,
+                    "rho_updates": 2
+                  },
+                  {
+                    "outer": 1,
+                    "iterations": 1405,
+                    "converged": true,
+                    "primal_relative": 0.00018298532507283354,
+                    "dual_relative": 0.0002977379154570451,
+                    "log_objective": 1589.2914470445178,
+                    "relative_change": 0.24157630909331365,
+                    "objective_descent_slack": 0.5707075234781345,
+                    "active_rows": 45,
+                    "rho": 2.0,
+                    "rho_updates": 1
+                  },
+                  {
+                    "outer": 2,
+                    "iterations": 1385,
+                    "converged": true,
+                    "primal_relative": 0.00011081887480713557,
+                    "dual_relative": 0.0002996320547522217,
+                    "log_objective": 1529.9238954458076,
+                    "relative_change": 0.09019465705550204,
+                    "objective_descent_slack": 0.4767874341133553,
+                    "active_rows": 41,
+                    "rho": 2.0,
+                    "rho_updates": 0
+                  },
+                  {
+                    "outer": 3,
+                    "iterations": 1134,
+                    "converged": true,
+                    "primal_relative": 0.00029993213452460905,
+                    "dual_relative": 0.0002082593538426146,
+                    "log_objective": 1509.600285237064,
+                    "relative_change": 0.11204073548361813,
+                    "objective_descent_slack": 0.4589771686337422,
+                    "active_rows": 38,
+                    "rho": 1.0,
+                    "rho_updates": 1
+                  },
+                  {
+                    "outer": 4,
+                    "iterations": 886,
+                    "converged": true,
+                    "primal_relative": 0.0002998444728586947,
+                    "dual_relative": 8.350076910244204e-05,
+                    "log_objective": 1491.4237170908855,
+                    "relative_change": 0.1188063600249333,
+                    "objective_descent_slack": 0.4528800855711192,
+                    "active_rows": 38,
+                    "rho": 1.0,
+                    "rho_updates": 0
+                  },
+                  {
+                    "outer": 5,
+                    "iterations": 1304,
+                    "converged": true,
+                    "primal_relative": 0.00029984301044921815,
+                    "dual_relative": 0.00014378370306822595,
+                    "log_objective": 1488.0635644814076,
+                    "relative_change": 0.07638379294357224,
+                    "objective_descent_slack": 0.44742711512726563,
+                    "active_rows": 38,
+                    "rho": 1.0,
+                    "rho_updates": 2
+                  },
+                  {
+                    "outer": 6,
+                    "iterations": 635,
+                    "converged": true,
+                    "primal_relative": 0.0002911807086200861,
+                    "dual_relative": 0.00029977653520707535,
+                    "log_objective": 1487.4345394742345,
+                    "relative_change": 0.037906013110989505,
+                    "objective_descent_slack": 0.44641906934442227,
+                    "active_rows": 38,
+                    "rho": 1.0,
+                    "rho_updates": 0
+                  },
+                  {
+                    "outer": 7,
+                    "iterations": 609,
+                    "converged": true,
+                    "primal_relative": 0.0002104453241502256,
+                    "dual_relative": 0.000298253805129814,
+                    "log_objective": 1483.9664055071466,
+                    "relative_change": 0.0409350326939963,
+                    "objective_descent_slack": 0.44623036184227033,
+                    "active_rows": 38,
+                    "rho": 1.0,
+                    "rho_updates": 2
+                  },
+                  {
+                    "outer": 8,
+                    "iterations": 269,
+                    "converged": true,
+                    "primal_relative": 0.0002998038954943833,
+                    "dual_relative": 0.00011384691879317093,
+                    "log_objective": 1467.893693773235,
+                    "relative_change": 0.0479446550552627,
+                    "objective_descent_slack": 0.44518992165214394,
+                    "active_rows": 37,
+                    "rho": 1.0,
+                    "rho_updates": 0
+                  },
+                  {
+                    "outer": 9,
+                    "iterations": 223,
+                    "converged": true,
+                    "primal_relative": 0.0002997658070402596,
+                    "dual_relative": 9.085892979965333e-05,
+                    "log_objective": 1468.05142077474,
+                    "relative_change": 0.0022171522961399954,
+                    "objective_descent_slack": 0.44036810813197047,
+                    "active_rows": 37,
+                    "rho": 1.0,
+                    "rho_updates": 0
+                  }
+                ],
+                "converged": false,
+                "inner_converged": false,
+                "outer_converged": true,
+                "descent_guard_triggered": false,
+                "descent_guard_step": null,
+                "rho_initial": 1.0,
+                "rho_final": 1.0,
+                "rho_updates": 8,
+                "outer_tolerance": 0.01,
+                "adaptive_rho": true,
+                "objective_descent_tolerance": 0.0003,
+                "objective_descent_slack_rule": "tolerance * max(1, previous_log_objective)",
+                "convergence_note": "Finite residual/change tolerances; no global-optimality claim.",
+                "amplitude_epsilon": 0.8536021697325635,
+                "edge_epsilon": 0.8536017185870487,
+                "amplitude_weight_range": [
+                  0.03161971660251547,
+                  1.0
+                ],
+                "edge_weight_range": [
+                  0.031619700419291207,
+                  1.0
+                ]
+              },
+              "response_condition": 47.098121860576676,
+              "null_rule": "99th percentile of up to 16 overlapping baseline projections; heuristic, not p-value"
+            }
+          ],
+          "selected_templates": [],
+          "graph_edges": 21320,
+          "deep_graph_edges": 0,
+          "spatial_templates_used": false,
+          "mrf_strength": 0.5,
+          "weighting_coordinates": "MRF_current_innovation"
+        }
+      }
+    },
+    {
+      "parcel": "lateraloccipital-lh",
+      "shape": "thin_path",
+      "center": 284,
+      "surface_indices": [
+        120,
+        212,
+        337,
+        338,
+        361,
+        385,
+        410,
+        411,
+        439,
+        539
+      ],
+      "surface_count": 10,
+      "deep_index": null,
+      "case_id": "shape_02_eeg-10_meg-10",
+      "seed": [
+        20260922,
+        2,
+        0
+      ],
+      "eeg_snr_db": -10,
+      "meg_snr_db": -10,
+      "actual_snr_db": [
+        -9.999999999999998,
+        -9.999999999999998
+      ],
+      "diagnostics": {
+        "v3": {
+          "mode": "signed_multiscale_erp_surface_residual_deep_v3",
+          "surface_scales_mm": [
+            0.0,
+            4.0,
+            7.0
+          ],
+          "selected_templates": 3,
+          "selected_surface_templates": 3,
+          "selected_deep_templates": 0,
+          "ridge_fraction": 0.03,
+          "max_templates_per_window": 7,
+          "require_one": false,
+          "windows": [
+            {
+              "window": 0,
+              "active_samples": 61,
+              "temporal_rank": 3,
+              "null_edges": [
+                15.001062518124057,
+                13.986228869905462,
+                17.890332940946653
+              ],
+              "channel_weight_min": 0.6189282799021258,
+              "channel_weight_max": 1.0,
+              "weighted_channels": 157,
+              "selected_surface_templates": 3,
+              "surface_ebic_deltas": [
+                -119.62175732177172,
+                -9.246000503774553,
+                -5.378492721658063
+              ],
+              "selected_templates": [
+                {
+                  "layer": "surface",
+                  "scale_mm": 4.0,
+                  "index": 464
+                },
+                {
+                  "layer": "surface",
+                  "scale_mm": 4.0,
+                  "index": 4020
+                },
+                {
+                  "layer": "surface",
+                  "scale_mm": 4.0,
+                  "index": 5536
+                }
+              ],
+              "deep_candidate_local": 15,
+              "deep_ebic_delta": 21.390692949907017,
+              "deep_accepted": false,
+              "selection": "joint_surface_then_residual_deep_ebic_v3",
+              "joint_ebic_deltas": [
+                -119.62175732177172,
+                -9.246000503774553,
+                -5.378492721658063
+              ],
+              "first_selected_layer": "surface",
+              "deep_rescue_attempted": false,
+              "deep_rescue_accepted": false,
+              "deep_rescue_ebic_delta": Infinity,
+              "deep_rescue_ebic_threshold": -6.0,
+              "time_evidence": {
+                "surface_raw": {
+                  "positive_candidates": 7514,
+                  "score_max": 84.84045580029009,
+                  "score_median_positive": 13.597992037537711
+                },
+                "deep_surface_residual": {
+                  "positive_candidates": 7514,
+                  "score_max": 26.389146698319735,
+                  "score_median_positive": 9.406069028411256
+                }
+              },
+              "residual_deep_reselection": {
+                "deep_local": 15,
+                "accepted": false,
+                "ebic_delta": 21.390692949907017,
+                "surface_design_rank": 3,
+                "candidate_universe": 22510,
+                "residual_active_samples": 61,
+                "residual_temporal_rank": 3,
+                "residual_null_edges": [
+                  14.900595736238984,
+                  13.802074764130344,
+                  17.75781999583126
+                ]
+              }
+            }
+          ],
+          "selection": "joint_surface_then_residual_deep_reselection",
+          "conditional_candidate_drops": true,
+          "joint_search_template_cap_per_window": 6,
+          "deep_rescue_can_add_one_template": false,
+          "max_deep_templates_per_window": 1,
+          "time_evidence_fraction": 0.05,
+          "time_evidence_surface_scale_mm": 4.0,
+          "time_evidence_layer_balanced": true,
+          "time_evidence_fusion": {
+            "primary_active_peak": 0.9096537271095316,
+            "evidence_active_peak": 260.025354356599,
+            "evidence_scale": 0.0023658757112837783,
+            "evidence_layer_peaks": [
+              260.025354356599,
+              19.224461428194232
+            ],
+            "evidence_layer_scales": [
+              0.00017491635178430175,
+              0.0023658757112837783
+            ]
+          },
+          "time_evidence_deep_surface_residual": true
+        },
+        "v4": {
+          "mode": "adaptive_source_and_edge_logsum_full_grid",
+          "windows": [
+            {
+              "active_samples": 61,
+              "temporal_rank": 3,
+              "null_edges": [
+                15.001062518124057,
+                13.986228869905462,
+                17.890332940946653
+              ],
+              "source_lambda": 9.040928967319424,
+              "edge_lambda": 0.794897811878061,
+              "solver": {
+                "history": [
+                  {
+                    "outer": 0,
+                    "iterations": 1420,
+                    "converged": true,
+                    "primal_relative": 0.00029994999471915853,
+                    "dual_relative": 0.00028108173428144823,
+                    "log_objective": 1055.8021963843064,
+                    "relative_change": 1.0,
+                    "objective_descent_slack": 0.0,
+                    "active_rows": 70,
+                    "rho": 4.0,
+                    "rho_updates": 2
+                  },
+                  {
+                    "outer": 1,
+                    "iterations": 1205,
+                    "converged": true,
+                    "primal_relative": 0.0002999815376285725,
+                    "dual_relative": 0.00013169490503257407,
+                    "log_objective": 916.4426371388155,
+                    "relative_change": 0.654878549531646,
+                    "objective_descent_slack": 0.3167406589152919,
+                    "active_rows": 45,
+                    "rho": 2.0,
+                    "rho_updates": 1
+                  },
+                  {
+                    "outer": 2,
+                    "iterations": 1064,
+                    "converged": true,
+                    "primal_relative": 0.00029956839128050984,
+                    "dual_relative": 0.00018679060655133687,
+                    "log_objective": 875.4344844021348,
+                    "relative_change": 0.47350889198579105,
+                    "objective_descent_slack": 0.2749327911416446,
+                    "active_rows": 32,
+                    "rho": 2.0,
+                    "rho_updates": 2
+                  },
+                  {
+                    "outer": 3,
+                    "iterations": 751,
+                    "converged": true,
+                    "primal_relative": 0.0002991064491637315,
+                    "dual_relative": 0.00017202051256795113,
+                    "log_objective": 859.0277479341784,
+                    "relative_change": 0.1890918598404738,
+                    "objective_descent_slack": 0.2626303453206404,
+                    "active_rows": 29,
+                    "rho": 2.0,
+                    "rho_updates": 2
+                  },
+                  {
+                    "outer": 4,
+                    "iterations": 630,
+                    "converged": true,
+                    "primal_relative": 0.00029981554353598845,
+                    "dual_relative": 0.0001621224791066763,
+                    "log_objective": 851.8721745878831,
+                    "relative_change": 0.16033052448507898,
+                    "objective_descent_slack": 0.2577083243802535,
+                    "active_rows": 28,
+                    "rho": 2.0,
+                    "rho_updates": 2
+                  },
+                  {
+                    "outer": 5,
+                    "iterations": 758,
+                    "converged": true,
+                    "primal_relative": 0.0002997662827583404,
+                    "dual_relative": 0.0002657331982835608,
+                    "log_objective": 844.3105289349191,
+                    "relative_change": 0.22696205726793145,
+                    "objective_descent_slack": 0.2555616523763649,
+                    "active_rows": 24,
+                    "rho": 1.0,
+                    "rho_updates": 1
+                  },
+                  {
+                    "outer": 6,
+                    "iterations": 996,
+                    "converged": true,
+                    "primal_relative": 0.00015200838899267675,
+                    "dual_relative": 0.00029925265286526057,
+                    "log_objective": 839.3024230869283,
+                    "relative_change": 0.13925520035388278,
+                    "objective_descent_slack": 0.25329315868047575,
+                    "active_rows": 24,
+                    "rho": 2.0,
+                    "rho_updates": 1
+                  },
+                  {
+                    "outer": 7,
+                    "iterations": 447,
+                    "converged": true,
+                    "primal_relative": 0.00023932521163624326,
+                    "dual_relative": 0.0002946763980714887,
+                    "log_objective": 839.204407292632,
+                    "relative_change": 0.03523382133567771,
+                    "objective_descent_slack": 0.25179072692607846,
+                    "active_rows": 24,
+                    "rho": 1.0,
+                    "rho_updates": 1
+                  },
+                  {
+                    "outer": 8,
+                    "iterations": 148,
+                    "converged": true,
+                    "primal_relative": 0.00028345242091688426,
+                    "dual_relative": 0.00029398411163638374,
+                    "log_objective": 839.2063916361401,
+                    "relative_change": 0.02923592922791939,
+                    "objective_descent_slack": 0.25176132218778957,
+                    "active_rows": 24,
+                    "rho": 1.0,
+                    "rho_updates": 0
+                  },
+                  {
+                    "outer": 9,
+                    "iterations": 322,
+                    "converged": true,
+                    "primal_relative": 0.00014885900869470744,
+                    "dual_relative": 0.0002981360145279225,
+                    "log_objective": 839.1712937189357,
+                    "relative_change": 0.014915610735763179,
+                    "objective_descent_slack": 0.251761917490842,
+                    "active_rows": 24,
+                    "rho": 1.0,
+                    "rho_updates": 0
+                  },
+                  {
+                    "outer": 10,
+                    "iterations": 87,
+                    "converged": true,
+                    "primal_relative": 0.0002928074163726328,
+                    "dual_relative": 0.00028876609937365804,
+                    "log_objective": 839.1718235121537,
+                    "relative_change": 0.0030914001941208724,
+                    "objective_descent_slack": 0.25175138811568065,
+                    "active_rows": 24,
+                    "rho": 1.0,
+                    "rho_updates": 0
+                  }
+                ],
+                "converged": true,
+                "inner_converged": true,
+                "outer_converged": true,
+                "descent_guard_triggered": false,
+                "descent_guard_step": null,
+                "rho_initial": 1.0,
+                "rho_final": 1.0,
+                "rho_updates": 12,
+                "outer_tolerance": 0.01,
+                "adaptive_rho": true,
+                "objective_descent_tolerance": 0.0003,
+                "objective_descent_slack_rule": "tolerance * max(1, previous_log_objective)",
+                "convergence_note": "Finite residual/change tolerances; no global-optimality claim.",
+                "amplitude_epsilon": 0.11037743275225192,
+                "edge_epsilon": 0.11037743275225192,
+                "amplitude_weight_range": [
+                  0.01199061953989003,
+                  1.0
+                ],
+                "edge_weight_range": [
+                  0.0071419738048003785,
+                  1.0
+                ]
+              },
+              "response_condition": 1.3162506712698736,
+              "null_rule": "99th percentile of up to 16 overlapping baseline projections; heuristic, not p-value"
+            }
+          ],
+          "selected_templates": [],
+          "graph_edges": 21320,
+          "deep_graph_edges": 0,
+          "spatial_templates_used": false,
+          "mrf_strength": 0.5,
+          "weighting_coordinates": "MRF_current_innovation"
+        }
+      }
+    },
+    {
+      "parcel": "lateraloccipital-lh",
+      "shape": "thin_path",
+      "center": 284,
+      "surface_indices": [
+        120,
+        212,
+        337,
+        338,
+        361,
+        385,
+        410,
+        411,
+        439,
+        539
+      ],
+      "surface_count": 10,
+      "deep_index": null,
+      "case_id": "shape_02_eeg+05_meg+05",
+      "seed": [
+        20260922,
+        2,
+        1
+      ],
+      "eeg_snr_db": 5,
+      "meg_snr_db": 5,
+      "actual_snr_db": [
+        5.0,
+        5.0
+      ],
+      "diagnostics": {
+        "v3": {
+          "mode": "signed_multiscale_erp_surface_residual_deep_v3",
+          "surface_scales_mm": [
+            0.0,
+            4.0,
+            7.0
+          ],
+          "selected_templates": 3,
+          "selected_surface_templates": 3,
+          "selected_deep_templates": 0,
+          "ridge_fraction": 0.03,
+          "max_templates_per_window": 7,
+          "require_one": false,
+          "windows": [
+            {
+              "window": 0,
+              "active_samples": 61,
+              "temporal_rank": 3,
+              "null_edges": [
+                16.07876545615972,
+                14.535061989867918,
+                18.67845202871828
+              ],
+              "channel_weight_min": 0.8145951382461146,
+              "channel_weight_max": 1.0,
+              "weighted_channels": 157,
+              "selected_surface_templates": 3,
+              "surface_ebic_deltas": [
+                -967.8790127324858,
+                -244.62035512293164,
+                -160.83308848049273
+              ],
+              "selected_templates": [
+                {
+                  "layer": "surface",
+                  "scale_mm": 4.0,
+                  "index": 464
+                },
+                {
+                  "layer": "surface",
+                  "scale_mm": 0.0,
+                  "index": 404
+                },
+                {
+                  "layer": "surface",
+                  "scale_mm": 0.0,
+                  "index": 212
+                }
+              ],
+              "deep_candidate_local": 0,
+              "deep_ebic_delta": 18.848099041055782,
+              "deep_accepted": false,
+              "selection": "joint_surface_then_residual_deep_ebic_v3",
+              "joint_ebic_deltas": [
+                -967.8790127324858,
+                -244.62035512293164,
+                -160.83308848049273
+              ],
+              "first_selected_layer": "surface",
+              "deep_rescue_attempted": false,
+              "deep_rescue_accepted": false,
+              "deep_rescue_ebic_delta": Infinity,
+              "deep_rescue_ebic_threshold": -6.0,
+              "time_evidence": {
+                "surface_raw": {
+                  "positive_candidates": 7514,
+                  "score_max": 1825.948570280354,
+                  "score_median_positive": 41.45652329578768
+                },
+                "deep_surface_residual": {
+                  "positive_candidates": 7514,
+                  "score_max": 24.950373443332243,
+                  "score_median_positive": 9.092060859984135
+                }
+              },
+              "residual_deep_reselection": {
+                "deep_local": 0,
+                "accepted": false,
+                "ebic_delta": 18.848099041055782,
+                "surface_design_rank": 3,
+                "candidate_universe": 22510,
+                "residual_active_samples": 61,
+                "residual_temporal_rank": 3,
+                "residual_null_edges": [
+                  15.982574386673576,
+                  14.481563083865066,
+                  18.59466206333313
+                ]
+              }
+            }
+          ],
+          "selection": "joint_surface_then_residual_deep_reselection",
+          "conditional_candidate_drops": true,
+          "joint_search_template_cap_per_window": 6,
+          "deep_rescue_can_add_one_template": false,
+          "max_deep_templates_per_window": 1,
+          "time_evidence_fraction": 0.05,
+          "time_evidence_surface_scale_mm": 4.0,
+          "time_evidence_layer_balanced": true,
+          "time_evidence_fusion": {
+            "primary_active_peak": 0.858203594141699,
+            "evidence_active_peak": 5803.336432170447,
+            "evidence_scale": 0.002471049583083409,
+            "evidence_layer_peaks": [
+              5803.336432170447,
+              17.36516337059536
+            ],
+            "evidence_layer_scales": [
+              7.394053439537806e-06,
+              0.002471049583083409
+            ]
+          },
+          "time_evidence_deep_surface_residual": true
+        },
+        "v4": {
+          "mode": "adaptive_source_and_edge_logsum_full_grid",
+          "windows": [
+            {
+              "active_samples": 61,
+              "temporal_rank": 3,
+              "null_edges": [
+                16.07876545615972,
+                14.535061989867918,
+                18.67845202871828
+              ],
+              "source_lambda": 8.593334166696962,
+              "edge_lambda": 0.7555443196751152,
+              "solver": {
+                "history": [
+                  {
+                    "outer": 0,
+                    "iterations": 2000,
+                    "converged": false,
+                    "primal_relative": 0.0004447844523329742,
+                    "dual_relative": 9.668543663876658e-05,
+                    "log_objective": 863.3271167377127,
+                    "relative_change": 1.0,
+                    "objective_descent_slack": 0.0,
+                    "active_rows": 17,
+                    "rho": 2.0,
+                    "rho_updates": 1
+                  },
+                  {
+                    "outer": 1,
+                    "iterations": 935,
+                    "converged": true,
+                    "primal_relative": 0.00029997214877096475,
+                    "dual_relative": 0.00016526737431239076,
+                    "log_objective": 768.918893013025,
+                    "relative_change": 0.5549680854071295,
+                    "objective_descent_slack": 0.2589981350213138,
+                    "active_rows": 14,
+                    "rho": 2.0,
+                    "rho_updates": 2
+                  },
+                  {
+                    "outer": 2,
+                    "iterations": 513,
+                    "converged": true,
+                    "primal_relative": 0.0002994063330014492,
+                    "dual_relative": 0.00019307094286822435,
+                    "log_objective": 733.4174213692073,
+                    "relative_change": 0.21020564202821782,
+                    "objective_descent_slack": 0.23067566790390748,
+                    "active_rows": 12,
+                    "rho": 2.0,
+                    "rho_updates": 2
+                  },
+                  {
+                    "outer": 3,
+                    "iterations": 467,
+                    "converged": true,
+                    "primal_relative": 0.0002997001392345083,
+                    "dual_relative": 6.41993903625988e-05,
+                    "log_objective": 717.0465828973519,
+                    "relative_change": 0.08915324866117269,
+                    "objective_descent_slack": 0.22002522641076216,
+                    "active_rows": 11,
+                    "rho": 1.0,
+                    "rho_updates": 1
+                  },
+                  {
+                    "outer": 4,
+                    "iterations": 468,
+                    "converged": true,
+                    "primal_relative": 0.0002991541752474576,
+                    "dual_relative": 0.00021943340165452228,
+                    "log_objective": 698.657052112181,
+                    "relative_change": 0.07395045600655539,
+                    "objective_descent_slack": 0.21511397486920555,
+                    "active_rows": 13,
+                    "rho": 2.0,
+                    "rho_updates": 1
+                  },
+                  {
+                    "outer": 5,
+                    "iterations": 401,
+                    "converged": true,
+                    "primal_relative": 0.00029885404761707276,
+                    "dual_relative": 0.00023116764457710413,
+                    "log_objective": 673.4726871336402,
+                    "relative_change": 0.06658859937309963,
+                    "objective_descent_slack": 0.20959711563365427,
+                    "active_rows": 9,
+                    "rho": 4.0,
+                    "rho_updates": 3
+                  },
+                  {
+                    "outer": 6,
+                    "iterations": 131,
+                    "converged": true,
+                    "primal_relative": 0.00028551169966247895,
+                    "dual_relative": 0.0002965635810716795,
+                    "log_objective": 671.6458073947412,
+                    "relative_change": 0.01069342104389011,
+                    "objective_descent_slack": 0.20204180614009204,
+                    "active_rows": 9,
+                    "rho": 2.0,
+                    "rho_updates": 1
+                  },
+                  {
+                    "outer": 7,
+                    "iterations": 201,
+                    "converged": true,
+                    "primal_relative": 0.00029854405664872237,
+                    "dual_relative": 6.350993002788002e-05,
+                    "log_objective": 668.9557888855124,
+                    "relative_change": 0.016716819057942506,
+                    "objective_descent_slack": 0.20149374221842234,
+                    "active_rows": 6,
+                    "rho": 1.0,
+                    "rho_updates": 1
+                  },
+                  {
+                    "outer": 8,
+                    "iterations": 363,
+                    "converged": true,
+                    "primal_relative": 0.0002989357053263501,
+                    "dual_relative": 0.00022948867198692785,
+                    "log_objective": 659.298128169943,
+                    "relative_change": 0.03074408069922211,
+                    "objective_descent_slack": 0.2006867366656537,
+                    "active_rows": 6,
+                    "rho": 2.0,
+                    "rho_updates": 1
+                  },
+                  {
+                    "outer": 9,
+                    "iterations": 350,
+                    "converged": true,
+                    "primal_relative": 0.0002995682798892783,
+                    "dual_relative": 8.003563564147098e-05,
+                    "log_objective": 658.2716235878829,
+                    "relative_change": 0.010903189387853961,
+                    "objective_descent_slack": 0.19778943845098287,
+                    "active_rows": 6,
+                    "rho": 1.0,
+                    "rho_updates": 3
+                  },
+                  {
+                    "outer": 10,
+                    "iterations": 130,
+                    "converged": true,
+                    "primal_relative": 0.00029758767602958304,
+                    "dual_relative": 0.0001805147176641801,
+                    "log_objective": 658.4520054927517,
+                    "relative_change": 0.0036030511501298763,
+                    "objective_descent_slack": 0.19748148707636487,
+                    "active_rows": 6,
+                    "rho": 1.0,
+                    "rho_updates": 0
+                  }
+                ],
+                "converged": false,
+                "inner_converged": false,
+                "outer_converged": true,
+                "descent_guard_triggered": false,
+                "descent_guard_step": null,
+                "rho_initial": 1.0,
+                "rho_final": 1.0,
+                "rho_updates": 16,
+                "outer_tolerance": 0.01,
+                "adaptive_rho": true,
+                "objective_descent_tolerance": 0.0003,
+                "objective_descent_slack_rule": "tolerance * max(1, previous_log_objective)",
+                "convergence_note": "Finite residual/change tolerances; no global-optimality claim.",
+                "amplitude_epsilon": 0.8331710050595902,
+                "edge_epsilon": 0.8331710050595902,
+                "amplitude_weight_range": [
+                  0.016928646440129078,
+                  1.0
+                ],
+                "edge_weight_range": [
+                  0.016928646440129078,
+                  1.0
+                ]
+              },
+              "response_condition": 9.970342443008008,
+              "null_rule": "99th percentile of up to 16 overlapping baseline projections; heuristic, not p-value"
+            }
+          ],
+          "selected_templates": [],
+          "graph_edges": 21320,
+          "deep_graph_edges": 0,
+          "spatial_templates_used": false,
+          "mrf_strength": 0.5,
+          "weighting_coordinates": "MRF_current_innovation"
+        }
+      }
+    },
+    {
+      "parcel": "lateraloccipital-lh",
+      "shape": "thin_path",
+      "center": 284,
+      "surface_indices": [
+        120,
+        212,
+        337,
+        338,
+        361,
+        385,
+        410,
+        411,
+        439,
+        539
+      ],
+      "surface_count": 10,
+      "deep_index": null,
+      "case_id": "shape_02_eeg-10_meg+20",
+      "seed": [
+        20260922,
+        2,
+        2
+      ],
+      "eeg_snr_db": -10,
+      "meg_snr_db": 20,
+      "actual_snr_db": [
+        -9.999999999999998,
+        20.0
+      ],
+      "diagnostics": {
+        "v3": {
+          "mode": "signed_multiscale_erp_surface_residual_deep_v3",
+          "surface_scales_mm": [
+            0.0,
+            4.0,
+            7.0
+          ],
+          "selected_templates": 4,
+          "selected_surface_templates": 3,
+          "selected_deep_templates": 1,
+          "ridge_fraction": 0.03,
+          "max_templates_per_window": 7,
+          "require_one": false,
+          "windows": [
+            {
+              "window": 0,
+              "active_samples": 61,
+              "temporal_rank": 3,
+              "null_edges": [
+                13.883497619844853,
+                12.645974174120987,
+                16.533154359786568
+              ],
+              "channel_weight_min": 0.06921980832474467,
+              "channel_weight_max": 1.0,
+              "weighted_channels": 157,
+              "selected_surface_templates": 3,
+              "surface_ebic_deltas": [
+                -1162.4194709336693,
+                -797.2777875745328,
+                -139.78858304749383
+              ],
+              "selected_templates": [
+                {
+                  "layer": "surface",
+                  "scale_mm": 7.0,
+                  "index": 361
+                },
+                {
+                  "layer": "surface",
+                  "scale_mm": 4.0,
+                  "index": 358
+                },
+                {
+                  "layer": "surface",
+                  "scale_mm": 4.0,
+                  "index": 18
+                },
+                {
+                  "layer": "deep",
+                  "scale_mm": null,
+                  "index": 0
+                }
+              ],
+              "deep_candidate_local": 0,
+              "deep_ebic_delta": -50.33369669796503,
+              "deep_accepted": true,
+              "selection": "joint_surface_then_residual_deep_ebic_v3",
+              "joint_ebic_deltas": [
+                -1162.4194709336693,
+                -797.2777875745328,
+                -139.78858304749383
+              ],
+              "first_selected_layer": "surface",
+              "deep_rescue_attempted": false,
+              "deep_rescue_accepted": false,
+              "deep_rescue_ebic_delta": Infinity,
+              "deep_rescue_ebic_threshold": -6.0,
+              "time_evidence": {
+                "surface_raw": {
+                  "positive_candidates": 7514,
+                  "score_max": 45757.12361332758,
+                  "score_median_positive": 1716.4078717125806
+                },
+                "deep_surface_residual": {
+                  "positive_candidates": 7514,
+                  "score_max": 160.59718147959117,
+                  "score_median_positive": 18.601740504496888
+                }
+              },
+              "residual_deep_reselection": {
+                "deep_local": 0,
+                "accepted": true,
+                "ebic_delta": -50.33369669796503,
+                "surface_design_rank": 3,
+                "candidate_universe": 22510,
+                "residual_active_samples": 61,
+                "residual_temporal_rank": 3,
+                "residual_null_edges": [
+                  13.86144343031983,
+                  12.366173881091362,
+                  16.19419807841843
+                ]
+              }
+            }
+          ],
+          "selection": "joint_surface_then_residual_deep_reselection",
+          "conditional_candidate_drops": true,
+          "joint_search_template_cap_per_window": 6,
+          "deep_rescue_can_add_one_template": false,
+          "max_deep_templates_per_window": 1,
+          "time_evidence_fraction": 0.05,
+          "time_evidence_surface_scale_mm": 4.0,
+          "time_evidence_layer_balanced": true,
+          "time_evidence_fusion": {
+            "primary_active_peak": 0.6475174914163537,
+            "evidence_active_peak": 133679.1673967473,
+            "evidence_scale": 0.00043656293077099,
+            "evidence_layer_peaks": [
+              133679.1673967473,
+              74.16084208899831
+            ],
+            "evidence_layer_scales": [
+              2.4219087537199503e-07,
+              0.00043656293077099
+            ]
+          },
+          "time_evidence_deep_surface_residual": true
+        },
+        "v4": {
+          "mode": "adaptive_source_and_edge_logsum_full_grid",
+          "windows": [
+            {
+              "active_samples": 61,
+              "temporal_rank": 3,
+              "null_edges": [
+                13.883497619844853,
+                12.645974174120987,
+                16.533154359786568
+              ],
+              "source_lambda": 11.869154001080572,
+              "edge_lambda": 1.0435614059580456,
+              "solver": {
+                "history": [
+                  {
+                    "outer": 0,
+                    "iterations": 1350,
+                    "converged": true,
+                    "primal_relative": 0.00029772531428705145,
+                    "dual_relative": 0.00029699799481896794,
+                    "log_objective": 3429.3317445446373,
+                    "relative_change": 1.0,
+                    "objective_descent_slack": 0.0,
+                    "active_rows": 35,
+                    "rho": 2.0,
+                    "rho_updates": 1
+                  },
+                  {
+                    "outer": 1,
+                    "iterations": 880,
+                    "converged": true,
+                    "primal_relative": 0.00029971907743585644,
+                    "dual_relative": 0.00019307411240957533,
+                    "log_objective": 2757.2547201560246,
+                    "relative_change": 0.320508350842296,
+                    "objective_descent_slack": 1.028799523363391,
+                    "active_rows": 21,
+                    "rho": 2.0,
+                    "rho_updates": 2
+                  },
+                  {
+                    "outer": 2,
+                    "iterations": 421,
+                    "converged": true,
+                    "primal_relative": 0.00029968413081238516,
+                    "dual_relative": 0.0001170561786099317,
+                    "log_objective": 2739.2647447949994,
+                    "relative_change": 0.05180620782653247,
+                    "objective_descent_slack": 0.8271764160468074,
+                    "active_rows": 19,
+                    "rho": 2.0,
+                    "rho_updates": 2
+                  },
+                  {
+                    "outer": 3,
+                    "iterations": 189,
+                    "converged": true,
+                    "primal_relative": 0.00029952898442999067,
+                    "dual_relative": 0.00023346380305423305,
+                    "log_objective": 2730.1453400921646,
+                    "relative_change": 0.025592383077938288,
+                    "objective_descent_slack": 0.8217794234384997,
+                    "active_rows": 18,
+                    "rho": 2.0,
+                    "rho_updates": 0
+                  },
+                  {
+                    "outer": 4,
+                    "iterations": 74,
+                    "converged": true,
+                    "primal_relative": 0.000275982388670374,
+                    "dual_relative": 0.0002925884217238336,
+                    "log_objective": 2729.6359483518513,
+                    "relative_change": 0.004758189640204817,
+                    "objective_descent_slack": 0.8190436020276493,
+                    "active_rows": 18,
+                    "rho": 2.0,
+                    "rho_updates": 0
+                  }
+                ],
+                "converged": true,
+                "inner_converged": true,
+                "outer_converged": true,
+                "descent_guard_triggered": false,
+                "descent_guard_step": null,
+                "rho_initial": 1.0,
+                "rho_final": 2.0,
+                "rho_updates": 5,
+                "outer_tolerance": 0.01,
+                "adaptive_rho": true,
+                "objective_descent_tolerance": 0.0003,
+                "objective_descent_slack_rule": "tolerance * max(1, previous_log_objective)",
+                "convergence_note": "Finite residual/change tolerances; no global-optimality claim.",
+                "amplitude_epsilon": 3.2031127619805697,
+                "edge_epsilon": 3.2031127619805697,
+                "amplitude_weight_range": [
+                  0.037889017790895124,
+                  1.0
+                ],
+                "edge_weight_range": [
+                  0.037889017790895124,
+                  1.0
+                ]
+              },
+              "response_condition": 59.69915248988244,
+              "null_rule": "99th percentile of up to 16 overlapping baseline projections; heuristic, not p-value"
+            }
+          ],
+          "selected_templates": [],
+          "graph_edges": 21320,
+          "deep_graph_edges": 0,
+          "spatial_templates_used": false,
+          "mrf_strength": 0.5,
+          "weighting_coordinates": "MRF_current_innovation"
+        }
+      }
+    },
+    {
+      "parcel": "superiorparietal-rh",
+      "shape": "wide_path_plus_deep",
+      "center": 4028,
+      "surface_indices": [
+        3892,
+        3893,
+        3894,
+        3943,
+        3964,
+        3965,
+        3994,
+        4026,
+        4027,
+        4055,
+        4058,
+        4062,
+        4084,
+        4086,
+        4107,
+        4109,
+        4110,
+        4113,
+        4116,
+        4142,
+        4146,
+        4148,
+        4166,
+        4167,
+        4168,
+        4171,
+        4197,
+        4205,
+        4208,
+        4234,
+        4236,
+        4238,
+        4263,
+        4266,
+        4286,
+        4290,
+        4292
+      ],
+      "surface_count": 37,
+      "deep_index": 7504,
+      "case_id": "shape_03_eeg-10_meg-10",
+      "seed": [
+        20260922,
+        3,
+        0
+      ],
+      "eeg_snr_db": -10,
+      "meg_snr_db": -10,
+      "actual_snr_db": [
+        -10.0,
+        -10.0
+      ],
+      "diagnostics": {
+        "v3": {
+          "mode": "signed_multiscale_erp_surface_residual_deep_v3",
+          "surface_scales_mm": [
+            0.0,
+            4.0,
+            7.0
+          ],
+          "selected_templates": 3,
+          "selected_surface_templates": 3,
+          "selected_deep_templates": 0,
+          "ridge_fraction": 0.03,
+          "max_templates_per_window": 7,
+          "require_one": false,
+          "windows": [
+            {
+              "window": 0,
+              "active_samples": 61,
+              "temporal_rank": 3,
+              "null_edges": [
+                15.642292722938508,
+                13.780888572632318,
+                17.911924465246084
+              ],
+              "channel_weight_min": 0.7090362082323707,
+              "channel_weight_max": 1.0,
+              "weighted_channels": 157,
+              "selected_surface_templates": 3,
+              "surface_ebic_deltas": [
+                -97.65437905965314,
+                -10.242697214648388,
+                -6.767602492222636
+              ],
+              "selected_templates": [
+                {
+                  "layer": "surface",
+                  "scale_mm": 7.0,
+                  "index": 3812
+                },
+                {
+                  "layer": "surface",
+                  "scale_mm": 0.0,
+                  "index": 3640
+                },
+                {
+                  "layer": "surface",
+                  "scale_mm": 0.0,
+                  "index": 3015
+                }
+              ],
+              "deep_candidate_local": 1,
+              "deep_ebic_delta": 26.090839513075604,
+              "deep_accepted": false,
+              "selection": "joint_surface_then_residual_deep_ebic_v3",
+              "joint_ebic_deltas": [
+                -97.65437905965314,
+                -10.242697214648388,
+                -6.767602492222636
+              ],
+              "first_selected_layer": "surface",
+              "deep_rescue_attempted": false,
+              "deep_rescue_accepted": false,
+              "deep_rescue_ebic_delta": Infinity,
+              "deep_rescue_ebic_threshold": -6.0,
+              "time_evidence": {
+                "surface_raw": {
+                  "positive_candidates": 7514,
+                  "score_max": 62.4382653154142,
+                  "score_median_positive": 13.379790006913872
+                },
+                "deep_surface_residual": {
+                  "positive_candidates": 7514,
+                  "score_max": 23.90410366645775,
+                  "score_median_positive": 9.707196233672587
+                }
+              },
+              "residual_deep_reselection": {
+                "deep_local": 1,
+                "accepted": false,
+                "ebic_delta": 26.090839513075604,
+                "surface_design_rank": 3,
+                "candidate_universe": 22510,
+                "residual_active_samples": 61,
+                "residual_temporal_rank": 3,
+                "residual_null_edges": [
+                  15.61083475074722,
+                  13.738616962316405,
+                  17.697858192916144
+                ]
+              }
+            }
+          ],
+          "selection": "joint_surface_then_residual_deep_reselection",
+          "conditional_candidate_drops": true,
+          "joint_search_template_cap_per_window": 6,
+          "deep_rescue_can_add_one_template": false,
+          "max_deep_templates_per_window": 1,
+          "time_evidence_fraction": 0.05,
+          "time_evidence_surface_scale_mm": 4.0,
+          "time_evidence_layer_balanced": true,
+          "time_evidence_fusion": {
+            "primary_active_peak": 4.722893156569229,
+            "evidence_active_peak": 220.0253836609767,
+            "evidence_scale": 0.019620690427741685,
+            "evidence_layer_peaks": [
+              220.0253836609767,
+              12.035491752857821
+            ],
+            "evidence_layer_scales": [
+              0.001073260975162402,
+              0.019620690427741685
+            ]
+          },
+          "time_evidence_deep_surface_residual": true
+        },
+        "v4": {
+          "mode": "adaptive_source_and_edge_logsum_full_grid",
+          "windows": [
+            {
+              "active_samples": 61,
+              "temporal_rank": 3,
+              "null_edges": [
+                15.642292722938508,
+                13.780888572632318,
+                17.911924465246084
+              ],
+              "source_lambda": 9.494165804110612,
+              "edge_lambda": 0.8347473639683556,
+              "solver": {
+                "history": [
+                  {
+                    "outer": 0,
+                    "iterations": 1835,
+                    "converged": true,
+                    "primal_relative": 0.0002995749083332547,
+                    "dual_relative": 0.00010357423845925387,
+                    "log_objective": 881.5732698241881,
+                    "relative_change": 1.0,
+                    "objective_descent_slack": 0.0,
+                    "active_rows": 113,
+                    "rho": 4.0,
+                    "rho_updates": 2
+                  },
+                  {
+                    "outer": 1,
+                    "iterations": 1464,
+                    "converged": true,
+                    "primal_relative": 0.0002998037607540367,
+                    "dual_relative": 9.874456960859787e-05,
+                    "log_objective": 689.7233125251582,
+                    "relative_change": 0.8905575829609139,
+                    "objective_descent_slack": 0.2644719809472564,
+                    "active_rows": 60,
+                    "rho": 2.0,
+                    "rho_updates": 1
+                  },
+                  {
+                    "outer": 2,
+                    "iterations": 735,
+                    "converged": true,
+                    "primal_relative": 0.0002997349261268835,
+                    "dual_relative": 0.00020671542844533658,
+                    "log_objective": 651.2155584606892,
+                    "relative_change": 0.36715159940347575,
+                    "objective_descent_slack": 0.20691699375754746,
+                    "active_rows": 46,
+                    "rho": 2.0,
+                    "rho_updates": 0
+                  },
+                  {
+                    "outer": 3,
+                    "iterations": 781,
+                    "converged": true,
+                    "primal_relative": 0.00029949869079795913,
+                    "dual_relative": 0.0001249563726244738,
+                    "log_objective": 630.6112782150642,
+                    "relative_change": 0.38458441821843536,
+                    "objective_descent_slack": 0.19536466753820675,
+                    "active_rows": 44,
+                    "rho": 1.0,
+                    "rho_updates": 1
+                  },
+                  {
+                    "outer": 4,
+                    "iterations": 618,
+                    "converged": true,
+                    "primal_relative": 0.00029990811553574177,
+                    "dual_relative": 0.00010823515765008717,
+                    "log_objective": 619.9975942286478,
+                    "relative_change": 0.25465941789923024,
+                    "objective_descent_slack": 0.18918338346451924,
+                    "active_rows": 38,
+                    "rho": 1.0,
+                    "rho_updates": 0
+                  },
+                  {
+                    "outer": 5,
+                    "iterations": 382,
+                    "converged": true,
+                    "primal_relative": 0.0002409779599203533,
+                    "dual_relative": 0.0002984092701419416,
+                    "log_objective": 618.6839186838256,
+                    "relative_change": 0.09283538610974196,
+                    "objective_descent_slack": 0.18599927826859433,
+                    "active_rows": 35,
+                    "rho": 1.0,
+                    "rho_updates": 0
+                  },
+                  {
+                    "outer": 6,
+                    "iterations": 145,
+                    "converged": true,
+                    "primal_relative": 0.0002804784868185159,
+                    "dual_relative": 0.00029566074346487115,
+                    "log_objective": 617.4720878519149,
+                    "relative_change": 0.03327457933535929,
+                    "objective_descent_slack": 0.18560517560514767,
+                    "active_rows": 35,
+                    "rho": 1.0,
+                    "rho_updates": 0
+                  },
+                  {
+                    "outer": 7,
+                    "iterations": 154,
+                    "converged": true,
+                    "primal_relative": 0.0002998742404408198,
+                    "dual_relative": 0.00028613598317354336,
+                    "log_objective": 615.4599976962145,
+                    "relative_change": 0.04987650997456729,
+                    "objective_descent_slack": 0.18524162635557445,
+                    "active_rows": 33,
+                    "rho": 1.0,
+                    "rho_updates": 0
+                  },
+                  {
+                    "outer": 8,
+                    "iterations": 45,
+                    "converged": true,
+                    "primal_relative": 0.0002996042039431723,
+                    "dual_relative": 0.0002692866180430803,
+                    "log_objective": 615.4425756724809,
+                    "relative_change": 0.007212757440518193,
+                    "objective_descent_slack": 0.18463799930886432,
+                    "active_rows": 33,
+                    "rho": 1.0,
+                    "rho_updates": 0
+                  }
+                ],
+                "converged": true,
+                "inner_converged": true,
+                "outer_converged": true,
+                "descent_guard_triggered": false,
+                "descent_guard_step": null,
+                "rho_initial": 1.0,
+                "rho_final": 1.0,
+                "rho_updates": 4,
+                "outer_tolerance": 0.01,
+                "adaptive_rho": true,
+                "objective_descent_tolerance": 0.0003,
+                "objective_descent_slack_rule": "tolerance * max(1, previous_log_objective)",
+                "convergence_note": "Finite residual/change tolerances; no global-optimality claim.",
+                "amplitude_epsilon": 0.0355002372802627,
+                "edge_epsilon": 0.0355002372802627,
+                "amplitude_weight_range": [
+                  0.003994510180512318,
+                  1.0
+                ],
+                "edge_weight_range": [
+                  0.0030398035238046006,
+                  1.0
+                ]
+              },
+              "response_condition": 2.371527529883307,
+              "null_rule": "99th percentile of up to 16 overlapping baseline projections; heuristic, not p-value"
+            }
+          ],
+          "selected_templates": [],
+          "graph_edges": 21320,
+          "deep_graph_edges": 0,
+          "spatial_templates_used": false,
+          "mrf_strength": 0.5,
+          "weighting_coordinates": "MRF_current_innovation"
+        }
+      }
+    },
+    {
+      "parcel": "superiorparietal-rh",
+      "shape": "wide_path_plus_deep",
+      "center": 4028,
+      "surface_indices": [
+        3892,
+        3893,
+        3894,
+        3943,
+        3964,
+        3965,
+        3994,
+        4026,
+        4027,
+        4055,
+        4058,
+        4062,
+        4084,
+        4086,
+        4107,
+        4109,
+        4110,
+        4113,
+        4116,
+        4142,
+        4146,
+        4148,
+        4166,
+        4167,
+        4168,
+        4171,
+        4197,
+        4205,
+        4208,
+        4234,
+        4236,
+        4238,
+        4263,
+        4266,
+        4286,
+        4290,
+        4292
+      ],
+      "surface_count": 37,
+      "deep_index": 7504,
+      "case_id": "shape_03_eeg+05_meg+05",
+      "seed": [
+        20260922,
+        3,
+        1
+      ],
+      "eeg_snr_db": 5,
+      "meg_snr_db": 5,
+      "actual_snr_db": [
+        4.999999999999999,
+        5.000000000000001
+      ],
+      "diagnostics": {
+        "v3": {
+          "mode": "signed_multiscale_erp_surface_residual_deep_v3",
+          "surface_scales_mm": [
+            0.0,
+            4.0,
+            7.0
+          ],
+          "selected_templates": 3,
+          "selected_surface_templates": 3,
+          "selected_deep_templates": 0,
+          "ridge_fraction": 0.03,
+          "max_templates_per_window": 7,
+          "require_one": false,
+          "windows": [
+            {
+              "window": 0,
+              "active_samples": 61,
+              "temporal_rank": 3,
+              "null_edges": [
+                17.359997782883067,
+                15.40973554498707,
+                20.12491423217763
+              ],
+              "channel_weight_min": 0.990828994067781,
+              "channel_weight_max": 1.0,
+              "weighted_channels": 157,
+              "selected_surface_templates": 3,
+              "surface_ebic_deltas": [
+                -708.579025812498,
+                -263.6852813703473,
+                -228.59634301019332
+              ],
+              "selected_templates": [
+                {
+                  "layer": "surface",
+                  "scale_mm": 7.0,
+                  "index": 3811
+                },
+                {
+                  "layer": "surface",
+                  "scale_mm": 0.0,
+                  "index": 4162
+                },
+                {
+                  "layer": "surface",
+                  "scale_mm": 7.0,
+                  "index": 3980
+                }
+              ],
+              "deep_candidate_local": 2,
+              "deep_ebic_delta": 0.5068339130981308,
+              "deep_accepted": false,
+              "selection": "joint_surface_then_residual_deep_ebic_v3",
+              "joint_ebic_deltas": [
+                -708.579025812498,
+                -263.6852813703473,
+                -228.59634301019332
+              ],
+              "first_selected_layer": "surface",
+              "deep_rescue_attempted": false,
+              "deep_rescue_accepted": false,
+              "deep_rescue_ebic_delta": Infinity,
+              "deep_rescue_ebic_threshold": -6.0,
+              "time_evidence": {
+                "surface_raw": {
+                  "positive_candidates": 7514,
+                  "score_max": 1285.914524315375,
+                  "score_median_positive": 27.987050364816362
+                },
+                "deep_surface_residual": {
+                  "positive_candidates": 7514,
+                  "score_max": 37.53573852042314,
+                  "score_median_positive": 11.223906532407508
+                }
+              },
+              "residual_deep_reselection": {
+                "deep_local": 2,
+                "accepted": false,
+                "ebic_delta": 0.5068339130981308,
+                "surface_design_rank": 3,
+                "candidate_universe": 22510,
+                "residual_active_samples": 61,
+                "residual_temporal_rank": 3,
+                "residual_null_edges": [
+                  17.15387531606769,
+                  15.314013564512216,
+                  19.99633086104328
+                ]
+              }
+            }
+          ],
+          "selection": "joint_surface_then_residual_deep_reselection",
+          "conditional_candidate_drops": true,
+          "joint_search_template_cap_per_window": 6,
+          "deep_rescue_can_add_one_template": false,
+          "max_deep_templates_per_window": 1,
+          "time_evidence_fraction": 0.05,
+          "time_evidence_surface_scale_mm": 4.0,
+          "time_evidence_layer_balanced": true,
+          "time_evidence_fusion": {
+            "primary_active_peak": 0.4628433885333333,
+            "evidence_active_peak": 3740.639607335725,
+            "evidence_scale": 0.0008450653833877049,
+            "evidence_layer_peaks": [
+              3740.639607335725,
+              27.385063785117016
+            ],
+            "evidence_layer_scales": [
+              6.186687801006765e-06,
+              0.0008450653833877049
+            ]
+          },
+          "time_evidence_deep_surface_residual": true
+        },
+        "v4": {
+          "mode": "adaptive_source_and_edge_logsum_full_grid",
+          "windows": [
+            {
+              "active_samples": 61,
+              "temporal_rank": 3,
+              "null_edges": [
+                17.359997782883067,
+                15.40973554498707,
+                20.12491423217763
+              ],
+              "source_lambda": 10.174989319023997,
+              "edge_lambda": 0.8946068235699101,
+              "solver": {
+                "history": [
+                  {
+                    "outer": 0,
+                    "iterations": 2000,
+                    "converged": false,
+                    "primal_relative": 0.0006217306390836673,
+                    "dual_relative": 0.0001934049988827471,
+                    "log_objective": 1329.2560063455878,
+                    "relative_change": 1.0,
+                    "objective_descent_slack": 0.0,
+                    "active_rows": 34,
+                    "rho": 1.0,
+                    "rho_updates": 0
+                  },
+                  {
+                    "outer": 1,
+                    "iterations": 1019,
+                    "converged": true,
+                    "primal_relative": 0.00027368025529317093,
+                    "dual_relative": 0.0002998824314315798,
+                    "log_objective": 926.0277519118997,
+                    "relative_change": 0.7741875818217514,
+                    "objective_descent_slack": 0.3987768019036763,
+                    "active_rows": 18,
+                    "rho": 1.0,
+                    "rho_updates": 0
+                  },
+                  {
+                    "outer": 2,
+                    "iterations": 568,
+                    "converged": true,
+                    "primal_relative": 0.0002998182630664036,
+                    "dual_relative": 0.00029156704613596013,
+                    "log_objective": 816.0677202034138,
+                    "relative_change": 0.3200744699113812,
+                    "objective_descent_slack": 0.2778083255735699,
+                    "active_rows": 12,
+                    "rho": 1.0,
+                    "rho_updates": 0
+                  },
+                  {
+                    "outer": 3,
+                    "iterations": 375,
+                    "converged": true,
+                    "primal_relative": 0.00029680938301876556,
+                    "dual_relative": 0.0002999681673314048,
+                    "log_objective": 774.6708850728578,
+                    "relative_change": 0.09417637643691458,
+                    "objective_descent_slack": 0.24482031606102414,
+                    "active_rows": 9,
+                    "rho": 1.0,
+                    "rho_updates": 0
+                  },
+                  {
+                    "outer": 4,
+                    "iterations": 325,
+                    "converged": true,
+                    "primal_relative": 0.00027308493585720444,
+                    "dual_relative": 0.0002963933864321565,
+                    "log_objective": 763.6202308259546,
+                    "relative_change": 0.04328936537957806,
+                    "objective_descent_slack": 0.23240126552185733,
+                    "active_rows": 8,
+                    "rho": 1.0,
+                    "rho_updates": 0
+                  },
+                  {
+                    "outer": 5,
+                    "iterations": 51,
+                    "converged": true,
+                    "primal_relative": 0.0002970604451430369,
+                    "dual_relative": 0.00022441821405317562,
+                    "log_objective": 763.6299555283434,
+                    "relative_change": 0.004438717150450466,
+                    "objective_descent_slack": 0.22908606924778638,
+                    "active_rows": 8,
+                    "rho": 1.0,
+                    "rho_updates": 0
+                  }
+                ],
+                "converged": false,
+                "inner_converged": false,
+                "outer_converged": true,
+                "descent_guard_triggered": false,
+                "descent_guard_step": null,
+                "rho_initial": 1.0,
+                "rho_final": 1.0,
+                "rho_updates": 0,
+                "outer_tolerance": 0.01,
+                "adaptive_rho": true,
+                "objective_descent_tolerance": 0.0003,
+                "objective_descent_slack_rule": "tolerance * max(1, previous_log_objective)",
+                "convergence_note": "Finite residual/change tolerances; no global-optimality claim.",
+                "amplitude_epsilon": 0.7230143492884057,
+                "edge_epsilon": 0.7230143492884057,
+                "amplitude_weight_range": [
+                  0.011494106865326266,
+                  1.0
+                ],
+                "edge_weight_range": [
+                  0.011494106865326266,
+                  1.0
+                ]
+              },
+              "response_condition": 10.584777556032979,
+              "null_rule": "99th percentile of up to 16 overlapping baseline projections; heuristic, not p-value"
+            }
+          ],
+          "selected_templates": [],
+          "graph_edges": 21320,
+          "deep_graph_edges": 0,
+          "spatial_templates_used": false,
+          "mrf_strength": 0.5,
+          "weighting_coordinates": "MRF_current_innovation"
+        }
+      }
+    },
+    {
+      "parcel": "superiorparietal-rh",
+      "shape": "wide_path_plus_deep",
+      "center": 4028,
+      "surface_indices": [
+        3892,
+        3893,
+        3894,
+        3943,
+        3964,
+        3965,
+        3994,
+        4026,
+        4027,
+        4055,
+        4058,
+        4062,
+        4084,
+        4086,
+        4107,
+        4109,
+        4110,
+        4113,
+        4116,
+        4142,
+        4146,
+        4148,
+        4166,
+        4167,
+        4168,
+        4171,
+        4197,
+        4205,
+        4208,
+        4234,
+        4236,
+        4238,
+        4263,
+        4266,
+        4286,
+        4290,
+        4292
+      ],
+      "surface_count": 37,
+      "deep_index": 7504,
+      "case_id": "shape_03_eeg-10_meg+20",
+      "seed": [
+        20260922,
+        3,
+        2
+      ],
+      "eeg_snr_db": -10,
+      "meg_snr_db": 20,
+      "actual_snr_db": [
+        -10.0,
+        20.0
+      ],
+      "diagnostics": {
+        "v3": {
+          "mode": "signed_multiscale_erp_surface_residual_deep_v3",
+          "surface_scales_mm": [
+            0.0,
+            4.0,
+            7.0
+          ],
+          "selected_templates": 4,
+          "selected_surface_templates": 3,
+          "selected_deep_templates": 1,
+          "ridge_fraction": 0.03,
+          "max_templates_per_window": 7,
+          "require_one": false,
+          "windows": [
+            {
+              "window": 0,
+              "active_samples": 61,
+              "temporal_rank": 3,
+              "null_edges": [
+                13.803681919096368,
+                12.950719655005123,
+                16.61115491994479
+              ],
+              "channel_weight_min": 0.0701545701524622,
+              "channel_weight_max": 1.0,
+              "weighted_channels": 157,
+              "selected_surface_templates": 3,
+              "surface_ebic_deltas": [
+                -1067.8782191936752,
+                -425.7811437349794,
+                -723.0182836883878
+              ],
+              "selected_templates": [
+                {
+                  "layer": "surface",
+                  "scale_mm": 7.0,
+                  "index": 3923
+                },
+                {
+                  "layer": "surface",
+                  "scale_mm": 0.0,
+                  "index": 3990
+                },
+                {
+                  "layer": "surface",
+                  "scale_mm": 7.0,
+                  "index": 4004
+                },
+                {
+                  "layer": "deep",
+                  "scale_mm": null,
+                  "index": 2
+                }
+              ],
+              "deep_candidate_local": 2,
+              "deep_ebic_delta": -99.78161750930906,
+              "deep_accepted": true,
+              "selection": "joint_surface_then_residual_deep_ebic_v3",
+              "joint_ebic_deltas": [
+                -1067.8782191936752,
+                -425.7811437349794,
+                -723.0182836883878
+              ],
+              "first_selected_layer": "surface",
+              "deep_rescue_attempted": false,
+              "deep_rescue_accepted": false,
+              "deep_rescue_ebic_delta": Infinity,
+              "deep_rescue_ebic_threshold": -6.0,
+              "time_evidence": {
+                "surface_raw": {
+                  "positive_candidates": 7514,
+                  "score_max": 46496.15416079408,
+                  "score_median_positive": 2178.1432262378667
+                },
+                "deep_surface_residual": {
+                  "positive_candidates": 7514,
+                  "score_max": 182.3599831190107,
+                  "score_median_positive": 24.13839333351884
+                }
+              },
+              "residual_deep_reselection": {
+                "deep_local": 2,
+                "accepted": true,
+                "ebic_delta": -99.78161750930906,
+                "surface_design_rank": 3,
+                "candidate_universe": 22510,
+                "residual_active_samples": 61,
+                "residual_temporal_rank": 3,
+                "residual_null_edges": [
+                  13.765029164968889,
+                  12.717223344044564,
+                  16.367011375338894
+                ]
+              }
+            }
+          ],
+          "selection": "joint_surface_then_residual_deep_reselection",
+          "conditional_candidate_drops": true,
+          "joint_search_template_cap_per_window": 6,
+          "deep_rescue_can_add_one_template": false,
+          "max_deep_templates_per_window": 1,
+          "time_evidence_fraction": 0.05,
+          "time_evidence_surface_scale_mm": 4.0,
+          "time_evidence_layer_balanced": true,
+          "time_evidence_fusion": {
+            "primary_active_peak": 0.9068604939341127,
+            "evidence_active_peak": 144914.07319799167,
+            "evidence_scale": 0.00039166847761691034,
+            "evidence_layer_peaks": [
+              144914.07319799167,
+              115.7688894766137
+            ],
+            "evidence_layer_scales": [
+              3.128959368546273e-07,
+              0.00039166847761691034
+            ]
+          },
+          "time_evidence_deep_surface_residual": true
+        },
+        "v4": {
+          "mode": "adaptive_source_and_edge_logsum_full_grid",
+          "windows": [
+            {
+              "active_samples": 61,
+              "temporal_rank": 3,
+              "null_edges": [
+                13.803681919096368,
+                12.950719655005123,
+                16.61115491994479
+              ],
+              "source_lambda": 11.875509050010905,
+              "edge_lambda": 1.0441201554524129,
+              "solver": {
+                "history": [
+                  {
+                    "outer": 0,
+                    "iterations": 1336,
+                    "converged": true,
+                    "primal_relative": 0.00029960446334954024,
+                    "dual_relative": 0.0002975170267281923,
+                    "log_objective": 4720.691861054413,
+                    "relative_change": 1.0,
+                    "objective_descent_slack": 0.0,
+                    "active_rows": 55,
+                    "rho": 1.0,
+                    "rho_updates": 0
+                  },
+                  {
+                    "outer": 1,
+                    "iterations": 889,
+                    "converged": true,
+                    "primal_relative": 0.0002793314345337414,
+                    "dual_relative": 0.0002988946884036494,
+                    "log_objective": 3560.3397222281956,
+                    "relative_change": 0.5154557095287261,
+                    "objective_descent_slack": 1.4162075583163236,
+                    "active_rows": 35,
+                    "rho": 1.0,
+                    "rho_updates": 0
+                  },
+                  {
+                    "outer": 2,
+                    "iterations": 867,
+                    "converged": true,
+                    "primal_relative": 0.0002998454070663407,
+                    "dual_relative": 0.00012149210274255755,
+                    "log_objective": 2890.7172254788566,
+                    "relative_change": 0.5083460823442691,
+                    "objective_descent_slack": 1.0681019166684587,
+                    "active_rows": 17,
+                    "rho": 1.0,
+                    "rho_updates": 0
+                  },
+                  {
+                    "outer": 3,
+                    "iterations": 440,
+                    "converged": true,
+                    "primal_relative": 0.0002769820703839164,
+                    "dual_relative": 0.00029909543248069024,
+                    "log_objective": 2666.118459246214,
+                    "relative_change": 0.09835371789364608,
+                    "objective_descent_slack": 0.8672151676436569,
+                    "active_rows": 12,
+                    "rho": 1.0,
+                    "rho_updates": 0
+                  },
+                  {
+                    "outer": 4,
+                    "iterations": 638,
+                    "converged": true,
+                    "primal_relative": 0.00017151797545361978,
+                    "dual_relative": 0.000299589111954014,
+                    "log_objective": 2605.9937172475643,
+                    "relative_change": 0.20976855878564452,
+                    "objective_descent_slack": 0.7998355377738642,
+                    "active_rows": 14,
+                    "rho": 1.0,
+                    "rho_updates": 0
+                  },
+                  {
+                    "outer": 5,
+                    "iterations": 422,
+                    "converged": true,
+                    "primal_relative": 0.0002422100592501258,
+                    "dual_relative": 0.00029780148618985323,
+                    "log_objective": 2496.582903535269,
+                    "relative_change": 0.14690145714997244,
+                    "objective_descent_slack": 0.7817981151742692,
+                    "active_rows": 11,
+                    "rho": 0.5,
+                    "rho_updates": 1
+                  },
+                  {
+                    "outer": 6,
+                    "iterations": 263,
+                    "converged": true,
+                    "primal_relative": 0.00029946657705771137,
+                    "dual_relative": 0.00028953203952601154,
+                    "log_objective": 2484.0470329428654,
+                    "relative_change": 0.01948279193572345,
+                    "objective_descent_slack": 0.7489748710605806,
+                    "active_rows": 12,
+                    "rho": 0.5,
+                    "rho_updates": 0
+                  },
+                  {
+                    "outer": 7,
+                    "iterations": 284,
+                    "converged": true,
+                    "primal_relative": 0.000299796049062272,
+                    "dual_relative": 0.00024324490251205773,
+                    "log_objective": 2477.846528338961,
+                    "relative_change": 0.020399399387157964,
+                    "objective_descent_slack": 0.7452141098828595,
+                    "active_rows": 14,
+                    "rho": 0.5,
+                    "rho_updates": 0
+                  },
+                  {
+                    "outer": 8,
+                    "iterations": 278,
+                    "converged": true,
+                    "primal_relative": 0.00029961989284138063,
+                    "dual_relative": 0.00022660908738191763,
+                    "log_objective": 2475.5233934351004,
+                    "relative_change": 0.016589403246648444,
+                    "objective_descent_slack": 0.7433539585016883,
+                    "active_rows": 14,
+                    "rho": 0.5,
+                    "rho_updates": 0
+                  },
+                  {
+                    "outer": 9,
+                    "iterations": 257,
+                    "converged": true,
+                    "primal_relative": 0.00029536497525891524,
+                    "dual_relative": 0.00029640024899271197,
+                    "log_objective": 2472.479674066229,
+                    "relative_change": 0.011588900331594636,
+                    "objective_descent_slack": 0.7426570180305301,
+                    "active_rows": 14,
+                    "rho": 0.5,
+                    "rho_updates": 0
+                  }
+                ],
+                "converged": false,
+                "inner_converged": true,
+                "outer_converged": false,
+                "descent_guard_triggered": true,
+                "descent_guard_step": {
+                  "outer": 10,
+                  "iterations": 230,
+                  "previous_log_objective": 2472.479674066229,
+                  "proposed_log_objective": 2473.428190207179,
+                  "allowed_increase": 0.7417439022198686,
+                  "inner_converged": true,
+                  "primal_relative": 0.0002959832242516415,
+                  "dual_relative": 0.00028425129757676137
+                },
+                "rho_initial": 1.0,
+                "rho_final": 0.5,
+                "rho_updates": 1,
+                "outer_tolerance": 0.01,
+                "adaptive_rho": true,
+                "objective_descent_tolerance": 0.0003,
+                "objective_descent_slack_rule": "tolerance * max(1, previous_log_objective)",
+                "convergence_note": "Finite residual/change tolerances; no global-optimality claim.",
+                "amplitude_epsilon": 2.3283179911066116,
+                "edge_epsilon": 2.3283179911066116,
+                "amplitude_weight_range": [
+                  0.021344734661494214,
+                  1.0
+                ],
+                "edge_weight_range": [
+                  0.021344734661494214,
+                  1.0
+                ]
+              },
+              "response_condition": 63.410332407462406,
+              "null_rule": "99th percentile of up to 16 overlapping baseline projections; heuristic, not p-value"
+            }
+          ],
+          "selected_templates": [],
+          "graph_edges": 21320,
+          "deep_graph_edges": 0,
+          "spatial_templates_used": false,
+          "mrf_strength": 0.5,
+          "weighting_coordinates": "MRF_current_innovation"
+        }
+      }
+    }
+  ]
+}

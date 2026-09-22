@@ -1,0 +1,161 @@
+{
+  "case_id": "erp-v3-development-07982-deep_plus_surface-eeg+20-meg-10",
+  "method": "OASTER-ERP-v4",
+  "manifest_sha256": "0989782ea769bc0a698e8e6f250795ee829398afc5984a904eeb9544a32432b5",
+  "parameters": {
+    "mrf_strength": 0.5,
+    "edge_fraction": 0.5,
+    "noise_multiplier": 1.0
+  },
+  "diagnostics": {
+    "mode": "adaptive_source_and_edge_logsum_full_grid",
+    "windows": [
+      {
+        "active_samples": 61,
+        "temporal_rank": 3,
+        "null_edges": [
+          12.925977464606254,
+          10.304968517540399,
+          13.260302348074017
+        ],
+        "source_lambda": 9.1689676237044,
+        "edge_lambda": 0.8061552444012148,
+        "solver": {
+          "history": [
+            {
+              "outer": 0,
+              "iterations": 2000,
+              "converged": false,
+              "primal_relative": 0.0004299703842639456,
+              "dual_relative": 0.00015312888072547753,
+              "log_objective": 1665.0849867356344,
+              "relative_change": 1.0,
+              "objective_descent_slack": 0.0,
+              "active_rows": 91,
+              "rho": 1.0,
+              "rho_updates": 0
+            },
+            {
+              "outer": 1,
+              "iterations": 1174,
+              "converged": true,
+              "primal_relative": 0.00029991770036096976,
+              "dual_relative": 8.214654616822391e-05,
+              "log_objective": 1267.0895651870774,
+              "relative_change": 0.40417420621268363,
+              "objective_descent_slack": 0.4995254960206903,
+              "active_rows": 50,
+              "rho": 1.0,
+              "rho_updates": 0
+            },
+            {
+              "outer": 2,
+              "iterations": 806,
+              "converged": true,
+              "primal_relative": 0.00029973758481932985,
+              "dual_relative": 0.00015056948945490762,
+              "log_objective": 1152.6773603028198,
+              "relative_change": 0.23399520733614376,
+              "objective_descent_slack": 0.3801268695561232,
+              "active_rows": 37,
+              "rho": 1.0,
+              "rho_updates": 2
+            },
+            {
+              "outer": 3,
+              "iterations": 538,
+              "converged": true,
+              "primal_relative": 0.0002862648258647673,
+              "dual_relative": 0.00029526085164076826,
+              "log_objective": 1121.4771913436455,
+              "relative_change": 0.1863494101343058,
+              "objective_descent_slack": 0.3458032080908459,
+              "active_rows": 36,
+              "rho": 1.0,
+              "rho_updates": 0
+            },
+            {
+              "outer": 4,
+              "iterations": 691,
+              "converged": true,
+              "primal_relative": 0.0002161499154253353,
+              "dual_relative": 0.00029933048022029923,
+              "log_objective": 1100.5164733984595,
+              "relative_change": 0.12876722278620895,
+              "objective_descent_slack": 0.3364431574030936,
+              "active_rows": 35,
+              "rho": 1.0,
+              "rho_updates": 0
+            },
+            {
+              "outer": 5,
+              "iterations": 564,
+              "converged": true,
+              "primal_relative": 0.0002994383984864686,
+              "dual_relative": 0.00023263542492803292,
+              "log_objective": 1100.3266621842881,
+              "relative_change": 0.10769596375740942,
+              "objective_descent_slack": 0.3301549420195378,
+              "active_rows": 35,
+              "rho": 1.0,
+              "rho_updates": 0
+            },
+            {
+              "outer": 6,
+              "iterations": 520,
+              "converged": true,
+              "primal_relative": 0.00029143849830096336,
+              "dual_relative": 0.0002923355553132657,
+              "log_objective": 1097.644119511663,
+              "relative_change": 0.08847973364869072,
+              "objective_descent_slack": 0.3300979986552864,
+              "active_rows": 35,
+              "rho": 1.0,
+              "rho_updates": 0
+            }
+          ],
+          "converged": false,
+          "inner_converged": false,
+          "outer_converged": false,
+          "descent_guard_triggered": true,
+          "descent_guard_step": {
+            "outer": 7,
+            "iterations": 515,
+            "previous_log_objective": 1097.644119511663,
+            "proposed_log_objective": 1098.4993934882898,
+            "allowed_increase": 0.32929323585349884,
+            "inner_converged": true,
+            "primal_relative": 0.0002484453697806816,
+            "dual_relative": 0.0002950585963963333
+          },
+          "rho_initial": 1.0,
+          "rho_final": 1.0,
+          "rho_updates": 2,
+          "outer_tolerance": 0.01,
+          "adaptive_rho": true,
+          "objective_descent_tolerance": 0.0003,
+          "objective_descent_slack_rule": "tolerance * max(1, previous_log_objective)",
+          "convergence_note": "Finite residual/change tolerances; no global-optimality claim.",
+          "amplitude_epsilon": 0.9584619425166508,
+          "edge_epsilon": 0.9475150578729576,
+          "amplitude_weight_range": [
+            0.01941196601547811,
+            1.0
+          ],
+          "edge_weight_range": [
+            0.01919451167629813,
+            1.0
+          ]
+        },
+        "response_condition": 70.31924557907868,
+        "null_rule": "99th percentile of up to 16 overlapping baseline projections; heuristic, not p-value"
+      }
+    ],
+    "selected_templates": [],
+    "graph_edges": 21320,
+    "deep_graph_edges": 0,
+    "spatial_templates_used": false,
+    "mrf_strength": 0.5,
+    "weighting_coordinates": "MRF_current_innovation"
+  }
+}

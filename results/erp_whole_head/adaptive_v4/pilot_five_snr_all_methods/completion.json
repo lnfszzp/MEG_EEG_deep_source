@@ -1,0 +1,19 @@
+{
+  "status": "complete",
+  "row_count": 160,
+  "expected_row_count": 160,
+  "error_count": 0,
+  "manifest_sha256": "0989782ea769bc0a698e8e6f250795ee829398afc5984a904eeb9544a32432b5",
+  "chunk_count": 5,
+  "method_count": 8,
+  "methods": [
+    "OASTER-ERP-v4",
+    "MNE",
+    "dSPM",
+    "sLORETA",
+    "eLORETA",
+    "LCMV",
+    "Dipole fitting (grid)",
+    "RAP-MUSIC"
+  ]
+}
