@@ -6,7 +6,6 @@ Run --self-check to validate connected truth shapes without running inverse solv
 
 # %% 参数：按顺序运行，无需逐个阅读自定义函数。
 import argparse
-import csv
 import hashlib
 import json
 import os
@@ -14,7 +13,7 @@ from pathlib import Path
 import time
 
 for name in ("OMP_NUM_THREADS", "MKL_NUM_THREADS", "OPENBLAS_NUM_THREADS"):
-    os.environ.setdefault(name, "1")
+    os.environ[name] = "1"
 
 import matplotlib
 
@@ -27,10 +26,12 @@ from scipy.sparse.csgraph import connected_components, dijkstra
 from benchmark import erp_protocol, methods, metrics, protocol
 from candidates import oaster_rebuilt
 import protected_multilayer as protected
+import run_strict_oaster as archive
 
 root = Path(__file__).resolve().parent
 parser = argparse.ArgumentParser(description=__doc__)
-parser.add_argument("--output", type=Path, default=root / "results/erp_whole_head/adaptive_v4/shape_challenge")
+parser.add_argument("--algorithm-version", choices=("v4", "v5"), default="v4")
+parser.add_argument("--output", type=Path)
 parser.add_argument("--data-root", type=Path, default=root / "corrected_v2/generated")
 parser.add_argument("--sample-path", type=Path, default=Path(os.environ.get("MNE_SAMPLE_PATH", r"D:\mne_data\MNE-sample-data")))
 parser.add_argument("--self-check", action="store_true")
@@ -38,15 +39,26 @@ parser.add_argument("--case-limit", type=int, default=12)
 parser.add_argument("--mrf-strength", type=float, default=0.5)
 parser.add_argument("--edge-fraction", type=float, default=0.5)
 parser.add_argument("--noise-multiplier", type=float, default=1.0,
-                    help="v4 regularization multiplier; does not change simulated SNR")
+                    help="adaptive regularization multiplier; does not change simulated SNR")
 args = parser.parse_args()
+if args.output is None:
+    args.output = root / f"results/erp_whole_head/adaptive_{args.algorithm_version}/shape_challenge"
+if not args.self_check and (args.output / "metrics.csv").exists():
+    parser.error(f"refusing to overwrite existing results: {args.output / 'metrics.csv'}")
 if not 1 <= args.case_limit <= 12:
     parser.error("--case-limit must be in [1, 12]")
 if (not np.isfinite([args.mrf_strength, args.edge_fraction, args.noise_multiplier]).all()
         or not 0 <= args.mrf_strength < 1 or args.edge_fraction < 0 or args.noise_multiplier <= 0):
     parser.error("require finite 0 <= mrf-strength < 1, edge-fraction >= 0, noise-multiplier > 0")
-v4_parameters = {"mrf_strength": args.mrf_strength, "edge_fraction": args.edge_fraction,
-                 "noise_multiplier": args.noise_multiplier}
+adaptive_parameters = {"mrf_strength": args.mrf_strength, "edge_fraction": args.edge_fraction,
+                       "noise_multiplier": args.noise_multiplier}
+if args.algorithm_version == "v5":
+    from candidates.oaster_balanced import reconstruct_evoked_oaster_v5_from_whitened as adaptive_solver
+    adaptive_parameters.update(calibration="layer", temporal_mode="smooth", solver_kind="admm",
+                               outer_iterations=20, max_iter=2000, max_inner_retries=2,
+                               tolerance=.001, outer_tolerance=.01)
+else:
+    from candidates.oaster_adaptive import reconstruct_evoked_oaster_v4_from_whitened as adaptive_solver
 seed_root = 20260922
 snr_pairs = ((-10, -10), (5, 5), (-10, 20))
 specifications = (
@@ -102,16 +114,19 @@ assert baseline.any() and active_mask.any() and np.all(active_mask[active])
 print(json.dumps(shapes, ensure_ascii=False, indent=2), flush=True)
 if args.self_check:
     assert shapes[0]["surface_count"] < shapes[1]["surface_count"]
-    print("PASS: four connected, non-Gaussian source configurations; no inverse jobs run.")
+    assert args.algorithm_version in adaptive_solver.__name__
+    print(f"PASS: four connected, non-Gaussian source configurations; v3/{args.algorithm_version}; "
+          f"output={args.output}; no inverse jobs run.")
     raise SystemExit(0)
 
 # %% 两版本接收同一白化观测。固定每病例的随机种子，保留真值、估计和收敛记录。
-from candidates.oaster_adaptive import reconstruct_evoked_oaster_v4_from_whitened
-
 args.output.mkdir(parents=True, exist_ok=True)
-code_paths = [Path(__file__), root / "candidates/oaster_adaptive.py",
+adaptive_code = ([root / "candidates/oaster_adaptive.py"] if args.algorithm_version == "v4" else
+                 [root / "candidates/oaster_balanced.py", root / "candidates/graph_reweight_solver.py"])
+code_paths = [Path(__file__), *adaptive_code, root / "algorithms/spatial_fused_fusion.py",
               Path(oaster_rebuilt.__file__), Path(erp_protocol.__file__),
-              Path(methods.__file__), Path(metrics.__file__)]
+              Path(methods.__file__), Path(metrics.__file__), Path(protocol.__file__),
+              Path(protected.__file__), Path(archive.__file__)]
 code_sha256 = {str(path.relative_to(root)): hashlib.sha256(path.read_bytes()).hexdigest()
                for path in code_paths}
 kernels = protected.connected_euclidean_surface_kernels(
@@ -120,6 +135,7 @@ kernels = protected.connected_euclidean_surface_kernels(
 rows = []
 cases = []
 display_maps = {}
+run_started = time.perf_counter()
 for shape_number, shape in enumerate(shapes):
     patch = np.asarray(shape["surface_indices"], dtype=int)
     has_deep = shape["deep_index"] is not None
@@ -155,44 +171,55 @@ for shape_number, shape in enumerate(shapes):
                        "eeg_snr_db": eeg_snr, "meg_snr_db": meg_snr,
                        "actual_snr_db": [actual_eeg, actual_meg], "diagnostics": {}}
         for version, solver in (("v3", oaster_rebuilt.reconstruct_evoked_oaster_v3_from_whitened),
-                                ("v4", reconstruct_evoked_oaster_v4_from_whitened)):
+                                (args.algorithm_version, adaptive_solver)):
             started = time.perf_counter()
-            estimate, diagnostics = solver(
-                data, gain, n_surf, kernels if version == "v3" else (),
-                baseline=baseline, active_windows=(active_mask,),
-                window_channel_weights=(channel_weights,), require_one=False,
-                **({"adjacency": shared["adjacency"], **v4_parameters} if version == "v4" else {"deep_rescue_delta": -6.0}),
-            )
-            assert estimate.shape == truth.shape and np.isfinite(estimate).all()
-            score = metrics.evaluate_estimate(estimate, truth, vertices, groups, n_surf,
-                                              active, shared["auc_cortex"], baseline=baseline)
-            energy = np.sum(estimate[:n_surf, active] ** 2, axis=1)
-            selected = np.flatnonzero(energy > 0.1 * energy.max(initial=0.0))
-            intersection = np.intersect1d(patch, selected).size
-            rows.append({"case_id": case_id, "shape": shape["shape"], "parcel": shape["parcel"],
-                         "method": f"OASTER-ERP-{version}", "eeg_snr_db": eeg_snr,
-                         "meg_snr_db": meg_snr, "surface_true_count": patch.size,
-                         "surface_estimated_count": selected.size,
-                         "surface_dice_10pct_energy": 2 * intersection / (patch.size + selected.size),
-                         "elapsed_seconds": time.perf_counter() - started, **score})
-            arrays["estimate_" + version] = estimate.astype(np.float32)
-            case_record["diagnostics"][version] = diagnostics
+            print(f"{case_id}: starting {version}", flush=True)
+            row = {"case_id": case_id, "shape": shape["shape"], "parcel": shape["parcel"],
+                   "method": f"OASTER-ERP-{version}", "eeg_snr_db": eeg_snr,
+                   "meg_snr_db": meg_snr, "surface_true_count": patch.size,
+                   "surface_estimated_count": np.nan, "surface_dice_10pct_energy": np.nan,
+                   "status": "error", "error": "", "elapsed_seconds": np.nan,
+                   **{name: np.nan for name in archive.METRIC_FIELDS}}
+            try:
+                estimate, diagnostics = solver(
+                    data, gain, n_surf, kernels if version == "v3" else (),
+                    baseline=baseline, active_windows=(active_mask,),
+                    window_channel_weights=(channel_weights,), require_one=False,
+                    **({"adjacency": shared["adjacency"], **adaptive_parameters} if version != "v3" else {"deep_rescue_delta": -6.0}),
+                )
+                case_record["diagnostics"][version] = diagnostics
+                assert estimate.shape == truth.shape and np.isfinite(estimate).all()
+                score = metrics.evaluate_estimate(estimate, truth, vertices, groups, n_surf,
+                                                  active, shared["auc_cortex"], baseline=baseline)
+                energy = np.sum(estimate[:n_surf, active] ** 2, axis=1)
+                selected = np.flatnonzero(energy > 0.1 * energy.max(initial=0.0))
+                intersection = np.intersect1d(patch, selected).size
+                row.update(status="ok", surface_estimated_count=selected.size,
+                           surface_dice_10pct_energy=2 * intersection / (patch.size + selected.size), **score)
+                arrays["estimate_" + version] = estimate.astype(np.float32)
+            except Exception as error:
+                row["error"] = f"{type(error).__name__}: {error}"
+                case_record["diagnostics"].setdefault(version, {})["error"] = row["error"]
+            row["elapsed_seconds"] = time.perf_counter() - started
+            rows.append(row)
+            archive._atomic_csv(args.output / "metrics.csv", rows, rows[0].keys())
+            temporary = args.output / f"{case_id}.json.tmp"
+            temporary.write_text(json.dumps(case_record, ensure_ascii=False, indent=2,
+                default=lambda value: value.tolist() if isinstance(value, np.ndarray) else value.item()) + "\n", encoding="utf-8")
+            os.replace(temporary, args.output / f"{case_id}.json")
+            print(f"{case_id}: {version} {row['status']} in {row['elapsed_seconds']:.1f}s {row['error']}", flush=True)
         np.savez_compressed(args.output / f"{case_id}.npz", **arrays)
         cases.append(case_record)
-        if (eeg_snr, meg_snr) == (5, 5):
+        if (eeg_snr, meg_snr) == (5, 5) and all("estimate_" + version in arrays for version in ("v3", args.algorithm_version)):
             display_maps[shape_number] = [np.sum(arrays[key][:, active] ** 2, axis=1)
-                                          for key in ("truth", "estimate_v3", "estimate_v4")]
-        with (args.output / "metrics.csv").open("w", newline="", encoding="utf-8-sig") as stream:
-            writer = csv.DictWriter(stream, fieldnames=list(rows[0]))
-            writer.writeheader()
-            writer.writerows(rows)
-        print(f"{case_id}: v3/v4 complete", flush=True)
+                                          for key in ("truth", "estimate_v3", "estimate_" + args.algorithm_version)]
+        print(f"{case_id}: v3/{args.algorithm_version} complete", flush=True)
 
 # %% 图为全头坐标俯视投影，显示能量大于各层峰值10%的点，不是解剖渲染。
 if display_maps:
     fig, axes = plt.subplots(len(display_maps), 3, figsize=(12, 3.2 * len(display_maps)), squeeze=False)
     for row_number, (shape_number, maps) in enumerate(display_maps.items()):
-        for column, (label, energy) in enumerate(zip(("Truth", "OASTER v3", "OASTER v4"), maps)):
+        for column, (label, energy) in enumerate(zip(("Truth", "OASTER v3", f"OASTER {args.algorithm_version}"), maps)):
             axis = axes[row_number, column]
             axis.scatter(vertices[:n_surf, 0] * 1000, vertices[:n_surf, 1] * 1000, s=1, c="#e0e3e8", rasterized=True)
             peak = energy[:n_surf].max(initial=0.0)
@@ -210,10 +237,14 @@ assert code_sha256 == {str(path.relative_to(root)): hashlib.sha256(path.read_byt
 metadata = {"scope": "12-case non-Gaussian supplementary shape challenge, not the full-head seven-comparator benchmark",
             "seed_root": seed_root, "snr_pairs": snr_pairs, "snr_level": "evoked",
             "source_amplitude": "uniform within each connected surface patch; no Gaussian spatial truth",
-            "deep_surface_ratio": 0.5, "v4_parameters": v4_parameters, "code_sha256": code_sha256,
+            "deep_surface_ratio": 0.5, "algorithm_version": args.algorithm_version,
+            "methods": ["OASTER-ERP-v3", f"OASTER-ERP-{args.algorithm_version}"],
+            f"{args.algorithm_version}_parameters": adaptive_parameters, "code_sha256": code_sha256,
             "gain_sha256": {name: hashlib.sha256(np.ascontiguousarray(shared[name]).tobytes()).hexdigest()
                             for name in ("gain_eeg", "gain_meg")},
-            "complete": len(cases) == 12, "case_count": len(cases), "cases": cases}
+            "complete": len(cases) == 12 and all(row["status"] == "ok" for row in rows),
+            "case_count": len(cases), "error_count": sum(row["status"] != "ok" for row in rows),
+            "wall_seconds": time.perf_counter() - run_started, "cases": cases}
 (args.output / "metadata.json").write_text(json.dumps(metadata, ensure_ascii=False, indent=2,
     default=lambda value: value.tolist() if isinstance(value, np.ndarray) else value.item()) + "\n", encoding="utf-8")
 print(args.output, flush=True)
