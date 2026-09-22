@@ -15,7 +15,6 @@ parser.add_argument("--input", type=Path, default=root / "results/erp_whole_head
 parser.add_argument("--output", type=Path)
 args = parser.parse_args()
 output = args.output or args.input / "figures_pilot"
-methods = ("OASTER-ERP-v4", *style.METHODS[1:])
 pairs = ((-10, -10), (-10, 20), (5, 5), (20, -10), (20, 20))
 scenario_names = ("Surface only", "Deep only", "Deep + surface", "Deep + 2 surfaces")
 tables = {}
@@ -25,6 +24,11 @@ for name in ("rows", "summary_by_snr_pair_scenario_macro", "summary_by_snr_scena
 rows = tables["rows"]
 macro = tables["summary_by_snr_pair_scenario_macro"]
 scenarios = tables["summary_by_snr_scenario"]
+adaptive_methods = {row["method"] for row in rows if row["method"].startswith("OASTER")}
+if len(adaptive_methods) != 1 or not adaptive_methods <= {"OASTER-ERP-v4", "OASTER-ERP-v5"}:
+    raise ValueError("pilot must contain exactly one adaptive method: OASTER-ERP-v4 or OASTER-ERP-v5")
+adaptive_method = next(iter(adaptive_methods))
+methods = (adaptive_method, *style.METHODS[1:])
 assert len(rows) == 20 * 8 and all(row["status"] == "ok" for row in rows)
 assert len({row["case_id"] for row in rows}) == 20
 assert len({row["configuration_id"] for row in rows}) == 4
@@ -33,13 +37,14 @@ assert {row["method"] for row in rows} == set(methods)
 assert {row["scenario"] for row in rows} == set(style.SCENARIOS)
 assert len({(row["case_id"], row["method"]) for row in rows}) == 160
 assert len(macro) == 40 and len(scenarios) == 160
+assert {row["method"] for row in macro} == {row["method"] for row in scenarios} == set(methods)
 assert len({(row["method"], row["eeg_snr_db"], row["meg_snr_db"]) for row in macro}) == 40
 assert len({(row["method"], row["scenario"], row["eeg_snr_db"], row["meg_snr_db"]) for row in scenarios}) == 160
 output.mkdir(parents=True, exist_ok=True)
 style._style()
 colors = [style.COLORS[style._canonical_method(method)] for method in methods]
 labels = [style.DISPLAY.get(method, method) for method in methods]
-title = "20-case development pilot | 4 configurations | five SNR pairs"
+title = f"{adaptive_method} | 20-case development pilot | 4 configurations | five SNR pairs"
 
 
 # %% 逐方法指标表。均值先对场景等权，再对五个 SNR 格等权；无独立样本统计。
@@ -119,4 +124,4 @@ figure.colorbar(heat, ax=list(axes.flat), shrink=0.85, label="An_auc (0–1)")
 figure.suptitle(title + "\nOne configuration per scenario, repeated across SNR; exploratory results", fontsize=14)
 figure.savefig(output / "four_scenarios_five_snr_pilot.png", dpi=180, facecolor="white")
 plt.close(figure)
-print("Saved pilot comparison table and two figures:", output)
+print(f"Saved {adaptive_method} pilot comparison table and two figures:", output)

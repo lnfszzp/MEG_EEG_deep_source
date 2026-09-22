@@ -181,3 +181,9 @@ results/strict_blind/*_shards/
 !results/erp_whole_head/adaptive_v4/**/*.json
 !results/erp_whole_head/adaptive_v4/**/*.md
 !results/erp_whole_head/adaptive_v4/**/*.png
+!results/erp_whole_head/adaptive_v5/
+!results/erp_whole_head/adaptive_v5/**/
+!results/erp_whole_head/adaptive_v5/**/*.csv
+!results/erp_whole_head/adaptive_v5/**/*.json
+!results/erp_whole_head/adaptive_v5/**/*.md
+!results/erp_whole_head/adaptive_v5/**/*.png

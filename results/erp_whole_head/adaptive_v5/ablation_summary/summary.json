@@ -1,0 +1,19 @@
+{
+  "purpose": "paired development ablation; not independent validation; no p-values or confidence intervals",
+  "included_settings": 9,
+  "paired_case_ids": [
+    "erp-v3-development-04512-surface_only-eeg+05-meg+05",
+    "erp-v3-development-04580-deep_only-eeg+05-meg+05",
+    "erp-v3-development-04598-deep_plus_surface-eeg+05-meg+05",
+    "erp-v3-development-04666-deep_plus_two_surface-eeg+05-meg+05"
+  ],
+  "skipped": [
+    {
+      "experiment": "ablation_irls_5_5",
+      "reason": "no completion.json; unfinished or aborted"
+    }
+  ],
+  "miss_penalty_mm": 234.02911185627735,
+  "penalty_rule": "norm(ptp(shared.vertices, axis=0)) * 1000; archive._aggregate applies missing/deep-nondetection penalties",
+  "objective_audit": "Accepted log-objective deltas only: IRLS starts from recorded initial objective; ADMM starts at first recorded MM objective. Increases exceeding recorded IRLS slack or 128*eps*max(1,abs(adjacent values)) count as violations. Different solver objectives are never compared against each other."
+}

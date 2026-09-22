@@ -40,6 +40,7 @@ DEFAULT_SAMPLE_PATH = Path(
 )
 DEFAULT_OUTPUT = ROOT / "results" / "erp_whole_head" / "current_method_v1"
 DEFAULT_V4_OUTPUT = ROOT / "results" / "erp_whole_head" / "adaptive_v4" / "all_methods"
+DEFAULT_V5_OUTPUT = ROOT / "results" / "erp_whole_head" / "adaptive_v5" / "pilot_five_snr_all_methods"
 EXPECTED_CASES = 9114
 METHODS = ("OASTER-ERP",) + comparators.METHODS
 SCENARIOS = (
@@ -48,7 +49,20 @@ SCENARIOS = (
     "deep_plus_surface",
     "deep_plus_two_surface",
 )
-ALGORITHM_VERSIONS = ("v1", "v2", "v3", "v4")
+ALGORITHM_VERSIONS = ("v1", "v2", "v3", "v4", "v5")
+ADAPTIVE_VERSIONS = ("v4", "v5")
+ADAPTIVE_CODE = {
+    "v4": {
+        "oaster_adaptive": ROOT / "candidates" / "oaster_adaptive.py",
+        "graph_solver_helpers": ROOT / "algorithms" / "spatial_fused_fusion.py",
+    },
+    "v5": {
+        "oaster_balanced": ROOT / "candidates" / "oaster_balanced.py",
+        "graph_reweight_solver": ROOT / "candidates" / "graph_reweight_solver.py",
+        "graph_irls": ROOT / "candidates" / "graph_irls.py",
+        "graph_solver_helpers": ROOT / "algorithms" / "spatial_fused_fusion.py",
+    },
+}
 MODALITY_WEIGHTINGS = ("equal", "evidence")
 
 
@@ -120,6 +134,7 @@ def _oaster_method(algorithm_version: str) -> str:
         "v2": "OASTER-ERP-v2",
         "v3": "OASTER-ERP-v3",
         "v4": "OASTER-ERP-v4",
+        "v5": "OASTER-ERP-v5",
     }[algorithm_version]
 
 
@@ -130,6 +145,10 @@ def _resolve_oaster(algorithm_version: str):
         from candidates.oaster_adaptive import reconstruct_evoked_oaster_v4_from_whitened
 
         return reconstruct_evoked_oaster_v4_from_whitened
+    if algorithm_version == "v5":
+        from candidates.oaster_balanced import reconstruct_evoked_oaster_v5_from_whitened
+
+        return reconstruct_evoked_oaster_v5_from_whitened
     name = {
         "v1": "reconstruct_evoked_oaster_from_whitened",
         "v2": "reconstruct_evoked_oaster_v2_from_whitened",
@@ -350,7 +369,7 @@ def _score_case(case: dict, runtime: dict, manifest_sha256: str) -> dict[str, di
             active_windows=active_windows,
             window_channel_weights=window_channel_weights,
             require_one=False,
-            **({"adjacency": runtime["shared"]["adjacency"]} if algorithm_version == "v4" else {}),
+            **({"adjacency": runtime["shared"]["adjacency"]} if algorithm_version in ADAPTIVE_VERSIONS else {}),
             **runtime.get("oaster_kwargs", {}),
         )
         if runtime.get("diagnostics_dir") is not None:
@@ -536,7 +555,7 @@ def _write_metadata(
             "Per-case JSON in active parts_*/diagnostics; status=ok means output was "
             "computed, not that all spatial solver subproblems converged. Inspect "
             "diagnostics.windows[].solver.history and .converged."
-            if algorithm_version == "v4" else None
+            if algorithm_version in ADAPTIVE_VERSIONS else None
         ),
         "workers": workers,
         "blas_threads": {
@@ -548,10 +567,7 @@ def _write_metadata(
                 "runner": __file__,
                 "erp_protocol": erp_protocol.__file__,
                 "oaster_algorithm": oaster.__file__,
-                **({
-                    "oaster_adaptive": ROOT / "candidates" / "oaster_adaptive.py",
-                    "graph_solver_helpers": ROOT / "algorithms" / "spatial_fused_fusion.py",
-                } if algorithm_version == "v4" else {}),
+                **ADAPTIVE_CODE.get(algorithm_version, {}),
                 "comparator_algorithms": comparator_methods.__file__,
                 "metrics": benchmark_metrics.__file__,
                 "archive_io": archive.__file__,
@@ -608,14 +624,16 @@ def run(
         if algorithm_version in {"v2", "v3"}
         else {}
     )
-    if algorithm_version == "v4":
+    if algorithm_version in ADAPTIVE_VERSIONS:
         oaster_kwargs = {
             "mrf_strength": float(v4_mrf_strength),
             "edge_fraction": float(v4_edge_fraction),
             "noise_multiplier": float(v4_noise_multiplier),
         }
+    if algorithm_version == "v5":
+        oaster_kwargs.update(calibration="layer", temporal_mode="smooth", solver_kind="admm")
     if output is None:
-        output = DEFAULT_V4_OUTPUT if algorithm_version == "v4" else DEFAULT_OUTPUT
+        output = {"v4": DEFAULT_V4_OUTPUT, "v5": DEFAULT_V5_OUTPUT}.get(algorithm_version, DEFAULT_OUTPUT)
     manifest_path, data_root, output = map(Path, (manifest_path, data_root, output))
     sample_path = None if sample_path is None else Path(sample_path)
     cases, manifest_sha256 = archive._load_manifest(manifest_path)
@@ -626,7 +644,7 @@ def run(
     selected = _select_pairs(cases, snr_pairs, cases_per_scenario)
     shared = protocol.load_shared(data_root, sample_path)
     kernels = (
-        () if algorithm_version == "v4"
+        () if algorithm_version in ADAPTIVE_VERSIONS
         else protected.connected_euclidean_surface_kernels(
             shared["vertices"],
             shared["adjacency"],
@@ -652,7 +670,7 @@ def run(
             repr(float(v2_deep_rescue_delta)).encode("ascii")
         ).hexdigest()[:8]
         configuration += f"_rescue_{rescue_tag}_{rescue_sha}"
-    if algorithm_version == "v4":
+    if algorithm_version in ADAPTIVE_VERSIONS:
         configuration += (
             f"_mrf_{v4_mrf_strength:g}_edge_{v4_edge_fraction:g}_noise_{v4_noise_multiplier:g}"
         ).replace(".", "p")
@@ -666,8 +684,7 @@ def run(
         benchmark_metrics.__file__,
         archive.__file__,
         comparators.__file__,
-        *((ROOT / "candidates" / "oaster_adaptive.py",
-           ROOT / "algorithms" / "spatial_fused_fusion.py") if algorithm_version == "v4" else ()),
+        *ADAPTIVE_CODE.get(algorithm_version, {}).values(),
     )
     code_fingerprint = _code_fingerprint(fingerprint_paths)
     shared_fingerprint = _shared_fingerprint(shared)
@@ -682,7 +699,7 @@ def run(
     )
     parts = output / f"parts_{configuration}_run_{checkpoint_fingerprint[:12]}"
     parts.mkdir(parents=True, exist_ok=True)
-    diagnostics_dir = parts / "diagnostics" if algorithm_version == "v4" else None
+    diagnostics_dir = parts / "diagnostics" if algorithm_version in ADAPTIVE_VERSIONS else None
     if diagnostics_dir is not None:
         diagnostics_dir.mkdir(exist_ok=True)
         runtime["diagnostics_dir"] = diagnostics_dir
@@ -781,9 +798,9 @@ def main() -> None:
     )
     parser.add_argument("--seed-root", type=int, default=erp_protocol.ERP_SEED_ROOT)
     parser.add_argument("--oaster-only", action="store_true")
-    parser.add_argument("--v4-mrf-strength", type=float, default=0.5)
-    parser.add_argument("--v4-edge-fraction", type=float, default=0.5)
-    parser.add_argument("--v4-noise-multiplier", type=float, default=1.0)
+    parser.add_argument("--v4-mrf-strength", type=float, default=0.5, help="shared adaptive parameter for v4/v5")
+    parser.add_argument("--v4-edge-fraction", type=float, default=0.5, help="shared adaptive parameter for v4/v5")
+    parser.add_argument("--v4-noise-multiplier", type=float, default=1.0, help="shared adaptive parameter for v4/v5")
     parser.add_argument(
         "--deep-rescue-delta",
         "--v2-deep-rescue-delta",

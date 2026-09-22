@@ -1,0 +1,935 @@
+{
+  "scope": "8 existing pilot cases; read-only diagnosis, truth never used by inverse solver",
+  "seed_root": 20260921,
+  "mrf_strengths": [
+    0,
+    0.5
+  ],
+  "source_weight_rule": "max(pre-MRF sensitivity / median sensitivity, .1)^.8",
+  "null_rule": "same v4 99th percentile of 16 overlapping baseline-window maxima",
+  "smooth_temporal_rule": "Orthonormal DCT-II; retain f with exp(-0.5*(pi*f*0.1)^2)>=0.05, without data-amplitude selection; 8 modes at width 61",
+  "smooth_alternative_rules": "Same Gaussian frequency response with cutoffs .01/.001 retains 10/12 DCT modes; development-only representation ablation, not verified inverse performance",
+  "limitations": [
+    "KKT scores are at zero or after oracle subtraction, not final-solver residuals",
+    "sensor_active_snr_db and projected_snr_db use the whitened modality-weighted sensor space; raw modality SNRs are separate columns",
+    "per-layer and matched-size thresholds are diagnostic only; not validated detection thresholds",
+    "component energies are nonadditive when signals correlate",
+    "projected SNR is descriptive: its temporal basis was selected using the same noisy data"
+  ],
+  "cases": [
+    {
+      "case_id": "erp-v3-development-00000-surface_only-eeg-10-meg-10",
+      "case_number": 0,
+      "configuration_id": "erp-v3-development-source-000-surface_only",
+      "configuration_number": 0,
+      "correlation": null,
+      "deep_index": null,
+      "deep_local": null,
+      "deep_surface_ratio": null,
+      "eeg_snr_db": -10,
+      "location": 0,
+      "meg_snr_db": -10,
+      "pair_index": 0,
+      "panel": "erp_v3_development",
+      "replicate": 0,
+      "scenario": "surface_only",
+      "scenario_code": 0,
+      "seed": [
+        20260921,
+        0,
+        0,
+        0
+      ],
+      "snr_db": -10,
+      "source_case_id": "dev-0000-surface_only-snr00",
+      "surface_centers": [
+        1317
+      ],
+      "simulation": {
+        "case_id": "erp-v3-development-00000-surface_only-eeg-10-meg-10",
+        "protocol": "phase-locked-erp-v1",
+        "event_sample": 200,
+        "n_times": 601,
+        "n_trials": 40,
+        "active_window_s": [
+          0.02,
+          0.12
+        ],
+        "baseline_window_s": [
+          -0.18,
+          -0.02
+        ],
+        "groups": [
+          [
+            1125,
+            1187,
+            1215,
+            1219,
+            1256,
+            1258,
+            1290,
+            1317,
+            1319,
+            1321,
+            1352,
+            1357,
+            1359,
+            1360,
+            1362,
+            1394,
+            1477,
+            1553
+          ]
+        ],
+        "correlation_target": 0.0,
+        "correlation_actual": [
+          [
+            1.0
+          ]
+        ],
+        "waveform_assignment": [
+          0
+        ],
+        "deep_surface_ratio_actual": null,
+        "target_snr_db": {
+          "eeg": -10.0,
+          "meg": -10.0
+        },
+        "actual_snr_db": {
+          "eeg": -9.999999999999998,
+          "meg": -9.999999999999998
+        },
+        "implied_single_trial_snr_db": {
+          "eeg": -26.02059991327962,
+          "meg": -26.02059991327962
+        },
+        "snr_level": "evoked-level",
+        "noise_model": "colored Gaussian 40-trial-mean equivalent",
+        "baseline_corrected_before_snr_scaling": true,
+        "waveform_model": "phase-locked transient ERP without sinusoidal carrier",
+        "seed_root": 20260921,
+        "seed_case_key": 6990362740452156897
+      },
+      "modality_weights": [
+        0.6696065436904026,
+        1.0
+      ],
+      "temporal_basis": {
+        "active_samples": 61,
+        "temporal_rank": 3,
+        "null_edges": [
+          15.254375230865502,
+          13.934359348031135,
+          18.279753680495237
+        ]
+      },
+      "pilot_threshold_reproduced": true
+    },
+    {
+      "case_id": "erp-v3-development-00068-deep_only-eeg-10-meg-10",
+      "case_number": 68,
+      "configuration_id": "erp-v3-development-source-068-deep_only",
+      "configuration_number": 68,
+      "correlation": null,
+      "deep_index": 7498,
+      "deep_local": 0,
+      "deep_surface_ratio": null,
+      "eeg_snr_db": -10,
+      "location": 0,
+      "meg_snr_db": -10,
+      "pair_index": 0,
+      "panel": "erp_v3_development",
+      "replicate": 0,
+      "scenario": "deep_only",
+      "scenario_code": 1,
+      "seed": [
+        20260921,
+        0,
+        1,
+        68
+      ],
+      "snr_db": -10,
+      "source_case_id": "dev-0068-deep_only-snr00",
+      "surface_centers": [],
+      "simulation": {
+        "case_id": "erp-v3-development-00068-deep_only-eeg-10-meg-10",
+        "protocol": "phase-locked-erp-v1",
+        "event_sample": 200,
+        "n_times": 601,
+        "n_trials": 40,
+        "active_window_s": [
+          0.02,
+          0.12
+        ],
+        "baseline_window_s": [
+          -0.18,
+          -0.02
+        ],
+        "groups": [
+          [
+            7498
+          ]
+        ],
+        "correlation_target": 0.0,
+        "correlation_actual": [
+          [
+            1.0
+          ]
+        ],
+        "waveform_assignment": [
+          0
+        ],
+        "deep_surface_ratio_actual": null,
+        "target_snr_db": {
+          "eeg": -10.0,
+          "meg": -10.0
+        },
+        "actual_snr_db": {
+          "eeg": -10.000000000000002,
+          "meg": -10.0
+        },
+        "implied_single_trial_snr_db": {
+          "eeg": -26.02059991327962,
+          "meg": -26.02059991327962
+        },
+        "snr_level": "evoked-level",
+        "noise_model": "colored Gaussian 40-trial-mean equivalent",
+        "baseline_corrected_before_snr_scaling": true,
+        "waveform_model": "phase-locked transient ERP without sinusoidal carrier",
+        "seed_root": 20260921,
+        "seed_case_key": 3944836071524717028
+      },
+      "modality_weights": [
+        0.7147991726064101,
+        1.0
+      ],
+      "temporal_basis": {
+        "active_samples": 61,
+        "temporal_rank": 3,
+        "null_edges": [
+          15.704467866283935,
+          13.924993361043018,
+          18.096772534968537
+        ]
+      },
+      "pilot_threshold_reproduced": true
+    },
+    {
+      "case_id": "erp-v3-development-00086-deep_plus_surface-eeg-10-meg-10",
+      "case_number": 86,
+      "configuration_id": "erp-v3-development-source-086-deep_plus_surface",
+      "configuration_number": 86,
+      "correlation": 0.0,
+      "deep_index": 7498,
+      "deep_local": 0,
+      "deep_surface_ratio": 0.5,
+      "eeg_snr_db": -10,
+      "location": 0,
+      "meg_snr_db": -10,
+      "pair_index": 0,
+      "panel": "erp_v3_development",
+      "replicate": 0,
+      "scenario": "deep_plus_surface",
+      "scenario_code": 2,
+      "seed": [
+        20260921,
+        0,
+        2,
+        86
+      ],
+      "snr_db": -10,
+      "source_case_id": "dev-0086-deep_plus_surface-snr00",
+      "surface_centers": [
+        1317
+      ],
+      "simulation": {
+        "case_id": "erp-v3-development-00086-deep_plus_surface-eeg-10-meg-10",
+        "protocol": "phase-locked-erp-v1",
+        "event_sample": 200,
+        "n_times": 601,
+        "n_trials": 40,
+        "active_window_s": [
+          0.02,
+          0.12
+        ],
+        "baseline_window_s": [
+          -0.18,
+          -0.02
+        ],
+        "groups": [
+          [
+            1125,
+            1187,
+            1215,
+            1219,
+            1256,
+            1258,
+            1290,
+            1317,
+            1319,
+            1321,
+            1352,
+            1357,
+            1359,
+            1360,
+            1362,
+            1394,
+            1477,
+            1553
+          ],
+          [
+            7498
+          ]
+        ],
+        "correlation_target": 0.0,
+        "correlation_actual": [
+          [
+            1.0,
+            3.3260264511682125e-17
+          ],
+          [
+            3.3260264511682125e-17,
+            1.0
+          ]
+        ],
+        "waveform_assignment": [
+          0,
+          1
+        ],
+        "deep_surface_ratio_actual": 0.5,
+        "target_snr_db": {
+          "eeg": -10.0,
+          "meg": -10.0
+        },
+        "actual_snr_db": {
+          "eeg": -9.999999999999998,
+          "meg": -10.0
+        },
+        "implied_single_trial_snr_db": {
+          "eeg": -26.02059991327962,
+          "meg": -26.02059991327962
+        },
+        "snr_level": "evoked-level",
+        "noise_model": "colored Gaussian 40-trial-mean equivalent",
+        "baseline_corrected_before_snr_scaling": true,
+        "waveform_model": "phase-locked transient ERP without sinusoidal carrier",
+        "seed_root": 20260921,
+        "seed_case_key": 15357084776640117990
+      },
+      "modality_weights": [
+        0.7007495698887501,
+        1.0
+      ],
+      "temporal_basis": {
+        "active_samples": 61,
+        "temporal_rank": 3,
+        "null_edges": [
+          15.442087925565922,
+          14.17668856005557,
+          18.08657013633286
+        ]
+      },
+      "pilot_threshold_reproduced": true
+    },
+    {
+      "case_id": "erp-v3-development-00154-deep_plus_two_surface-eeg-10-meg-10",
+      "case_number": 154,
+      "configuration_id": "erp-v3-development-source-154-deep_plus_two_surface",
+      "configuration_number": 154,
+      "correlation": 0.0,
+      "deep_index": 7498,
+      "deep_local": 0,
+      "deep_surface_ratio": 0.5,
+      "eeg_snr_db": -10,
+      "location": 0,
+      "meg_snr_db": -10,
+      "pair_index": 0,
+      "panel": "erp_v3_development",
+      "replicate": 0,
+      "scenario": "deep_plus_two_surface",
+      "scenario_code": 3,
+      "seed": [
+        20260921,
+        0,
+        3,
+        154
+      ],
+      "snr_db": -10,
+      "source_case_id": "dev-0154-deep_plus_two_surface-snr00",
+      "surface_centers": [
+        1317,
+        7204
+      ],
+      "simulation": {
+        "case_id": "erp-v3-development-00154-deep_plus_two_surface-eeg-10-meg-10",
+        "protocol": "phase-locked-erp-v1",
+        "event_sample": 200,
+        "n_times": 601,
+        "n_trials": 40,
+        "active_window_s": [
+          0.02,
+          0.12
+        ],
+        "baseline_window_s": [
+          -0.18,
+          -0.02
+        ],
+        "groups": [
+          [
+            1125,
+            1187,
+            1215,
+            1219,
+            1256,
+            1258,
+            1290,
+            1317,
+            1319,
+            1321,
+            1352,
+            1357,
+            1359,
+            1360,
+            1362,
+            1394,
+            1477,
+            1553
+          ],
+          [
+            7187,
+            7188,
+            7202,
+            7204,
+            7205,
+            7227,
+            7253,
+            7258,
+            7267,
+            7280,
+            7283
+          ],
+          [
+            7498
+          ]
+        ],
+        "correlation_target": 0.0,
+        "correlation_actual": [
+          [
+            1.0,
+            -1.0035750843363578e-17,
+            -2.2159601331437788e-17
+          ],
+          [
+            -1.0035750843363576e-17,
+            0.9999999999999999,
+            -1.8885711508059485e-17
+          ],
+          [
+            -2.215960133143779e-17,
+            -1.8885711508059485e-17,
+            0.9999999999999999
+          ]
+        ],
+        "waveform_assignment": [
+          0,
+          1,
+          2
+        ],
+        "deep_surface_ratio_actual": 0.49999999999999994,
+        "target_snr_db": {
+          "eeg": -10.0,
+          "meg": -10.0
+        },
+        "actual_snr_db": {
+          "eeg": -10.0,
+          "meg": -9.999999999999998
+        },
+        "implied_single_trial_snr_db": {
+          "eeg": -26.02059991327962,
+          "meg": -26.02059991327962
+        },
+        "snr_level": "evoked-level",
+        "noise_model": "colored Gaussian 40-trial-mean equivalent",
+        "baseline_corrected_before_snr_scaling": true,
+        "waveform_model": "phase-locked transient ERP without sinusoidal carrier",
+        "seed_root": 20260921,
+        "seed_case_key": 7369386268397949072
+      },
+      "modality_weights": [
+        0.6232090445420106,
+        1.0
+      ],
+      "temporal_basis": {
+        "active_samples": 61,
+        "temporal_rank": 3,
+        "null_edges": [
+          15.135621819330007,
+          14.042112956969628,
+          17.809349348436474
+        ]
+      },
+      "pilot_threshold_reproduced": true
+    },
+    {
+      "case_id": "erp-v3-development-04512-surface_only-eeg+05-meg+05",
+      "case_number": 4512,
+      "configuration_id": "erp-v3-development-source-000-surface_only",
+      "configuration_number": 0,
+      "correlation": null,
+      "deep_index": null,
+      "deep_local": null,
+      "deep_surface_ratio": null,
+      "eeg_snr_db": 5,
+      "location": 0,
+      "meg_snr_db": 5,
+      "pair_index": 24,
+      "panel": "erp_v3_development",
+      "replicate": 0,
+      "scenario": "surface_only",
+      "scenario_code": 0,
+      "seed": [
+        20260921,
+        24,
+        0,
+        0
+      ],
+      "snr_db": 5,
+      "source_case_id": "dev-0000-surface_only-snr00",
+      "surface_centers": [
+        1317
+      ],
+      "simulation": {
+        "case_id": "erp-v3-development-04512-surface_only-eeg+05-meg+05",
+        "protocol": "phase-locked-erp-v1",
+        "event_sample": 200,
+        "n_times": 601,
+        "n_trials": 40,
+        "active_window_s": [
+          0.02,
+          0.12
+        ],
+        "baseline_window_s": [
+          -0.18,
+          -0.02
+        ],
+        "groups": [
+          [
+            1125,
+            1187,
+            1215,
+            1219,
+            1256,
+            1258,
+            1290,
+            1317,
+            1319,
+            1321,
+            1352,
+            1357,
+            1359,
+            1360,
+            1362,
+            1394,
+            1477,
+            1553
+          ]
+        ],
+        "correlation_target": 0.0,
+        "correlation_actual": [
+          [
+            1.0
+          ]
+        ],
+        "waveform_assignment": [
+          0
+        ],
+        "deep_surface_ratio_actual": null,
+        "target_snr_db": {
+          "eeg": 5.0,
+          "meg": 5.0
+        },
+        "actual_snr_db": {
+          "eeg": 5.000000000000001,
+          "meg": 5.0
+        },
+        "implied_single_trial_snr_db": {
+          "eeg": -11.020599913279622,
+          "meg": -11.020599913279622
+        },
+        "snr_level": "evoked-level",
+        "noise_model": "colored Gaussian 40-trial-mean equivalent",
+        "baseline_corrected_before_snr_scaling": true,
+        "waveform_model": "phase-locked transient ERP without sinusoidal carrier",
+        "seed_root": 20260921,
+        "seed_case_key": 5058053379337942597
+      },
+      "modality_weights": [
+        0.8308282108527371,
+        1.0
+      ],
+      "temporal_basis": {
+        "active_samples": 61,
+        "temporal_rank": 3,
+        "null_edges": [
+          16.469491740126447,
+          15.051192800297624,
+          19.797419942450155
+        ]
+      },
+      "pilot_threshold_reproduced": true
+    },
+    {
+      "case_id": "erp-v3-development-04580-deep_only-eeg+05-meg+05",
+      "case_number": 4580,
+      "configuration_id": "erp-v3-development-source-068-deep_only",
+      "configuration_number": 68,
+      "correlation": null,
+      "deep_index": 7498,
+      "deep_local": 0,
+      "deep_surface_ratio": null,
+      "eeg_snr_db": 5,
+      "location": 0,
+      "meg_snr_db": 5,
+      "pair_index": 24,
+      "panel": "erp_v3_development",
+      "replicate": 0,
+      "scenario": "deep_only",
+      "scenario_code": 1,
+      "seed": [
+        20260921,
+        24,
+        1,
+        68
+      ],
+      "snr_db": 5,
+      "source_case_id": "dev-0068-deep_only-snr00",
+      "surface_centers": [],
+      "simulation": {
+        "case_id": "erp-v3-development-04580-deep_only-eeg+05-meg+05",
+        "protocol": "phase-locked-erp-v1",
+        "event_sample": 200,
+        "n_times": 601,
+        "n_trials": 40,
+        "active_window_s": [
+          0.02,
+          0.12
+        ],
+        "baseline_window_s": [
+          -0.18,
+          -0.02
+        ],
+        "groups": [
+          [
+            7498
+          ]
+        ],
+        "correlation_target": 0.0,
+        "correlation_actual": [
+          [
+            1.0
+          ]
+        ],
+        "waveform_assignment": [
+          0
+        ],
+        "deep_surface_ratio_actual": null,
+        "target_snr_db": {
+          "eeg": 5.0,
+          "meg": 5.0
+        },
+        "actual_snr_db": {
+          "eeg": 5.000000000000001,
+          "meg": 5.000000000000001
+        },
+        "implied_single_trial_snr_db": {
+          "eeg": -11.020599913279622,
+          "meg": -11.020599913279622
+        },
+        "snr_level": "evoked-level",
+        "noise_model": "colored Gaussian 40-trial-mean equivalent",
+        "baseline_corrected_before_snr_scaling": true,
+        "waveform_model": "phase-locked transient ERP without sinusoidal carrier",
+        "seed_root": 20260921,
+        "seed_case_key": 14363125076805813040
+      },
+      "modality_weights": [
+        0.5515196609118291,
+        1.0
+      ],
+      "temporal_basis": {
+        "active_samples": 61,
+        "temporal_rank": 3,
+        "null_edges": [
+          14.81171521558,
+          13.622684219358375,
+          17.676221944616152
+        ]
+      },
+      "pilot_threshold_reproduced": true
+    },
+    {
+      "case_id": "erp-v3-development-04598-deep_plus_surface-eeg+05-meg+05",
+      "case_number": 4598,
+      "configuration_id": "erp-v3-development-source-086-deep_plus_surface",
+      "configuration_number": 86,
+      "correlation": 0.0,
+      "deep_index": 7498,
+      "deep_local": 0,
+      "deep_surface_ratio": 0.5,
+      "eeg_snr_db": 5,
+      "location": 0,
+      "meg_snr_db": 5,
+      "pair_index": 24,
+      "panel": "erp_v3_development",
+      "replicate": 0,
+      "scenario": "deep_plus_surface",
+      "scenario_code": 2,
+      "seed": [
+        20260921,
+        24,
+        2,
+        86
+      ],
+      "snr_db": 5,
+      "source_case_id": "dev-0086-deep_plus_surface-snr00",
+      "surface_centers": [
+        1317
+      ],
+      "simulation": {
+        "case_id": "erp-v3-development-04598-deep_plus_surface-eeg+05-meg+05",
+        "protocol": "phase-locked-erp-v1",
+        "event_sample": 200,
+        "n_times": 601,
+        "n_trials": 40,
+        "active_window_s": [
+          0.02,
+          0.12
+        ],
+        "baseline_window_s": [
+          -0.18,
+          -0.02
+        ],
+        "groups": [
+          [
+            1125,
+            1187,
+            1215,
+            1219,
+            1256,
+            1258,
+            1290,
+            1317,
+            1319,
+            1321,
+            1352,
+            1357,
+            1359,
+            1360,
+            1362,
+            1394,
+            1477,
+            1553
+          ],
+          [
+            7498
+          ]
+        ],
+        "correlation_target": 0.0,
+        "correlation_actual": [
+          [
+            1.0,
+            3.3260264511682125e-17
+          ],
+          [
+            3.3260264511682125e-17,
+            1.0
+          ]
+        ],
+        "waveform_assignment": [
+          0,
+          1
+        ],
+        "deep_surface_ratio_actual": 0.5,
+        "target_snr_db": {
+          "eeg": 5.0,
+          "meg": 5.0
+        },
+        "actual_snr_db": {
+          "eeg": 5.0,
+          "meg": 5.000000000000001
+        },
+        "implied_single_trial_snr_db": {
+          "eeg": -11.020599913279622,
+          "meg": -11.020599913279622
+        },
+        "snr_level": "evoked-level",
+        "noise_model": "colored Gaussian 40-trial-mean equivalent",
+        "baseline_corrected_before_snr_scaling": true,
+        "waveform_model": "phase-locked transient ERP without sinusoidal carrier",
+        "seed_root": 20260921,
+        "seed_case_key": 450707801505971073
+      },
+      "modality_weights": [
+        0.8232608861543973,
+        1.0
+      ],
+      "temporal_basis": {
+        "active_samples": 61,
+        "temporal_rank": 3,
+        "null_edges": [
+          16.330460843099463,
+          14.746159603737205,
+          19.23207985550403
+        ]
+      },
+      "pilot_threshold_reproduced": true
+    },
+    {
+      "case_id": "erp-v3-development-04666-deep_plus_two_surface-eeg+05-meg+05",
+      "case_number": 4666,
+      "configuration_id": "erp-v3-development-source-154-deep_plus_two_surface",
+      "configuration_number": 154,
+      "correlation": 0.0,
+      "deep_index": 7498,
+      "deep_local": 0,
+      "deep_surface_ratio": 0.5,
+      "eeg_snr_db": 5,
+      "location": 0,
+      "meg_snr_db": 5,
+      "pair_index": 24,
+      "panel": "erp_v3_development",
+      "replicate": 0,
+      "scenario": "deep_plus_two_surface",
+      "scenario_code": 3,
+      "seed": [
+        20260921,
+        24,
+        3,
+        154
+      ],
+      "snr_db": 5,
+      "source_case_id": "dev-0154-deep_plus_two_surface-snr00",
+      "surface_centers": [
+        1317,
+        7204
+      ],
+      "simulation": {
+        "case_id": "erp-v3-development-04666-deep_plus_two_surface-eeg+05-meg+05",
+        "protocol": "phase-locked-erp-v1",
+        "event_sample": 200,
+        "n_times": 601,
+        "n_trials": 40,
+        "active_window_s": [
+          0.02,
+          0.12
+        ],
+        "baseline_window_s": [
+          -0.18,
+          -0.02
+        ],
+        "groups": [
+          [
+            1125,
+            1187,
+            1215,
+            1219,
+            1256,
+            1258,
+            1290,
+            1317,
+            1319,
+            1321,
+            1352,
+            1357,
+            1359,
+            1360,
+            1362,
+            1394,
+            1477,
+            1553
+          ],
+          [
+            7187,
+            7188,
+            7202,
+            7204,
+            7205,
+            7227,
+            7253,
+            7258,
+            7267,
+            7280,
+            7283
+          ],
+          [
+            7498
+          ]
+        ],
+        "correlation_target": 0.0,
+        "correlation_actual": [
+          [
+            1.0,
+            -1.0035750843363578e-17,
+            -2.2159601331437788e-17
+          ],
+          [
+            -1.0035750843363576e-17,
+            0.9999999999999999,
+            -1.8885711508059485e-17
+          ],
+          [
+            -2.215960133143779e-17,
+            -1.8885711508059485e-17,
+            0.9999999999999999
+          ]
+        ],
+        "waveform_assignment": [
+          0,
+          1,
+          2
+        ],
+        "deep_surface_ratio_actual": 0.49999999999999994,
+        "target_snr_db": {
+          "eeg": 5.0,
+          "meg": 5.0
+        },
+        "actual_snr_db": {
+          "eeg": 4.999999999999999,
+          "meg": 5.0
+        },
+        "implied_single_trial_snr_db": {
+          "eeg": -11.020599913279622,
+          "meg": -11.020599913279622
+        },
+        "snr_level": "evoked-level",
+        "noise_model": "colored Gaussian 40-trial-mean equivalent",
+        "baseline_corrected_before_snr_scaling": true,
+        "waveform_model": "phase-locked transient ERP without sinusoidal carrier",
+        "seed_root": 20260921,
+        "seed_case_key": 12566699813794169195
+      },
+      "modality_weights": [
+        0.6741921717054489,
+        1.0
+      ],
+      "temporal_basis": {
+        "active_samples": 61,
+        "temporal_rank": 3,
+        "null_edges": [
+          15.349166901283295,
+          14.163542359309524,
+          18.216910096901827
+        ]
+      },
+      "pilot_threshold_reproduced": true
+    }
+  ],
+  "manifest_sha256": "0989782ea769bc0a698e8e6f250795ee829398afc5984a904eeb9544a32432b5",
+  "code_sha256": {
+    "作者风格版\\17-浅深源可辨识诊断.py": "5f82e136f137d9ca5ae07825fb150dd8f1273e2bd8686ddd2d2fb9c8b2e9b199",
+    "benchmark\\erp_protocol.py": "f74f9b1dd33036105d50d4ccd6242c1a068cb090fe4a234eb7736f8071e16647",
+    "benchmark\\methods.py": "1625c67d91d20112d711a3d77de175ed0509c1acfa45c1561845f6761c307dcf",
+    "candidates\\oaster_rebuilt.py": "4032f015ed06df64df3ad10d128b67605c49fb76a2e5bef302ed5160519e00f0",
+    "candidates\\oaster_adaptive.py": "c95e8dd3906aa3a6fafd68112ead976b6505dcea82927b6face63b2f2318582e"
+  }
+}

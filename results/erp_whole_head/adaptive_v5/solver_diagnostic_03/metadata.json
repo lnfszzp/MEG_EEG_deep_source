@@ -1,0 +1,21 @@
+{
+  "case_id": "erp-v3-development-09110-deep_plus_surface-eeg+20-meg+20",
+  "manifest_sha256": "0989782ea769bc0a698e8e6f250795ee829398afc5984a904eeb9544a32432b5",
+  "purpose": "Numerical solver comparison on the unchanged v4 spatial model; not a v5 efficacy claim.",
+  "command_settings": {
+    "output": "results/erp_whole_head/adaptive_v5/solver_diagnostic_03",
+    "ranks": "8",
+    "outer_iterations": 1,
+    "max_iter": 2000
+  },
+  "code_fingerprint": "7256cb74216bf3bbac139c61a8f877a0d9520d6f751bede3203f411c1c1d6447",
+  "environment": {
+    "python": "3.13.15",
+    "numpy": "2.5.2",
+    "scipy": "1.18.1",
+    "mne": "1.12.1",
+    "OMP_NUM_THREADS": "1",
+    "MKL_NUM_THREADS": "1",
+    "OPENBLAS_NUM_THREADS": "1"
+  }
+}

@@ -1,5 +1,7 @@
 import hashlib
 import json
+import sys
+from types import SimpleNamespace
 
 import numpy as np
 import pytest
@@ -13,6 +15,16 @@ def test_v3_entry_point_is_explicitly_versioned() -> None:
         runner._resolve_oaster("v3")
         is runner.oaster.reconstruct_evoked_oaster_v3_from_whitened
     )
+
+
+def test_v5_entry_point_is_separate_from_v4(monkeypatch):
+    solver = object()
+    monkeypatch.setitem(sys.modules, "candidates.oaster_balanced", SimpleNamespace(
+        reconstruct_evoked_oaster_v5_from_whitened=solver,
+    ))
+    assert runner._oaster_method("v5") == "OASTER-ERP-v5"
+    assert runner._resolve_oaster("v5") is solver
+    assert runner._checkpoint_fingerprint("m", "c", "s", {}, {"version": "v4"}) != runner._checkpoint_fingerprint("m", "c", "s", {}, {"version": "v5"})
 
 
 def _case(number, scenario="surface_only"):
@@ -267,7 +279,7 @@ def test_v2_evidence_dispatch_uses_retained_whitened_rows(monkeypatch):
     np.testing.assert_allclose(captured["weights"], [1.0, 0.61237244, 0.61237244])
 
 
-@pytest.mark.parametrize("version", ("v1", "v4"))
+@pytest.mark.parametrize("version", ("v1", "v4", "v5"))
 def test_oaster_only_returns_before_comparators(monkeypatch, tmp_path, version):
     case = _case(0)
     baseline = np.array([1, 1, 0, 0], dtype=bool)
@@ -300,7 +312,7 @@ def test_oaster_only_returns_before_comparators(monkeypatch, tmp_path, version):
 
     def solver(_data, _gain, _n_surf, kernels, **kwargs):
         assert kernels == ()
-        if version == "v4":
+        if version in runner.ADAPTIVE_VERSIONS:
             assert kwargs["adjacency"] is adjacency
         else:
             assert "adjacency" not in kwargs
@@ -325,21 +337,21 @@ def test_oaster_only_returns_before_comparators(monkeypatch, tmp_path, version):
         "oaster_solver": solver,
         "methods": (method,),
     }
-    if version == "v4":
+    if version in runner.ADAPTIVE_VERSIONS:
         runtime["diagnostics_dir"] = tmp_path
 
     rows = runner._score_case(case, runtime, "digest")
 
     assert tuple(rows) == (method,)
     assert rows[method]["status"] == "ok"
-    if version == "v4":
+    if version in runner.ADAPTIVE_VERSIONS:
         diagnostics = json.loads((tmp_path / "case_00000.json").read_text())
         assert diagnostics["case_id"] == case["case_id"]
         assert diagnostics["diagnostics"]["windows"][0]["solver"]["converged"] is False
         assert diagnostics["diagnostics"]["windows"][0]["solver"]["history"][0]["iterations"] == 300
 
 
-@pytest.mark.parametrize("version", ("v1", "v4"))
+@pytest.mark.parametrize("version", ("v1", "v4", "v5"))
 def test_pair_checkpoint_resumes_without_rescoring(tmp_path, monkeypatch, version):
     cases = [_case(index, scenario) for index, scenario in enumerate(runner.SCENARIOS)]
     manifest = tmp_path / "manifest.json"
@@ -362,7 +374,7 @@ def test_pair_checkpoint_resumes_without_rescoring(tmp_path, monkeypatch, versio
     }
     monkeypatch.setattr(runner.protocol, "load_shared", lambda *_args: shared)
     def kernels(*_args, **_kwargs):
-        assert version != "v4", "v4 must not build Gaussian templates"
+        assert version not in runner.ADAPTIVE_VERSIONS, "adaptive methods must not build Gaussian templates"
         return ()
 
     monkeypatch.setattr(
@@ -414,9 +426,10 @@ def test_pair_checkpoint_resumes_without_rescoring(tmp_path, monkeypatch, versio
     assert metadata["oaster_algorithm_version"] == version
     assert metadata["oaster_modality_weighting"] == "equal"
     assert metadata["erp_seed_root"] == runner.erp_protocol.ERP_SEED_ROOT
-    if version == "v4":
+    if version in runner.ADAPTIVE_VERSIONS:
         assert metadata["oaster_kwargs"] == {
             "mrf_strength": 0.5, "edge_fraction": 0.5, "noise_multiplier": 1.0,
+            **({"calibration": "layer", "temporal_mode": "smooth", "solver_kind": "admm"} if version == "v5" else {}),
         }
     assert len(metadata["checkpoint_shared_fingerprint"]) == 64
     assert len(metadata["checkpoint_fingerprint"]) == 64
@@ -436,7 +449,7 @@ def test_pair_checkpoint_resumes_without_rescoring(tmp_path, monkeypatch, versio
     fingerprint[0] = "b" * 64
     runner.run(manifest, tmp_path, None, output, workers=1, algorithm_version=version)
     assert scored == [case["case_id"] for case in cases]
-    if version == "v4":
+    if version in runner.ADAPTIVE_VERSIONS:
         for path in output.glob("parts_*/diagnostics/case_00000.json"):
             path.unlink()
         scored.clear()
@@ -444,24 +457,26 @@ def test_pair_checkpoint_resumes_without_rescoring(tmp_path, monkeypatch, versio
         assert scored == [case["case_id"] for case in cases]
         previous = json.loads((output / "metadata.json").read_text(encoding="utf-8"))
         scored.clear()
-        runner.run(manifest, tmp_path, None, output, workers=1, algorithm_version="v4",
+        runner.run(manifest, tmp_path, None, output, workers=1, algorithm_version=version,
                    v4_mrf_strength=0.8, v4_edge_fraction=2.0, v4_noise_multiplier=0.6)
         assert scored == [case["case_id"] for case in cases]
         updated = json.loads((output / "metadata.json").read_text(encoding="utf-8"))
         assert updated["checkpoint_fingerprint"] != previous["checkpoint_fingerprint"]
         assert updated["oaster_kwargs"] == {
             "mrf_strength": 0.8, "edge_fraction": 2.0, "noise_multiplier": 0.6,
+            **({"calibration": "layer", "temporal_mode": "smooth", "solver_kind": "admm"} if version == "v5" else {}),
         }
 
 
-def test_method_cli_selects_v4_and_preserves_comparators(monkeypatch):
+@pytest.mark.parametrize("version", ("v4", "v5"))
+def test_method_cli_selects_adaptive_version_and_preserves_comparators(monkeypatch, version):
     calls = []
-    monkeypatch.setattr("sys.argv", ["run_erp_whole_head_matrix.py", "--method", "OASTER-ERP-v4",
+    monkeypatch.setattr("sys.argv", ["run_erp_whole_head_matrix.py", "--method", runner._oaster_method(version),
                         "--v4-mrf-strength", "0.8", "--v4-edge-fraction", "2",
                         "--v4-noise-multiplier", "0.6"])
     monkeypatch.setattr(runner, "run", lambda *_args, **kwargs: calls.append(kwargs))
     runner.main()
-    assert calls[0]["algorithm_version"] == "v4"
+    assert calls[0]["algorithm_version"] == version
     assert calls[0]["oaster_only"] is False
     assert calls[0]["v4_mrf_strength"] == 0.8
     assert calls[0]["v4_edge_fraction"] == 2.0

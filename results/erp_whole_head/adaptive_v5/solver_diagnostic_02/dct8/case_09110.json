@@ -1,0 +1,80 @@
+{
+  "case_id": "erp-v3-development-09110-deep_plus_surface-eeg+20-meg+20",
+  "method": "OASTER-ERP-v4",
+  "manifest_sha256": "0989782ea769bc0a698e8e6f250795ee829398afc5984a904eeb9544a32432b5",
+  "parameters": {
+    "mrf_strength": 0.5,
+    "outer_iterations": 1,
+    "max_iter": 1000,
+    "tolerance": 0.001
+  },
+  "diagnostics": {
+    "mode": "adaptive_source_and_edge_logsum_full_grid",
+    "windows": [
+      {
+        "active_samples": 61,
+        "temporal_rank": 8,
+        "basis": "fixed_DCT8_performance_check",
+        "source_lambda": 9.5280685074301,
+        "edge_lambda": 0.8377281621565537,
+        "solver": {
+          "history": [
+            {
+              "outer": 0,
+              "iterations": 3000,
+              "retries": 2,
+              "converged": false,
+              "primal_relative": 9.174818190902592e-05,
+              "dual_relative": 3.9221207194448315e-05,
+              "surrogate_reference": 577258.6247928182,
+              "surrogate_objective": 15203.575113098515,
+              "surrogate_roundoff": 1.640667690005609e-08,
+              "primal_dual_gap": 19.599961805870407,
+              "primal_dual_gap_relative": 0.0012891679529365577,
+              "dual_scale": 0.9986294412543653,
+              "dual_candidate": "admm_linear_residual",
+              "source_dual_violation": 0.0,
+              "log_objective": 6896.742542721124,
+              "local_stationarity_gap_relative": 0.8236127044403103,
+              "relative_change": 1.0,
+              "accepted_step": 1.0,
+              "rho": 1.0,
+              "rho_updates": 0,
+              "active_rows": 67
+            }
+          ],
+          "converged": false,
+          "inner_converged": false,
+          "outer_converged": false,
+          "final_stationarity_gap_relative": 0.0012891679529365577,
+          "numerical_stall": false,
+          "descent_guard_triggered": false,
+          "amplitude_epsilon": 6.1041994956463945,
+          "edge_epsilon": 2.6990724998281688,
+          "amplitude_weight_range": [
+            0.04761904761904763,
+            1.0
+          ],
+          "edge_weight_range": [
+            0.04761904761904762,
+            1.0
+          ],
+          "rho_initial": 1.0,
+          "rho_final": 1.0,
+          "rho_updates": 0,
+          "outer_tolerance": 0.01,
+          "adaptive_rho": true,
+          "convergence_note": "Feasible primal-dual bound for the current convex MM surrogate; no global-optimality claim for log-sum."
+        },
+        "response_condition": 81.18559273559875,
+        "null_rule": "99th percentile of up to 16 overlapping baseline projections; heuristic, not p-value"
+      }
+    ],
+    "selected_templates": [],
+    "graph_edges": 21320,
+    "deep_graph_edges": 0,
+    "spatial_templates_used": false,
+    "mrf_strength": 0.5,
+    "weighting_coordinates": "MRF_current_innovation"
+  }
+}
