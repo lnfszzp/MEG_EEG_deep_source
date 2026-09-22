@@ -187,3 +187,11 @@ results/strict_blind/*_shards/
 !results/erp_whole_head/adaptive_v5/**/*.json
 !results/erp_whole_head/adaptive_v5/**/*.md
 !results/erp_whole_head/adaptive_v5/**/*.png
+!results/erp_whole_head/adaptive_v6/
+!results/erp_whole_head/adaptive_v6/**/
+!results/erp_whole_head/adaptive_v6/**/*.csv
+!results/erp_whole_head/adaptive_v6/**/*.json
+!results/erp_whole_head/adaptive_v6/**/*.sha256
+!results/erp_whole_head/adaptive_v6/**/*.md
+!results/erp_whole_head/adaptive_v6/**/*.png
+!results/erp_whole_head/adaptive_v6/development_diagnosis/deep_leakage_saved_arrays.py
