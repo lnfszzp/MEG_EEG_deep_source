@@ -1,0 +1,69 @@
+{
+  "case_id": "erp-v3-development-04666-deep_plus_two_surface-eeg+05-meg+05",
+  "method": "OASTER-ERP-v4",
+  "manifest_sha256": "0989782ea769bc0a698e8e6f250795ee829398afc5984a904eeb9544a32432b5",
+  "parameters": {
+    "edge_fraction": 10.0,
+    "noise_multiplier": 1.0
+  },
+  "diagnostics": {
+    "mode": "adaptive_source_and_edge_logsum_full_grid",
+    "windows": [
+      {
+        "active_samples": 61,
+        "temporal_rank": 3,
+        "null_edges": [
+          15.349166901283299,
+          14.163542359309524,
+          18.216910096901827
+        ],
+        "source_lambda": 4.506710473992993,
+        "edge_lambda": 7.9247924798310185,
+        "solver": {
+          "history": [
+            {
+              "outer": 0,
+              "iterations": 600,
+              "converged": false,
+              "primal_relative": 0.0012570666250201618,
+              "dual_relative": 0.000312820188477531,
+              "log_objective": 2882.689247062048,
+              "relative_change": 1.0,
+              "active_rows": 52
+            },
+            {
+              "outer": 1,
+              "iterations": 368,
+              "converged": true,
+              "primal_relative": 0.0009972482984995446,
+              "dual_relative": 0.0009016756931483472,
+              "log_objective": 2421.5494217926775,
+              "relative_change": 0.6511689284383728,
+              "active_rows": 35
+            }
+          ],
+          "converged": false,
+          "inner_converged": false,
+          "outer_converged": false,
+          "descent_guard_triggered": true,
+          "amplitude_epsilon": 3.6106657604170693,
+          "edge_epsilon": 1.9009162575402923,
+          "amplitude_weight_range": [
+            0.0218279462361251,
+            0.9999962844445223
+          ],
+          "edge_weight_range": [
+            0.03888547786545839,
+            0.999997927172051
+          ]
+        },
+        "response_condition": 10.444362024370076,
+        "null_rule": "99th percentile of up to 16 overlapping baseline projections; heuristic, not p-value"
+      }
+    ],
+    "selected_templates": [],
+    "graph_edges": 21320,
+    "deep_graph_edges": 0,
+    "spatial_templates_used": false
+  }
+}

@@ -414,6 +414,10 @@ def test_pair_checkpoint_resumes_without_rescoring(tmp_path, monkeypatch, versio
     assert metadata["oaster_algorithm_version"] == version
     assert metadata["oaster_modality_weighting"] == "equal"
     assert metadata["erp_seed_root"] == runner.erp_protocol.ERP_SEED_ROOT
+    if version == "v4":
+        assert metadata["oaster_kwargs"] == {
+            "mrf_strength": 0.5, "edge_fraction": 0.5, "noise_multiplier": 1.0,
+        }
     assert len(metadata["checkpoint_shared_fingerprint"]) == 64
     assert len(metadata["checkpoint_fingerprint"]) == 64
     assert {"python", "numpy", "scipy", "mne"} <= set(
@@ -438,12 +442,37 @@ def test_pair_checkpoint_resumes_without_rescoring(tmp_path, monkeypatch, versio
         scored.clear()
         runner.run(manifest, tmp_path, None, output, workers=1, algorithm_version=version)
         assert scored == [case["case_id"] for case in cases]
+        previous = json.loads((output / "metadata.json").read_text(encoding="utf-8"))
+        scored.clear()
+        runner.run(manifest, tmp_path, None, output, workers=1, algorithm_version="v4",
+                   v4_mrf_strength=0.8, v4_edge_fraction=2.0, v4_noise_multiplier=0.6)
+        assert scored == [case["case_id"] for case in cases]
+        updated = json.loads((output / "metadata.json").read_text(encoding="utf-8"))
+        assert updated["checkpoint_fingerprint"] != previous["checkpoint_fingerprint"]
+        assert updated["oaster_kwargs"] == {
+            "mrf_strength": 0.8, "edge_fraction": 2.0, "noise_multiplier": 0.6,
+        }
 
 
 def test_method_cli_selects_v4_and_preserves_comparators(monkeypatch):
     calls = []
-    monkeypatch.setattr("sys.argv", ["run_erp_whole_head_matrix.py", "--method", "OASTER-ERP-v4"])
+    monkeypatch.setattr("sys.argv", ["run_erp_whole_head_matrix.py", "--method", "OASTER-ERP-v4",
+                        "--v4-mrf-strength", "0.8", "--v4-edge-fraction", "2",
+                        "--v4-noise-multiplier", "0.6"])
     monkeypatch.setattr(runner, "run", lambda *_args, **kwargs: calls.append(kwargs))
     runner.main()
     assert calls[0]["algorithm_version"] == "v4"
     assert calls[0]["oaster_only"] is False
+    assert calls[0]["v4_mrf_strength"] == 0.8
+    assert calls[0]["v4_edge_fraction"] == 2.0
+    assert calls[0]["v4_noise_multiplier"] == 0.6
+
+
+@pytest.mark.parametrize("parameters", (
+    {"v4_mrf_strength": 1.0}, {"v4_mrf_strength": np.nan},
+    {"v4_edge_fraction": -1.0}, {"v4_edge_fraction": np.inf},
+    {"v4_noise_multiplier": 0.0}, {"v4_noise_multiplier": np.nan},
+))
+def test_invalid_v4_parameters_rejected_before_loading_data(parameters):
+    with pytest.raises(ValueError, match="v4_"):
+        runner.run(algorithm_version="v4", **parameters)

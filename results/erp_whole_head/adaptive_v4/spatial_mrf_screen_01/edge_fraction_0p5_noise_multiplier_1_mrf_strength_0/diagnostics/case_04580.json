@@ -1,0 +1,82 @@
+{
+  "case_id": "erp-v3-development-04580-deep_only-eeg+05-meg+05",
+  "method": "OASTER-ERP-v4",
+  "manifest_sha256": "0989782ea769bc0a698e8e6f250795ee829398afc5984a904eeb9544a32432b5",
+  "parameters": {
+    "edge_fraction": 0.5,
+    "noise_multiplier": 1.0,
+    "mrf_strength": 0.0
+  },
+  "diagnostics": {
+    "mode": "adaptive_source_and_edge_logsum_full_grid",
+    "windows": [
+      {
+        "active_samples": 61,
+        "temporal_rank": 3,
+        "null_edges": [
+          14.81171521558,
+          13.622684219358375,
+          17.676221944616152
+        ],
+        "source_lambda": 5.849224051963863,
+        "edge_lambda": 0.5142762891841586,
+        "solver": {
+          "history": [
+            {
+              "outer": 0,
+              "iterations": 581,
+              "converged": true,
+              "primal_relative": 0.0008062752017746073,
+              "dual_relative": 0.0009971711411697467,
+              "log_objective": 536.227064259761,
+              "relative_change": 1.0,
+              "active_rows": 1
+            },
+            {
+              "outer": 1,
+              "iterations": 289,
+              "converged": true,
+              "primal_relative": 0.0009990657193020306,
+              "dual_relative": 0.00015936719898222801,
+              "log_objective": 456.7930597604239,
+              "relative_change": 0.1396487564251548,
+              "active_rows": 1
+            },
+            {
+              "outer": 2,
+              "iterations": 8,
+              "converged": true,
+              "primal_relative": 0.0009957434129980415,
+              "dual_relative": 0.0003581000968457628,
+              "log_objective": 454.73423395584274,
+              "relative_change": 0.001083910164294822,
+              "active_rows": 1
+            }
+          ],
+          "converged": false,
+          "inner_converged": true,
+          "outer_converged": false,
+          "descent_guard_triggered": true,
+          "amplitude_epsilon": 13.240102524607318,
+          "edge_epsilon": 0.05651424481233951,
+          "amplitude_weight_range": [
+            0.04126553157726371,
+            1.0
+          ],
+          "edge_weight_range": [
+            0.19469843056164018,
+            1.0
+          ]
+        },
+        "response_condition": 6.8888588393514825,
+        "null_rule": "99th percentile of up to 16 overlapping baseline projections; heuristic, not p-value"
+      }
+    ],
+    "selected_templates": [],
+    "graph_edges": 21320,
+    "deep_graph_edges": 0,
+    "spatial_templates_used": false,
+    "mrf_strength": 0.0,
+    "weighting_coordinates": "physical_current"
+  }
+}

@@ -100,12 +100,14 @@ def _checkpoint_fingerprint(
     code_fingerprint: str,
     shared_fingerprint: str,
     environment: dict[str, str],
+    configuration: dict | None = None,
 ) -> str:
     payload = {
         "manifest": manifest_sha256,
         "code": code_fingerprint,
         "shared": shared_fingerprint,
         "environment": environment,
+        "configuration": configuration or {},
     }
     return hashlib.sha256(
         json.dumps(payload, sort_keys=True, separators=(",", ":")).encode("utf-8")
@@ -579,6 +581,9 @@ def run(
     seed_root: int = erp_protocol.ERP_SEED_ROOT,
     oaster_only: bool = False,
     v2_deep_rescue_delta: float = oaster.ERP_V2_DEEP_RESCUE_DELTA,
+    v4_mrf_strength: float = 0.5,
+    v4_edge_fraction: float = 0.5,
+    v4_noise_multiplier: float = 1.0,
 ) -> None:
     if workers < 1:
         raise ValueError("workers must be positive")
@@ -589,6 +594,12 @@ def run(
         raise ValueError("seed_root must be non-negative")
     if not np.isfinite(v2_deep_rescue_delta):
         raise ValueError("v2_deep_rescue_delta must be finite")
+    if not np.isfinite(v4_mrf_strength) or not 0 <= v4_mrf_strength < 1:
+        raise ValueError("v4_mrf_strength must be finite and in [0, 1)")
+    if not np.isfinite(v4_edge_fraction) or v4_edge_fraction < 0:
+        raise ValueError("v4_edge_fraction must be finite and non-negative")
+    if not np.isfinite(v4_noise_multiplier) or v4_noise_multiplier <= 0:
+        raise ValueError("v4_noise_multiplier must be finite and positive")
     solver = _resolve_oaster(algorithm_version)
     oaster_method = _oaster_method(algorithm_version)
     methods = (oaster_method,) if oaster_only else (oaster_method,) + comparators.METHODS
@@ -597,6 +608,12 @@ def run(
         if algorithm_version in {"v2", "v3"}
         else {}
     )
+    if algorithm_version == "v4":
+        oaster_kwargs = {
+            "mrf_strength": float(v4_mrf_strength),
+            "edge_fraction": float(v4_edge_fraction),
+            "noise_multiplier": float(v4_noise_multiplier),
+        }
     if output is None:
         output = DEFAULT_V4_OUTPUT if algorithm_version == "v4" else DEFAULT_OUTPUT
     manifest_path, data_root, output = map(Path, (manifest_path, data_root, output))
@@ -635,6 +652,10 @@ def run(
             repr(float(v2_deep_rescue_delta)).encode("ascii")
         ).hexdigest()[:8]
         configuration += f"_rescue_{rescue_tag}_{rescue_sha}"
+    if algorithm_version == "v4":
+        configuration += (
+            f"_mrf_{v4_mrf_strength:g}_edge_{v4_edge_fraction:g}_noise_{v4_noise_multiplier:g}"
+        ).replace(".", "p")
     fingerprint_paths = (
         __file__,
         erp_protocol.__file__,
@@ -656,6 +677,8 @@ def run(
         code_fingerprint,
         shared_fingerprint,
         environment,
+        {"algorithm_version": algorithm_version, "modality_weighting": modality_weighting,
+         "seed_root": seed_root, "methods": methods, "oaster_kwargs": oaster_kwargs},
     )
     parts = output / f"parts_{configuration}_run_{checkpoint_fingerprint[:12]}"
     parts.mkdir(parents=True, exist_ok=True)
@@ -758,6 +781,9 @@ def main() -> None:
     )
     parser.add_argument("--seed-root", type=int, default=erp_protocol.ERP_SEED_ROOT)
     parser.add_argument("--oaster-only", action="store_true")
+    parser.add_argument("--v4-mrf-strength", type=float, default=0.5)
+    parser.add_argument("--v4-edge-fraction", type=float, default=0.5)
+    parser.add_argument("--v4-noise-multiplier", type=float, default=1.0)
     parser.add_argument(
         "--deep-rescue-delta",
         "--v2-deep-rescue-delta",
@@ -788,6 +814,9 @@ def main() -> None:
             seed_root=args.seed_root,
             oaster_only=args.oaster_only,
             v2_deep_rescue_delta=args.deep_rescue_delta,
+            v4_mrf_strength=args.v4_mrf_strength,
+            v4_edge_fraction=args.v4_edge_fraction,
+            v4_noise_multiplier=args.v4_noise_multiplier,
         )
     except ValueError as exc:
         parser.error(str(exc))

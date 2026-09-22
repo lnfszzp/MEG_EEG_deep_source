@@ -1,0 +1,10 @@
+{
+  "expected_cases": 4,
+  "computed_cases": 4,
+  "error_count": 0,
+  "diagnostic_files": 4,
+  "solver_windows": 4,
+  "solver_windows_converged": 0,
+  "wall_seconds": 238.90399040002376,
+  "code_fingerprint": "5e9f8617d7b59884bdee33949a0e1c34f8b5a21cef346b5beeff0dd03c208147"
+}

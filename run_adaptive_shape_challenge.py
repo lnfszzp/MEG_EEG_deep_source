@@ -35,9 +35,18 @@ parser.add_argument("--data-root", type=Path, default=root / "corrected_v2/gener
 parser.add_argument("--sample-path", type=Path, default=Path(os.environ.get("MNE_SAMPLE_PATH", r"D:\mne_data\MNE-sample-data")))
 parser.add_argument("--self-check", action="store_true")
 parser.add_argument("--case-limit", type=int, default=12)
+parser.add_argument("--mrf-strength", type=float, default=0.5)
+parser.add_argument("--edge-fraction", type=float, default=0.5)
+parser.add_argument("--noise-multiplier", type=float, default=1.0,
+                    help="v4 regularization multiplier; does not change simulated SNR")
 args = parser.parse_args()
 if not 1 <= args.case_limit <= 12:
     parser.error("--case-limit must be in [1, 12]")
+if (not np.isfinite([args.mrf_strength, args.edge_fraction, args.noise_multiplier]).all()
+        or not 0 <= args.mrf_strength < 1 or args.edge_fraction < 0 or args.noise_multiplier <= 0):
+    parser.error("require finite 0 <= mrf-strength < 1, edge-fraction >= 0, noise-multiplier > 0")
+v4_parameters = {"mrf_strength": args.mrf_strength, "edge_fraction": args.edge_fraction,
+                 "noise_multiplier": args.noise_multiplier}
 seed_root = 20260922
 snr_pairs = ((-10, -10), (5, 5), (-10, 20))
 specifications = (
@@ -87,6 +96,9 @@ for parcel, shape_name, hops, has_deep in specifications:
 
 baseline, active_mask = erp_protocol._masks(shared["times"])
 active = np.flatnonzero(active_mask)
+assert baseline.shape == active_mask.shape == np.asarray(shared["times"]).shape
+assert baseline.dtype == active_mask.dtype == bool and not np.any(baseline & active_mask)
+assert baseline.any() and active_mask.any() and np.all(active_mask[active])
 print(json.dumps(shapes, ensure_ascii=False, indent=2), flush=True)
 if args.self_check:
     assert shapes[0]["surface_count"] < shapes[1]["surface_count"]
@@ -149,7 +161,7 @@ for shape_number, shape in enumerate(shapes):
                 data, gain, n_surf, kernels if version == "v3" else (),
                 baseline=baseline, active_windows=(active_mask,),
                 window_channel_weights=(channel_weights,), require_one=False,
-                **({"adjacency": shared["adjacency"]} if version == "v4" else {"deep_rescue_delta": -6.0}),
+                **({"adjacency": shared["adjacency"], **v4_parameters} if version == "v4" else {"deep_rescue_delta": -6.0}),
             )
             assert estimate.shape == truth.shape and np.isfinite(estimate).all()
             score = metrics.evaluate_estimate(estimate, truth, vertices, groups, n_surf,
@@ -198,7 +210,7 @@ assert code_sha256 == {str(path.relative_to(root)): hashlib.sha256(path.read_byt
 metadata = {"scope": "12-case non-Gaussian supplementary shape challenge, not the full-head seven-comparator benchmark",
             "seed_root": seed_root, "snr_pairs": snr_pairs, "snr_level": "evoked",
             "source_amplitude": "uniform within each connected surface patch; no Gaussian spatial truth",
-            "deep_surface_ratio": 0.5, "code_sha256": code_sha256,
+            "deep_surface_ratio": 0.5, "v4_parameters": v4_parameters, "code_sha256": code_sha256,
             "gain_sha256": {name: hashlib.sha256(np.ascontiguousarray(shared[name]).tobytes()).hexdigest()
                             for name in ("gain_eeg", "gain_meg")},
             "complete": len(cases) == 12, "case_count": len(cases), "cases": cases}

@@ -1,0 +1,69 @@
+{
+  "case_id": "erp-v3-development-04666-deep_plus_two_surface-eeg+05-meg+05",
+  "method": "OASTER-ERP-v4",
+  "manifest_sha256": "0989782ea769bc0a698e8e6f250795ee829398afc5984a904eeb9544a32432b5",
+  "parameters": {
+    "edge_fraction": 10.0,
+    "noise_multiplier": 0.5
+  },
+  "diagnostics": {
+    "mode": "adaptive_source_and_edge_logsum_full_grid",
+    "windows": [
+      {
+        "active_samples": 61,
+        "temporal_rank": 3,
+        "null_edges": [
+          15.349166901283299,
+          14.163542359309524,
+          18.216910096901827
+        ],
+        "source_lambda": 2.2533552369964966,
+        "edge_lambda": 3.9623962399155093,
+        "solver": {
+          "history": [
+            {
+              "outer": 0,
+              "iterations": 555,
+              "converged": true,
+              "primal_relative": 0.0009999277183572997,
+              "dual_relative": 0.0008704664339983684,
+              "log_objective": 1836.2048482045507,
+              "relative_change": 1.0,
+              "active_rows": 78
+            },
+            {
+              "outer": 1,
+              "iterations": 395,
+              "converged": true,
+              "primal_relative": 0.0009974788459168307,
+              "dual_relative": 0.0006587262808753665,
+              "log_objective": 1559.2066549827337,
+              "relative_change": 0.5949218662446666,
+              "active_rows": 32
+            }
+          ],
+          "converged": false,
+          "inner_converged": true,
+          "outer_converged": false,
+          "descent_guard_triggered": true,
+          "amplitude_epsilon": 3.7432066034122364,
+          "edge_epsilon": 1.9990083583412581,
+          "amplitude_weight_range": [
+            0.024884303355674937,
+            0.9999964038711179
+          ],
+          "edge_weight_range": [
+            0.03982880228468995,
+            0.9999982760623612
+          ]
+        },
+        "response_condition": 10.444362024370076,
+        "null_rule": "99th percentile of up to 16 overlapping baseline projections; heuristic, not p-value"
+      }
+    ],
+    "selected_templates": [],
+    "graph_edges": 21320,
+    "deep_graph_edges": 0,
+    "spatial_templates_used": false
+  }
+}

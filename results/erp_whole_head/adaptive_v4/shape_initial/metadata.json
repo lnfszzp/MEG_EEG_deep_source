@@ -1,0 +1,3019 @@
+{
+  "scope": "12-case non-Gaussian supplementary shape challenge, not the full-head seven-comparator benchmark",
+  "seed_root": 20260922,
+  "snr_pairs": [
+    [
+      -10,
+      -10
+    ],
+    [
+      5,
+      5
+    ],
+    [
+      -10,
+      20
+    ]
+  ],
+  "snr_level": "evoked",
+  "source_amplitude": "uniform within each connected surface patch; no Gaussian spatial truth",
+  "deep_surface_ratio": 0.5,
+  "code_sha256": {
+    "run_adaptive_shape_challenge.py": "69d136daee7f460d7066c3cbcba8d6d75022add76d375c4cd3ccc165925f5394",
+    "candidates\\oaster_adaptive.py": "4fdc0b0ba9ce2f80884ae88dcfa34b569d1350f3c70704606ac46490f5b7f670",
+    "candidates\\oaster_rebuilt.py": "4032f015ed06df64df3ad10d128b67605c49fb76a2e5bef302ed5160519e00f0",
+    "benchmark\\erp_protocol.py": "f74f9b1dd33036105d50d4ccd6242c1a068cb090fe4a234eb7736f8071e16647",
+    "benchmark\\methods.py": "1625c67d91d20112d711a3d77de175ed0509c1acfa45c1561845f6761c307dcf",
+    "benchmark\\metrics.py": "f07a42e26dc2118c418744e3a4971c5fcd3037b7b93e26a7e2e4e899400986d8"
+  },
+  "gain_sha256": {
+    "gain_eeg": "382f792c273fc62a160b30c636b9bf7a2f5e6eb1e67efba408281f445058d7a5",
+    "gain_meg": "faca09a9d5ad559f5878ed85b421699f776bdd4aa3cc32dcadd4f45c09e18855"
+  },
+  "complete": true,
+  "case_count": 12,
+  "cases": [
+    {
+      "parcel": "postcentral-lh",
+      "shape": "uniform_1hop",
+      "center": 1540,
+      "surface_indices": [
+        1454,
+        1455,
+        1458,
+        1540,
+        1580,
+        1663,
+        1693
+      ],
+      "surface_count": 7,
+      "deep_index": null,
+      "case_id": "shape_00_eeg-10_meg-10",
+      "seed": [
+        20260922,
+        0,
+        0
+      ],
+      "eeg_snr_db": -10,
+      "meg_snr_db": -10,
+      "actual_snr_db": [
+        -9.999999999999998,
+        -9.999999999999998
+      ],
+      "diagnostics": {
+        "v3": {
+          "mode": "signed_multiscale_erp_surface_residual_deep_v3",
+          "surface_scales_mm": [
+            0.0,
+            4.0,
+            7.0
+          ],
+          "selected_templates": 2,
+          "selected_surface_templates": 2,
+          "selected_deep_templates": 0,
+          "ridge_fraction": 0.03,
+          "max_templates_per_window": 7,
+          "require_one": false,
+          "windows": [
+            {
+              "window": 0,
+              "active_samples": 61,
+              "temporal_rank": 3,
+              "null_edges": [
+                15.21012396443574,
+                13.837080723501249,
+                17.95152689797033
+              ],
+              "channel_weight_min": 0.6790048674545214,
+              "channel_weight_max": 1.0,
+              "weighted_channels": 157,
+              "selected_surface_templates": 2,
+              "surface_ebic_deltas": [
+                -80.39504314782619,
+                -0.7856059376715621
+              ],
+              "selected_templates": [
+                {
+                  "layer": "surface",
+                  "scale_mm": 0.0,
+                  "index": 1572
+                },
+                {
+                  "layer": "surface",
+                  "scale_mm": 0.0,
+                  "index": 3937
+                }
+              ],
+              "deep_candidate_local": 14,
+              "deep_ebic_delta": 35.0119930517076,
+              "deep_accepted": false,
+              "selection": "joint_surface_then_residual_deep_ebic_v3",
+              "joint_ebic_deltas": [
+                -80.39504314782619,
+                -0.7856059376715621
+              ],
+              "first_selected_layer": "surface",
+              "deep_rescue_attempted": false,
+              "deep_rescue_accepted": false,
+              "deep_rescue_ebic_delta": Infinity,
+              "deep_rescue_ebic_threshold": -6.0,
+              "time_evidence": {
+                "surface_raw": {
+                  "positive_candidates": 7514,
+                  "score_max": 67.44657118505363,
+                  "score_median_positive": 11.718024135951051
+                },
+                "deep_surface_residual": {
+                  "positive_candidates": 7514,
+                  "score_max": 23.402583250589437,
+                  "score_median_positive": 9.41439686223341
+                }
+              },
+              "residual_deep_reselection": {
+                "deep_local": 14,
+                "accepted": false,
+                "ebic_delta": 35.0119930517076,
+                "surface_design_rank": 2,
+                "candidate_universe": 22510,
+                "residual_active_samples": 61,
+                "residual_temporal_rank": 3,
+                "residual_null_edges": [
+                  15.163011592851474,
+                  13.814556563400552,
+                  17.93274236181953
+                ]
+              }
+            }
+          ],
+          "selection": "joint_surface_then_residual_deep_reselection",
+          "conditional_candidate_drops": true,
+          "joint_search_template_cap_per_window": 6,
+          "deep_rescue_can_add_one_template": false,
+          "max_deep_templates_per_window": 1,
+          "time_evidence_fraction": 0.05,
+          "time_evidence_surface_scale_mm": 4.0,
+          "time_evidence_layer_balanced": true,
+          "time_evidence_fusion": {
+            "primary_active_peak": 1.3044757004139915,
+            "evidence_active_peak": 178.45508709122058,
+            "evidence_scale": 0.006471386544026706,
+            "evidence_layer_peaks": [
+              178.45508709122058,
+              10.078796031880245
+            ],
+            "evidence_layer_scales": [
+              0.0003654913182013088,
+              0.006471386544026706
+            ]
+          },
+          "time_evidence_deep_surface_residual": true
+        },
+        "v4": {
+          "mode": "adaptive_source_and_edge_logsum_full_grid",
+          "windows": [
+            {
+              "active_samples": 61,
+              "temporal_rank": 3,
+              "null_edges": [
+                15.21012396443574,
+                13.837080723501249,
+                17.95152689797033
+              ],
+              "source_lambda": 4.865818016130908,
+              "edge_lambda": 0.427813127168733,
+              "solver": {
+                "history": [
+                  {
+                    "outer": 0,
+                    "iterations": 600,
+                    "converged": false,
+                    "primal_relative": 0.008719002543395903,
+                    "dual_relative": 0.004348243573397231,
+                    "log_objective": 1024.0962049700213,
+                    "relative_change": 1.0,
+                    "active_rows": 76
+                  },
+                  {
+                    "outer": 1,
+                    "iterations": 525,
+                    "converged": true,
+                    "primal_relative": 0.000999422297426572,
+                    "dual_relative": 0.00025681578993505175,
+                    "log_objective": 760.5933385013337,
+                    "relative_change": 0.8140805899716911,
+                    "active_rows": 38
+                  },
+                  {
+                    "outer": 2,
+                    "iterations": 288,
+                    "converged": true,
+                    "primal_relative": 0.0007872704467578525,
+                    "dual_relative": 0.0009918265952178905,
+                    "log_objective": 732.3209818758053,
+                    "relative_change": 0.44573476240585885,
+                    "active_rows": 35
+                  }
+                ],
+                "converged": false,
+                "inner_converged": false,
+                "outer_converged": false,
+                "descent_guard_triggered": true,
+                "amplitude_epsilon": 0.0990995222734782,
+                "edge_epsilon": 0.0990661520176094,
+                "amplitude_weight_range": [
+                  0.009989977879922644,
+                  0.9999649784950824
+                ],
+                "edge_weight_range": [
+                  0.009986807496399096,
+                  0.9999928427574661
+                ]
+              },
+              "response_condition": 1.2522139346287735,
+              "null_rule": "99th percentile of up to 16 overlapping baseline projections; heuristic, not p-value"
+            }
+          ],
+          "selected_templates": [],
+          "graph_edges": 21320,
+          "deep_graph_edges": 0,
+          "spatial_templates_used": false
+        }
+      }
+    },
+    {
+      "parcel": "postcentral-lh",
+      "shape": "uniform_1hop",
+      "center": 1540,
+      "surface_indices": [
+        1454,
+        1455,
+        1458,
+        1540,
+        1580,
+        1663,
+        1693
+      ],
+      "surface_count": 7,
+      "deep_index": null,
+      "case_id": "shape_00_eeg+05_meg+05",
+      "seed": [
+        20260922,
+        0,
+        1
+      ],
+      "eeg_snr_db": 5,
+      "meg_snr_db": 5,
+      "actual_snr_db": [
+        4.999999999999999,
+        4.999999999999999
+      ],
+      "diagnostics": {
+        "v3": {
+          "mode": "signed_multiscale_erp_surface_residual_deep_v3",
+          "surface_scales_mm": [
+            0.0,
+            4.0,
+            7.0
+          ],
+          "selected_templates": 1,
+          "selected_surface_templates": 1,
+          "selected_deep_templates": 0,
+          "ridge_fraction": 0.03,
+          "max_templates_per_window": 7,
+          "require_one": false,
+          "windows": [
+            {
+              "window": 0,
+              "active_samples": 61,
+              "temporal_rank": 3,
+              "null_edges": [
+                17.518683210925133,
+                15.44839572153429,
+                20.12189523262894
+              ],
+              "channel_weight_min": 0.9954049260856853,
+              "channel_weight_max": 1.0,
+              "weighted_channels": 157,
+              "selected_surface_templates": 1,
+              "surface_ebic_deltas": [
+                -1447.9550421054103
+              ],
+              "selected_templates": [
+                {
+                  "layer": "surface",
+                  "scale_mm": 4.0,
+                  "index": 1540
+                }
+              ],
+              "deep_candidate_local": 0,
+              "deep_ebic_delta": 30.75268588980085,
+              "deep_accepted": false,
+              "selection": "joint_surface_then_residual_deep_ebic_v3",
+              "joint_ebic_deltas": [
+                -1447.9550421054103
+              ],
+              "first_selected_layer": "surface",
+              "deep_rescue_attempted": false,
+              "deep_rescue_accepted": false,
+              "deep_rescue_ebic_delta": Infinity,
+              "deep_rescue_ebic_threshold": -6.0,
+              "time_evidence": {
+                "surface_raw": {
+                  "positive_candidates": 7514,
+                  "score_max": 1332.4670588905637,
+                  "score_median_positive": 19.562747573557314
+                },
+                "deep_surface_residual": {
+                  "positive_candidates": 7514,
+                  "score_max": 29.625676991609616,
+                  "score_median_positive": 8.44382869919221
+                }
+              },
+              "residual_deep_reselection": {
+                "deep_local": 0,
+                "accepted": false,
+                "ebic_delta": 30.75268588980085,
+                "surface_design_rank": 1,
+                "candidate_universe": 22510,
+                "residual_active_samples": 61,
+                "residual_temporal_rank": 3,
+                "residual_null_edges": [
+                  17.517260456274254,
+                  15.360154429801463,
+                  20.03498576368623
+                ]
+              }
+            }
+          ],
+          "selection": "joint_surface_then_residual_deep_reselection",
+          "conditional_candidate_drops": true,
+          "joint_search_template_cap_per_window": 6,
+          "deep_rescue_can_add_one_template": false,
+          "max_deep_templates_per_window": 1,
+          "time_evidence_fraction": 0.05,
+          "time_evidence_surface_scale_mm": 4.0,
+          "time_evidence_layer_balanced": true,
+          "time_evidence_fusion": {
+            "primary_active_peak": 0.520312185000984,
+            "evidence_active_peak": 3748.987912808235,
+            "evidence_scale": 0.002608563423564888,
+            "evidence_layer_peaks": [
+              3748.987912808235,
+              9.973155728180846
+            ],
+            "evidence_layer_scales": [
+              6.939368665651905e-06,
+              0.002608563423564888
+            ]
+          },
+          "time_evidence_deep_surface_residual": true
+        },
+        "v4": {
+          "mode": "adaptive_source_and_edge_logsum_full_grid",
+          "windows": [
+            {
+              "active_samples": 61,
+              "temporal_rank": 3,
+              "null_edges": [
+                17.518683210925133,
+                15.44839572153429,
+                20.12189523262894
+              ],
+              "source_lambda": 5.350757754648795,
+              "edge_lambda": 0.470450066186171,
+              "solver": {
+                "history": [
+                  {
+                    "outer": 0,
+                    "iterations": 600,
+                    "converged": false,
+                    "primal_relative": 0.002233459811865774,
+                    "dual_relative": 0.0011478632671310827,
+                    "log_objective": 752.7198706245359,
+                    "relative_change": 1.0,
+                    "active_rows": 36
+                  },
+                  {
+                    "outer": 1,
+                    "iterations": 584,
+                    "converged": true,
+                    "primal_relative": 0.0005731173750193748,
+                    "dual_relative": 0.0009914928050687776,
+                    "log_objective": 615.906915006161,
+                    "relative_change": 0.4875157647415834,
+                    "active_rows": 20
+                  },
+                  {
+                    "outer": 2,
+                    "iterations": 412,
+                    "converged": true,
+                    "primal_relative": 0.0003644881619468754,
+                    "dual_relative": 0.0009795602031624929,
+                    "log_objective": 597.5532604761709,
+                    "relative_change": 0.22471779934022176,
+                    "active_rows": 20
+                  },
+                  {
+                    "outer": 3,
+                    "iterations": 353,
+                    "converged": true,
+                    "primal_relative": 0.0008688147559889945,
+                    "dual_relative": 0.0009928933475455018,
+                    "log_objective": 560.7717560178404,
+                    "relative_change": 0.4310603918380482,
+                    "active_rows": 13
+                  },
+                  {
+                    "outer": 4,
+                    "iterations": 241,
+                    "converged": true,
+                    "primal_relative": 0.0005718989787023511,
+                    "dual_relative": 0.0009877831262819238,
+                    "log_objective": 535.6430943410742,
+                    "relative_change": 0.03915179048797105,
+                    "active_rows": 10
+                  }
+                ],
+                "converged": false,
+                "inner_converged": false,
+                "outer_converged": false,
+                "descent_guard_triggered": true,
+                "amplitude_epsilon": 0.5379417822949654,
+                "edge_epsilon": 0.537941626674687,
+                "amplitude_weight_range": [
+                  0.014301010010800912,
+                  0.9999939048276819
+                ],
+                "edge_weight_range": [
+                  0.014300938026255688,
+                  0.9999990809489998
+                ]
+              },
+              "response_condition": 10.205118671482913,
+              "null_rule": "99th percentile of up to 16 overlapping baseline projections; heuristic, not p-value"
+            }
+          ],
+          "selected_templates": [],
+          "graph_edges": 21320,
+          "deep_graph_edges": 0,
+          "spatial_templates_used": false
+        }
+      }
+    },
+    {
+      "parcel": "postcentral-lh",
+      "shape": "uniform_1hop",
+      "center": 1540,
+      "surface_indices": [
+        1454,
+        1455,
+        1458,
+        1540,
+        1580,
+        1663,
+        1693
+      ],
+      "surface_count": 7,
+      "deep_index": null,
+      "case_id": "shape_00_eeg-10_meg+20",
+      "seed": [
+        20260922,
+        0,
+        2
+      ],
+      "eeg_snr_db": -10,
+      "meg_snr_db": 20,
+      "actual_snr_db": [
+        -10.0,
+        20.0
+      ],
+      "diagnostics": {
+        "v3": {
+          "mode": "signed_multiscale_erp_surface_residual_deep_v3",
+          "surface_scales_mm": [
+            0.0,
+            4.0,
+            7.0
+          ],
+          "selected_templates": 3,
+          "selected_surface_templates": 3,
+          "selected_deep_templates": 0,
+          "ridge_fraction": 0.03,
+          "max_templates_per_window": 7,
+          "require_one": false,
+          "windows": [
+            {
+              "window": 0,
+              "active_samples": 61,
+              "temporal_rank": 3,
+              "null_edges": [
+                13.79140705715467,
+                12.913867279273308,
+                16.45683441760034
+              ],
+              "channel_weight_min": 0.07709594726812209,
+              "channel_weight_max": 1.0,
+              "weighted_channels": 157,
+              "selected_surface_templates": 3,
+              "surface_ebic_deltas": [
+                -2630.4509893724203,
+                -70.85465335044569,
+                -16.383915277974097
+              ],
+              "selected_templates": [
+                {
+                  "layer": "surface",
+                  "scale_mm": 4.0,
+                  "index": 1540
+                },
+                {
+                  "layer": "surface",
+                  "scale_mm": 7.0,
+                  "index": 3488
+                },
+                {
+                  "layer": "surface",
+                  "scale_mm": 7.0,
+                  "index": 33
+                }
+              ],
+              "deep_candidate_local": 4,
+              "deep_ebic_delta": 13.141620712719408,
+              "deep_accepted": false,
+              "selection": "joint_surface_then_residual_deep_ebic_v3",
+              "joint_ebic_deltas": [
+                -2630.4509893724203,
+                -70.85465335044569,
+                -16.383915277974097
+              ],
+              "first_selected_layer": "surface",
+              "deep_rescue_attempted": false,
+              "deep_rescue_accepted": false,
+              "deep_rescue_ebic_delta": Infinity,
+              "deep_rescue_ebic_threshold": -6.0,
+              "time_evidence": {
+                "surface_raw": {
+                  "positive_candidates": 7514,
+                  "score_max": 29986.47380088715,
+                  "score_median_positive": 1026.9056903239873
+                },
+                "deep_surface_residual": {
+                  "positive_candidates": 7514,
+                  "score_max": 23.154483271979448,
+                  "score_median_positive": 11.49149637738951
+                }
+              },
+              "residual_deep_reselection": {
+                "deep_local": 4,
+                "accepted": false,
+                "ebic_delta": 13.141620712719408,
+                "surface_design_rank": 3,
+                "candidate_universe": 22510,
+                "residual_active_samples": 61,
+                "residual_temporal_rank": 3,
+                "residual_null_edges": [
+                  13.776836300193741,
+                  12.81843681543509,
+                  16.27247650011809
+                ]
+              }
+            }
+          ],
+          "selection": "joint_surface_then_residual_deep_reselection",
+          "conditional_candidate_drops": true,
+          "joint_search_template_cap_per_window": 6,
+          "deep_rescue_can_add_one_template": false,
+          "max_deep_templates_per_window": 1,
+          "time_evidence_fraction": 0.05,
+          "time_evidence_surface_scale_mm": 4.0,
+          "time_evidence_layer_balanced": true,
+          "time_evidence_fusion": {
+            "primary_active_peak": 0.5179782906176705,
+            "evidence_active_peak": 86562.52050708928,
+            "evidence_scale": 0.0018999963684320858,
+            "evidence_layer_peaks": [
+              86562.52050708928,
+              13.631033701530608
+            ],
+            "evidence_layer_scales": [
+              2.991931655775026e-07,
+              0.0018999963684320858
+            ]
+          },
+          "time_evidence_deep_surface_residual": true
+        },
+        "v4": {
+          "mode": "adaptive_source_and_edge_logsum_full_grid",
+          "windows": [
+            {
+              "active_samples": 61,
+              "temporal_rank": 3,
+              "null_edges": [
+                13.79140705715467,
+                12.913867279273308,
+                16.45683441760034
+              ],
+              "source_lambda": 4.495562135190947,
+              "edge_lambda": 0.395259438199598,
+              "solver": {
+                "history": [
+                  {
+                    "outer": 0,
+                    "iterations": 524,
+                    "converged": true,
+                    "primal_relative": 0.000898789710838707,
+                    "dual_relative": 0.0009984456927968424,
+                    "log_objective": 1567.3665137903922,
+                    "relative_change": 1.0,
+                    "active_rows": 136
+                  },
+                  {
+                    "outer": 1,
+                    "iterations": 600,
+                    "converged": false,
+                    "primal_relative": 0.0003832896328832294,
+                    "dual_relative": 0.0020250267183437778,
+                    "log_objective": 1007.8839526843121,
+                    "relative_change": 0.7029452889721796,
+                    "active_rows": 44
+                  },
+                  {
+                    "outer": 2,
+                    "iterations": 426,
+                    "converged": true,
+                    "primal_relative": 0.00015407859395458632,
+                    "dual_relative": 0.0009996280888014176,
+                    "log_objective": 875.4237670072168,
+                    "relative_change": 0.21037793651463613,
+                    "active_rows": 37
+                  },
+                  {
+                    "outer": 3,
+                    "iterations": 569,
+                    "converged": true,
+                    "primal_relative": 0.00016860310360240617,
+                    "dual_relative": 0.0009892963356405995,
+                    "log_objective": 817.6808031849466,
+                    "relative_change": 0.19048044009578408,
+                    "active_rows": 28
+                  },
+                  {
+                    "outer": 4,
+                    "iterations": 291,
+                    "converged": true,
+                    "primal_relative": 0.0001746058005420176,
+                    "dual_relative": 0.0009987788252886728,
+                    "log_objective": 806.9943529041342,
+                    "relative_change": 0.0893526606090066,
+                    "active_rows": 27
+                  },
+                  {
+                    "outer": 5,
+                    "iterations": 263,
+                    "converged": true,
+                    "primal_relative": 0.00014985371413715499,
+                    "dual_relative": 0.000999731796622575,
+                    "log_objective": 798.9130907575923,
+                    "relative_change": 0.06942245904402328,
+                    "active_rows": 27
+                  }
+                ],
+                "converged": false,
+                "inner_converged": false,
+                "outer_converged": false,
+                "descent_guard_triggered": false,
+                "amplitude_epsilon": 0.7478097417574854,
+                "edge_epsilon": 1.1380941984235071,
+                "amplitude_weight_range": [
+                  0.00956812613730394,
+                  0.9999962700186182
+                ],
+                "edge_weight_range": [
+                  0.014489410724513417,
+                  0.9999997518355963
+                ]
+              },
+              "response_condition": 43.85921132495771,
+              "null_rule": "99th percentile of up to 16 overlapping baseline projections; heuristic, not p-value"
+            }
+          ],
+          "selected_templates": [],
+          "graph_edges": 21320,
+          "deep_graph_edges": 0,
+          "spatial_templates_used": false
+        }
+      }
+    },
+    {
+      "parcel": "superiorfrontal-rh",
+      "shape": "uniform_3hop",
+      "center": 6511,
+      "surface_indices": [
+        6052,
+        6054,
+        6085,
+        6147,
+        6179,
+        6214,
+        6216,
+        6240,
+        6291,
+        6298,
+        6375,
+        6376,
+        6377,
+        6379,
+        6380,
+        6457,
+        6487,
+        6492,
+        6510,
+        6511,
+        6512,
+        6514,
+        6606,
+        6611,
+        6613,
+        6629,
+        6630,
+        6653,
+        6732,
+        6736,
+        6738,
+        6765,
+        6766,
+        6845,
+        6870,
+        6872,
+        6898
+      ],
+      "surface_count": 37,
+      "deep_index": null,
+      "case_id": "shape_01_eeg-10_meg-10",
+      "seed": [
+        20260922,
+        1,
+        0
+      ],
+      "eeg_snr_db": -10,
+      "meg_snr_db": -10,
+      "actual_snr_db": [
+        -9.999999999999998,
+        -9.999999999999998
+      ],
+      "diagnostics": {
+        "v3": {
+          "mode": "signed_multiscale_erp_surface_residual_deep_v3",
+          "surface_scales_mm": [
+            0.0,
+            4.0,
+            7.0
+          ],
+          "selected_templates": 2,
+          "selected_surface_templates": 2,
+          "selected_deep_templates": 0,
+          "ridge_fraction": 0.03,
+          "max_templates_per_window": 7,
+          "require_one": false,
+          "windows": [
+            {
+              "window": 0,
+              "active_samples": 61,
+              "temporal_rank": 3,
+              "null_edges": [
+                15.585446810248659,
+                14.692298987118086,
+                18.56366697841866
+              ],
+              "channel_weight_min": 0.7116038948413344,
+              "channel_weight_max": 1.0,
+              "weighted_channels": 157,
+              "selected_surface_templates": 2,
+              "surface_ebic_deltas": [
+                -96.49491402661113,
+                -4.612931622632004
+              ],
+              "selected_templates": [
+                {
+                  "layer": "surface",
+                  "scale_mm": 4.0,
+                  "index": 6487
+                },
+                {
+                  "layer": "surface",
+                  "scale_mm": 0.0,
+                  "index": 4046
+                }
+              ],
+              "deep_candidate_local": 9,
+              "deep_ebic_delta": 33.549518166925296,
+              "deep_accepted": false,
+              "selection": "joint_surface_then_residual_deep_ebic_v3",
+              "joint_ebic_deltas": [
+                -96.49491402661113,
+                -4.612931622632004
+              ],
+              "first_selected_layer": "surface",
+              "deep_rescue_attempted": false,
+              "deep_rescue_accepted": false,
+              "deep_rescue_ebic_delta": Infinity,
+              "deep_rescue_ebic_threshold": -6.0,
+              "time_evidence": {
+                "surface_raw": {
+                  "positive_candidates": 7514,
+                  "score_max": 79.31322420590074,
+                  "score_median_positive": 12.393994495622806
+                },
+                "deep_surface_residual": {
+                  "positive_candidates": 7514,
+                  "score_max": 24.384918476479026,
+                  "score_median_positive": 9.163939432691135
+                }
+              },
+              "residual_deep_reselection": {
+                "deep_local": 9,
+                "accepted": false,
+                "ebic_delta": 33.549518166925296,
+                "surface_design_rank": 2,
+                "candidate_universe": 22510,
+                "residual_active_samples": 61,
+                "residual_temporal_rank": 3,
+                "residual_null_edges": [
+                  15.577487784971742,
+                  14.60688602091432,
+                  18.516924224834224
+                ]
+              }
+            }
+          ],
+          "selection": "joint_surface_then_residual_deep_reselection",
+          "conditional_candidate_drops": true,
+          "joint_search_template_cap_per_window": 6,
+          "deep_rescue_can_add_one_template": false,
+          "max_deep_templates_per_window": 1,
+          "time_evidence_fraction": 0.05,
+          "time_evidence_surface_scale_mm": 4.0,
+          "time_evidence_layer_balanced": true,
+          "time_evidence_fusion": {
+            "primary_active_peak": 1.3580767380605183,
+            "evidence_active_peak": 266.27442306325327,
+            "evidence_scale": 0.008689082654804942,
+            "evidence_layer_peaks": [
+              266.27442306325327,
+              7.814845318047013
+            ],
+            "evidence_layer_scales": [
+              0.0002550144926495453,
+              0.008689082654804942
+            ]
+          },
+          "time_evidence_deep_surface_residual": true
+        },
+        "v4": {
+          "mode": "adaptive_source_and_edge_logsum_full_grid",
+          "windows": [
+            {
+              "active_samples": 61,
+              "temporal_rank": 3,
+              "null_edges": [
+                15.585446810248659,
+                14.692298987118086,
+                18.56366697841866
+              ],
+              "source_lambda": 4.4770486632607165,
+              "edge_lambda": 0.3936316941501976,
+              "solver": {
+                "history": [
+                  {
+                    "outer": 0,
+                    "iterations": 600,
+                    "converged": false,
+                    "primal_relative": 0.005700858633234555,
+                    "dual_relative": 0.0019224572095750654,
+                    "log_objective": 849.1279388169132,
+                    "relative_change": 1.0,
+                    "active_rows": 64
+                  },
+                  {
+                    "outer": 1,
+                    "iterations": 516,
+                    "converged": true,
+                    "primal_relative": 0.0009962415998480759,
+                    "dual_relative": 0.0002579012615938078,
+                    "log_objective": 636.0635736735152,
+                    "relative_change": 0.736093779678902,
+                    "active_rows": 40
+                  },
+                  {
+                    "outer": 2,
+                    "iterations": 238,
+                    "converged": true,
+                    "primal_relative": 0.0009984764907403152,
+                    "dual_relative": 0.0003758119969983649,
+                    "log_objective": 605.4718913047494,
+                    "relative_change": 0.2690739097821588,
+                    "active_rows": 39
+                  },
+                  {
+                    "outer": 3,
+                    "iterations": 139,
+                    "converged": true,
+                    "primal_relative": 0.0009957037037479053,
+                    "dual_relative": 0.000830276929005662,
+                    "log_objective": 593.4265059490791,
+                    "relative_change": 0.13573024625511318,
+                    "active_rows": 34
+                  },
+                  {
+                    "outer": 4,
+                    "iterations": 69,
+                    "converged": true,
+                    "primal_relative": 0.0008539148484914988,
+                    "dual_relative": 0.0009893305138880357,
+                    "log_objective": 590.5688946865321,
+                    "relative_change": 0.05213575317062616,
+                    "active_rows": 34
+                  },
+                  {
+                    "outer": 5,
+                    "iterations": 63,
+                    "converged": true,
+                    "primal_relative": 0.0007969788963877941,
+                    "dual_relative": 0.0009784405447554557,
+                    "log_objective": 587.3872296417882,
+                    "relative_change": 0.05502523292821011,
+                    "active_rows": 33
+                  }
+                ],
+                "converged": false,
+                "inner_converged": false,
+                "outer_converged": false,
+                "descent_guard_triggered": false,
+                "amplitude_epsilon": 0.15265848881929384,
+                "edge_epsilon": 0.15265366474240324,
+                "amplitude_weight_range": [
+                  0.015976199078539404,
+                  0.9999887323344528
+                ],
+                "edge_weight_range": [
+                  0.015975921485990134,
+                  0.9999924739894447
+                ]
+              },
+              "response_condition": 1.299656041151693,
+              "null_rule": "99th percentile of up to 16 overlapping baseline projections; heuristic, not p-value"
+            }
+          ],
+          "selected_templates": [],
+          "graph_edges": 21320,
+          "deep_graph_edges": 0,
+          "spatial_templates_used": false
+        }
+      }
+    },
+    {
+      "parcel": "superiorfrontal-rh",
+      "shape": "uniform_3hop",
+      "center": 6511,
+      "surface_indices": [
+        6052,
+        6054,
+        6085,
+        6147,
+        6179,
+        6214,
+        6216,
+        6240,
+        6291,
+        6298,
+        6375,
+        6376,
+        6377,
+        6379,
+        6380,
+        6457,
+        6487,
+        6492,
+        6510,
+        6511,
+        6512,
+        6514,
+        6606,
+        6611,
+        6613,
+        6629,
+        6630,
+        6653,
+        6732,
+        6736,
+        6738,
+        6765,
+        6766,
+        6845,
+        6870,
+        6872,
+        6898
+      ],
+      "surface_count": 37,
+      "deep_index": null,
+      "case_id": "shape_01_eeg+05_meg+05",
+      "seed": [
+        20260922,
+        1,
+        1
+      ],
+      "eeg_snr_db": 5,
+      "meg_snr_db": 5,
+      "actual_snr_db": [
+        5.000000000000001,
+        5.000000000000001
+      ],
+      "diagnostics": {
+        "v3": {
+          "mode": "signed_multiscale_erp_surface_residual_deep_v3",
+          "surface_scales_mm": [
+            0.0,
+            4.0,
+            7.0
+          ],
+          "selected_templates": 2,
+          "selected_surface_templates": 2,
+          "selected_deep_templates": 0,
+          "ridge_fraction": 0.03,
+          "max_templates_per_window": 7,
+          "require_one": false,
+          "windows": [
+            {
+              "window": 0,
+              "active_samples": 61,
+              "temporal_rank": 3,
+              "null_edges": [
+                16.025187078824324,
+                14.289455268659987,
+                18.25545835228305
+              ],
+              "channel_weight_min": 0.8361022582311571,
+              "channel_weight_max": 1.0,
+              "weighted_channels": 157,
+              "selected_surface_templates": 2,
+              "surface_ebic_deltas": [
+                -1231.7930196622674,
+                -295.8288966342576
+              ],
+              "selected_templates": [
+                {
+                  "layer": "surface",
+                  "scale_mm": 7.0,
+                  "index": 6653
+                },
+                {
+                  "layer": "surface",
+                  "scale_mm": 4.0,
+                  "index": 6179
+                }
+              ],
+              "deep_candidate_local": 0,
+              "deep_ebic_delta": 30.79845051935358,
+              "deep_accepted": false,
+              "selection": "joint_surface_then_residual_deep_ebic_v3",
+              "joint_ebic_deltas": [
+                -1231.7930196622674,
+                -295.8288966342576
+              ],
+              "first_selected_layer": "surface",
+              "deep_rescue_attempted": false,
+              "deep_rescue_accepted": false,
+              "deep_rescue_ebic_delta": Infinity,
+              "deep_rescue_ebic_threshold": -6.0,
+              "time_evidence": {
+                "surface_raw": {
+                  "positive_candidates": 7514,
+                  "score_max": 1681.2219184463452,
+                  "score_median_positive": 42.28644146272442
+                },
+                "deep_surface_residual": {
+                  "positive_candidates": 7513,
+                  "score_max": 22.53475196744952,
+                  "score_median_positive": 7.532048223705295
+                }
+              },
+              "residual_deep_reselection": {
+                "deep_local": 0,
+                "accepted": false,
+                "ebic_delta": 30.79845051935358,
+                "surface_design_rank": 2,
+                "candidate_universe": 22510,
+                "residual_active_samples": 61,
+                "residual_temporal_rank": 3,
+                "residual_null_edges": [
+                  16.014994947962613,
+                  14.206000960368526,
+                  18.14333329755757
+                ]
+              }
+            }
+          ],
+          "selection": "joint_surface_then_residual_deep_reselection",
+          "conditional_candidate_drops": true,
+          "joint_search_template_cap_per_window": 6,
+          "deep_rescue_can_add_one_template": false,
+          "max_deep_templates_per_window": 1,
+          "time_evidence_fraction": 0.05,
+          "time_evidence_surface_scale_mm": 4.0,
+          "time_evidence_layer_balanced": true,
+          "time_evidence_fusion": {
+            "primary_active_peak": 0.41597886454776023,
+            "evidence_active_peak": 5808.961725630591,
+            "evidence_scale": 0.0024553179763221263,
+            "evidence_layer_peaks": [
+              5808.961725630591,
+              8.470977457079998
+            ],
+            "evidence_layer_scales": [
+              3.580492385690523e-06,
+              0.0024553179763221263
+            ]
+          },
+          "time_evidence_deep_surface_residual": true
+        },
+        "v4": {
+          "mode": "adaptive_source_and_edge_logsum_full_grid",
+          "windows": [
+            {
+              "active_samples": 61,
+              "temporal_rank": 3,
+              "null_edges": [
+                16.025187078824324,
+                14.289455268659987,
+                18.25545835228305
+              ],
+              "source_lambda": 5.123350542715921,
+              "edge_lambda": 0.45045593772612547,
+              "solver": {
+                "history": [
+                  {
+                    "outer": 0,
+                    "iterations": 600,
+                    "converged": false,
+                    "primal_relative": 0.002724442650005707,
+                    "dual_relative": 0.0005792856985201948,
+                    "log_objective": 732.0147537372379,
+                    "relative_change": 1.0,
+                    "active_rows": 78
+                  },
+                  {
+                    "outer": 1,
+                    "iterations": 467,
+                    "converged": true,
+                    "primal_relative": 0.0009993833756208517,
+                    "dual_relative": 0.00017530612515328386,
+                    "log_objective": 612.8274043097529,
+                    "relative_change": 0.3737801976933692,
+                    "active_rows": 38
+                  },
+                  {
+                    "outer": 2,
+                    "iterations": 206,
+                    "converged": true,
+                    "primal_relative": 0.000998592250723141,
+                    "dual_relative": 0.0005298326351541724,
+                    "log_objective": 601.0687186175854,
+                    "relative_change": 0.19003738612704454,
+                    "active_rows": 35
+                  },
+                  {
+                    "outer": 3,
+                    "iterations": 191,
+                    "converged": true,
+                    "primal_relative": 0.000995902732271035,
+                    "dual_relative": 0.00046844291476968357,
+                    "log_objective": 598.9599295624057,
+                    "relative_change": 0.11102233054799537,
+                    "active_rows": 34
+                  }
+                ],
+                "converged": false,
+                "inner_converged": false,
+                "outer_converged": false,
+                "descent_guard_triggered": true,
+                "amplitude_epsilon": 0.3983046973713568,
+                "edge_epsilon": 0.39830903944204343,
+                "amplitude_weight_range": [
+                  0.03688730467710313,
+                  0.9999686936889577
+                ],
+                "edge_weight_range": [
+                  0.03688612334204208,
+                  0.9999974494596435
+                ]
+              },
+              "response_condition": 9.849433416159977,
+              "null_rule": "99th percentile of up to 16 overlapping baseline projections; heuristic, not p-value"
+            }
+          ],
+          "selected_templates": [],
+          "graph_edges": 21320,
+          "deep_graph_edges": 0,
+          "spatial_templates_used": false
+        }
+      }
+    },
+    {
+      "parcel": "superiorfrontal-rh",
+      "shape": "uniform_3hop",
+      "center": 6511,
+      "surface_indices": [
+        6052,
+        6054,
+        6085,
+        6147,
+        6179,
+        6214,
+        6216,
+        6240,
+        6291,
+        6298,
+        6375,
+        6376,
+        6377,
+        6379,
+        6380,
+        6457,
+        6487,
+        6492,
+        6510,
+        6511,
+        6512,
+        6514,
+        6606,
+        6611,
+        6613,
+        6629,
+        6630,
+        6653,
+        6732,
+        6736,
+        6738,
+        6765,
+        6766,
+        6845,
+        6870,
+        6872,
+        6898
+      ],
+      "surface_count": 37,
+      "deep_index": null,
+      "case_id": "shape_01_eeg-10_meg+20",
+      "seed": [
+        20260922,
+        1,
+        2
+      ],
+      "eeg_snr_db": -10,
+      "meg_snr_db": 20,
+      "actual_snr_db": [
+        -10.0,
+        20.0
+      ],
+      "diagnostics": {
+        "v3": {
+          "mode": "signed_multiscale_erp_surface_residual_deep_v3",
+          "surface_scales_mm": [
+            0.0,
+            4.0,
+            7.0
+          ],
+          "selected_templates": 3,
+          "selected_surface_templates": 3,
+          "selected_deep_templates": 0,
+          "ridge_fraction": 0.03,
+          "max_templates_per_window": 7,
+          "require_one": false,
+          "windows": [
+            {
+              "window": 0,
+              "active_samples": 61,
+              "temporal_rank": 3,
+              "null_edges": [
+                13.908564847331283,
+                12.549012986668439,
+                16.424401005137256
+              ],
+              "channel_weight_min": 0.0850033833879386,
+              "channel_weight_max": 1.0,
+              "weighted_channels": 157,
+              "selected_surface_templates": 3,
+              "surface_ebic_deltas": [
+                -1798.9260977402748,
+                -621.0103801211943,
+                -141.95646681878782
+              ],
+              "selected_templates": [
+                {
+                  "layer": "surface",
+                  "scale_mm": 7.0,
+                  "index": 6511
+                },
+                {
+                  "layer": "surface",
+                  "scale_mm": 0.0,
+                  "index": 6897
+                },
+                {
+                  "layer": "surface",
+                  "scale_mm": 0.0,
+                  "index": 1649
+                }
+              ],
+              "deep_candidate_local": 3,
+              "deep_ebic_delta": 3.5373411480759707,
+              "deep_accepted": false,
+              "selection": "joint_surface_then_residual_deep_ebic_v3",
+              "joint_ebic_deltas": [
+                -1798.9260977402748,
+                -621.0103801211943,
+                -141.95646681878782
+              ],
+              "first_selected_layer": "surface",
+              "deep_rescue_attempted": false,
+              "deep_rescue_accepted": false,
+              "deep_rescue_ebic_delta": Infinity,
+              "deep_rescue_ebic_threshold": -6.0,
+              "time_evidence": {
+                "surface_raw": {
+                  "positive_candidates": 7514,
+                  "score_max": 29683.15104651716,
+                  "score_median_positive": 841.3140202089506
+                },
+                "deep_surface_residual": {
+                  "positive_candidates": 7514,
+                  "score_max": 25.473347464473072,
+                  "score_median_positive": 11.595629593991134
+                }
+              },
+              "residual_deep_reselection": {
+                "deep_local": 3,
+                "accepted": false,
+                "ebic_delta": 3.5373411480759707,
+                "surface_design_rank": 3,
+                "candidate_universe": 22510,
+                "residual_active_samples": 61,
+                "residual_temporal_rank": 3,
+                "residual_null_edges": [
+                  13.90301531210852,
+                  12.422050404954534,
+                  16.08713162838109
+                ]
+              }
+            }
+          ],
+          "selection": "joint_surface_then_residual_deep_reselection",
+          "conditional_candidate_drops": true,
+          "joint_search_template_cap_per_window": 6,
+          "deep_rescue_can_add_one_template": false,
+          "max_deep_templates_per_window": 1,
+          "time_evidence_fraction": 0.05,
+          "time_evidence_surface_scale_mm": 4.0,
+          "time_evidence_layer_balanced": true,
+          "time_evidence_fusion": {
+            "primary_active_peak": 0.5482518351446738,
+            "evidence_active_peak": 116168.89423893466,
+            "evidence_scale": 0.001614662058013776,
+            "evidence_layer_peaks": [
+              116168.89423893466,
+              16.977293558848096
+            ],
+            "evidence_layer_scales": [
+              2.359718747158928e-07,
+              0.001614662058013776
+            ]
+          },
+          "time_evidence_deep_surface_residual": true
+        },
+        "v4": {
+          "mode": "adaptive_source_and_edge_logsum_full_grid",
+          "windows": [
+            {
+              "active_samples": 61,
+              "temporal_rank": 3,
+              "null_edges": [
+                13.908564847331283,
+                12.549012986668439,
+                16.424401005137256
+              ],
+              "source_lambda": 5.178796993855039,
+              "edge_lambda": 0.45533090830118533,
+              "solver": {
+                "history": [
+                  {
+                    "outer": 0,
+                    "iterations": 600,
+                    "converged": false,
+                    "primal_relative": 0.000698985586188908,
+                    "dual_relative": 0.0013573589307896582,
+                    "log_objective": 1560.7526288095805,
+                    "relative_change": 1.0,
+                    "active_rows": 74
+                  },
+                  {
+                    "outer": 1,
+                    "iterations": 199,
+                    "converged": true,
+                    "primal_relative": 0.0009180213440510211,
+                    "dual_relative": 0.0009933231589666774,
+                    "log_objective": 1426.6484350499622,
+                    "relative_change": 0.13565052938330951,
+                    "active_rows": 59
+                  },
+                  {
+                    "outer": 2,
+                    "iterations": 125,
+                    "converged": true,
+                    "primal_relative": 0.0008515922296726442,
+                    "dual_relative": 0.0009978191649077164,
+                    "log_objective": 1411.0905405066749,
+                    "relative_change": 0.05678004811470634,
+                    "active_rows": 58
+                  },
+                  {
+                    "outer": 3,
+                    "iterations": 85,
+                    "converged": true,
+                    "primal_relative": 0.0008013325776784802,
+                    "dual_relative": 0.000995359890239261,
+                    "log_objective": 1404.6735468234913,
+                    "relative_change": 0.0323905018838513,
+                    "active_rows": 57
+                  },
+                  {
+                    "outer": 4,
+                    "iterations": 96,
+                    "converged": true,
+                    "primal_relative": 0.000684941658519887,
+                    "dual_relative": 0.0009830370267980965,
+                    "log_objective": 1388.3968667891202,
+                    "relative_change": 0.03767258046220914,
+                    "active_rows": 56
+                  },
+                  {
+                    "outer": 5,
+                    "iterations": 62,
+                    "converged": true,
+                    "primal_relative": 0.0006042726780895253,
+                    "dual_relative": 0.000999609301855408,
+                    "log_objective": 1383.7694902927476,
+                    "relative_change": 0.022387743647229834,
+                    "active_rows": 56
+                  }
+                ],
+                "converged": false,
+                "inner_converged": false,
+                "outer_converged": false,
+                "descent_guard_triggered": false,
+                "amplitude_epsilon": 1.007418668160446,
+                "edge_epsilon": 1.0074214445105119,
+                "amplitude_weight_range": [
+                  0.040154519341285895,
+                  0.9999886195445091
+                ],
+                "edge_weight_range": [
+                  0.04015449796014615,
+                  0.999998079180771
+                ]
+              },
+              "response_condition": 47.098121860576676,
+              "null_rule": "99th percentile of up to 16 overlapping baseline projections; heuristic, not p-value"
+            }
+          ],
+          "selected_templates": [],
+          "graph_edges": 21320,
+          "deep_graph_edges": 0,
+          "spatial_templates_used": false
+        }
+      }
+    },
+    {
+      "parcel": "lateraloccipital-lh",
+      "shape": "thin_path",
+      "center": 284,
+      "surface_indices": [
+        120,
+        212,
+        337,
+        338,
+        361,
+        385,
+        410,
+        411,
+        439,
+        539
+      ],
+      "surface_count": 10,
+      "deep_index": null,
+      "case_id": "shape_02_eeg-10_meg-10",
+      "seed": [
+        20260922,
+        2,
+        0
+      ],
+      "eeg_snr_db": -10,
+      "meg_snr_db": -10,
+      "actual_snr_db": [
+        -9.999999999999998,
+        -9.999999999999998
+      ],
+      "diagnostics": {
+        "v3": {
+          "mode": "signed_multiscale_erp_surface_residual_deep_v3",
+          "surface_scales_mm": [
+            0.0,
+            4.0,
+            7.0
+          ],
+          "selected_templates": 3,
+          "selected_surface_templates": 3,
+          "selected_deep_templates": 0,
+          "ridge_fraction": 0.03,
+          "max_templates_per_window": 7,
+          "require_one": false,
+          "windows": [
+            {
+              "window": 0,
+              "active_samples": 61,
+              "temporal_rank": 3,
+              "null_edges": [
+                15.001062518124057,
+                13.986228869905462,
+                17.890332940946653
+              ],
+              "channel_weight_min": 0.6189282799021258,
+              "channel_weight_max": 1.0,
+              "weighted_channels": 157,
+              "selected_surface_templates": 3,
+              "surface_ebic_deltas": [
+                -119.62175732177172,
+                -9.246000503774553,
+                -5.378492721658063
+              ],
+              "selected_templates": [
+                {
+                  "layer": "surface",
+                  "scale_mm": 4.0,
+                  "index": 464
+                },
+                {
+                  "layer": "surface",
+                  "scale_mm": 4.0,
+                  "index": 4020
+                },
+                {
+                  "layer": "surface",
+                  "scale_mm": 4.0,
+                  "index": 5536
+                }
+              ],
+              "deep_candidate_local": 15,
+              "deep_ebic_delta": 21.390692949907017,
+              "deep_accepted": false,
+              "selection": "joint_surface_then_residual_deep_ebic_v3",
+              "joint_ebic_deltas": [
+                -119.62175732177172,
+                -9.246000503774553,
+                -5.378492721658063
+              ],
+              "first_selected_layer": "surface",
+              "deep_rescue_attempted": false,
+              "deep_rescue_accepted": false,
+              "deep_rescue_ebic_delta": Infinity,
+              "deep_rescue_ebic_threshold": -6.0,
+              "time_evidence": {
+                "surface_raw": {
+                  "positive_candidates": 7514,
+                  "score_max": 84.84045580029009,
+                  "score_median_positive": 13.597992037537711
+                },
+                "deep_surface_residual": {
+                  "positive_candidates": 7514,
+                  "score_max": 26.389146698319735,
+                  "score_median_positive": 9.406069028411256
+                }
+              },
+              "residual_deep_reselection": {
+                "deep_local": 15,
+                "accepted": false,
+                "ebic_delta": 21.390692949907017,
+                "surface_design_rank": 3,
+                "candidate_universe": 22510,
+                "residual_active_samples": 61,
+                "residual_temporal_rank": 3,
+                "residual_null_edges": [
+                  14.900595736238984,
+                  13.802074764130344,
+                  17.75781999583126
+                ]
+              }
+            }
+          ],
+          "selection": "joint_surface_then_residual_deep_reselection",
+          "conditional_candidate_drops": true,
+          "joint_search_template_cap_per_window": 6,
+          "deep_rescue_can_add_one_template": false,
+          "max_deep_templates_per_window": 1,
+          "time_evidence_fraction": 0.05,
+          "time_evidence_surface_scale_mm": 4.0,
+          "time_evidence_layer_balanced": true,
+          "time_evidence_fusion": {
+            "primary_active_peak": 0.9096537271095316,
+            "evidence_active_peak": 260.025354356599,
+            "evidence_scale": 0.0023658757112837783,
+            "evidence_layer_peaks": [
+              260.025354356599,
+              19.224461428194232
+            ],
+            "evidence_layer_scales": [
+              0.00017491635178430175,
+              0.0023658757112837783
+            ]
+          },
+          "time_evidence_deep_surface_residual": true
+        },
+        "v4": {
+          "mode": "adaptive_source_and_edge_logsum_full_grid",
+          "windows": [
+            {
+              "active_samples": 61,
+              "temporal_rank": 3,
+              "null_edges": [
+                15.001062518124057,
+                13.986228869905462,
+                17.890332940946653
+              ],
+              "source_lambda": 5.291817742576367,
+              "edge_lambda": 0.4652679342616979,
+              "solver": {
+                "history": [
+                  {
+                    "outer": 0,
+                    "iterations": 600,
+                    "converged": false,
+                    "primal_relative": 0.011940366741356642,
+                    "dual_relative": 0.002661823308693999,
+                    "log_objective": 998.6434054055662,
+                    "relative_change": 1.0,
+                    "active_rows": 43
+                  },
+                  {
+                    "outer": 1,
+                    "iterations": 589,
+                    "converged": true,
+                    "primal_relative": 0.0009994470399811513,
+                    "dual_relative": 0.000334467076823292,
+                    "log_objective": 763.5944091989135,
+                    "relative_change": 0.7341860970536775,
+                    "active_rows": 29
+                  },
+                  {
+                    "outer": 2,
+                    "iterations": 364,
+                    "converged": true,
+                    "primal_relative": 0.0008677391911789367,
+                    "dual_relative": 0.0009797220115092277,
+                    "log_objective": 746.3478537823682,
+                    "relative_change": 0.3461871239164311,
+                    "active_rows": 27
+                  },
+                  {
+                    "outer": 3,
+                    "iterations": 355,
+                    "converged": true,
+                    "primal_relative": 0.00047734579607867906,
+                    "dual_relative": 0.000989028307358451,
+                    "log_objective": 733.4488895786421,
+                    "relative_change": 0.16357834878430486,
+                    "active_rows": 24
+                  }
+                ],
+                "converged": false,
+                "inner_converged": false,
+                "outer_converged": false,
+                "descent_guard_triggered": true,
+                "amplitude_epsilon": 0.10324905382661231,
+                "edge_epsilon": 0.10326465343007102,
+                "amplitude_weight_range": [
+                  0.012690993653424416,
+                  0.9999886251191226
+                ],
+                "edge_weight_range": [
+                  0.010614737936569463,
+                  0.9999976609960871
+                ]
+              },
+              "response_condition": 1.3162506712698736,
+              "null_rule": "99th percentile of up to 16 overlapping baseline projections; heuristic, not p-value"
+            }
+          ],
+          "selected_templates": [],
+          "graph_edges": 21320,
+          "deep_graph_edges": 0,
+          "spatial_templates_used": false
+        }
+      }
+    },
+    {
+      "parcel": "lateraloccipital-lh",
+      "shape": "thin_path",
+      "center": 284,
+      "surface_indices": [
+        120,
+        212,
+        337,
+        338,
+        361,
+        385,
+        410,
+        411,
+        439,
+        539
+      ],
+      "surface_count": 10,
+      "deep_index": null,
+      "case_id": "shape_02_eeg+05_meg+05",
+      "seed": [
+        20260922,
+        2,
+        1
+      ],
+      "eeg_snr_db": 5,
+      "meg_snr_db": 5,
+      "actual_snr_db": [
+        5.0,
+        5.0
+      ],
+      "diagnostics": {
+        "v3": {
+          "mode": "signed_multiscale_erp_surface_residual_deep_v3",
+          "surface_scales_mm": [
+            0.0,
+            4.0,
+            7.0
+          ],
+          "selected_templates": 3,
+          "selected_surface_templates": 3,
+          "selected_deep_templates": 0,
+          "ridge_fraction": 0.03,
+          "max_templates_per_window": 7,
+          "require_one": false,
+          "windows": [
+            {
+              "window": 0,
+              "active_samples": 61,
+              "temporal_rank": 3,
+              "null_edges": [
+                16.07876545615972,
+                14.535061989867918,
+                18.67845202871828
+              ],
+              "channel_weight_min": 0.8145951382461146,
+              "channel_weight_max": 1.0,
+              "weighted_channels": 157,
+              "selected_surface_templates": 3,
+              "surface_ebic_deltas": [
+                -967.8790127324858,
+                -244.62035512293164,
+                -160.83308848049273
+              ],
+              "selected_templates": [
+                {
+                  "layer": "surface",
+                  "scale_mm": 4.0,
+                  "index": 464
+                },
+                {
+                  "layer": "surface",
+                  "scale_mm": 0.0,
+                  "index": 404
+                },
+                {
+                  "layer": "surface",
+                  "scale_mm": 0.0,
+                  "index": 212
+                }
+              ],
+              "deep_candidate_local": 0,
+              "deep_ebic_delta": 18.848099041055782,
+              "deep_accepted": false,
+              "selection": "joint_surface_then_residual_deep_ebic_v3",
+              "joint_ebic_deltas": [
+                -967.8790127324858,
+                -244.62035512293164,
+                -160.83308848049273
+              ],
+              "first_selected_layer": "surface",
+              "deep_rescue_attempted": false,
+              "deep_rescue_accepted": false,
+              "deep_rescue_ebic_delta": Infinity,
+              "deep_rescue_ebic_threshold": -6.0,
+              "time_evidence": {
+                "surface_raw": {
+                  "positive_candidates": 7514,
+                  "score_max": 1825.948570280354,
+                  "score_median_positive": 41.45652329578768
+                },
+                "deep_surface_residual": {
+                  "positive_candidates": 7514,
+                  "score_max": 24.950373443332243,
+                  "score_median_positive": 9.092060859984135
+                }
+              },
+              "residual_deep_reselection": {
+                "deep_local": 0,
+                "accepted": false,
+                "ebic_delta": 18.848099041055782,
+                "surface_design_rank": 3,
+                "candidate_universe": 22510,
+                "residual_active_samples": 61,
+                "residual_temporal_rank": 3,
+                "residual_null_edges": [
+                  15.982574386673576,
+                  14.481563083865066,
+                  18.59466206333313
+                ]
+              }
+            }
+          ],
+          "selection": "joint_surface_then_residual_deep_reselection",
+          "conditional_candidate_drops": true,
+          "joint_search_template_cap_per_window": 6,
+          "deep_rescue_can_add_one_template": false,
+          "max_deep_templates_per_window": 1,
+          "time_evidence_fraction": 0.05,
+          "time_evidence_surface_scale_mm": 4.0,
+          "time_evidence_layer_balanced": true,
+          "time_evidence_fusion": {
+            "primary_active_peak": 0.858203594141699,
+            "evidence_active_peak": 5803.336432170447,
+            "evidence_scale": 0.002471049583083409,
+            "evidence_layer_peaks": [
+              5803.336432170447,
+              17.36516337059536
+            ],
+            "evidence_layer_scales": [
+              7.394053439537806e-06,
+              0.002471049583083409
+            ]
+          },
+          "time_evidence_deep_surface_residual": true
+        },
+        "v4": {
+          "mode": "adaptive_source_and_edge_logsum_full_grid",
+          "windows": [
+            {
+              "active_samples": 61,
+              "temporal_rank": 3,
+              "null_edges": [
+                16.07876545615972,
+                14.535061989867918,
+                18.67845202871828
+              ],
+              "source_lambda": 4.793573885560153,
+              "edge_lambda": 0.42146126869054906,
+              "solver": {
+                "history": [
+                  {
+                    "outer": 0,
+                    "iterations": 600,
+                    "converged": false,
+                    "primal_relative": 0.0019648312557445065,
+                    "dual_relative": 0.0012529206420081264,
+                    "log_objective": 854.265243613579,
+                    "relative_change": 1.0,
+                    "active_rows": 29
+                  },
+                  {
+                    "outer": 1,
+                    "iterations": 306,
+                    "converged": true,
+                    "primal_relative": 0.0009972533798007428,
+                    "dual_relative": 0.0008267503761913794,
+                    "log_objective": 706.6246293952836,
+                    "relative_change": 0.4682784614191985,
+                    "active_rows": 20
+                  },
+                  {
+                    "outer": 2,
+                    "iterations": 222,
+                    "converged": true,
+                    "primal_relative": 0.000722610029400698,
+                    "dual_relative": 0.0009960883624743752,
+                    "log_objective": 667.6301802366671,
+                    "relative_change": 0.19929854106876116,
+                    "active_rows": 13
+                  },
+                  {
+                    "outer": 3,
+                    "iterations": 163,
+                    "converged": true,
+                    "primal_relative": 0.0007920255714166241,
+                    "dual_relative": 0.0009951967175571709,
+                    "log_objective": 665.9500955665984,
+                    "relative_change": 0.12257038247319826,
+                    "active_rows": 13
+                  },
+                  {
+                    "outer": 4,
+                    "iterations": 154,
+                    "converged": true,
+                    "primal_relative": 0.0007195239852238164,
+                    "dual_relative": 0.0009963164855823798,
+                    "log_objective": 661.6056797420398,
+                    "relative_change": 0.10106430223067553,
+                    "active_rows": 13
+                  },
+                  {
+                    "outer": 5,
+                    "iterations": 175,
+                    "converged": true,
+                    "primal_relative": 0.0007044858151771285,
+                    "dual_relative": 0.0009931135501499947,
+                    "log_objective": 654.593070149449,
+                    "relative_change": 0.12989718841131379,
+                    "active_rows": 13
+                  }
+                ],
+                "converged": false,
+                "inner_converged": false,
+                "outer_converged": false,
+                "descent_guard_triggered": false,
+                "amplitude_epsilon": 1.1989999591795222,
+                "edge_epsilon": 1.199001478439966,
+                "amplitude_weight_range": [
+                  0.03143024870993338,
+                  0.9999989030562089
+                ],
+                "edge_weight_range": [
+                  0.03143088293160477,
+                  0.9999990610021168
+                ]
+              },
+              "response_condition": 9.970342443008008,
+              "null_rule": "99th percentile of up to 16 overlapping baseline projections; heuristic, not p-value"
+            }
+          ],
+          "selected_templates": [],
+          "graph_edges": 21320,
+          "deep_graph_edges": 0,
+          "spatial_templates_used": false
+        }
+      }
+    },
+    {
+      "parcel": "lateraloccipital-lh",
+      "shape": "thin_path",
+      "center": 284,
+      "surface_indices": [
+        120,
+        212,
+        337,
+        338,
+        361,
+        385,
+        410,
+        411,
+        439,
+        539
+      ],
+      "surface_count": 10,
+      "deep_index": null,
+      "case_id": "shape_02_eeg-10_meg+20",
+      "seed": [
+        20260922,
+        2,
+        2
+      ],
+      "eeg_snr_db": -10,
+      "meg_snr_db": 20,
+      "actual_snr_db": [
+        -9.999999999999998,
+        20.0
+      ],
+      "diagnostics": {
+        "v3": {
+          "mode": "signed_multiscale_erp_surface_residual_deep_v3",
+          "surface_scales_mm": [
+            0.0,
+            4.0,
+            7.0
+          ],
+          "selected_templates": 4,
+          "selected_surface_templates": 3,
+          "selected_deep_templates": 1,
+          "ridge_fraction": 0.03,
+          "max_templates_per_window": 7,
+          "require_one": false,
+          "windows": [
+            {
+              "window": 0,
+              "active_samples": 61,
+              "temporal_rank": 3,
+              "null_edges": [
+                13.883497619844853,
+                12.645974174120987,
+                16.533154359786568
+              ],
+              "channel_weight_min": 0.06921980832474467,
+              "channel_weight_max": 1.0,
+              "weighted_channels": 157,
+              "selected_surface_templates": 3,
+              "surface_ebic_deltas": [
+                -1162.4194709336693,
+                -797.2777875745328,
+                -139.78858304749383
+              ],
+              "selected_templates": [
+                {
+                  "layer": "surface",
+                  "scale_mm": 7.0,
+                  "index": 361
+                },
+                {
+                  "layer": "surface",
+                  "scale_mm": 4.0,
+                  "index": 358
+                },
+                {
+                  "layer": "surface",
+                  "scale_mm": 4.0,
+                  "index": 18
+                },
+                {
+                  "layer": "deep",
+                  "scale_mm": null,
+                  "index": 0
+                }
+              ],
+              "deep_candidate_local": 0,
+              "deep_ebic_delta": -50.33369669796503,
+              "deep_accepted": true,
+              "selection": "joint_surface_then_residual_deep_ebic_v3",
+              "joint_ebic_deltas": [
+                -1162.4194709336693,
+                -797.2777875745328,
+                -139.78858304749383
+              ],
+              "first_selected_layer": "surface",
+              "deep_rescue_attempted": false,
+              "deep_rescue_accepted": false,
+              "deep_rescue_ebic_delta": Infinity,
+              "deep_rescue_ebic_threshold": -6.0,
+              "time_evidence": {
+                "surface_raw": {
+                  "positive_candidates": 7514,
+                  "score_max": 45757.12361332758,
+                  "score_median_positive": 1716.4078717125806
+                },
+                "deep_surface_residual": {
+                  "positive_candidates": 7514,
+                  "score_max": 160.59718147959117,
+                  "score_median_positive": 18.601740504496888
+                }
+              },
+              "residual_deep_reselection": {
+                "deep_local": 0,
+                "accepted": true,
+                "ebic_delta": -50.33369669796503,
+                "surface_design_rank": 3,
+                "candidate_universe": 22510,
+                "residual_active_samples": 61,
+                "residual_temporal_rank": 3,
+                "residual_null_edges": [
+                  13.86144343031983,
+                  12.366173881091362,
+                  16.19419807841843
+                ]
+              }
+            }
+          ],
+          "selection": "joint_surface_then_residual_deep_reselection",
+          "conditional_candidate_drops": true,
+          "joint_search_template_cap_per_window": 6,
+          "deep_rescue_can_add_one_template": false,
+          "max_deep_templates_per_window": 1,
+          "time_evidence_fraction": 0.05,
+          "time_evidence_surface_scale_mm": 4.0,
+          "time_evidence_layer_balanced": true,
+          "time_evidence_fusion": {
+            "primary_active_peak": 0.6475174914163537,
+            "evidence_active_peak": 133679.1673967473,
+            "evidence_scale": 0.00043656293077099,
+            "evidence_layer_peaks": [
+              133679.1673967473,
+              74.16084208899831
+            ],
+            "evidence_layer_scales": [
+              2.4219087537199503e-07,
+              0.00043656293077099
+            ]
+          },
+          "time_evidence_deep_surface_residual": true
+        },
+        "v4": {
+          "mode": "adaptive_source_and_edge_logsum_full_grid",
+          "windows": [
+            {
+              "active_samples": 61,
+              "temporal_rank": 3,
+              "null_edges": [
+                13.883497619844853,
+                12.645974174120987,
+                16.533154359786568
+              ],
+              "source_lambda": 4.9444425758301955,
+              "edge_lambda": 0.4347259666225939,
+              "solver": {
+                "history": [
+                  {
+                    "outer": 0,
+                    "iterations": 600,
+                    "converged": false,
+                    "primal_relative": 0.0005385828574762019,
+                    "dual_relative": 0.0013722882655561061,
+                    "log_objective": 2199.701652630265,
+                    "relative_change": 1.0,
+                    "active_rows": 37
+                  },
+                  {
+                    "outer": 1,
+                    "iterations": 543,
+                    "converged": true,
+                    "primal_relative": 0.00021944176136649016,
+                    "dual_relative": 0.000999103675550331,
+                    "log_objective": 1707.3484283267642,
+                    "relative_change": 0.438064948778726,
+                    "active_rows": 22
+                  },
+                  {
+                    "outer": 2,
+                    "iterations": 245,
+                    "converged": true,
+                    "primal_relative": 0.00027157238256772943,
+                    "dual_relative": 0.0009999622831642172,
+                    "log_objective": 1579.122411600562,
+                    "relative_change": 0.13973176806725013,
+                    "active_rows": 15
+                  },
+                  {
+                    "outer": 3,
+                    "iterations": 160,
+                    "converged": true,
+                    "primal_relative": 0.00034334085861902834,
+                    "dual_relative": 0.0009951771384451662,
+                    "log_objective": 1552.412275513517,
+                    "relative_change": 0.08174300156394151,
+                    "active_rows": 14
+                  },
+                  {
+                    "outer": 4,
+                    "iterations": 181,
+                    "converged": true,
+                    "primal_relative": 0.0002487227759003477,
+                    "dual_relative": 0.0009972322569422826,
+                    "log_objective": 1532.247111165138,
+                    "relative_change": 0.06446761687621777,
+                    "active_rows": 14
+                  },
+                  {
+                    "outer": 5,
+                    "iterations": 254,
+                    "converged": true,
+                    "primal_relative": 0.00031545285913025075,
+                    "dual_relative": 0.0009976396422031093,
+                    "log_objective": 1513.817306263931,
+                    "relative_change": 0.10330495560492163,
+                    "active_rows": 14
+                  }
+                ],
+                "converged": false,
+                "inner_converged": false,
+                "outer_converged": false,
+                "descent_guard_triggered": false,
+                "amplitude_epsilon": 3.914643481755913,
+                "edge_epsilon": 3.9146118446021703,
+                "amplitude_weight_range": [
+                  0.03466595091614852,
+                  0.9999981276394329
+                ],
+                "edge_weight_range": [
+                  0.034665386334290726,
+                  0.9999993360624946
+                ]
+              },
+              "response_condition": 59.69915248988244,
+              "null_rule": "99th percentile of up to 16 overlapping baseline projections; heuristic, not p-value"
+            }
+          ],
+          "selected_templates": [],
+          "graph_edges": 21320,
+          "deep_graph_edges": 0,
+          "spatial_templates_used": false
+        }
+      }
+    },
+    {
+      "parcel": "superiorparietal-rh",
+      "shape": "wide_path_plus_deep",
+      "center": 4028,
+      "surface_indices": [
+        3892,
+        3893,
+        3894,
+        3943,
+        3964,
+        3965,
+        3994,
+        4026,
+        4027,
+        4055,
+        4058,
+        4062,
+        4084,
+        4086,
+        4107,
+        4109,
+        4110,
+        4113,
+        4116,
+        4142,
+        4146,
+        4148,
+        4166,
+        4167,
+        4168,
+        4171,
+        4197,
+        4205,
+        4208,
+        4234,
+        4236,
+        4238,
+        4263,
+        4266,
+        4286,
+        4290,
+        4292
+      ],
+      "surface_count": 37,
+      "deep_index": 7504,
+      "case_id": "shape_03_eeg-10_meg-10",
+      "seed": [
+        20260922,
+        3,
+        0
+      ],
+      "eeg_snr_db": -10,
+      "meg_snr_db": -10,
+      "actual_snr_db": [
+        -10.0,
+        -10.0
+      ],
+      "diagnostics": {
+        "v3": {
+          "mode": "signed_multiscale_erp_surface_residual_deep_v3",
+          "surface_scales_mm": [
+            0.0,
+            4.0,
+            7.0
+          ],
+          "selected_templates": 3,
+          "selected_surface_templates": 3,
+          "selected_deep_templates": 0,
+          "ridge_fraction": 0.03,
+          "max_templates_per_window": 7,
+          "require_one": false,
+          "windows": [
+            {
+              "window": 0,
+              "active_samples": 61,
+              "temporal_rank": 3,
+              "null_edges": [
+                15.642292722938508,
+                13.780888572632318,
+                17.911924465246084
+              ],
+              "channel_weight_min": 0.7090362082323707,
+              "channel_weight_max": 1.0,
+              "weighted_channels": 157,
+              "selected_surface_templates": 3,
+              "surface_ebic_deltas": [
+                -97.65437905965314,
+                -10.242697214648388,
+                -6.767602492222636
+              ],
+              "selected_templates": [
+                {
+                  "layer": "surface",
+                  "scale_mm": 7.0,
+                  "index": 3812
+                },
+                {
+                  "layer": "surface",
+                  "scale_mm": 0.0,
+                  "index": 3640
+                },
+                {
+                  "layer": "surface",
+                  "scale_mm": 0.0,
+                  "index": 3015
+                }
+              ],
+              "deep_candidate_local": 1,
+              "deep_ebic_delta": 26.090839513075604,
+              "deep_accepted": false,
+              "selection": "joint_surface_then_residual_deep_ebic_v3",
+              "joint_ebic_deltas": [
+                -97.65437905965314,
+                -10.242697214648388,
+                -6.767602492222636
+              ],
+              "first_selected_layer": "surface",
+              "deep_rescue_attempted": false,
+              "deep_rescue_accepted": false,
+              "deep_rescue_ebic_delta": Infinity,
+              "deep_rescue_ebic_threshold": -6.0,
+              "time_evidence": {
+                "surface_raw": {
+                  "positive_candidates": 7514,
+                  "score_max": 62.4382653154142,
+                  "score_median_positive": 13.379790006913872
+                },
+                "deep_surface_residual": {
+                  "positive_candidates": 7514,
+                  "score_max": 23.90410366645775,
+                  "score_median_positive": 9.707196233672587
+                }
+              },
+              "residual_deep_reselection": {
+                "deep_local": 1,
+                "accepted": false,
+                "ebic_delta": 26.090839513075604,
+                "surface_design_rank": 3,
+                "candidate_universe": 22510,
+                "residual_active_samples": 61,
+                "residual_temporal_rank": 3,
+                "residual_null_edges": [
+                  15.61083475074722,
+                  13.738616962316405,
+                  17.697858192916144
+                ]
+              }
+            }
+          ],
+          "selection": "joint_surface_then_residual_deep_reselection",
+          "conditional_candidate_drops": true,
+          "joint_search_template_cap_per_window": 6,
+          "deep_rescue_can_add_one_template": false,
+          "max_deep_templates_per_window": 1,
+          "time_evidence_fraction": 0.05,
+          "time_evidence_surface_scale_mm": 4.0,
+          "time_evidence_layer_balanced": true,
+          "time_evidence_fusion": {
+            "primary_active_peak": 4.722893156569229,
+            "evidence_active_peak": 220.0253836609767,
+            "evidence_scale": 0.019620690427741685,
+            "evidence_layer_peaks": [
+              220.0253836609767,
+              12.035491752857821
+            ],
+            "evidence_layer_scales": [
+              0.001073260975162402,
+              0.019620690427741685
+            ]
+          },
+          "time_evidence_deep_surface_residual": true
+        },
+        "v4": {
+          "mode": "adaptive_source_and_edge_logsum_full_grid",
+          "windows": [
+            {
+              "active_samples": 61,
+              "temporal_rank": 3,
+              "null_edges": [
+                15.642292722938508,
+                13.780888572632318,
+                17.911924465246084
+              ],
+              "source_lambda": 5.0189621455562525,
+              "edge_lambda": 0.44127788657810485,
+              "solver": {
+                "history": [
+                  {
+                    "outer": 0,
+                    "iterations": 600,
+                    "converged": false,
+                    "primal_relative": 0.005024204071849295,
+                    "dual_relative": 0.0013447529082517618,
+                    "log_objective": 847.5110434475303,
+                    "relative_change": 1.0,
+                    "active_rows": 35
+                  },
+                  {
+                    "outer": 1,
+                    "iterations": 514,
+                    "converged": true,
+                    "primal_relative": 0.0009973458932319773,
+                    "dual_relative": 0.00025767847611919757,
+                    "log_objective": 689.7755135359072,
+                    "relative_change": 0.5927731741581781,
+                    "active_rows": 22
+                  },
+                  {
+                    "outer": 2,
+                    "iterations": 368,
+                    "converged": true,
+                    "primal_relative": 0.0009992363586984023,
+                    "dual_relative": 0.00028595056508469956,
+                    "log_objective": 663.8353883116923,
+                    "relative_change": 0.2721593467989775,
+                    "active_rows": 20
+                  },
+                  {
+                    "outer": 3,
+                    "iterations": 292,
+                    "converged": true,
+                    "primal_relative": 0.0009979793986331028,
+                    "dual_relative": 0.0003352341367776442,
+                    "log_objective": 656.8728619515364,
+                    "relative_change": 0.17189040027053765,
+                    "active_rows": 20
+                  },
+                  {
+                    "outer": 4,
+                    "iterations": 164,
+                    "converged": true,
+                    "primal_relative": 0.0009971621062283317,
+                    "dual_relative": 0.00035542688440675274,
+                    "log_objective": 654.2799710010612,
+                    "relative_change": 0.07928142671688393,
+                    "active_rows": 18
+                  }
+                ],
+                "converged": false,
+                "inner_converged": false,
+                "outer_converged": false,
+                "descent_guard_triggered": true,
+                "amplitude_epsilon": 0.33065153819617793,
+                "edge_epsilon": 0.33065799512404714,
+                "amplitude_weight_range": [
+                  0.028447884752918127,
+                  0.9999852460078203
+                ],
+                "edge_weight_range": [
+                  0.028447100516443904,
+                  0.9999975804671372
+                ]
+              },
+              "response_condition": 2.371527529883307,
+              "null_rule": "99th percentile of up to 16 overlapping baseline projections; heuristic, not p-value"
+            }
+          ],
+          "selected_templates": [],
+          "graph_edges": 21320,
+          "deep_graph_edges": 0,
+          "spatial_templates_used": false
+        }
+      }
+    },
+    {
+      "parcel": "superiorparietal-rh",
+      "shape": "wide_path_plus_deep",
+      "center": 4028,
+      "surface_indices": [
+        3892,
+        3893,
+        3894,
+        3943,
+        3964,
+        3965,
+        3994,
+        4026,
+        4027,
+        4055,
+        4058,
+        4062,
+        4084,
+        4086,
+        4107,
+        4109,
+        4110,
+        4113,
+        4116,
+        4142,
+        4146,
+        4148,
+        4166,
+        4167,
+        4168,
+        4171,
+        4197,
+        4205,
+        4208,
+        4234,
+        4236,
+        4238,
+        4263,
+        4266,
+        4286,
+        4290,
+        4292
+      ],
+      "surface_count": 37,
+      "deep_index": 7504,
+      "case_id": "shape_03_eeg+05_meg+05",
+      "seed": [
+        20260922,
+        3,
+        1
+      ],
+      "eeg_snr_db": 5,
+      "meg_snr_db": 5,
+      "actual_snr_db": [
+        4.999999999999999,
+        5.000000000000001
+      ],
+      "diagnostics": {
+        "v3": {
+          "mode": "signed_multiscale_erp_surface_residual_deep_v3",
+          "surface_scales_mm": [
+            0.0,
+            4.0,
+            7.0
+          ],
+          "selected_templates": 3,
+          "selected_surface_templates": 3,
+          "selected_deep_templates": 0,
+          "ridge_fraction": 0.03,
+          "max_templates_per_window": 7,
+          "require_one": false,
+          "windows": [
+            {
+              "window": 0,
+              "active_samples": 61,
+              "temporal_rank": 3,
+              "null_edges": [
+                17.359997782883067,
+                15.40973554498707,
+                20.12491423217763
+              ],
+              "channel_weight_min": 0.990828994067781,
+              "channel_weight_max": 1.0,
+              "weighted_channels": 157,
+              "selected_surface_templates": 3,
+              "surface_ebic_deltas": [
+                -708.579025812498,
+                -263.6852813703473,
+                -228.59634301019332
+              ],
+              "selected_templates": [
+                {
+                  "layer": "surface",
+                  "scale_mm": 7.0,
+                  "index": 3811
+                },
+                {
+                  "layer": "surface",
+                  "scale_mm": 0.0,
+                  "index": 4162
+                },
+                {
+                  "layer": "surface",
+                  "scale_mm": 7.0,
+                  "index": 3980
+                }
+              ],
+              "deep_candidate_local": 2,
+              "deep_ebic_delta": 0.5068339130981308,
+              "deep_accepted": false,
+              "selection": "joint_surface_then_residual_deep_ebic_v3",
+              "joint_ebic_deltas": [
+                -708.579025812498,
+                -263.6852813703473,
+                -228.59634301019332
+              ],
+              "first_selected_layer": "surface",
+              "deep_rescue_attempted": false,
+              "deep_rescue_accepted": false,
+              "deep_rescue_ebic_delta": Infinity,
+              "deep_rescue_ebic_threshold": -6.0,
+              "time_evidence": {
+                "surface_raw": {
+                  "positive_candidates": 7514,
+                  "score_max": 1285.914524315375,
+                  "score_median_positive": 27.987050364816362
+                },
+                "deep_surface_residual": {
+                  "positive_candidates": 7514,
+                  "score_max": 37.53573852042314,
+                  "score_median_positive": 11.223906532407508
+                }
+              },
+              "residual_deep_reselection": {
+                "deep_local": 2,
+                "accepted": false,
+                "ebic_delta": 0.5068339130981308,
+                "surface_design_rank": 3,
+                "candidate_universe": 22510,
+                "residual_active_samples": 61,
+                "residual_temporal_rank": 3,
+                "residual_null_edges": [
+                  17.15387531606769,
+                  15.314013564512216,
+                  19.99633086104328
+                ]
+              }
+            }
+          ],
+          "selection": "joint_surface_then_residual_deep_reselection",
+          "conditional_candidate_drops": true,
+          "joint_search_template_cap_per_window": 6,
+          "deep_rescue_can_add_one_template": false,
+          "max_deep_templates_per_window": 1,
+          "time_evidence_fraction": 0.05,
+          "time_evidence_surface_scale_mm": 4.0,
+          "time_evidence_layer_balanced": true,
+          "time_evidence_fusion": {
+            "primary_active_peak": 0.4628433885333333,
+            "evidence_active_peak": 3740.639607335725,
+            "evidence_scale": 0.0008450653833877049,
+            "evidence_layer_peaks": [
+              3740.639607335725,
+              27.385063785117016
+            ],
+            "evidence_layer_scales": [
+              6.186687801006765e-06,
+              0.0008450653833877049
+            ]
+          },
+          "time_evidence_deep_surface_residual": true
+        },
+        "v4": {
+          "mode": "adaptive_source_and_edge_logsum_full_grid",
+          "windows": [
+            {
+              "active_samples": 61,
+              "temporal_rank": 3,
+              "null_edges": [
+                17.359997782883067,
+                15.40973554498707,
+                20.12491423217763
+              ],
+              "source_lambda": 5.068127410197072,
+              "edge_lambda": 0.44560060180180167,
+              "solver": {
+                "history": [
+                  {
+                    "outer": 0,
+                    "iterations": 592,
+                    "converged": true,
+                    "primal_relative": 0.0007408681763885144,
+                    "dual_relative": 0.0009968902195934212,
+                    "log_objective": 1281.9398389920555,
+                    "relative_change": 1.0,
+                    "active_rows": 36
+                  },
+                  {
+                    "outer": 1,
+                    "iterations": 361,
+                    "converged": true,
+                    "primal_relative": 0.0005795016899544558,
+                    "dual_relative": 0.0009987556613168093,
+                    "log_objective": 1067.5935809499604,
+                    "relative_change": 0.42413357856792333,
+                    "active_rows": 20
+                  },
+                  {
+                    "outer": 2,
+                    "iterations": 225,
+                    "converged": true,
+                    "primal_relative": 0.0007820086170906668,
+                    "dual_relative": 0.0009958139954151075,
+                    "log_objective": 1042.2629491556731,
+                    "relative_change": 0.24184052207201326,
+                    "active_rows": 17
+                  },
+                  {
+                    "outer": 3,
+                    "iterations": 157,
+                    "converged": true,
+                    "primal_relative": 0.0007579895936100253,
+                    "dual_relative": 0.0009902497211282774,
+                    "log_objective": 1025.8150223709379,
+                    "relative_change": 0.140361715934111,
+                    "active_rows": 15
+                  }
+                ],
+                "converged": false,
+                "inner_converged": true,
+                "outer_converged": false,
+                "descent_guard_triggered": true,
+                "amplitude_epsilon": 2.4077163942398867,
+                "edge_epsilon": 2.4076904734875466,
+                "amplitude_weight_range": [
+                  0.04979983413272438,
+                  0.9999966782103783
+                ],
+                "edge_weight_range": [
+                  0.04979756086182837,
+                  0.9999993268532108
+                ]
+              },
+              "response_condition": 10.584777556032979,
+              "null_rule": "99th percentile of up to 16 overlapping baseline projections; heuristic, not p-value"
+            }
+          ],
+          "selected_templates": [],
+          "graph_edges": 21320,
+          "deep_graph_edges": 0,
+          "spatial_templates_used": false
+        }
+      }
+    },
+    {
+      "parcel": "superiorparietal-rh",
+      "shape": "wide_path_plus_deep",
+      "center": 4028,
+      "surface_indices": [
+        3892,
+        3893,
+        3894,
+        3943,
+        3964,
+        3965,
+        3994,
+        4026,
+        4027,
+        4055,
+        4058,
+        4062,
+        4084,
+        4086,
+        4107,
+        4109,
+        4110,
+        4113,
+        4116,
+        4142,
+        4146,
+        4148,
+        4166,
+        4167,
+        4168,
+        4171,
+        4197,
+        4205,
+        4208,
+        4234,
+        4236,
+        4238,
+        4263,
+        4266,
+        4286,
+        4290,
+        4292
+      ],
+      "surface_count": 37,
+      "deep_index": 7504,
+      "case_id": "shape_03_eeg-10_meg+20",
+      "seed": [
+        20260922,
+        3,
+        2
+      ],
+      "eeg_snr_db": -10,
+      "meg_snr_db": 20,
+      "actual_snr_db": [
+        -10.0,
+        20.0
+      ],
+      "diagnostics": {
+        "v3": {
+          "mode": "signed_multiscale_erp_surface_residual_deep_v3",
+          "surface_scales_mm": [
+            0.0,
+            4.0,
+            7.0
+          ],
+          "selected_templates": 4,
+          "selected_surface_templates": 3,
+          "selected_deep_templates": 1,
+          "ridge_fraction": 0.03,
+          "max_templates_per_window": 7,
+          "require_one": false,
+          "windows": [
+            {
+              "window": 0,
+              "active_samples": 61,
+              "temporal_rank": 3,
+              "null_edges": [
+                13.803681919096368,
+                12.950719655005123,
+                16.61115491994479
+              ],
+              "channel_weight_min": 0.0701545701524622,
+              "channel_weight_max": 1.0,
+              "weighted_channels": 157,
+              "selected_surface_templates": 3,
+              "surface_ebic_deltas": [
+                -1067.8782191936752,
+                -425.7811437349794,
+                -723.0182836883878
+              ],
+              "selected_templates": [
+                {
+                  "layer": "surface",
+                  "scale_mm": 7.0,
+                  "index": 3923
+                },
+                {
+                  "layer": "surface",
+                  "scale_mm": 0.0,
+                  "index": 3990
+                },
+                {
+                  "layer": "surface",
+                  "scale_mm": 7.0,
+                  "index": 4004
+                },
+                {
+                  "layer": "deep",
+                  "scale_mm": null,
+                  "index": 2
+                }
+              ],
+              "deep_candidate_local": 2,
+              "deep_ebic_delta": -99.78161750930906,
+              "deep_accepted": true,
+              "selection": "joint_surface_then_residual_deep_ebic_v3",
+              "joint_ebic_deltas": [
+                -1067.8782191936752,
+                -425.7811437349794,
+                -723.0182836883878
+              ],
+              "first_selected_layer": "surface",
+              "deep_rescue_attempted": false,
+              "deep_rescue_accepted": false,
+              "deep_rescue_ebic_delta": Infinity,
+              "deep_rescue_ebic_threshold": -6.0,
+              "time_evidence": {
+                "surface_raw": {
+                  "positive_candidates": 7514,
+                  "score_max": 46496.15416079408,
+                  "score_median_positive": 2178.1432262378667
+                },
+                "deep_surface_residual": {
+                  "positive_candidates": 7514,
+                  "score_max": 182.3599831190107,
+                  "score_median_positive": 24.13839333351884
+                }
+              },
+              "residual_deep_reselection": {
+                "deep_local": 2,
+                "accepted": true,
+                "ebic_delta": -99.78161750930906,
+                "surface_design_rank": 3,
+                "candidate_universe": 22510,
+                "residual_active_samples": 61,
+                "residual_temporal_rank": 3,
+                "residual_null_edges": [
+                  13.765029164968889,
+                  12.717223344044564,
+                  16.367011375338894
+                ]
+              }
+            }
+          ],
+          "selection": "joint_surface_then_residual_deep_reselection",
+          "conditional_candidate_drops": true,
+          "joint_search_template_cap_per_window": 6,
+          "deep_rescue_can_add_one_template": false,
+          "max_deep_templates_per_window": 1,
+          "time_evidence_fraction": 0.05,
+          "time_evidence_surface_scale_mm": 4.0,
+          "time_evidence_layer_balanced": true,
+          "time_evidence_fusion": {
+            "primary_active_peak": 0.9068604939341127,
+            "evidence_active_peak": 144914.07319799167,
+            "evidence_scale": 0.00039166847761691034,
+            "evidence_layer_peaks": [
+              144914.07319799167,
+              115.7688894766137
+            ],
+            "evidence_layer_scales": [
+              3.128959368546273e-07,
+              0.00039166847761691034
+            ]
+          },
+          "time_evidence_deep_surface_residual": true
+        },
+        "v4": {
+          "mode": "adaptive_source_and_edge_logsum_full_grid",
+          "windows": [
+            {
+              "active_samples": 61,
+              "temporal_rank": 3,
+              "null_edges": [
+                13.803681919096368,
+                12.950719655005123,
+                16.61115491994479
+              ],
+              "source_lambda": 4.322767760638225,
+              "edge_lambda": 0.3800669872099603,
+              "solver": {
+                "history": [
+                  {
+                    "outer": 0,
+                    "iterations": 600,
+                    "converged": false,
+                    "primal_relative": 0.0002550846669554902,
+                    "dual_relative": 0.0016421671829657475,
+                    "log_objective": 2125.8003826818194,
+                    "relative_change": 1.0,
+                    "active_rows": 50
+                  },
+                  {
+                    "outer": 1,
+                    "iterations": 545,
+                    "converged": true,
+                    "primal_relative": 0.0002000218263012376,
+                    "dual_relative": 0.0009969983092927538,
+                    "log_objective": 1596.7664332880345,
+                    "relative_change": 0.5035611563791369,
+                    "active_rows": 30
+                  },
+                  {
+                    "outer": 2,
+                    "iterations": 166,
+                    "converged": true,
+                    "primal_relative": 0.0005284605883298313,
+                    "dual_relative": 0.0009951153642361323,
+                    "log_objective": 1554.755812225541,
+                    "relative_change": 0.14189749504001642,
+                    "active_rows": 29
+                  },
+                  {
+                    "outer": 3,
+                    "iterations": 195,
+                    "converged": true,
+                    "primal_relative": 0.0003581352324239331,
+                    "dual_relative": 0.00099149560097172,
+                    "log_objective": 1462.7476812502744,
+                    "relative_change": 0.15322511223644952,
+                    "active_rows": 27
+                  },
+                  {
+                    "outer": 4,
+                    "iterations": 121,
+                    "converged": true,
+                    "primal_relative": 0.0003596334963738473,
+                    "dual_relative": 0.0009938994161307437,
+                    "log_objective": 1438.237168025621,
+                    "relative_change": 0.10108737396695791,
+                    "active_rows": 22
+                  },
+                  {
+                    "outer": 5,
+                    "iterations": 100,
+                    "converged": true,
+                    "primal_relative": 0.000298687716903074,
+                    "dual_relative": 0.0009944911237482212,
+                    "log_objective": 1424.0612176527354,
+                    "relative_change": 0.07825533840969885,
+                    "active_rows": 22
+                  }
+                ],
+                "converged": false,
+                "inner_converged": false,
+                "outer_converged": false,
+                "descent_guard_triggered": false,
+                "amplitude_epsilon": 2.3026994536787573,
+                "edge_epsilon": 3.979677724727743,
+                "amplitude_weight_range": [
+                  0.013318266347158395,
+                  0.9999981959823775
+                ],
+                "edge_weight_range": [
+                  0.028990439224444657,
+                  0.9999994347671689
+                ]
+              },
+              "response_condition": 63.410332407462406,
+              "null_rule": "99th percentile of up to 16 overlapping baseline projections; heuristic, not p-value"
+            }
+          ],
+          "selected_templates": [],
+          "graph_edges": 21320,
+          "deep_graph_edges": 0,
+          "spatial_templates_used": false
+        }
+      }
+    }
+  ]
+}

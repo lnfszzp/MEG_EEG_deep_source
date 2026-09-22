@@ -173,3 +173,11 @@ results/strict_blind/*_shards/
 !results/strict_blind/brain_maps_v2/README.md
 !results/strict_blind/brain_maps_v2/**/*.png
 !results/strict_blind/brain_maps_v2/**/*.csv
+# Adaptive ERP experiments: preserve failures, metrics, solver diagnostics and figures.
+# Dense truth/reconstruction NPZ arrays stay local; scripts regenerate them.
+!results/erp_whole_head/adaptive_v4/
+!results/erp_whole_head/adaptive_v4/**/
+!results/erp_whole_head/adaptive_v4/**/*.csv
+!results/erp_whole_head/adaptive_v4/**/*.json
+!results/erp_whole_head/adaptive_v4/**/*.md
+!results/erp_whole_head/adaptive_v4/**/*.png

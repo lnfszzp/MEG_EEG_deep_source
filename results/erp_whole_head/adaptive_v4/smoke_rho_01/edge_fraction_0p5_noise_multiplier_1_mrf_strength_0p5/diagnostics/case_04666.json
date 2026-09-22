@@ -1,0 +1,129 @@
+{
+  "case_id": "erp-v3-development-04666-deep_plus_two_surface-eeg+05-meg+05",
+  "method": "OASTER-ERP-v4",
+  "manifest_sha256": "0989782ea769bc0a698e8e6f250795ee829398afc5984a904eeb9544a32432b5",
+  "parameters": {
+    "edge_fraction": 0.5,
+    "noise_multiplier": 1.0,
+    "mrf_strength": 0.5
+  },
+  "diagnostics": {
+    "mode": "adaptive_source_and_edge_logsum_full_grid",
+    "windows": [
+      {
+        "active_samples": 61,
+        "temporal_rank": 3,
+        "null_edges": [
+          15.349166901283299,
+          14.163542359309524,
+          18.216910096901827
+        ],
+        "source_lambda": 9.04138762799856,
+        "edge_lambda": 0.7949381383059709,
+        "solver": {
+          "history": [
+            {
+              "outer": 0,
+              "iterations": 2000,
+              "converged": false,
+              "primal_relative": 0.00022205804444071697,
+              "dual_relative": 6.14367157920315e-05,
+              "log_objective": 1262.6588077395018,
+              "relative_change": 1.0,
+              "active_rows": 47,
+              "rho": 2.0,
+              "rho_updates": 1
+            },
+            {
+              "outer": 1,
+              "iterations": 1610,
+              "converged": true,
+              "primal_relative": 6.585362690873862e-05,
+              "dual_relative": 9.998425060318001e-05,
+              "log_objective": 984.2277313854621,
+              "relative_change": 0.6246144186449063,
+              "active_rows": 36,
+              "rho": 2.0,
+              "rho_updates": 0
+            },
+            {
+              "outer": 2,
+              "iterations": 1233,
+              "converged": true,
+              "primal_relative": 9.979275967162782e-05,
+              "dual_relative": 6.25945922269387e-05,
+              "log_objective": 819.7608007569081,
+              "relative_change": 0.44414620992208664,
+              "active_rows": 17,
+              "rho": 2.0,
+              "rho_updates": 2
+            },
+            {
+              "outer": 3,
+              "iterations": 455,
+              "converged": true,
+              "primal_relative": 9.999782395009813e-05,
+              "dual_relative": 8.532485496408759e-05,
+              "log_objective": 809.6134023111698,
+              "relative_change": 0.039022735789305325,
+              "active_rows": 17,
+              "rho": 2.0,
+              "rho_updates": 0
+            },
+            {
+              "outer": 4,
+              "iterations": 328,
+              "converged": true,
+              "primal_relative": 8.999129021814034e-05,
+              "dual_relative": 9.957666631846743e-05,
+              "log_objective": 804.3384755768484,
+              "relative_change": 0.023049244774190344,
+              "active_rows": 16,
+              "rho": 2.0,
+              "rho_updates": 0
+            },
+            {
+              "outer": 5,
+              "iterations": 256,
+              "converged": true,
+              "primal_relative": 7.055409362913121e-05,
+              "dual_relative": 9.959071944175808e-05,
+              "log_objective": 804.245917699963,
+              "relative_change": 0.008585809787662949,
+              "active_rows": 16,
+              "rho": 2.0,
+              "rho_updates": 0
+            }
+          ],
+          "converged": false,
+          "inner_converged": false,
+          "outer_converged": true,
+          "descent_guard_triggered": false,
+          "rho_initial": 1.0,
+          "rho_final": 2.0,
+          "rho_updates": 3,
+          "outer_tolerance": 0.01,
+          "adaptive_rho": true,
+          "amplitude_epsilon": 0.4512166046789222,
+          "edge_epsilon": 0.4512166046789222,
+          "amplitude_weight_range": [
+            0.010947280043992891,
+            1.0
+          ],
+          "edge_weight_range": [
+            0.010947280043992891,
+            1.0
+          ]
+        },
+        "response_condition": 10.444362024370076,
+        "null_rule": "99th percentile of up to 16 overlapping baseline projections; heuristic, not p-value"
+      }
+    ],
+    "selected_templates": [],
+    "graph_edges": 21320,
+    "deep_graph_edges": 0,
+    "spatial_templates_used": false,
+    "mrf_strength": 0.5,
+    "weighting_coordinates": "MRF_current_innovation"
+  }
+}

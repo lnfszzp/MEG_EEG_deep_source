@@ -12,7 +12,7 @@ import sys
 import time
 
 
-# %% 1. 参数：使用全部开发位置；原 v3 的结果保存在原目录。
+# %% 1. 参数：默认仅选四个开发配置；None 才使用全部位置。v3 保存在原目录。
 project_root = Path(__file__).resolve().parents[1]
 manifest_path = project_root / "results/erp_whole_head/development_full_v3/manifest.json"
 geometry_root = project_root / "corrected_v2/generated"
@@ -21,6 +21,11 @@ sample_data_path = Path(r"D:\mne_data\MNE-sample-data")
 algorithm_version = "v4"
 modality_weighting = "evidence"
 seed_root = 20260921  # 与 development_full_v3/v3_locked 完全相同的噪声抽样。
+# MRF 创新坐标 Z=(I-tau*P)J：由邻接关系定义，不在固定高斯模板中选源。
+# 源幅度与边缘幅度的权重在这些坐标下反复更新，最终转回物理电流 J。
+v4_mrf_strength = 0.5
+v4_edge_fraction = 0.5
+v4_noise_multiplier = 1.0
 snr_levels = (-10, -5, 0, 5, 10, 15, 20)
 snr_pairs = [(eeg, meg) for eeg in snr_levels for meg in snr_levels]
 cases_per_scenario = 1  # 首先 49 格各做四种情况，共 196 例；改成 None 做完整 9,212 例。
@@ -30,9 +35,15 @@ save_root = project_root / "results/erp_whole_head/adaptive_v4" / (
     "development_all_methods" if cases_per_scenario is None
     else f"development_{cases_per_scenario}_per_scenario_all_methods"
 )
+parameter_tag = f"mrf_{v4_mrf_strength:g}_edge_{v4_edge_fraction:g}_noise_{v4_noise_multiplier:g}".replace(".", "p")
+save_root = save_root / parameter_tag
 
 if str(project_root) not in sys.path:
     sys.path.insert(0, str(project_root))
+
+# 多 case 并行，每 case 的 BLAS 只用 1 个线程，避免重复并行占满电脑。
+for thread_variable in ("OMP_NUM_THREADS", "MKL_NUM_THREADS", "OPENBLAS_NUM_THREADS"):
+    os.environ[thread_variable] = "1"
 
 import run_erp_whole_head_matrix as simulation
 import plot_erp_whole_head_results as result_plot
@@ -70,6 +81,9 @@ simulation.run(
     algorithm_version=algorithm_version,
     modality_weighting=modality_weighting,
     seed_root=seed_root,
+    v4_mrf_strength=v4_mrf_strength,
+    v4_edge_fraction=v4_edge_fraction,
+    v4_noise_multiplier=v4_noise_multiplier,
 )
 print("运行时间（小时）：", (time.perf_counter() - started) / 3600.0)
 
@@ -87,6 +101,11 @@ assert {row["method"] for row in rows} == set(expected_methods)
 assert len({row["case_id"] for row in rows}) == expected_cases
 assert metadata["oaster_algorithm_version"] == "v4"
 assert metadata["manifest_sha256"] == manifest_sha256
+assert metadata["oaster_kwargs"] == {
+    "mrf_strength": v4_mrf_strength,
+    "edge_fraction": v4_edge_fraction,
+    "noise_multiplier": v4_noise_multiplier,
+}
 print("成功结果：", len(rows), "行，错误 0 行。")
 
 
