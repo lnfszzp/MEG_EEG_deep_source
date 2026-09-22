@@ -39,6 +39,7 @@ DEFAULT_SAMPLE_PATH = Path(
     os.environ.get("MNE_SAMPLE_PATH", r"D:\mne_data\MNE-sample-data")
 )
 DEFAULT_OUTPUT = ROOT / "results" / "erp_whole_head" / "current_method_v1"
+DEFAULT_V4_OUTPUT = ROOT / "results" / "erp_whole_head" / "adaptive_v4" / "all_methods"
 EXPECTED_CASES = 9114
 METHODS = ("OASTER-ERP",) + comparators.METHODS
 SCENARIOS = (
@@ -47,7 +48,7 @@ SCENARIOS = (
     "deep_plus_surface",
     "deep_plus_two_surface",
 )
-ALGORITHM_VERSIONS = ("v1", "v2", "v3")
+ALGORITHM_VERSIONS = ("v1", "v2", "v3", "v4")
 MODALITY_WEIGHTINGS = ("equal", "evidence")
 
 
@@ -116,12 +117,17 @@ def _oaster_method(algorithm_version: str) -> str:
         "v1": "OASTER-ERP",
         "v2": "OASTER-ERP-v2",
         "v3": "OASTER-ERP-v3",
+        "v4": "OASTER-ERP-v4",
     }[algorithm_version]
 
 
 def _resolve_oaster(algorithm_version: str):
     if algorithm_version not in ALGORITHM_VERSIONS:
         raise ValueError(f"algorithm_version must be one of {ALGORITHM_VERSIONS}")
+    if algorithm_version == "v4":
+        from candidates.oaster_adaptive import reconstruct_evoked_oaster_v4_from_whitened
+
+        return reconstruct_evoked_oaster_v4_from_whitened
     name = {
         "v1": "reconstruct_evoked_oaster_from_whitened",
         "v2": "reconstruct_evoked_oaster_v2_from_whitened",
@@ -342,8 +348,22 @@ def _score_case(case: dict, runtime: dict, manifest_sha256: str) -> dict[str, di
             active_windows=active_windows,
             window_channel_weights=window_channel_weights,
             require_one=False,
+            **({"adjacency": runtime["shared"]["adjacency"]} if algorithm_version == "v4" else {}),
             **runtime.get("oaster_kwargs", {}),
         )
+        if runtime.get("diagnostics_dir") is not None:
+            path = Path(runtime["diagnostics_dir"]) / f"case_{int(case['case_number']):05d}.json"
+            temporary = path.with_suffix(".json.tmp")
+            temporary.write_text(
+                json.dumps(
+                    {"case_id": case["case_id"], "method": oaster_method,
+                     "manifest_sha256": manifest_sha256,
+                     "parameters": runtime.get("oaster_kwargs", {}),
+                     "diagnostics": diagnostics},
+                    ensure_ascii=False, indent=2, allow_nan=False,
+                ) + "\n", encoding="utf-8",
+            )
+            os.replace(temporary, path)
         rows[oaster_method] = _success_row(
             base,
             oaster_method,
@@ -357,7 +377,11 @@ def _score_case(case: dict, runtime: dict, manifest_sha256: str) -> dict[str, di
             temporal_rank=sum(
                 int(window.get("temporal_rank", 0)) for window in diagnostics["windows"]
             ),
-            selected_templates=int(diagnostics["selected_templates"]),
+            selected_templates=(
+                len(diagnostics["selected_templates"])
+                if isinstance(diagnostics["selected_templates"], (list, tuple))
+                else int(diagnostics["selected_templates"])
+            ),
         )
     except Exception as exc:
         rows[oaster_method] = _error_row(
@@ -420,8 +444,18 @@ def _valid_pair(
     cases: list[dict],
     manifest_sha256: str,
     methods: tuple[str, ...] = METHODS,
+    diagnostics_dir: Path | None = None,
 ) -> bool:
     try:
+        if diagnostics_dir is not None:
+            for case in cases:
+                path = diagnostics_dir / f"case_{int(case['case_number']):05d}.json"
+                payload = json.loads(path.read_text(encoding="utf-8"))
+                if (payload["case_id"] != case["case_id"]
+                        or payload["manifest_sha256"] != manifest_sha256
+                        or payload["method"] != methods[0]
+                        or not isinstance(payload["diagnostics"]["windows"], list)):
+                    return False
         expected = [
             (str(case["case_id"]), method)
             for case in cases
@@ -433,7 +467,7 @@ def _valid_pair(
             and all(row["manifest_sha256"] == manifest_sha256 for row in rows)
             and all(row["status"] == "ok" for row in rows)
         )
-    except (KeyError, TypeError, ValueError):
+    except (KeyError, TypeError, ValueError, OSError):
         return False
 
 
@@ -496,6 +530,12 @@ def _write_metadata(
         "cases_per_scenario": cases_per_scenario,
         "selected_case_count": sum(len(cases) for _pair, cases in selected),
         "checkpoint": "one atomically replaced CSV per EEG/MEG SNR pair",
+        "solver_diagnostics": (
+            "Per-case JSON in active parts_*/diagnostics; status=ok means output was "
+            "computed, not that all spatial solver subproblems converged. Inspect "
+            "diagnostics.windows[].solver.history and .converged."
+            if algorithm_version == "v4" else None
+        ),
         "workers": workers,
         "blas_threads": {
             name: os.environ.get(name)
@@ -506,6 +546,10 @@ def _write_metadata(
                 "runner": __file__,
                 "erp_protocol": erp_protocol.__file__,
                 "oaster_algorithm": oaster.__file__,
+                **({
+                    "oaster_adaptive": ROOT / "candidates" / "oaster_adaptive.py",
+                    "graph_solver_helpers": ROOT / "algorithms" / "spatial_fused_fusion.py",
+                } if algorithm_version == "v4" else {}),
                 "comparator_algorithms": comparator_methods.__file__,
                 "metrics": benchmark_metrics.__file__,
                 "archive_io": archive.__file__,
@@ -524,7 +568,7 @@ def run(
     manifest_path: Path = DEFAULT_MANIFEST,
     data_root: Path = DEFAULT_DATA_ROOT,
     sample_path: Path | None = DEFAULT_SAMPLE_PATH,
-    output: Path = DEFAULT_OUTPUT,
+    output: Path | None = None,
     *,
     snr_pairs: list[tuple[int, int]] | tuple[tuple[int, int], ...] | None = None,
     cases_per_scenario: int | None = None,
@@ -553,6 +597,8 @@ def run(
         if algorithm_version in {"v2", "v3"}
         else {}
     )
+    if output is None:
+        output = DEFAULT_V4_OUTPUT if algorithm_version == "v4" else DEFAULT_OUTPUT
     manifest_path, data_root, output = map(Path, (manifest_path, data_root, output))
     sample_path = None if sample_path is None else Path(sample_path)
     cases, manifest_sha256 = archive._load_manifest(manifest_path)
@@ -562,11 +608,14 @@ def run(
         )
     selected = _select_pairs(cases, snr_pairs, cases_per_scenario)
     shared = protocol.load_shared(data_root, sample_path)
-    kernels = protected.connected_euclidean_surface_kernels(
-        shared["vertices"],
-        shared["adjacency"],
-        shared["n_surf"],
-        scales_mm=oaster.SURFACE_SCALES_MM,
+    kernels = (
+        () if algorithm_version == "v4"
+        else protected.connected_euclidean_surface_kernels(
+            shared["vertices"],
+            shared["adjacency"],
+            shared["n_surf"],
+            scales_mm=oaster.SURFACE_SCALES_MM,
+        )
     )
     runtime = {
         "shared": shared,
@@ -596,6 +645,8 @@ def run(
         benchmark_metrics.__file__,
         archive.__file__,
         comparators.__file__,
+        *((ROOT / "candidates" / "oaster_adaptive.py",
+           ROOT / "algorithms" / "spatial_fused_fusion.py") if algorithm_version == "v4" else ()),
     )
     code_fingerprint = _code_fingerprint(fingerprint_paths)
     shared_fingerprint = _shared_fingerprint(shared)
@@ -608,12 +659,16 @@ def run(
     )
     parts = output / f"parts_{configuration}_run_{checkpoint_fingerprint[:12]}"
     parts.mkdir(parents=True, exist_ok=True)
+    diagnostics_dir = parts / "diagnostics" if algorithm_version == "v4" else None
+    if diagnostics_dir is not None:
+        diagnostics_dir.mkdir(exist_ok=True)
+        runtime["diagnostics_dir"] = diagnostics_dir
     (output / "completion.json").unlink(missing_ok=True)
 
     for pair, pair_cases in selected:
         path = _pair_path(parts, pair)
         existing = archive._read_csv(path)
-        if not force and _valid_pair(existing, pair_cases, manifest_sha256, methods):
+        if not force and _valid_pair(existing, pair_cases, manifest_sha256, methods, diagnostics_dir):
             print(f"SNR EEG={pair[0]:+d}, MEG={pair[1]:+d}: verified checkpoint", flush=True)
             continue
         arguments = [(case, runtime, manifest_sha256) for case in pair_cases]
@@ -624,7 +679,7 @@ def run(
                 scored = list(pool.map(lambda argument: _score_case(*argument), arguments))
         rows = [result[method] for result in scored for method in methods]
         archive._atomic_csv(path, rows, archive.ROW_FIELDS)
-        if not _valid_pair(rows, pair_cases, manifest_sha256, methods):
+        if not _valid_pair(rows, pair_cases, manifest_sha256, methods, diagnostics_dir):
             failures = [row for row in rows if row["status"] != "ok"]
             detail = failures[0]["error"] if failures else "checkpoint ordering mismatch"
             raise RuntimeError(f"SNR pair {pair} failed: {detail}")
@@ -639,7 +694,7 @@ def run(
     combined = []
     for pair, pair_cases in selected:
         rows = archive._read_csv(_pair_path(parts, pair))
-        if not _valid_pair(rows, pair_cases, manifest_sha256, methods):
+        if not _valid_pair(rows, pair_cases, manifest_sha256, methods, diagnostics_dir):
             raise RuntimeError(f"incomplete checkpoint for SNR pair {pair}")
         combined.extend(rows)
     combined.sort(key=lambda row: (int(row["case_number"]), methods.index(row["method"])))
@@ -679,7 +734,7 @@ def main() -> None:
     parser.add_argument("--manifest", type=Path, default=DEFAULT_MANIFEST)
     parser.add_argument("--data-root", type=Path, default=DEFAULT_DATA_ROOT)
     parser.add_argument("--sample-path", type=Path, default=DEFAULT_SAMPLE_PATH)
-    parser.add_argument("--output", type=Path, default=DEFAULT_OUTPUT)
+    parser.add_argument("--output", type=Path)
     parser.add_argument(
         "--snr-pair",
         nargs=2,
@@ -689,8 +744,14 @@ def main() -> None:
         help="repeat to run selected EEG/MEG SNR pairs; default is all 49",
     )
     parser.add_argument("--cases-per-scenario", type=int)
-    parser.add_argument(
+    version_selection = parser.add_mutually_exclusive_group()
+    version_selection.add_argument(
         "--algorithm-version", choices=ALGORITHM_VERSIONS, default="v1"
+    )
+    version_selection.add_argument(
+        "--method",
+        choices=tuple(_oaster_method(version) for version in ALGORITHM_VERSIONS),
+        help="choose OASTER version; the seven comparators still run unless --oaster-only",
     )
     parser.add_argument(
         "--modality-weighting", choices=MODALITY_WEIGHTINGS, default="equal"
@@ -719,7 +780,10 @@ def main() -> None:
             cases_per_scenario=args.cases_per_scenario,
             workers=args.workers,
             force=args.force,
-            algorithm_version=args.algorithm_version,
+            algorithm_version=(
+                next(version for version in ALGORITHM_VERSIONS if _oaster_method(version) == args.method)
+                if args.method else args.algorithm_version
+            ),
             modality_weighting=args.modality_weighting,
             seed_root=args.seed_root,
             oaster_only=args.oaster_only,

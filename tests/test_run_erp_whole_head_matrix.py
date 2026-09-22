@@ -2,6 +2,7 @@ import hashlib
 import json
 
 import numpy as np
+import pytest
 
 import run_erp_whole_head_matrix as runner
 
@@ -266,7 +267,8 @@ def test_v2_evidence_dispatch_uses_retained_whitened_rows(monkeypatch):
     np.testing.assert_allclose(captured["weights"], [1.0, 0.61237244, 0.61237244])
 
 
-def test_oaster_only_returns_before_comparators(monkeypatch):
+@pytest.mark.parametrize("version", ("v1", "v4"))
+def test_oaster_only_returns_before_comparators(monkeypatch, tmp_path, version):
     case = _case(0)
     baseline = np.array([1, 1, 0, 0], dtype=bool)
     active = ~baseline
@@ -294,29 +296,51 @@ def test_oaster_only_returns_before_comparators(monkeypatch):
         "evaluate_estimate",
         lambda *_args, **_kwargs: _metrics(case),
     )
+    adjacency = np.eye(2)
+
+    def solver(_data, _gain, _n_surf, kernels, **kwargs):
+        assert kernels == ()
+        if version == "v4":
+            assert kwargs["adjacency"] is adjacency
+        else:
+            assert "adjacency" not in kwargs
+        return truth, {
+            "selected_templates": [],
+            "windows": [{"temporal_rank": 1, "solver": {"converged": False,
+                         "history": [{"outer": 0, "iterations": 300}]}}],
+        }
+
+    method = runner._oaster_method(version)
     runtime = {
         "shared": {
             "gain_eeg": np.ones((1, 2)),
             "gain_meg": np.ones((1, 2)),
             "vertices": np.zeros((2, 3)),
+            "adjacency": adjacency,
             "n_surf": 1,
             "auc_cortex": {},
         },
         "kernels": (),
-        "oaster_solver": lambda *_args, **_kwargs: (
-            truth,
-            {"selected_templates": 0, "windows": [{"temporal_rank": 1}]},
-        ),
-        "methods": ("OASTER-ERP",),
+        "algorithm_version": version,
+        "oaster_solver": solver,
+        "methods": (method,),
     }
+    if version == "v4":
+        runtime["diagnostics_dir"] = tmp_path
 
     rows = runner._score_case(case, runtime, "digest")
 
-    assert tuple(rows) == ("OASTER-ERP",)
-    assert rows["OASTER-ERP"]["status"] == "ok"
+    assert tuple(rows) == (method,)
+    assert rows[method]["status"] == "ok"
+    if version == "v4":
+        diagnostics = json.loads((tmp_path / "case_00000.json").read_text())
+        assert diagnostics["case_id"] == case["case_id"]
+        assert diagnostics["diagnostics"]["windows"][0]["solver"]["converged"] is False
+        assert diagnostics["diagnostics"]["windows"][0]["solver"]["history"][0]["iterations"] == 300
 
 
-def test_pair_checkpoint_resumes_without_rescoring(tmp_path, monkeypatch):
+@pytest.mark.parametrize("version", ("v1", "v4"))
+def test_pair_checkpoint_resumes_without_rescoring(tmp_path, monkeypatch, version):
     cases = [_case(index, scenario) for index, scenario in enumerate(runner.SCENARIOS)]
     manifest = tmp_path / "manifest.json"
     manifest.write_text(json.dumps(cases), encoding="utf-8")
@@ -337,10 +361,14 @@ def test_pair_checkpoint_resumes_without_rescoring(tmp_path, monkeypatch):
         "auc_cortex": {},
     }
     monkeypatch.setattr(runner.protocol, "load_shared", lambda *_args: shared)
+    def kernels(*_args, **_kwargs):
+        assert version != "v4", "v4 must not build Gaussian templates"
+        return ()
+
     monkeypatch.setattr(
         runner.protected,
         "connected_euclidean_surface_kernels",
-        lambda *_args, **_kwargs: (),
+        kernels,
     )
     monkeypatch.setattr(runner.archive, "_provenance", lambda *_args: {})
     fingerprint = ["a" * 64]
@@ -351,6 +379,11 @@ def test_pair_checkpoint_resumes_without_rescoring(tmp_path, monkeypatch):
     def score(case, runtime, manifest_sha256):
         scored.append(case["case_id"])
         base = runner._base_row(case, manifest_sha256)
+        if runtime.get("diagnostics_dir") is not None:
+            path = runtime["diagnostics_dir"] / f"case_{int(case['case_number']):05d}.json"
+            path.write_text(json.dumps({"case_id": case["case_id"],
+                "method": runtime["methods"][0], "manifest_sha256": manifest_sha256,
+                "diagnostics": {"windows": []}}), encoding="utf-8")
         return {
             method: {
                 **base,
@@ -362,12 +395,12 @@ def test_pair_checkpoint_resumes_without_rescoring(tmp_path, monkeypatch):
                 "selected_templates": 1 if method == "OASTER-ERP" else "",
                 **_metrics(case),
             }
-            for method in runner.METHODS
+            for method in runtime["methods"]
         }
 
     monkeypatch.setattr(runner, "_score_case", score)
     output = tmp_path / "output"
-    runner.run(manifest, tmp_path, None, output, workers=1)
+    runner.run(manifest, tmp_path, None, output, workers=1, algorithm_version=version)
     assert scored == [case["case_id"] for case in cases]
     assert len(runner.archive._read_csv(output / "rows.csv")) == 4 * len(runner.METHODS)
     assert (output / "completion.json").exists()
@@ -378,7 +411,7 @@ def test_pair_checkpoint_resumes_without_rescoring(tmp_path, monkeypatch):
     ):
         assert (output / name).exists()
     metadata = json.loads((output / "metadata.json").read_text(encoding="utf-8"))
-    assert metadata["oaster_algorithm_version"] == "v1"
+    assert metadata["oaster_algorithm_version"] == version
     assert metadata["oaster_modality_weighting"] == "equal"
     assert metadata["erp_seed_root"] == runner.erp_protocol.ERP_SEED_ROOT
     assert len(metadata["checkpoint_shared_fingerprint"]) == 64
@@ -388,14 +421,29 @@ def test_pair_checkpoint_resumes_without_rescoring(tmp_path, monkeypatch):
     )
 
     scored.clear()
-    runner.run(manifest, tmp_path, None, output, workers=1)
+    runner.run(manifest, tmp_path, None, output, workers=1, algorithm_version=version)
     assert scored == []
 
     shared["gain_eeg"][0, 0] = 2.0
-    runner.run(manifest, tmp_path, None, output, workers=1)
+    runner.run(manifest, tmp_path, None, output, workers=1, algorithm_version=version)
     assert scored == [case["case_id"] for case in cases]
 
     scored.clear()
     fingerprint[0] = "b" * 64
-    runner.run(manifest, tmp_path, None, output, workers=1)
+    runner.run(manifest, tmp_path, None, output, workers=1, algorithm_version=version)
     assert scored == [case["case_id"] for case in cases]
+    if version == "v4":
+        for path in output.glob("parts_*/diagnostics/case_00000.json"):
+            path.unlink()
+        scored.clear()
+        runner.run(manifest, tmp_path, None, output, workers=1, algorithm_version=version)
+        assert scored == [case["case_id"] for case in cases]
+
+
+def test_method_cli_selects_v4_and_preserves_comparators(monkeypatch):
+    calls = []
+    monkeypatch.setattr("sys.argv", ["run_erp_whole_head_matrix.py", "--method", "OASTER-ERP-v4"])
+    monkeypatch.setattr(runner, "run", lambda *_args, **kwargs: calls.append(kwargs))
+    runner.main()
+    assert calls[0]["algorithm_version"] == "v4"
+    assert calls[0]["oaster_only"] is False
