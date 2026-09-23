@@ -129,6 +129,7 @@ def test_surface_elementwise_mode_passes_cortical_mask_and_rejects_irls(monkeypa
     captured = {}
 
     def capture(response, gain, incidence, **kwargs):
+        captured["response"] = response.copy()
         captured.update(kwargs)
         return np.zeros((gain.shape[1], response.shape[1])), {"converged": True}
 
@@ -145,10 +146,14 @@ def test_surface_elementwise_mode_passes_cortical_mask_and_rejects_irls(monkeypa
         mrf_strength=0)
     assert mixed_solver["source_penalty_mode"] == "surface_elementwise"
     assert np.array_equal(mixed_solver["elementwise_source_mask"], [True, True, False])
-    assert mixed_solver["source_penalty"][-1] == captured["source_penalty"][-1]
+    assert np.isclose(mixed_solver["source_penalty"][-1], captured["source_penalty"][-1])
     assert np.all(mixed_solver["source_penalty"][:2] <= captured["source_penalty"][:2])
-    assert mixed_solver["edge_penalty"] == captured["edge_penalty"]
+    assert np.isclose(mixed_solver["edge_penalty"], captured["edge_penalty"])
     assert mixed["source_penalty_mode"] == "surface_elementwise"
+    gram = mixed_solver["response"].T @ mixed_solver["response"]
+    assert np.allclose(gram, np.diag(np.diag(gram)), atol=1e-9)
+    assert mixed["windows"][0]["temporal_rotation"] == \
+        "training_sensor_svd_with_blockwise_null"
     with np.testing.assert_raises(ValueError):
         inverse.reconstruct_evoked_oaster_v5_from_whitened(
             np.zeros((3, 30)), np.eye(3), 2, adjacency=sparse.eye(3),

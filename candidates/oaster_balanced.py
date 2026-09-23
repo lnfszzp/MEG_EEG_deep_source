@@ -134,6 +134,17 @@ def reconstruct_evoked_oaster_v5_from_whitened(
                     weighting_coordinates="physical_current" if not mrf_strength else "MRF_current_innovation")
     if not basis.size:
         return np.zeros((gain.shape[1], data.shape[1])), dict(metadata, windows=[dict(info, solver=None)])
+    calibration_basis = basis
+    elementwise_coordinates = (source_penalty_mode == "surface_elementwise"
+                               or edge_penalty_mode == "elementwise")
+    if elementwise_coordinates:
+        unrotated_response = weighted_data @ calibration_basis.T
+        _, singular, rotation = np.linalg.svd(unrotated_response, full_matrices=True)
+        basis = rotation @ calibration_basis
+        info.update(temporal_rotation="training_sensor_svd_with_blockwise_null",
+                    temporal_rotation_singular_values=singular.tolist())
+    else:
+        info.update(temporal_rotation="none")
     sensitivity = np.linalg.norm(weighted_gain, axis=0)
     if not np.any(sensitivity > 0):
         raise ValueError("lead field has no nonzero source columns")
@@ -147,13 +158,21 @@ def reconstruct_evoked_oaster_v5_from_whitened(
     ridge_penalty = float(ridge_fraction * ridge_scale)
     response = weighted_data @ basis.T
     local_basis = basis[:, active].T
+    calibration_local_basis = calibration_basis[:, active].T
     noise_projection = design.T @ weighted_data[:, baseline]
+    baseline_data = weighted_data[:, baseline]
     width = local_basis.shape[0]
     starts = np.unique(np.linspace(0, noise_projection.shape[1] - width, 16).astype(int))
     layers = (slice(0, n_surf), slice(n_surf, gain.shape[1]))
     null, edge_null = [], []
     for start in starts:
-        projected = noise_projection[:, start:start + width] @ local_basis
+        if elementwise_coordinates:
+            block_response = baseline_data[:, start:start + width] @ calibration_local_basis
+            block_rotation = np.linalg.svd(block_response, full_matrices=True)[2]
+            projected = (noise_projection[:, start:start + width]
+                         @ calibration_local_basis @ block_rotation.T)
+        else:
+            projected = noise_projection[:, start:start + width] @ local_basis
         surface_group_size = np.linalg.norm(projected[:n_surf], axis=1)
         surface_element_size = np.max(np.abs(projected[:n_surf]), axis=1, initial=0.)
         surface_size = (surface_element_size if source_penalty_mode == "surface_elementwise"
@@ -211,6 +230,8 @@ def reconstruct_evoked_oaster_v5_from_whitened(
                 ridge_penalty=ridge_penalty,
                 ridge_scale=ridge_scale,
                 response_condition=float(singular[0] / max(singular[-1], np.finfo(float).tiny)),
-                null_rule="separate layer maxima of baseline matched-filter norms; empirical regularization, not p-values",
+                null_rule=("separate layer maxima of baseline matched-filter norms; "
+                           "elementwise modes repeat the sensor-SVD rotation in every null block; "
+                           "empirical regularization, not p-values"),
                 solver=diagnostics)
     return estimate, dict(metadata, windows=[info])
