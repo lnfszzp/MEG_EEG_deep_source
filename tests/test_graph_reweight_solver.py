@@ -116,6 +116,53 @@ def test_group_edge_mode_is_exactly_the_default():
     assert default_info == explicit_info
 
 
+def test_group_source_mode_is_exactly_the_default():
+    data = np.array([[3., 4.], [-2., 1.]])
+    graph = sparse.csr_matrix((0, 2))
+    settings = dict(source_penalty=.2, edge_penalty=0., outer_iterations=3,
+                    max_iter=500, tolerance=1e-8)
+    default, default_info = solve_reweighted_graph_v5(data, np.eye(2), graph, **settings)
+    explicit, explicit_info = solve_reweighted_graph_v5(
+        data, np.eye(2), graph, source_penalty_mode="group", **settings)
+    assert np.array_equal(default, explicit)
+    assert default_info == explicit_info
+
+
+def test_mixed_source_penalty_matches_elastic_net_kkt_and_certificate():
+    data = np.array([[3., .5], [3., 4.]])
+    graph = sparse.csr_matrix((0, 2))
+    mask = np.array([True, False])
+    ridge = .5
+    estimate, diagnostics = solve_reweighted_graph_v5(
+        data, np.eye(2), graph, source_penalty=1., edge_penalty=0.,
+        ridge_penalty=ridge, source_penalty_mode="surface_elementwise",
+        elementwise_source_mask=mask, outer_iterations=1, max_iter=1000,
+        tolerance=1e-9)
+    expected = np.vstack([
+        np.sign(data[0]) * np.maximum(np.abs(data[0]) - 1, 0) / (1 + ridge),
+        data[1] * (1 - 1 / np.linalg.norm(data[1])) / (1 + ridge),
+    ])
+    assert np.allclose(estimate, expected, atol=2e-6)
+    surface_kkt = estimate[0] - data[0] + ridge * estimate[0] + np.array([1., .5])
+    deep_kkt = (estimate[1] - data[1] + ridge * estimate[1]
+                + estimate[1] / np.linalg.norm(estimate[1]))
+    assert np.linalg.norm(surface_kkt) < 2e-6
+    assert np.linalg.norm(deep_kkt) < 2e-6
+    certificate = _certificate(
+        data, np.eye(2), graph, expected, np.zeros((0, 2)), np.ones(2),
+        np.ones(0), expected - data, ridge_penalty=ridge,
+        source_penalty_mode="surface_elementwise", elementwise_source_mask=mask)
+    assert certificate["dual_objective"] <= certificate["objective"] + 1e-12
+    assert certificate["gap"] < 1e-10
+    assert diagnostics["converged"]
+    assert diagnostics["source_penalty_mode"] == "surface_elementwise"
+    assert np.allclose(diagnostics["amplitude_epsilon"]["surface_elementwise"],
+                       np.maximum(.05 * np.abs(expected[0]), 1e-12))
+    assert np.isclose(diagnostics["amplitude_epsilon"]["deep_group"],
+                      .05 * np.linalg.norm(expected[1]))
+    json.dumps(diagnostics)
+
+
 def test_elementwise_edge_mode_matches_two_sample_fused_ridge_solution():
     data = np.array([[0., 0.], [4., 1.]])
     graph = _incidence_matrix(2, np.array([0]), np.array([1]))
@@ -182,3 +229,17 @@ def test_invalid_edge_penalty_mode_is_rejected():
         solve_reweighted_graph_v5(
             np.ones((2, 2)), np.eye(2), sparse.csr_matrix((0, 2)),
             source_penalty=1., edge_penalty=0., edge_penalty_mode="per_mode")
+
+
+@pytest.mark.parametrize("mode, mask", [
+    ("per_mode", None),
+    ("surface_elementwise", None),
+    ("surface_elementwise", np.array([False, False])),
+    ("surface_elementwise", np.array([1, 0])),
+])
+def test_invalid_source_penalty_mode_or_mask_is_rejected(mode, mask):
+    with pytest.raises(ValueError):
+        solve_reweighted_graph_v5(
+            np.ones((2, 2)), np.eye(2), sparse.csr_matrix((0, 2)),
+            source_penalty=1., edge_penalty=0., source_penalty_mode=mode,
+            elementwise_source_mask=mask)

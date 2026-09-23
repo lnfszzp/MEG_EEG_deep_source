@@ -20,19 +20,52 @@ def _project_rows(values, radii):
     return values * scale[:, None]
 
 
+def _source_mask(mode, mask, n):
+    if mode == "group":
+        if mask is not None:
+            raise ValueError("elementwise_source_mask requires surface_elementwise mode")
+        return None
+    if mode != "surface_elementwise":
+        raise ValueError("invalid source_penalty_mode")
+    mask = np.asarray(mask)
+    if mask.dtype != np.bool_ or mask.shape != (n,) or not mask.any():
+        raise ValueError("surface_elementwise mode requires a nonempty boolean source mask")
+    return mask
+
+
 def _certificate(data, gain, incidence, x, edge_dual, amplitude_penalty,
                  edge_penalty, data_dual=None, ridge_penalty=0.,
-                 edge_penalty_mode="group"):
+                 edge_penalty_mode="group", source_penalty_mode="group",
+                 elementwise_source_mask=None):
     """A feasible convex dual gives a rigorous lower bound on the optimum."""
     ridge_penalty = float(ridge_penalty)
     if (not np.isfinite(ridge_penalty) or ridge_penalty < 0
             or edge_penalty_mode not in {"group", "elementwise"}):
         raise ValueError("invalid ridge_penalty or edge_penalty_mode")
+    source_mask = _source_mask(source_penalty_mode, elementwise_source_mask, x.shape[0])
+    amplitude_penalty = np.asarray(amplitude_penalty, float)
+    if source_mask is None:
+        amplitude_penalty = np.broadcast_to(amplitude_penalty, (x.shape[0],))
+    else:
+        amplitude_penalty = np.broadcast_to(
+            amplitude_penalty[:, None] if amplitude_penalty.ndim == 1 else amplitude_penalty,
+            x.shape)
+        if (np.any(~source_mask)
+                and not np.all(amplitude_penalty[~source_mask]
+                               == amplitude_penalty[~source_mask, :1])):
+            raise ValueError("deep group penalties must be constant across temporal modes")
+    if not np.isfinite(amplitude_penalty).all() or np.any(amplitude_penalty < 0):
+        raise ValueError("source penalties must be finite and nonnegative")
     residual = gain @ x - data
     dx = incidence @ x
+    source_objective = (amplitude_penalty @ np.linalg.norm(x, axis=1)
+                        if source_mask is None else
+                        np.sum(amplitude_penalty[source_mask] * np.abs(x[source_mask]))
+                        + amplitude_penalty[~source_mask, 0]
+                        @ np.linalg.norm(x[~source_mask], axis=1))
     if edge_penalty_mode == "group":
         objective = (.5 * np.sum(residual ** 2)
-                     + amplitude_penalty @ np.linalg.norm(x, axis=1)
+                     + source_objective
                      + edge_penalty @ np.linalg.norm(dx, axis=1))
         q = _project_rows(edge_dual, edge_penalty)
     else:
@@ -42,7 +75,7 @@ def _certificate(data, gain, incidence, x, edge_dual, amplitude_penalty,
                 edge_penalty, (incidence.shape[0],))[:, None]
         edge_penalty = np.broadcast_to(edge_penalty, dx.shape)
         objective = (.5 * np.sum(residual ** 2)
-                     + amplitude_penalty @ np.linalg.norm(x, axis=1)
+                     + source_objective
                      + np.sum(edge_penalty * np.abs(dx)))
         q = np.clip(edge_dual, -edge_penalty, edge_penalty)
     if ridge_penalty:
@@ -54,20 +87,44 @@ def _certificate(data, gain, incidence, x, edge_dual, amplitude_penalty,
     if data_dual is not None:
         candidates.append(("admm_linear_residual", data_dual))
     for name, sensor_dual in candidates:
-        norms = np.linalg.norm(-gain.T @ sensor_dual - edge_gradient, axis=1)
+        source_gradient = -gain.T @ sensor_dual - edge_gradient
+        norms = np.linalg.norm(source_gradient, axis=1)
         if ridge_penalty:
             candidate_scale = 1.
-            excess = np.maximum(norms - amplitude_penalty, 0.)
+            if source_mask is None:
+                excess = np.maximum(norms - amplitude_penalty, 0.)
+            else:
+                surface_excess = np.maximum(
+                    np.abs(source_gradient[source_mask]) - amplitude_penalty[source_mask], 0.)
+                deep_excess = np.maximum(
+                    norms[~source_mask] - amplitude_penalty[~source_mask, 0], 0.)
+                excess = np.r_[surface_excess.ravel(), deep_excess]
             candidate_conjugate = .5 * float(excess @ excess) / ridge_penalty
             candidate_violation = 0.
             candidate_excess = float(excess.max(initial=0.))
         else:
-            nonzero = norms > 0
-            candidate_scale = min(1., float(np.min(
-                amplitude_penalty[nonzero] / norms[nonzero], initial=1.)))
+            if source_mask is None:
+                nonzero = norms > 0
+                candidate_scale = min(1., float(np.min(
+                    amplitude_penalty[nonzero] / norms[nonzero], initial=1.)))
+                candidate_violation = float(np.maximum(
+                    candidate_scale * norms - amplitude_penalty, 0.).max(initial=0.))
+            else:
+                surface_size = np.abs(source_gradient[source_mask])
+                surface_nonzero = surface_size > 0
+                deep_nonzero = norms[~source_mask] > 0
+                candidate_scale = min(
+                    1.,
+                    float(np.min(amplitude_penalty[source_mask][surface_nonzero]
+                                 / surface_size[surface_nonzero], initial=1.)),
+                    float(np.min(amplitude_penalty[~source_mask, 0][deep_nonzero]
+                                 / norms[~source_mask][deep_nonzero], initial=1.)))
+                candidate_violation = max(
+                    float(np.maximum(candidate_scale * surface_size
+                                     - amplitude_penalty[source_mask], 0.).max(initial=0.)),
+                    float(np.maximum(candidate_scale * norms[~source_mask]
+                                     - amplitude_penalty[~source_mask, 0], 0.).max(initial=0.)))
             candidate_conjugate = 0.
-            candidate_violation = float(np.maximum(
-                candidate_scale * norms - amplitude_penalty, 0.).max(initial=0.))
             candidate_excess = 0.
         # With ridge, the source conjugate is finite everywhere. Without it,
         # the common scale enforces the group-lasso dual balls exactly.
@@ -91,7 +148,8 @@ def solve_reweighted_graph_v5(data, gain, incidence, *, source_penalty, edge_pen
                               epsilon_fraction=.05, rho=1., outer_tolerance=.01,
                               adaptive_rho=True, max_inner_retries=2,
                               amplitude_weight_floor=0., ridge_penalty=0.,
-                              edge_penalty_mode="group"):
+                              edge_penalty_mode="group", source_penalty_mode="group",
+                              elementwise_source_mask=None):
     """Solve the v4 log-sum objective with verified, monotone MM updates.
 
     ``max_iter`` is one inner budget; an unfinished convex subproblem continues
@@ -108,6 +166,7 @@ def solve_reweighted_graph_v5(data, gain, incidence, *, source_penalty, edge_pen
         raise ValueError("data and gain must be matrices sharing the sensor axis")
     n = gain.shape[1]
     incidence = sparse.csr_matrix(incidence)
+    source_mask = _source_mask(source_penalty_mode, elementwise_source_mask, n)
     source_penalty = np.broadcast_to(np.asarray(source_penalty, float), (n,)).copy()
     edge_penalty = np.broadcast_to(np.asarray(edge_penalty, float), (incidence.shape[0],)).copy()
     amplitude_weight_floor = np.broadcast_to(
@@ -141,10 +200,11 @@ def solve_reweighted_graph_v5(data, gain, incidence, *, source_penalty, edge_pen
     z, u = x.copy(), x.copy()
     v = np.zeros((incidence.shape[0], data.shape[1]))
     h = v.copy()
-    amplitude_weights = np.ones(n)
+    amplitude_weights = (np.ones(n) if source_mask is None
+                         else np.ones((n, data.shape[1])))
     edge_weights = (np.ones(incidence.shape[0]) if edge_penalty_mode == "group" else
                     np.ones((incidence.shape[0], data.shape[1])))
-    eps_a = eps_e = None
+    eps_a = eps_e = eps_surface = eps_deep = None
     history = []
     initial_rho, rho_updates = float(rho), 0
     stalled = outer_converged = False
@@ -153,17 +213,25 @@ def solve_reweighted_graph_v5(data, gain, incidence, *, source_penalty, edge_pen
 
     for outer in range(outer_iterations):
         previous = x.copy()
-        a = source_penalty * amplitude_weights
+        a = (source_penalty * amplitude_weights if source_mask is None else
+             source_penalty[:, None] * amplitude_weights)
         b = (edge_penalty * edge_weights if edge_penalty_mode == "group" else
              edge_penalty[:, None] * edge_weights)
         # Reweighting changes the dual balls. Keep valid warm duals and start
         # both consensus variables at the previously accepted physical point.
-        u = _project_rows(rho * u, a) / rho
+        if source_mask is None:
+            u = _project_rows(rho * u, a) / rho
+        else:
+            u[source_mask] = np.clip(
+                rho * u[source_mask], -a[source_mask], a[source_mask]) / rho
+            u[~source_mask] = _project_rows(
+                rho * u[~source_mask], a[~source_mask, 0]) / rho
         h = (_project_rows(rho * h, b) if edge_penalty_mode == "group" else
              np.clip(rho * h, -b, b)) / rho
         z, v = previous.copy(), incidence @ previous
         reference = _certificate(data, gain, incidence, previous, rho * h, a, b,
-                                 linear_residual, ridge_penalty, edge_penalty_mode)
+                                 linear_residual, ridge_penalty, edge_penalty_mode,
+                                 source_penalty_mode, source_mask)
         roundoff = 128 * np.finfo(float).eps * max(1., reference["objective"])
         previous_rho_updates = rho_updates
         inner_converged = False
@@ -175,7 +243,14 @@ def solve_reweighted_graph_v5(data, gain, incidence, *, source_penalty, edge_pen
             linear_x = (solved - q_gain @ linalg.cho_solve(
                 sensor_factor, gain @ solved, check_finite=False)) / rho
             dx = incidence @ linear_x
-            z = vector_soft_threshold(linear_x + u, a / rho)
+            if source_mask is None:
+                z = vector_soft_threshold(linear_x + u, a / rho)
+            else:
+                shifted_source = linear_x + u
+                z[source_mask] = np.sign(shifted_source[source_mask]) * np.maximum(
+                    np.abs(shifted_source[source_mask]) - a[source_mask] / rho, 0.)
+                z[~source_mask] = vector_soft_threshold(
+                    shifted_source[~source_mask], a[~source_mask, 0] / rho)
             if edge_penalty_mode == "group":
                 v = vector_soft_threshold(dx + h, b / rho)
             else:
@@ -189,7 +264,8 @@ def solve_reweighted_graph_v5(data, gain, incidence, *, source_penalty, edge_pen
             if iteration % 25 == 0 or iteration == total_budget:
                 linear_residual = gain @ linear_x - data
                 certificate = _certificate(data, gain, incidence, z, rho * h, a, b,
-                                           linear_residual, ridge_penalty, edge_penalty_mode)
+                                           linear_residual, ridge_penalty, edge_penalty_mode,
+                                           source_penalty_mode, source_mask)
                 descent = certificate["objective"] <= reference["objective"] + roundoff
                 if certificate["gap_relative"] <= tolerance and descent:
                     inner_converged = True
@@ -218,7 +294,8 @@ def solve_reweighted_graph_v5(data, gain, incidence, *, source_penalty, edge_pen
                 step = .5 ** exponent
                 candidate = previous + step * direction
                 trial = _certificate(data, gain, incidence, candidate, rho * h, a, b,
-                                     linear_residual, ridge_penalty, edge_penalty_mode)
+                                     linear_residual, ridge_penalty, edge_penalty_mode,
+                                     source_penalty_mode, source_mask)
                 if trial["objective"] <= reference["objective"] + roundoff:
                     x, certificate = candidate, trial
                     inner_converged = certificate["gap_relative"] <= tolerance
@@ -227,7 +304,8 @@ def solve_reweighted_graph_v5(data, gain, incidence, *, source_penalty, edge_pen
                 x, step = previous, 0.
                 certificate = _certificate(data, gain, incidence, previous, rho * h,
                                            a, b, linear_residual, ridge_penalty,
-                                           edge_penalty_mode)
+                                           edge_penalty_mode, source_penalty_mode,
+                                           source_mask)
                 inner_converged = certificate["gap_relative"] <= tolerance
                 stalled = not inner_converged
         norms = np.linalg.norm(x, axis=1)
@@ -235,12 +313,28 @@ def solve_reweighted_graph_v5(data, gain, incidence, *, source_penalty, edge_pen
             jumps = np.linalg.norm(incidence @ x, axis=1)
         else:
             jumps = np.abs(incidence @ x)
-        if eps_a is None:
-            eps_a = max(epsilon_fraction * float(norms.max(initial=0)), 1e-12)
+        if eps_a is None and eps_surface is None:
+            if source_mask is None:
+                eps_a = max(epsilon_fraction * float(norms.max(initial=0)), 1e-12)
+            else:
+                eps_surface = np.maximum(
+                    epsilon_fraction * np.abs(x[source_mask]).max(axis=0, initial=0.), 1e-12)
+                eps_deep = max(
+                    epsilon_fraction * float(norms[~source_mask].max(initial=0)), 1e-12)
             eps_e = (max(epsilon_fraction * float(jumps.max(initial=0)), 1e-12)
                      if edge_penalty_mode == "group" else
                      np.maximum(epsilon_fraction * jumps.max(axis=0, initial=0.), 1e-12))
-        if np.any(amplitude_weight_floor):
+        if source_mask is not None:
+            surface_floor = amplitude_weight_floor[source_mask, None]
+            surface_size = np.abs(x[source_mask])
+            surface_shape = (surface_floor * surface_size
+                + (1 - surface_floor) * eps_surface * np.log1p(surface_size / eps_surface))
+            deep_floor = amplitude_weight_floor[~source_mask]
+            deep_shape = (deep_floor * norms[~source_mask]
+                + (1 - deep_floor) * eps_deep * np.log1p(norms[~source_mask] / eps_deep))
+            source_objective = (np.sum(source_penalty[source_mask, None] * surface_shape)
+                                + np.sum(source_penalty[~source_mask] * deep_shape))
+        elif np.any(amplitude_weight_floor):
             source_shape = (amplitude_weight_floor * norms
                             + (1 - amplitude_weight_floor) * eps_a * np.log1p(norms / eps_a))
             source_objective = np.sum(source_penalty * source_shape)
@@ -255,17 +349,29 @@ def solve_reweighted_graph_v5(data, gain, incidence, *, source_penalty, edge_pen
         if ridge_penalty:
             log_objective += .5 * ridge_penalty * np.sum(x ** 2)
         change = np.linalg.norm(x - previous) / max(np.linalg.norm(x), 1e-12)
-        amplitude_weights = eps_a / (norms + eps_a)
-        if np.any(amplitude_weight_floor):
-            amplitude_weights = (amplitude_weight_floor
-                                 + (1 - amplitude_weight_floor) * amplitude_weights)
+        if source_mask is None:
+            amplitude_weights = eps_a / (norms + eps_a)
+            if np.any(amplitude_weight_floor):
+                amplitude_weights = (amplitude_weight_floor
+                                     + (1 - amplitude_weight_floor) * amplitude_weights)
+        else:
+            amplitude_weights[source_mask] = (
+                amplitude_weight_floor[source_mask, None]
+                + (1 - amplitude_weight_floor[source_mask, None])
+                * eps_surface / (np.abs(x[source_mask]) + eps_surface))
+            amplitude_weights[~source_mask] = (
+                amplitude_weight_floor[~source_mask, None]
+                + (1 - amplitude_weight_floor[~source_mask, None])
+                * eps_deep / (norms[~source_mask, None] + eps_deep))
         edge_weights = eps_e / (jumps + eps_e)
         local_edge_penalty = (edge_penalty * edge_weights
                               if edge_penalty_mode == "group" else
                               edge_penalty[:, None] * edge_weights)
         local_certificate = _certificate(data, gain, incidence, x, rho * h,
-            source_penalty * amplitude_weights, local_edge_penalty,
-            linear_residual, ridge_penalty, edge_penalty_mode)
+            (source_penalty * amplitude_weights if source_mask is None else
+             source_penalty[:, None] * amplitude_weights), local_edge_penalty,
+            linear_residual, ridge_penalty, edge_penalty_mode,
+            source_penalty_mode, source_mask)
         history.append(dict(outer=outer, iterations=iteration, retries=(iteration - 1) // max_iter,
             converged=inner_converged, primal_relative=primal / magnitude, dual_relative=dual / magnitude,
             surrogate_reference=reference["objective"], surrogate_objective=certificate["objective"],
@@ -288,12 +394,16 @@ def solve_reweighted_graph_v5(data, gain, incidence, *, source_penalty, edge_pen
         inner_converged=all(item["converged"] for item in history), outer_converged=outer_converged,
         final_stationarity_gap_relative=final_certificate["gap_relative"],
         numerical_stall=stalled, descent_guard_triggered=stalled,
-        amplitude_epsilon=eps_a,
+        amplitude_epsilon=(eps_a if source_mask is None else
+            dict(surface_elementwise=eps_surface.tolist(), deep_group=float(eps_deep))),
         edge_epsilon=(eps_e if edge_penalty_mode == "group" else eps_e.tolist()),
         amplitude_weight_range=[float(amplitude_weights.min()), float(amplitude_weights.max())],
         amplitude_weight_floor_range=[float(amplitude_weight_floor.min()),
                                       float(amplitude_weight_floor.max())],
-        amplitude_penalty_model="per-source linear/log-sum mixture",
+        amplitude_penalty_model=("per-source linear/log-sum mixture" if source_mask is None else
+                                 "surface elementwise and deep row-group linear/log-sum mixture"),
+        source_penalty_mode=source_penalty_mode,
+        elementwise_source_count=0 if source_mask is None else int(source_mask.sum()),
         ridge_penalty=ridge_penalty,
         edge_penalty_mode=edge_penalty_mode,
         edge_weight_range=[float(edge_weights.min(initial=1)), float(edge_weights.max(initial=0))],

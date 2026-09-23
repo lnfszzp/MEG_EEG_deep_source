@@ -121,3 +121,36 @@ def test_reweight_floors_are_applied_to_their_admm_layers(monkeypatch):
             np.zeros((3, 30)), np.eye(3), 2, adjacency=sparse.eye(3),
             baseline=baseline, active_windows=(active,),
             surface_penalty_multiplier=[1.])
+
+
+def test_surface_elementwise_mode_passes_cortical_mask_and_rejects_irls(monkeypatch):
+    baseline = np.arange(30) < 15
+    active = (np.arange(30) >= 20) & (np.arange(30) < 25)
+    captured = {}
+
+    def capture(response, gain, incidence, **kwargs):
+        captured.update(kwargs)
+        return np.zeros((gain.shape[1], response.shape[1])), {"converged": True}
+
+    monkeypatch.setattr(inverse, "solve_reweighted_graph_v5", capture)
+    _, mixed = inverse.reconstruct_evoked_oaster_v5_from_whitened(
+        np.arange(90, dtype=float).reshape(3, 30), np.eye(3), 2,
+        adjacency=sparse.eye(3), baseline=baseline, active_windows=(active,),
+        mrf_strength=0, source_penalty_mode="surface_elementwise")
+    mixed_solver = captured.copy()
+    captured.clear()
+    inverse.reconstruct_evoked_oaster_v5_from_whitened(
+        np.arange(90, dtype=float).reshape(3, 30), np.eye(3), 2,
+        adjacency=sparse.eye(3), baseline=baseline, active_windows=(active,),
+        mrf_strength=0)
+    assert mixed_solver["source_penalty_mode"] == "surface_elementwise"
+    assert np.array_equal(mixed_solver["elementwise_source_mask"], [True, True, False])
+    assert mixed_solver["source_penalty"][-1] == captured["source_penalty"][-1]
+    assert np.all(mixed_solver["source_penalty"][:2] <= captured["source_penalty"][:2])
+    assert mixed_solver["edge_penalty"] == captured["edge_penalty"]
+    assert mixed["source_penalty_mode"] == "surface_elementwise"
+    with np.testing.assert_raises(ValueError):
+        inverse.reconstruct_evoked_oaster_v5_from_whitened(
+            np.zeros((3, 30)), np.eye(3), 2, adjacency=sparse.eye(3),
+            baseline=baseline, active_windows=(active,), solver_kind="irls",
+            source_penalty_mode="surface_elementwise")

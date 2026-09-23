@@ -46,7 +46,7 @@ def reconstruct_evoked_oaster_v5_from_whitened(
         noise_multiplier=1.0, mrf_strength=0.5, calibration="layer",
         temporal_mode="smooth", solver_kind="admm", surface_reweight_floor=0.,
         deep_reweight_floor=0., ridge_fraction=0., edge_penalty_mode="group",
-        surface_penalty_multiplier=None,
+        surface_penalty_multiplier=None, source_penalty_mode="group",
         **solver_settings):
     """Joint surface/deep solve; no truth, template selection or forced deep source.
 
@@ -65,6 +65,7 @@ def reconstruct_evoked_oaster_v5_from_whitened(
             or temporal_mode not in {"v4", "smooth"}
             or solver_kind not in {"admm", "irls"}
             or edge_penalty_mode not in {"group", "elementwise"}
+            or source_penalty_mode not in {"group", "surface_elementwise"}
             or not np.isfinite([
                 edge_fraction, noise_multiplier, mrf_strength,
                 surface_reweight_floor, deep_reweight_floor, ridge_fraction]).all()
@@ -78,6 +79,10 @@ def reconstruct_evoked_oaster_v5_from_whitened(
         raise ValueError("ridge_fraction is supported only by the ADMM solver")
     if solver_kind != "admm" and edge_penalty_mode != "group":
         raise ValueError("elementwise edge penalties are supported only by the ADMM solver")
+    if solver_kind != "admm" and source_penalty_mode != "group":
+        raise ValueError("surface-elementwise source penalties are supported only by the ADMM solver")
+    if source_penalty_mode == "surface_elementwise" and not n_surf:
+        raise ValueError("surface-elementwise source penalties require cortical sources")
     if "ridge_penalty" in solver_settings:
         raise ValueError("use the design-scaled ridge_fraction setting")
     graph = sparse.csr_matrix(adjacency)
@@ -120,6 +125,7 @@ def reconstruct_evoked_oaster_v5_from_whitened(
                     deep_reweight_floor=float(deep_reweight_floor),
                     ridge_fraction=float(ridge_fraction),
                     edge_penalty_mode=edge_penalty_mode,
+                    source_penalty_mode=source_penalty_mode,
                     surface_penalty_multiplier_count=int(np.count_nonzero(
                         surface_penalty_multiplier != 1)),
                     surface_penalty_multiplier_range=surface_penalty_range,
@@ -145,22 +151,34 @@ def reconstruct_evoked_oaster_v5_from_whitened(
     width = local_basis.shape[0]
     starts = np.unique(np.linspace(0, noise_projection.shape[1] - width, 16).astype(int))
     layers = (slice(0, n_surf), slice(n_surf, gain.shape[1]))
-    null = []
+    null, edge_null = [], []
     for start in starts:
-        scores = np.linalg.norm(noise_projection[:, start:start + width] @ local_basis, axis=1) / depth_weights
-        null.append([float(scores[layer].max(initial=0.)) for layer in layers])
+        projected = noise_projection[:, start:start + width] @ local_basis
+        surface_group_size = np.linalg.norm(projected[:n_surf], axis=1)
+        surface_element_size = np.max(np.abs(projected[:n_surf]), axis=1, initial=0.)
+        surface_size = (surface_element_size if source_penalty_mode == "surface_elementwise"
+                        else surface_group_size)
+        deep_size = np.linalg.norm(projected[n_surf:], axis=1)
+        null.append([
+            float((surface_size / depth_weights[:n_surf]).max(initial=0.)),
+            float((deep_size / depth_weights[n_surf:]).max(initial=0.)),
+        ])
+        edge_size = surface_element_size if edge_penalty_mode == "elementwise" else surface_group_size
+        edge_null.append(float((edge_size / depth_weights[:n_surf]).max(initial=0.)))
     null = np.asarray(null)
     layer_lambdas = noise_multiplier * np.quantile(null, .99, axis=0)
     global_lambda = float(noise_multiplier * np.quantile(null.max(axis=1), .99))
+    edge_surface_lambda = float(noise_multiplier * np.quantile(edge_null, .99))
     if calibration == "global":
         layer_lambdas[:] = global_lambda
+        edge_surface_lambda = global_lambda
     # An empty layer has no influence on the other layer's threshold.
     source_penalties = depth_weights.copy()
     for layer, threshold in zip(layers, layer_lambdas):
         source_penalties[layer] *= threshold
     source_penalties[:n_surf] *= surface_penalty_multiplier
     mean_degree = 2 * incidence.shape[0] / max(n_surf, 1)
-    edge_penalty = float(layer_lambdas[0] * edge_fraction / max(mean_degree, 1))
+    edge_penalty = float(edge_surface_lambda * edge_fraction / max(mean_degree, 1))
     spatial_solver = solve_reweighted_graph_v5
     if solver_kind == "irls":
         from candidates.graph_irls import solve_reweighted_graph_irls
@@ -171,6 +189,10 @@ def reconstruct_evoked_oaster_v5_from_whitened(
         amplitude_weight_floor[n_surf:] = deep_reweight_floor
         spatial_settings["amplitude_weight_floor"] = amplitude_weight_floor
         spatial_settings["edge_penalty_mode"] = edge_penalty_mode
+        if source_penalty_mode == "surface_elementwise":
+            spatial_settings["source_penalty_mode"] = source_penalty_mode
+            spatial_settings["elementwise_source_mask"] = (
+                np.arange(gain.shape[1]) < n_surf)
         if ridge_penalty:
             spatial_settings["ridge_penalty"] = ridge_penalty
     coefficients, diagnostics = spatial_solver(
@@ -184,6 +206,7 @@ def reconstruct_evoked_oaster_v5_from_whitened(
     info.update(source_lambda_surface=float(layer_lambdas[0]),
                 source_lambda_deep=float(layer_lambdas[1]),
                 source_lambda_global_reference=global_lambda, edge_lambda=edge_penalty,
+                edge_lambda_surface_reference=edge_surface_lambda,
                 noise_projection_blocks=len(starts),
                 ridge_penalty=ridge_penalty,
                 ridge_scale=ridge_scale,
