@@ -1,0 +1,13 @@
+{
+  "complete": true,
+  "phase": "development",
+  "case_id": "erp-v6-development-04-eeg-10-meg-10",
+  "fixed_ridge_fraction": 0.05,
+  "grid_search": false,
+  "calibration_or_validation_read": false,
+  "all_converged": true,
+  "H1_An_cal_AUC_delta": 0.0,
+  "H1_An_auc_delta": -0.0007326741492962308,
+  "prediction_score_delta": 0.01662581672253618,
+  "partial_score_delta": 0.0
+}

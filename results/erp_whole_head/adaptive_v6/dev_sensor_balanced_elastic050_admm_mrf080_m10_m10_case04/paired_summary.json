@@ -1,0 +1,18 @@
+{
+  "complete": true,
+  "phase": "development",
+  "case_id": "erp-v6-development-04-eeg-10-meg-10",
+  "fixed_ridge_fraction": 0.5,
+  "grid_search": false,
+  "comparators_run": false,
+  "calibration_or_validation_read": false,
+  "null_converged": true,
+  "full_converged": true,
+  "baseline_prediction_score": -0.0027169209636201393,
+  "elastic_prediction_score": 0.0048067568657955235,
+  "baseline_partial_score": 0.8067142740072268,
+  "elastic_partial_score": 0.8067142740072268,
+  "H1_An_cal_AUC_delta": -0.00015151515151519468,
+  "H1_An_auc_delta": -0.0008417958311061817,
+  "conclusion": "reject; H1 AUC did not improve and H0 AUC deteriorated; no third ridge will be tested"
+}

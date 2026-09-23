@@ -1,0 +1,57 @@
+{
+  "phase": "development",
+  "manifest": "D:\\博士\\工作＆汇报\\源定位\\新建文件夹\\results\\erp_whole_head\\adaptive_v6\\protocol\\development_sensor_balanced_m10_m10_case01.json",
+  "manifest_sha256": "3eca5db9ad2f00c53b552575ba19c839b2f65808f48eb8a7aac82dacf61cb026",
+  "seed_root": 2026092206,
+  "case_ids": [
+    "erp-v6-development-01-eeg-10-meg-10"
+  ],
+  "code_sha256": {
+    "作者风格版\\23-独立观测浅深检出仿真.py": "ae07d26eac7a249d28a6c9217ab83afb206d18cf8691ef06d551198e2d5e812f",
+    "candidates\\oaster_predictive.py": "9ace116274a469280f91d0a654bbf8b25b62eeff036e224cd6be5fafc2f22431",
+    "candidates\\oaster_balanced.py": "4993857ea5eb6064d0a822a935efc877c7b635e6a035c533f4dc0801f081c3d5",
+    "candidates\\graph_irls.py": "9e6fec79d97e1c331e824fc165b71732e0ed90a1573d0183ea167d5c0cccd760",
+    "candidates\\graph_reweight_solver.py": "78687c6ec183d4de834470a312fd843f9d4bab7c3a2882342ce8a11de5f75431",
+    "candidates\\oaster_rebuilt.py": "4032f015ed06df64df3ad10d128b67605c49fb76a2e5bef302ed5160519e00f0",
+    "algorithms\\spatial_fused_fusion.py": "68c65de7c6c41628f36f72cb8b9f913ea569aec8ff675109461acdad6353197d",
+    "benchmark\\erp_trial_covariance.py": "818e41cd1e3c75921db386b9858f78e3722551cc9e32ddbd2e88e819b22e7d89",
+    "benchmark\\erp_replicates.py": "e999e001d9a23d99e63e6bd33831c3e1702a7b25bbdaffe1debee9ec4b7f4487",
+    "benchmark\\erp_protocol.py": "f74f9b1dd33036105d50d4ccd6242c1a068cb090fe4a234eb7736f8071e16647",
+    "benchmark\\protocol.py": "26f816e0530cf6f36445b7222fc5db3d0ce216f4ec089f0a2779c65e1c4c8d4a",
+    "benchmark\\methods.py": "1625c67d91d20112d711a3d77de175ed0509c1acfa45c1561845f6761c307dcf",
+    "benchmark\\metrics.py": "f07a42e26dc2118c418744e3a4971c5fcd3037b7b93e26a7e2e4e899400986d8",
+    "benchmark\\deep_acceptance.py": "6f520b42e241179639f2c9f4ab8d66c67180ed35756ed2197cb27c867d0efcc7",
+    "run_strict_oaster.py": "9a63e37a0b32265732e03f24751191e8734df4be2585fb8dec7e30a1d0195e47",
+    "run_erp_whole_head_matrix.py": "ef0605204c632b14d3aefce288ec58f3a999e5728d0485c4bec3b218968c358b",
+    "protected_multilayer.py": "bf35006d1945dc96ac7fc13edf4149e0d4f8520dbe6825730c40ab38697521c8",
+    "auc_metric.py": "90dd52e563ba97b9ab951df541cb085e99974bc07143bd0c8aa0e688bff818b1",
+    "metrics\\user_metrics\\__init__.py": "7b504a4dca65f17a4ff9e150729a67a479165e3b0dd156de34f91f0144e66a46",
+    "metrics\\user_metrics\\_common.py": "e50de172818c087108a2f06303e5f0302ac4d9d4167eff153a84b0a6142b9379",
+    "metrics\\user_metrics\\An_auc.py": "7a4f59da932648851e3a0bc1f28101c79d616ac0d99bf37925b57473bd767194",
+    "metrics\\user_metrics\\An_cal_AUC.py": "e635455a5bb0fb7cd51bf7989f69d025b2ee54c98cf2fc7e510a0009db269b5e",
+    "metrics\\user_metrics\\An_roc.py": "182e82076715a1b0ccefa72c0360a8f43a98b70d85fbf24fe0e0592b267bf673",
+    "metrics\\user_metrics\\DLE_an.py": "c63752183cb8ffd144ea1a12d786cb049ecde3baf11116193a7f4f5eacefa669",
+    "metrics\\user_metrics\\RMSE.py": "0b243d526692bcee7a7cf7fddddb37fc12a652c92e2013ae5e4814bbf38aea0d",
+    "metrics\\user_metrics\\SD.py": "dacd584ed3fd74a0af9b3b123489448853c2ecb190de28cc8b9bfd1e4714ff93"
+  },
+  "shared_fingerprint": "a97e6991fde1cedfac66857d5c07683c43af62f16ad19bfa31ea7199a9083556",
+  "environment": {
+    "python": "3.13.15",
+    "numpy": "2.5.2",
+    "scipy": "1.18.1",
+    "mne": "1.12.1",
+    "OMP_NUM_THREADS": "1",
+    "MKL_NUM_THREADS": "1",
+    "OPENBLAS_NUM_THREADS": "1"
+  },
+  "solver_settings": {
+    "solver_kind": "admm",
+    "mrf_strength": 0.8,
+    "ridge_fraction": 0.5
+  },
+  "covariance": "trial",
+  "alpha": 0.05,
+  "comparison_data": "v6 H0/H1 fitted to train-20 mean, confirmation-20 used only for prediction score; seven comparators reported separately on train-20 and combined-40 means, not treated as identical data usage",
+  "scope": "engineering development/calibration/stress validation; no universal or clinical FPR guarantee",
+  "calibration_use": "one-use empirical null calibration, not a reusable independent test or a parameter-tuning set; raw half-means are independent but share training-derived preprocessing"
+}

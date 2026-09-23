@@ -1,0 +1,21 @@
+{
+  "complete": true,
+  "phase": "development",
+  "case_id": "erp-v6-development-04-eeg-10-meg-10",
+  "fixed_noise_multiplier": 0.5,
+  "fixed_ridge_fraction": 0.05,
+  "fixed_mrf_strength": 0.8,
+  "grid_search": false,
+  "comparators_run": false,
+  "calibration_or_validation_read": false,
+  "null_converged": true,
+  "full_converged": true,
+  "baseline_prediction_score": -0.0027169209636201393,
+  "interaction_prediction_score": 0.020372450660777645,
+  "baseline_partial_score": 0.8067142740072268,
+  "interaction_partial_score": 0.10513464572539766,
+  "H1_An_cal_AUC_delta": -0.06170407781518902,
+  "H1_An_auc_delta": 0.079926064493141,
+  "deep_DLE_worsening_mm": 20.000001097096984,
+  "conclusion": "reject; parcel AUC and deep localization error deteriorated; stop after this fixed interaction"
+}

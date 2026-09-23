@@ -1,0 +1,62 @@
+{
+  "complete": true,
+  "phase": "development",
+  "cases": [
+    1,
+    4
+  ],
+  "snr_eeg_meg_db": [
+    -10,
+    -10
+  ],
+  "mrf_strength": 0.8,
+  "calibration_or_validation_read": false,
+  "accepted": false,
+  "reason": "No fixed elastic-net setting reaches both AUC definitions >=0.90 in both difficult two-surface cases.",
+  "settings": [
+    {
+      "variant": "baseline",
+      "case01_An_cal_AUC": 0.7166792929292929,
+      "case01_An_auc": 0.9285605694146915,
+      "case04_An_cal_AUC": 0.732913393191171,
+      "case04_An_auc": 0.7231204347051486,
+      "case01_H1_false_positive": 1,
+      "case04_deep_DLE_mm": 0.0,
+      "all_converged": false,
+      "passes_spatial_AUC_090": false
+    },
+    {
+      "variant": "ridge .05",
+      "case01_An_cal_AUC": 0.7166638608305274,
+      "case01_An_auc": 0.9286296731393822,
+      "case04_An_cal_AUC": 0.732913393191171,
+      "case04_An_auc": 0.7223877605558524,
+      "case01_H1_false_positive": 0,
+      "case04_deep_DLE_mm": 0.0,
+      "all_converged": true,
+      "passes_spatial_AUC_090": false
+    },
+    {
+      "variant": "ridge .5",
+      "case01_An_cal_AUC": 0.713013468013468,
+      "case01_An_auc": 0.9249487480708544,
+      "case04_An_cal_AUC": 0.7327618780396558,
+      "case04_An_auc": 0.7222786388740424,
+      "case01_H1_false_positive": 0,
+      "case04_deep_DLE_mm": 0.0,
+      "all_converged": true,
+      "passes_spatial_AUC_090": false
+    },
+    {
+      "variant": "lambda .5 + ridge .05",
+      "case01_An_cal_AUC": 0.7243952147740026,
+      "case01_An_auc": 0.9594729689263585,
+      "case04_An_cal_AUC": 0.671209315375982,
+      "case04_An_auc": 0.8030464991982896,
+      "case01_H1_false_positive": 1,
+      "case04_deep_DLE_mm": 20.000001097096984,
+      "all_converged": true,
+      "passes_spatial_AUC_090": false
+    }
+  ]
+}
