@@ -24,6 +24,8 @@ outputs = {
     "development_sensor_balanced_m10_m10.json": selected,
     "development_sensor_balanced_m10_m10_cases00_01.json": selected[:2],
     "development_sensor_balanced_m10_m10_cases02_04.json": selected[2:],
+    "development_sensor_balanced_m10_m10_case01.json": selected[1:2],
+    "development_sensor_balanced_m10_m10_case04.json": selected[4:5],
 }
 records = []
 for name, subset in outputs.items():
