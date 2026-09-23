@@ -36,6 +36,38 @@ def simulate_replicated_case(shared: dict, case: dict, seed_root=erp_protocol.ER
             raise ValueError("finite gain and square channel noise factor required")
     _, _, truth, groups, baseline, windows, active, old_metadata = erp_protocol.simulate_case(
         shared, case, seed_root=seed_root)
+    sensor_ratio = case.get("deep_surface_sensor_amplitude_ratio")
+    if sensor_ratio is not None:
+        sensor_ratio = float(sensor_ratio)
+        deep_index = case.get("deep_index")
+        if (not np.isfinite(sensor_ratio) or sensor_ratio <= 0 or deep_index is None
+                or not case.get("surface_centers")):
+            raise ValueError("sensor-balanced scaling requires a positive ratio and mixed surface/deep truth")
+        deep = np.zeros_like(truth)
+        deep[int(deep_index)] = truth[int(deep_index)]
+        surface = truth - deep
+        energies = {}
+        for layer, source in (("surface", surface), ("deep", deep)):
+            energies[layer] = 0.
+            for modality in ("eeg", "meg"):
+                factor = np.asarray(shared["noise_factor_" + modality], float)
+                covariance = factor @ factor.T
+                values, vectors = np.linalg.eigh((covariance + covariance.T) / 2)
+                keep = values > values[-1] * 1e-8
+                whitener = (vectors[:, keep] / np.sqrt(values[keep])).T
+                gain = np.asarray(shared["gain_" + modality], float)
+                energies[layer] += (np.linalg.norm((whitener @ gain @ source)[:, active]) ** 2
+                                    / keep.sum())
+        if min(energies.values()) <= 0 or not np.isfinite(list(energies.values())).all():
+            raise ValueError("mixed components need positive finite noise-normalized sensor energy")
+        scale = sensor_ratio * np.sqrt(energies["surface"] / energies["deep"])
+        truth = surface + scale * deep
+        old_metadata.update(
+            source_deep_surface_ratio_before_sensor_balance=old_metadata["deep_surface_ratio_actual"],
+            deep_surface_ratio_actual=float(np.linalg.norm(scale * deep) / np.linalg.norm(surface)),
+            deep_surface_sensor_amplitude_ratio=sensor_ratio,
+            deep_sensor_scale=float(scale),
+            component_scaling="joint EEG/MEG noise-normalized sensor amplitude; covariance eigenvalue cutoff 1e-8; modality energies divided by retained rank")
     case_key = int.from_bytes(hashlib.sha256(str(case["case_id"]).encode("utf-8")).digest()[:8], "little")
     entropy = {half: [roots[half], case_key, 6001, index]
                for index, half in enumerate(("fit", "check"))}

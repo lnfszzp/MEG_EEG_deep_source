@@ -61,6 +61,39 @@ def test_expected_combined_snr_without_realization_normalization():
         assert np.std(np.asarray(observations)[:, 2]) > .03
 
 
+def test_opt_in_mixed_truth_balances_noise_normalized_sensor_amplitude():
+    shared, case = _toy()
+    shared.update(vertices=np.array([[0., 0., 0.], [.01, 0., 0.], [0., 0., .02]]),
+                  adjacency=np.zeros((3, 3)))
+    case.update(surface_centers=[0], deep_surface_ratio=.5,
+                deep_surface_sensor_amplitude_ratio=.5)
+    result = erp_replicates.simulate_replicated_case(shared, case, 9)
+    deep = np.zeros_like(result["truth"])
+    deep[case["deep_index"]] = result["truth"][case["deep_index"]]
+    surface = result["truth"] - deep
+    energies = {}
+    for layer, source in (("surface", surface), ("deep", deep)):
+        energies[layer] = 0.
+        for modality in ("eeg", "meg"):
+            factor = shared["noise_factor_" + modality]
+            values, vectors = np.linalg.eigh(factor @ factor.T)
+            keep = values > values[-1] * 1e-8
+            whitener = (vectors[:, keep] / np.sqrt(values[keep])).T
+            energies[layer] += (np.linalg.norm(
+                (whitener @ shared["gain_" + modality] @ source)[:, result["active"]]) ** 2
+                / keep.sum())
+    assert np.sqrt(energies["deep"] / energies["surface"]) == pytest.approx(.5)
+    assert result["metadata"]["deep_surface_sensor_amplitude_ratio"] == .5
+    assert result["metadata"]["source_deep_surface_ratio_before_sensor_balance"] == pytest.approx(.5)
+
+
+def test_sensor_balancing_rejects_nonmixed_truth():
+    shared, case = _toy()
+    case["deep_surface_sensor_amplitude_ratio"] = .5
+    with pytest.raises(ValueError, match="mixed"):
+        erp_replicates.simulate_replicated_case(shared, case, 9)
+
+
 def test_explicit_half_roots_override_fallback_and_change_only_the_requested_half():
     shared, case = _toy()
     case["replica_seed_roots"] = dict(fit=2026092206, check=2026092207)
