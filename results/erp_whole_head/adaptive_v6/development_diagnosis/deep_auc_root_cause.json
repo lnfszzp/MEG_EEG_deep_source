@@ -1,0 +1,4757 @@
+{
+  "scope": "five previously seen 5/5 dB development cases only; no calibration or validation files read; no inverse refit",
+  "interpretation": {
+    "predictive_score": "fixed-amplitude H1 minus H0 held-out loss improvement in baseline-noise units",
+    "confirmation_amplitude": "least-squares scalar on a training-selected fixed prediction direction; >0 is sign replication, 1 reproduces training amplitude",
+    "one_sided_directional_z": "development diagnostic using confirmation baseline covariance; not a calibrated p-value",
+    "partial_surface_change": "deep direction residualized against the one observed H1-vs-H0 cortical reallocation direction"
+  },
+  "rows": [
+    {
+      "variant": "mean_irls",
+      "case_id": "erp-v6-development-00-eeg+05-meg+05",
+      "scenario": "surface_only",
+      "has_deep_true": false,
+      "null_converged": false,
+      "full_converged": false,
+      "predictive_score": -5.232597545204484e-05,
+      "null_loss_noise_units": 1.2358901339316628,
+      "full_loss_noise_units": 1.235942459907115,
+      "selected_deep_index": 7500,
+      "true_deep_index": null,
+      "true_deep_active_energy_rank_of_16": null,
+      "true_deep_baseline_adjusted_rank_of_16": null,
+      "true_deep_energy_fraction_of_deep_peak": null,
+      "selected_deep_distance_to_truth_mm": null,
+      "deep_active_energy_auc_from_rank": null,
+      "deep_to_global_baseline_adjusted_peak_ratio": 0.0017263758364860725,
+      "directional_confirmation": {
+        "full_h1_minus_h0": {
+          "confirmation_cross": -0.0745574065783356,
+          "training_direction_squared_norm": 0.0047889710296749426,
+          "confirmation_amplitude": -15.568564962356072,
+          "one_sided_directional_z": -0.847852708270677,
+          "optimally_scaled_loss_improvement": 0.0
+        },
+        "all_deep_component": {
+          "confirmation_cross": -0.016750430524887033,
+          "training_direction_squared_norm": 0.005733434604646956,
+          "confirmation_amplitude": -2.9215351146258457,
+          "one_sided_directional_z": -0.13552982044278078,
+          "optimally_scaled_loss_improvement": 0.0
+        },
+        "selected_deep_component": {
+          "confirmation_cross": 0.014695381363807498,
+          "training_direction_squared_norm": 0.00010070234598249711,
+          "confirmation_amplitude": 145.9288879562118,
+          "one_sided_directional_z": 0.9672151678432411,
+          "optimally_scaled_loss_improvement": 2.1444806605128677
+        },
+        "all_deep_partial_surface_change": {
+          "confirmation_cross": -0.04918097883657546,
+          "training_direction_squared_norm": 0.003297471724240912,
+          "confirmation_amplitude": -14.914753771815002,
+          "one_sided_directional_z": -0.6087956881942523,
+          "optimally_scaled_loss_improvement": 0.0
+        },
+        "selected_deep_partial_surface_change": {
+          "confirmation_cross": 0.012888019970830307,
+          "training_direction_squared_norm": 9.313659425984853e-05,
+          "confirmation_amplitude": 138.37761701778666,
+          "one_sided_directional_z": 0.9083099160845148,
+          "optimally_scaled_loss_improvement": 1.7834134916411422
+        }
+      },
+      "lead_field": {}
+    },
+    {
+      "variant": "mean_irls",
+      "case_id": "erp-v6-development-01-eeg+05-meg+05",
+      "scenario": "surface_only",
+      "has_deep_true": false,
+      "null_converged": true,
+      "full_converged": true,
+      "predictive_score": 0.006514946568334512,
+      "null_loss_noise_units": 1.3566484442705555,
+      "full_loss_noise_units": 1.350133497702221,
+      "selected_deep_index": 7505,
+      "true_deep_index": null,
+      "true_deep_active_energy_rank_of_16": null,
+      "true_deep_baseline_adjusted_rank_of_16": null,
+      "true_deep_energy_fraction_of_deep_peak": null,
+      "selected_deep_distance_to_truth_mm": null,
+      "deep_active_energy_auc_from_rank": null,
+      "deep_to_global_baseline_adjusted_peak_ratio": 1.0,
+      "directional_confirmation": {
+        "full_h1_minus_h0": {
+          "confirmation_cross": 17.74742039748073,
+          "training_direction_squared_norm": 19.73992129743745,
+          "confirmation_amplitude": 0.8990623685913389,
+          "one_sided_directional_z": 3.774877435981019,
+          "optimally_scaled_loss_improvement": 15.95603781894527
+        },
+        "all_deep_component": {
+          "confirmation_cross": -1.4099194060601956,
+          "training_direction_squared_norm": 135.7932749944984,
+          "confirmation_amplitude": -0.010382836750327421,
+          "one_sided_directional_z": -0.07474408164629057,
+          "optimally_scaled_loss_improvement": 0.0
+        },
+        "selected_deep_component": {
+          "confirmation_cross": -1.25656878377049,
+          "training_direction_squared_norm": 136.05889912882512,
+          "confirmation_amplitude": -0.009235476634135696,
+          "one_sided_directional_z": -0.06657115629919175,
+          "optimally_scaled_loss_improvement": 0.0
+        },
+        "all_deep_partial_surface_change": {
+          "confirmation_cross": 23.17503917083954,
+          "training_direction_squared_norm": 13.79374375796613,
+          "confirmation_amplitude": 1.680112344950264,
+          "one_sided_directional_z": 5.241205580903348,
+          "optimally_scaled_loss_improvement": 38.93666940563344
+        },
+        "selected_deep_partial_surface_change": {
+          "confirmation_cross": 23.346801694710667,
+          "training_direction_squared_norm": 13.876566325128664,
+          "confirmation_amplitude": 1.6824624440725393,
+          "one_sided_directional_z": 5.2681452059691525,
+          "optimally_scaled_loss_improvement": 39.28011704055981
+        }
+      },
+      "lead_field": {}
+    },
+    {
+      "variant": "mean_irls",
+      "case_id": "erp-v6-development-02-eeg+05-meg+05",
+      "scenario": "deep_only",
+      "has_deep_true": true,
+      "null_converged": true,
+      "full_converged": true,
+      "predictive_score": 0.10801807279875363,
+      "null_loss_noise_units": 1.393802313107513,
+      "full_loss_noise_units": 1.2857842403087594,
+      "selected_deep_index": 7498,
+      "true_deep_index": 7498,
+      "true_deep_active_energy_rank_of_16": 1,
+      "true_deep_baseline_adjusted_rank_of_16": 1,
+      "true_deep_energy_fraction_of_deep_peak": 1.0,
+      "selected_deep_distance_to_truth_mm": 0.0,
+      "deep_active_energy_auc_from_rank": 1.0,
+      "deep_to_global_baseline_adjusted_peak_ratio": 1.0,
+      "directional_confirmation": {
+        "full_h1_minus_h0": {
+          "confirmation_cross": 262.75861431921066,
+          "training_direction_squared_norm": 272.53263140233616,
+          "confirmation_amplitude": 0.9641363420122112,
+          "one_sided_directional_z": 12.917722224280453,
+          "optimally_scaled_loss_improvement": 253.3351292419212
+        },
+        "all_deep_component": {
+          "confirmation_cross": 627.8074966951408,
+          "training_direction_squared_norm": 7079.8109417963,
+          "confirmation_amplitude": 0.08867574315986644,
+          "one_sided_directional_z": 3.5488157034968446,
+          "optimally_scaled_loss_improvement": 55.671296330777004
+        },
+        "selected_deep_component": {
+          "confirmation_cross": 754.0104277393536,
+          "training_direction_squared_norm": 8664.353558182169,
+          "confirmation_amplitude": 0.08702442977148654,
+          "one_sided_directional_z": 3.898229635967359,
+          "optimally_scaled_loss_improvement": 65.6173275157719
+        },
+        "all_deep_partial_surface_change": {
+          "confirmation_cross": 254.23381017014583,
+          "training_direction_squared_norm": 268.98600059811116,
+          "confirmation_amplitude": 0.9451562891928847,
+          "one_sided_directional_z": 12.43615995250727,
+          "optimally_scaled_loss_improvement": 240.2906846077833
+        },
+        "selected_deep_partial_surface_change": {
+          "confirmation_cross": 345.7516052974757,
+          "training_direction_squared_norm": 530.0885255851365,
+          "confirmation_amplitude": 0.6522525740692442,
+          "one_sided_directional_z": 9.628725375320277,
+          "optimally_scaled_loss_improvement": 225.51737454385184
+        }
+      },
+      "lead_field": {
+        "true_deep_weighted_gain_norm": 85.14540485597573,
+        "selected_to_true_abs_cosine": 1.0,
+        "closest_surface_index_by_abs_cosine": 1392,
+        "closest_surface_abs_cosine": 0.9592168886548175,
+        "closest_other_deep_index_by_abs_cosine": 7500,
+        "closest_other_deep_abs_cosine": 0.8855574064145986
+      }
+    },
+    {
+      "variant": "mean_irls",
+      "case_id": "erp-v6-development-03-eeg+05-meg+05",
+      "scenario": "deep_plus_surface",
+      "has_deep_true": true,
+      "null_converged": true,
+      "full_converged": true,
+      "predictive_score": -0.0025640821853482824,
+      "null_loss_noise_units": 1.251296146461455,
+      "full_loss_noise_units": 1.2538602286468032,
+      "selected_deep_index": 7500,
+      "true_deep_index": 7498,
+      "true_deep_active_energy_rank_of_16": 8,
+      "true_deep_baseline_adjusted_rank_of_16": 8,
+      "true_deep_energy_fraction_of_deep_peak": 2.673232660383302e-07,
+      "selected_deep_distance_to_truth_mm": 14.142136204249597,
+      "deep_active_energy_auc_from_rank": 0.5333333333333333,
+      "deep_to_global_baseline_adjusted_peak_ratio": 1.0,
+      "directional_confirmation": {
+        "full_h1_minus_h0": {
+          "confirmation_cross": 4.082625222014414,
+          "training_direction_squared_norm": 14.693023517037169,
+          "confirmation_amplitude": 0.2778614774066373,
+          "one_sided_directional_z": 0.8744913647821989,
+          "optimally_scaled_loss_improvement": 1.1344042758865258
+        },
+        "all_deep_component": {
+          "confirmation_cross": 1.5188443784710586,
+          "training_direction_squared_norm": 153.6329564726284,
+          "confirmation_amplitude": 0.009886188571406287,
+          "one_sided_directional_z": 0.08100444494026435,
+          "optimally_scaled_loss_improvement": 0.015015581936185267
+        },
+        "selected_deep_component": {
+          "confirmation_cross": 1.624086554438056,
+          "training_direction_squared_norm": 153.71682176827858,
+          "confirmation_amplitude": 0.010565444534667102,
+          "one_sided_directional_z": 0.08664382248429021,
+          "optimally_scaled_loss_improvement": 0.017159196410413885
+        },
+        "all_deep_partial_surface_change": {
+          "confirmation_cross": 4.507650271837129,
+          "training_direction_squared_norm": 11.825326727503269,
+          "confirmation_amplitude": 0.38118610806357384,
+          "one_sided_directional_z": 1.0174100330279654,
+          "optimally_scaled_loss_improvement": 1.7182536636333057
+        },
+        "selected_deep_partial_surface_change": {
+          "confirmation_cross": 4.612742356336217,
+          "training_direction_squared_norm": 11.923434219968524,
+          "confirmation_amplitude": 0.3868635722928821,
+          "one_sided_directional_z": 1.0361416658509357,
+          "optimally_scaled_loss_improvement": 1.7845019860389157
+        }
+      },
+      "lead_field": {
+        "true_deep_weighted_gain_norm": 25.792453677362584,
+        "selected_to_true_abs_cosine": 0.8130555115480711,
+        "closest_surface_index_by_abs_cosine": 2117,
+        "closest_surface_abs_cosine": 0.9090199052070762,
+        "closest_other_deep_index_by_abs_cosine": 7499,
+        "closest_other_deep_abs_cosine": 0.8743886105632556
+      }
+    },
+    {
+      "variant": "mean_irls",
+      "case_id": "erp-v6-development-04-eeg+05-meg+05",
+      "scenario": "deep_plus_two_surface",
+      "has_deep_true": true,
+      "null_converged": true,
+      "full_converged": true,
+      "predictive_score": -0.0022645409105274336,
+      "null_loss_noise_units": 1.4155994326808317,
+      "full_loss_noise_units": 1.4178639735913592,
+      "selected_deep_index": 7500,
+      "true_deep_index": 7498,
+      "true_deep_active_energy_rank_of_16": 14,
+      "true_deep_baseline_adjusted_rank_of_16": 14,
+      "true_deep_energy_fraction_of_deep_peak": 6.08259831205892e-08,
+      "selected_deep_distance_to_truth_mm": 14.142136204249597,
+      "deep_active_energy_auc_from_rank": 0.13333333333333333,
+      "deep_to_global_baseline_adjusted_peak_ratio": 1.0,
+      "directional_confirmation": {
+        "full_h1_minus_h0": {
+          "confirmation_cross": 18.287172089347976,
+          "training_direction_squared_norm": 42.297485094738306,
+          "confirmation_amplitude": 0.43234655791918114,
+          "one_sided_directional_z": 2.7203060948166726,
+          "optimally_scaled_loss_improvement": 7.906395906905318
+        },
+        "all_deep_component": {
+          "confirmation_cross": 35.02415412770957,
+          "training_direction_squared_norm": 312.9044306983403,
+          "confirmation_amplitude": 0.11193243269052676,
+          "one_sided_directional_z": 1.2167470412481676,
+          "optimally_scaled_loss_improvement": 3.9203387744424867
+        },
+        "selected_deep_component": {
+          "confirmation_cross": 35.26802814503796,
+          "training_direction_squared_norm": 313.3832124261288,
+          "confirmation_amplitude": 0.11253962160896348,
+          "one_sided_directional_z": 1.2246202806905289,
+          "optimally_scaled_loss_improvement": 3.969050542336846
+        },
+        "all_deep_partial_surface_change": {
+          "confirmation_cross": 14.948767439491595,
+          "training_direction_squared_norm": 34.60143299882682,
+          "confirmation_amplitude": 0.4320274088069832,
+          "one_sided_directional_z": 2.175700164289115,
+          "optimally_scaled_loss_improvement": 6.458277261741755
+        },
+        "selected_deep_partial_surface_change": {
+          "confirmation_cross": 15.17775954398159,
+          "training_direction_squared_norm": 34.66744897163585,
+          "confirmation_amplitude": 0.4378101070084419,
+          "one_sided_directional_z": 2.2075325172647364,
+          "optimally_scaled_loss_improvement": 6.6449765300989805
+        }
+      },
+      "lead_field": {
+        "true_deep_weighted_gain_norm": 20.841930830577496,
+        "selected_to_true_abs_cosine": 0.8075529785863323,
+        "closest_surface_index_by_abs_cosine": 2045,
+        "closest_surface_abs_cosine": 0.9161070131656797,
+        "closest_other_deep_index_by_abs_cosine": 7499,
+        "closest_other_deep_abs_cosine": 0.8376957302390852
+      }
+    },
+    {
+      "variant": "trial_irls",
+      "case_id": "erp-v6-development-00-eeg+05-meg+05",
+      "scenario": "surface_only",
+      "has_deep_true": false,
+      "null_converged": true,
+      "full_converged": true,
+      "predictive_score": -1.0487720462762083e-05,
+      "null_loss_noise_units": 1.2571224528132405,
+      "full_loss_noise_units": 1.2571329405337033,
+      "selected_deep_index": 7500,
+      "true_deep_index": null,
+      "true_deep_active_energy_rank_of_16": null,
+      "true_deep_baseline_adjusted_rank_of_16": null,
+      "true_deep_energy_fraction_of_deep_peak": null,
+      "selected_deep_distance_to_truth_mm": null,
+      "deep_active_energy_auc_from_rank": null,
+      "deep_to_global_baseline_adjusted_peak_ratio": 0.0025030307422704754,
+      "directional_confirmation": {
+        "full_h1_minus_h0": {
+          "confirmation_cross": -0.006841726854761303,
+          "training_direction_squared_norm": 0.0006953809809472891,
+          "confirmation_amplitude": -9.838817917397018,
+          "one_sided_directional_z": -0.2560579252575167,
+          "optimally_scaled_loss_improvement": 0.0
+        },
+        "all_deep_component": {
+          "confirmation_cross": 0.11171561579959889,
+          "training_direction_squared_norm": 0.004894002320848365,
+          "confirmation_amplitude": 22.82704593818689,
+          "one_sided_directional_z": 1.5761291371843442,
+          "optimally_scaled_loss_improvement": 2.5501374938702814
+        },
+        "selected_deep_component": {
+          "confirmation_cross": 0.027301298954806288,
+          "training_direction_squared_norm": 0.00018050270429631184,
+          "confirmation_amplitude": 151.25146773418246,
+          "one_sided_directional_z": 1.9615628010436699,
+          "optimally_scaled_loss_improvement": 4.129361537964153
+        },
+        "all_deep_partial_surface_change": {
+          "confirmation_cross": -0.01448162436290044,
+          "training_direction_squared_norm": 0.0006799363805137953,
+          "confirmation_amplitude": -21.29849906245254,
+          "one_sided_directional_z": -0.5563291739190116,
+          "optimally_scaled_loss_improvement": 0.0
+        },
+        "selected_deep_partial_surface_change": {
+          "confirmation_cross": 0.006229138492944196,
+          "training_direction_squared_norm": 6.300760791894782e-05,
+          "confirmation_amplitude": 98.8632753834629,
+          "one_sided_directional_z": 0.7355750188893401,
+          "optimally_scaled_loss_improvement": 0.6158330342296712
+        }
+      },
+      "lead_field": {}
+    },
+    {
+      "variant": "trial_irls",
+      "case_id": "erp-v6-development-01-eeg+05-meg+05",
+      "scenario": "surface_only",
+      "has_deep_true": false,
+      "null_converged": true,
+      "full_converged": true,
+      "predictive_score": 0.00018414660040165599,
+      "null_loss_noise_units": 1.3454848916098527,
+      "full_loss_noise_units": 1.345300745009451,
+      "selected_deep_index": 7505,
+      "true_deep_index": null,
+      "true_deep_active_energy_rank_of_16": null,
+      "true_deep_baseline_adjusted_rank_of_16": null,
+      "true_deep_energy_fraction_of_deep_peak": null,
+      "selected_deep_distance_to_truth_mm": null,
+      "deep_active_energy_auc_from_rank": null,
+      "deep_to_global_baseline_adjusted_peak_ratio": 0.006246264201405042,
+      "directional_confirmation": {
+        "full_h1_minus_h0": {
+          "confirmation_cross": 0.1453155739697929,
+          "training_direction_squared_norm": 0.004482894657627002,
+          "confirmation_amplitude": 32.41556741079322,
+          "one_sided_directional_z": 2.1534149775877744,
+          "optimally_scaled_loss_improvement": 4.710486783855931
+        },
+        "all_deep_component": {
+          "confirmation_cross": 0.21496099780001282,
+          "training_direction_squared_norm": 0.030231014361835066,
+          "confirmation_amplitude": 7.110611480883316,
+          "one_sided_directional_z": 1.1535727330778258,
+          "optimally_scaled_loss_improvement": 1.5285041388989042
+        },
+        "selected_deep_component": {
+          "confirmation_cross": 0.061858531901807685,
+          "training_direction_squared_norm": 0.0008278966065697334,
+          "confirmation_amplitude": 74.71770195810963,
+          "one_sided_directional_z": 1.9530388003606127,
+          "optimally_scaled_loss_improvement": 4.621927350205483
+        },
+        "all_deep_partial_surface_change": {
+          "confirmation_cross": 0.11802554352645957,
+          "training_direction_squared_norm": 0.0022664837735825376,
+          "confirmation_amplitude": 52.07429450946452,
+          "one_sided_directional_z": 2.7836839088875265,
+          "optimally_scaled_loss_improvement": 6.146096913236479
+        },
+        "selected_deep_partial_surface_change": {
+          "confirmation_cross": 0.04733046245002778,
+          "training_direction_squared_norm": 0.0001997542947903794,
+          "confirmation_amplitude": 236.94340339313356,
+          "one_sided_directional_z": 3.1427839571884824,
+          "optimally_scaled_loss_improvement": 11.214640857080493
+        }
+      },
+      "lead_field": {}
+    },
+    {
+      "variant": "trial_irls",
+      "case_id": "erp-v6-development-02-eeg+05-meg+05",
+      "scenario": "deep_only",
+      "has_deep_true": true,
+      "null_converged": true,
+      "full_converged": true,
+      "predictive_score": 0.1469988215736901,
+      "null_loss_noise_units": 1.3107420176628237,
+      "full_loss_noise_units": 1.1637431960891336,
+      "selected_deep_index": 7498,
+      "true_deep_index": 7498,
+      "true_deep_active_energy_rank_of_16": 1,
+      "true_deep_baseline_adjusted_rank_of_16": 1,
+      "true_deep_energy_fraction_of_deep_peak": 1.0,
+      "selected_deep_distance_to_truth_mm": 0.0,
+      "deep_active_energy_auc_from_rank": 1.0,
+      "deep_to_global_baseline_adjusted_peak_ratio": 1.0,
+      "directional_confirmation": {
+        "full_h1_minus_h0": {
+          "confirmation_cross": 197.02827741468548,
+          "training_direction_squared_norm": 201.98748942075883,
+          "confirmation_amplitude": 0.9754479249170583,
+          "one_sided_directional_z": 15.363206616652125,
+          "optimally_scaled_loss_improvement": 192.19082435413745
+        },
+        "all_deep_component": {
+          "confirmation_cross": 320.07842389682344,
+          "training_direction_squared_norm": 3382.5009383598017,
+          "confirmation_amplitude": 0.09462774134573683,
+          "one_sided_directional_z": 4.950336881701411,
+          "optimally_scaled_loss_improvement": 30.288298306859723
+        },
+        "selected_deep_component": {
+          "confirmation_cross": 364.2920826605134,
+          "training_direction_squared_norm": 3871.4589575346245,
+          "confirmation_amplitude": 0.09409684737882316,
+          "one_sided_directional_z": 5.313335992619499,
+          "optimally_scaled_loss_improvement": 34.278736503419964
+        },
+        "all_deep_partial_surface_change": {
+          "confirmation_cross": 191.98393203208184,
+          "training_direction_squared_norm": 197.0475687921,
+          "confirmation_amplitude": 0.9743024651810818,
+          "one_sided_directional_z": 14.863524254549574,
+          "optimally_scaled_loss_improvement": 187.05041825401457
+        },
+        "selected_deep_partial_surface_change": {
+          "confirmation_cross": 228.3272559000264,
+          "training_direction_squared_norm": 282.54134393690924,
+          "confirmation_amplitude": 0.8081198054717659,
+          "one_sided_directional_z": 13.831868129739238,
+          "optimally_scaled_loss_improvement": 184.51577762183143
+        }
+      },
+      "lead_field": {
+        "true_deep_weighted_gain_norm": 58.07040672578126,
+        "selected_to_true_abs_cosine": 0.9999999999999998,
+        "closest_surface_index_by_abs_cosine": 2045,
+        "closest_surface_abs_cosine": 0.943874138441597,
+        "closest_other_deep_index_by_abs_cosine": 7499,
+        "closest_other_deep_abs_cosine": 0.8568929244831671
+      }
+    },
+    {
+      "variant": "trial_irls",
+      "case_id": "erp-v6-development-03-eeg+05-meg+05",
+      "scenario": "deep_plus_surface",
+      "has_deep_true": true,
+      "null_converged": true,
+      "full_converged": true,
+      "predictive_score": 0.018106295512077288,
+      "null_loss_noise_units": 1.2537346035612251,
+      "full_loss_noise_units": 1.235628308049148,
+      "selected_deep_index": 7499,
+      "true_deep_index": 7498,
+      "true_deep_active_energy_rank_of_16": 16,
+      "true_deep_baseline_adjusted_rank_of_16": 16,
+      "true_deep_energy_fraction_of_deep_peak": 2.7092305783570724e-07,
+      "selected_deep_distance_to_truth_mm": 10.00000054854849,
+      "deep_active_energy_auc_from_rank": 0.0,
+      "deep_to_global_baseline_adjusted_peak_ratio": 1.0,
+      "directional_confirmation": {
+        "full_h1_minus_h0": {
+          "confirmation_cross": 47.28947821826088,
+          "training_direction_squared_norm": 65.38765164134502,
+          "confirmation_amplitude": 0.7232172593939656,
+          "one_sided_directional_z": 5.469313262617686,
+          "optimally_scaled_loss_improvement": 34.20056683518127
+        },
+        "all_deep_component": {
+          "confirmation_cross": -3.8026110332819165,
+          "training_direction_squared_norm": 196.53206792248326,
+          "confirmation_amplitude": -0.01934855249567594,
+          "one_sided_directional_z": -0.2684193340770596,
+          "optimally_scaled_loss_improvement": 0.0
+        },
+        "selected_deep_component": {
+          "confirmation_cross": -2.987834848086049,
+          "training_direction_squared_norm": 165.8334987431862,
+          "confirmation_amplitude": -0.018017076590255643,
+          "one_sided_directional_z": -0.2263783430344396,
+          "optimally_scaled_loss_improvement": 0.0
+        },
+        "all_deep_partial_surface_change": {
+          "confirmation_cross": 37.065724518782446,
+          "training_direction_squared_norm": 56.6325095428032,
+          "confirmation_amplitude": 0.654495533007732,
+          "one_sided_directional_z": 4.523521757742429,
+          "optimally_scaled_loss_improvement": 24.25935112523828
+        },
+        "selected_deep_partial_surface_change": {
+          "confirmation_cross": 24.698385477691446,
+          "training_direction_squared_norm": 101.62836073084961,
+          "confirmation_amplitude": 0.24302650657823877,
+          "one_sided_directional_z": 2.296118834479261,
+          "optimally_scaled_loss_improvement": 6.002362340766057
+        }
+      },
+      "lead_field": {
+        "true_deep_weighted_gain_norm": 19.555131341749803,
+        "selected_to_true_abs_cosine": 0.8981255396892059,
+        "closest_surface_index_by_abs_cosine": 2117,
+        "closest_surface_abs_cosine": 0.8819764181817997,
+        "closest_other_deep_index_by_abs_cosine": 7499,
+        "closest_other_deep_abs_cosine": 0.8981255396892059
+      }
+    },
+    {
+      "variant": "trial_irls",
+      "case_id": "erp-v6-development-04-eeg+05-meg+05",
+      "scenario": "deep_plus_two_surface",
+      "has_deep_true": true,
+      "null_converged": true,
+      "full_converged": true,
+      "predictive_score": -0.013128050761440389,
+      "null_loss_noise_units": 1.2869054693715571,
+      "full_loss_noise_units": 1.3000335201329976,
+      "selected_deep_index": 7500,
+      "true_deep_index": 7498,
+      "true_deep_active_energy_rank_of_16": 11,
+      "true_deep_baseline_adjusted_rank_of_16": 11,
+      "true_deep_energy_fraction_of_deep_peak": 1.2987276427424098e-07,
+      "selected_deep_distance_to_truth_mm": 14.142136204249597,
+      "deep_active_energy_auc_from_rank": 0.3333333333333333,
+      "deep_to_global_baseline_adjusted_peak_ratio": 1.0,
+      "directional_confirmation": {
+        "full_h1_minus_h0": {
+          "confirmation_cross": 5.647209571283172,
+          "training_direction_squared_norm": 32.2948565866687,
+          "confirmation_amplitude": 0.17486405477999048,
+          "one_sided_directional_z": 1.0118844266874258,
+          "optimally_scaled_loss_improvement": 0.9874939638269471
+        },
+        "all_deep_component": {
+          "confirmation_cross": 24.520559383590864,
+          "training_direction_squared_norm": 140.64219563437342,
+          "confirmation_amplitude": 0.1743471031079236,
+          "one_sided_directional_z": 2.08188409362111,
+          "optimally_scaled_loss_improvement": 4.27508849511488
+        },
+        "selected_deep_component": {
+          "confirmation_cross": 24.413321470389928,
+          "training_direction_squared_norm": 140.55891944597565,
+          "confirmation_amplitude": 0.17368745837416089,
+          "one_sided_directional_z": 2.0732804923905666,
+          "optimally_scaled_loss_improvement": 4.240287756663359
+        },
+        "all_deep_partial_surface_change": {
+          "confirmation_cross": 2.1049566149254364,
+          "training_direction_squared_norm": 29.519878302733034,
+          "confirmation_amplitude": 0.0713064123550453,
+          "one_sided_directional_z": 0.3971718362720498,
+          "optimally_scaled_loss_improvement": 0.1500969043733535
+        },
+        "selected_deep_partial_surface_change": {
+          "confirmation_cross": 2.006834691901222,
+          "training_direction_squared_norm": 29.52696631127393,
+          "confirmation_amplitude": 0.06796616593608454,
+          "one_sided_directional_z": 0.37839758078035557,
+          "optimally_scaled_loss_improvement": 0.13639685967604956
+        }
+      },
+      "lead_field": {
+        "true_deep_weighted_gain_norm": 16.742012703394433,
+        "selected_to_true_abs_cosine": 0.8077967846947661,
+        "closest_surface_index_by_abs_cosine": 2117,
+        "closest_surface_abs_cosine": 0.9029762715934884,
+        "closest_other_deep_index_by_abs_cosine": 7499,
+        "closest_other_deep_abs_cosine": 0.8788503951813563
+      }
+    },
+    {
+      "variant": "mean_admm",
+      "case_id": "erp-v6-development-00-eeg+05-meg+05",
+      "scenario": "surface_only",
+      "has_deep_true": false,
+      "null_converged": true,
+      "full_converged": true,
+      "predictive_score": -0.006524683847030355,
+      "null_loss_noise_units": 1.1267702761498186,
+      "full_loss_noise_units": 1.133294959996849,
+      "selected_deep_index": 7500,
+      "true_deep_index": null,
+      "true_deep_active_energy_rank_of_16": null,
+      "true_deep_baseline_adjusted_rank_of_16": null,
+      "true_deep_energy_fraction_of_deep_peak": null,
+      "selected_deep_distance_to_truth_mm": null,
+      "deep_active_energy_auc_from_rank": null,
+      "deep_to_global_baseline_adjusted_peak_ratio": 1.0,
+      "directional_confirmation": {
+        "full_h1_minus_h0": {
+          "confirmation_cross": 38.89117955490443,
+          "training_direction_squared_norm": 96.97321190035694,
+          "confirmation_amplitude": 0.40105075198361334,
+          "one_sided_directional_z": 2.225364004121688,
+          "optimally_scaled_loss_improvement": 15.597336806024149
+        },
+        "all_deep_component": {
+          "confirmation_cross": -10.113271837151622,
+          "training_direction_squared_norm": 135.57680837545902,
+          "confirmation_amplitude": -0.07459440857424876,
+          "one_sided_directional_z": -0.45425565024745596,
+          "optimally_scaled_loss_improvement": 0.0
+        },
+        "selected_deep_component": {
+          "confirmation_cross": 31.209979798159544,
+          "training_direction_squared_norm": 265.9505306591922,
+          "confirmation_amplitude": 0.11735257576212252,
+          "one_sided_directional_z": 1.2735464982292735,
+          "optimally_scaled_loss_improvement": 3.662571518797831
+        },
+        "all_deep_partial_surface_change": {
+          "confirmation_cross": 21.638805119198047,
+          "training_direction_squared_norm": 80.80243468266386,
+          "confirmation_amplitude": 0.26779892467572697,
+          "one_sided_directional_z": 1.4297694182353293,
+          "optimally_scaled_loss_improvement": 5.794848742188853
+        },
+        "selected_deep_partial_surface_change": {
+          "confirmation_cross": 45.64592772643896,
+          "training_direction_squared_norm": 254.6285148454333,
+          "confirmation_amplitude": 0.17926479190340222,
+          "one_sided_directional_z": 1.7434849870054736,
+          "optimally_scaled_loss_improvement": 8.182707735117818
+        }
+      },
+      "lead_field": {}
+    },
+    {
+      "variant": "mean_admm",
+      "case_id": "erp-v6-development-01-eeg+05-meg+05",
+      "scenario": "surface_only",
+      "has_deep_true": false,
+      "null_converged": true,
+      "full_converged": true,
+      "predictive_score": -0.0029073717455747453,
+      "null_loss_noise_units": 1.3495376439508748,
+      "full_loss_noise_units": 1.3524450156964496,
+      "selected_deep_index": 7500,
+      "true_deep_index": null,
+      "true_deep_active_energy_rank_of_16": null,
+      "true_deep_baseline_adjusted_rank_of_16": null,
+      "true_deep_energy_fraction_of_deep_peak": null,
+      "selected_deep_distance_to_truth_mm": null,
+      "deep_active_energy_auc_from_rank": null,
+      "deep_to_global_baseline_adjusted_peak_ratio": 1.0,
+      "directional_confirmation": {
+        "full_h1_minus_h0": {
+          "confirmation_cross": 215.43870629620108,
+          "training_direction_squared_norm": 437.90822884998585,
+          "confirmation_amplitude": 0.4919722720488175,
+          "one_sided_directional_z": 6.242208081579832,
+          "optimally_scaled_loss_improvement": 105.98986982379994
+        },
+        "all_deep_component": {
+          "confirmation_cross": -22.750460351241838,
+          "training_direction_squared_norm": 402.98710913029316,
+          "confirmation_amplitude": -0.0564545610412719,
+          "one_sided_directional_z": -0.6584625177230518,
+          "optimally_scaled_loss_improvement": 0.0
+        },
+        "selected_deep_component": {
+          "confirmation_cross": -33.33451385257115,
+          "training_direction_squared_norm": 397.98923561384254,
+          "confirmation_amplitude": -0.08375732524814984,
+          "one_sided_directional_z": -1.2534974253507853,
+          "optimally_scaled_loss_improvement": 0.0
+        },
+        "all_deep_partial_surface_change": {
+          "confirmation_cross": 90.3949277486027,
+          "training_direction_squared_norm": 245.24354390863112,
+          "confirmation_amplitude": 0.36859248691284846,
+          "one_sided_directional_z": 3.4238627173441607,
+          "optimally_scaled_loss_improvement": 33.31889122316472
+        },
+        "selected_deep_partial_surface_change": {
+          "confirmation_cross": -11.964687398561232,
+          "training_direction_squared_norm": 392.3621965534961,
+          "confirmation_amplitude": -0.030493986178227347,
+          "one_sided_directional_z": -0.4471433576933447,
+          "optimally_scaled_loss_improvement": 0.0
+        }
+      },
+      "lead_field": {}
+    },
+    {
+      "variant": "mean_admm",
+      "case_id": "erp-v6-development-02-eeg+05-meg+05",
+      "scenario": "deep_only",
+      "has_deep_true": true,
+      "null_converged": true,
+      "full_converged": true,
+      "predictive_score": 0.24287017341977374,
+      "null_loss_noise_units": 1.4089677642634053,
+      "full_loss_noise_units": 1.1660975908436315,
+      "selected_deep_index": 7498,
+      "true_deep_index": 7498,
+      "true_deep_active_energy_rank_of_16": 1,
+      "true_deep_baseline_adjusted_rank_of_16": 1,
+      "true_deep_energy_fraction_of_deep_peak": 1.0,
+      "selected_deep_distance_to_truth_mm": 0.0,
+      "deep_active_energy_auc_from_rank": 1.0,
+      "deep_to_global_baseline_adjusted_peak_ratio": 1.0,
+      "directional_confirmation": {
+        "full_h1_minus_h0": {
+          "confirmation_cross": 558.8827535874186,
+          "training_direction_squared_norm": 548.9494740124211,
+          "confirmation_amplitude": 1.0180950707583205,
+          "one_sided_directional_z": 14.496364470857278,
+          "optimally_scaled_loss_improvement": 568.9957765591879
+        },
+        "all_deep_component": {
+          "confirmation_cross": 621.5191111546835,
+          "training_direction_squared_norm": 6927.323489245282,
+          "confirmation_amplitude": 0.08971994914335908,
+          "one_sided_directional_z": 3.5870215031894817,
+          "optimally_scaled_loss_improvement": 55.762663044423945
+        },
+        "selected_deep_component": {
+          "confirmation_cross": 676.1653347524623,
+          "training_direction_squared_norm": 6630.527726401007,
+          "confirmation_amplitude": 0.10197760459701433,
+          "one_sided_directional_z": 4.007344877572018,
+          "optimally_scaled_loss_improvement": 68.95372114959443
+        },
+        "all_deep_partial_surface_change": {
+          "confirmation_cross": 560.8925224889543,
+          "training_direction_squared_norm": 541.9324416651734,
+          "confirmation_amplitude": 1.0349860598223701,
+          "one_sided_directional_z": 14.658389996017702,
+          "optimally_scaled_loss_improvement": 580.515941834673
+        },
+        "selected_deep_partial_surface_change": {
+          "confirmation_cross": 617.3584197008234,
+          "training_direction_squared_norm": 622.6922696164588,
+          "confirmation_amplitude": 0.9914342120885479,
+          "one_sided_directional_z": 15.194685901367905,
+          "optimally_scaled_loss_improvement": 612.070258412317
+        }
+      },
+      "lead_field": {
+        "true_deep_weighted_gain_norm": 85.14540485597573,
+        "selected_to_true_abs_cosine": 1.0,
+        "closest_surface_index_by_abs_cosine": 1392,
+        "closest_surface_abs_cosine": 0.9592168886548175,
+        "closest_other_deep_index_by_abs_cosine": 7500,
+        "closest_other_deep_abs_cosine": 0.8855574064145986
+      }
+    },
+    {
+      "variant": "mean_admm",
+      "case_id": "erp-v6-development-03-eeg+05-meg+05",
+      "scenario": "deep_plus_surface",
+      "has_deep_true": true,
+      "null_converged": false,
+      "full_converged": true,
+      "predictive_score": -0.06720398197260603,
+      "null_loss_noise_units": 1.1367769575669522,
+      "full_loss_noise_units": 1.2039809395395582,
+      "selected_deep_index": 7500,
+      "true_deep_index": 7498,
+      "true_deep_active_energy_rank_of_16": 4,
+      "true_deep_baseline_adjusted_rank_of_16": 4,
+      "true_deep_energy_fraction_of_deep_peak": 0.3906792125442072,
+      "selected_deep_distance_to_truth_mm": 14.142136204249597,
+      "deep_active_energy_auc_from_rank": 0.8,
+      "deep_to_global_baseline_adjusted_peak_ratio": 1.0,
+      "directional_confirmation": {
+        "full_h1_minus_h0": {
+          "confirmation_cross": 47.34849374626683,
+          "training_direction_squared_norm": 265.7883516529628,
+          "confirmation_amplitude": 0.1781435997920981,
+          "one_sided_directional_z": 1.727714696998119,
+          "optimally_scaled_loss_improvement": 8.434831120693618
+        },
+        "all_deep_component": {
+          "confirmation_cross": 47.3187484029864,
+          "training_direction_squared_norm": 499.9502608569087,
+          "confirmation_amplitude": 0.09464691211858284,
+          "one_sided_directional_z": 1.1490232671458143,
+          "optimally_scaled_loss_improvement": 4.478573421658786
+        },
+        "selected_deep_component": {
+          "confirmation_cross": 141.6623043081909,
+          "training_direction_squared_norm": 411.13164989573204,
+          "confirmation_amplitude": 0.34456676917021145,
+          "one_sided_directional_z": 4.606404340660587,
+          "optimally_scaled_loss_improvement": 48.812122508680666
+        },
+        "all_deep_partial_surface_change": {
+          "confirmation_cross": 47.34078128932073,
+          "training_direction_squared_norm": 233.08993449228004,
+          "confirmation_amplitude": 0.2031009249388616,
+          "one_sided_directional_z": 1.8253882681469646,
+          "optimally_scaled_loss_improvement": 9.614956467189392
+        },
+        "selected_deep_partial_surface_change": {
+          "confirmation_cross": 141.66735731334504,
+          "training_direction_squared_norm": 397.0957356124241,
+          "confirmation_amplitude": 0.35675869723168246,
+          "one_sided_directional_z": 4.698249321037701,
+          "optimally_scaled_loss_improvement": 50.54106183536424
+        }
+      },
+      "lead_field": {
+        "true_deep_weighted_gain_norm": 25.792453677362584,
+        "selected_to_true_abs_cosine": 0.8130555115480711,
+        "closest_surface_index_by_abs_cosine": 2117,
+        "closest_surface_abs_cosine": 0.9090199052070762,
+        "closest_other_deep_index_by_abs_cosine": 7499,
+        "closest_other_deep_abs_cosine": 0.8743886105632556
+      }
+    },
+    {
+      "variant": "mean_admm",
+      "case_id": "erp-v6-development-04-eeg+05-meg+05",
+      "scenario": "deep_plus_two_surface",
+      "has_deep_true": true,
+      "null_converged": false,
+      "full_converged": true,
+      "predictive_score": 0.051304105156883315,
+      "null_loss_noise_units": 1.3258355281430638,
+      "full_loss_noise_units": 1.2745314229861806,
+      "selected_deep_index": 7500,
+      "true_deep_index": 7498,
+      "true_deep_active_energy_rank_of_16": 2,
+      "true_deep_baseline_adjusted_rank_of_16": 2,
+      "true_deep_energy_fraction_of_deep_peak": 0.18965063035190058,
+      "selected_deep_distance_to_truth_mm": 14.142136204249597,
+      "deep_active_energy_auc_from_rank": 0.9333333333333333,
+      "deep_to_global_baseline_adjusted_peak_ratio": 1.0,
+      "directional_confirmation": {
+        "full_h1_minus_h0": {
+          "confirmation_cross": 363.589613559314,
+          "training_direction_squared_norm": 597.519229671021,
+          "confirmation_amplitude": 0.6084985980442793,
+          "one_sided_directional_z": 8.947991807448677,
+          "optimally_scaled_loss_improvement": 221.24377011430383
+        },
+        "all_deep_component": {
+          "confirmation_cross": -163.15802564010045,
+          "training_direction_squared_norm": 656.3161598713298,
+          "confirmation_amplitude": -0.24859669107048565,
+          "one_sided_directional_z": -3.5290933739433514,
+          "optimally_scaled_loss_improvement": 0.0
+        },
+        "selected_deep_component": {
+          "confirmation_cross": -186.9634198522918,
+          "training_direction_squared_norm": 1390.6215169072834,
+          "confirmation_amplitude": -0.1344459420332392,
+          "one_sided_directional_z": -2.9870413844611354,
+          "optimally_scaled_loss_improvement": 0.0
+        },
+        "all_deep_partial_surface_change": {
+          "confirmation_cross": 114.72476754347778,
+          "training_direction_squared_norm": 359.28043899976126,
+          "confirmation_amplitude": 0.3193181567659853,
+          "one_sided_directional_z": 3.6002541307013773,
+          "optimally_scaled_loss_improvement": 36.63370130738946
+        },
+        "selected_deep_partial_surface_change": {
+          "confirmation_cross": 3.9072091303157066,
+          "training_direction_squared_norm": 1250.4810442682342,
+          "confirmation_amplitude": 0.0031245648610388624,
+          "one_sided_directional_z": 0.06330608029283737,
+          "optimally_scaled_loss_improvement": 0.01220832835331467
+        }
+      },
+      "lead_field": {
+        "true_deep_weighted_gain_norm": 20.841930830577496,
+        "selected_to_true_abs_cosine": 0.8075529785863323,
+        "closest_surface_index_by_abs_cosine": 2045,
+        "closest_surface_abs_cosine": 0.9161070131656797,
+        "closest_other_deep_index_by_abs_cosine": 7499,
+        "closest_other_deep_abs_cosine": 0.8376957302390852
+      }
+    },
+    {
+      "variant": "trial_admm",
+      "case_id": "erp-v6-development-00-eeg+05-meg+05",
+      "scenario": "surface_only",
+      "has_deep_true": false,
+      "null_converged": true,
+      "full_converged": true,
+      "predictive_score": 0.02738235264139636,
+      "null_loss_noise_units": 1.236384275976422,
+      "full_loss_noise_units": 1.2090019233350255,
+      "selected_deep_index": 7500,
+      "true_deep_index": null,
+      "true_deep_active_energy_rank_of_16": null,
+      "true_deep_baseline_adjusted_rank_of_16": null,
+      "true_deep_energy_fraction_of_deep_peak": null,
+      "selected_deep_distance_to_truth_mm": null,
+      "deep_active_energy_auc_from_rank": null,
+      "deep_to_global_baseline_adjusted_peak_ratio": 0.5578991255681033,
+      "directional_confirmation": {
+        "full_h1_minus_h0": {
+          "confirmation_cross": 33.64445353742265,
+          "training_direction_squared_norm": 29.745270335672412,
+          "confirmation_amplitude": 1.1310858216364599,
+          "one_sided_directional_z": 6.5933784928898636,
+          "optimally_scaled_loss_improvement": 38.054764372885394
+        },
+        "all_deep_component": {
+          "confirmation_cross": -1.7027172095493819,
+          "training_direction_squared_norm": 12.48819703288843,
+          "confirmation_amplitude": -0.13634611986543552,
+          "one_sided_directional_z": -0.46006566262891985,
+          "optimally_scaled_loss_improvement": 0.0
+        },
+        "selected_deep_component": {
+          "confirmation_cross": -1.702717209549382,
+          "training_direction_squared_norm": 12.488197032888433,
+          "confirmation_amplitude": -0.1363461198654355,
+          "one_sided_directional_z": -0.4600656626289199,
+          "optimally_scaled_loss_improvement": 0.0
+        },
+        "all_deep_partial_surface_change": {
+          "confirmation_cross": 7.917066662737348,
+          "training_direction_squared_norm": 9.68333051276299,
+          "confirmation_amplitude": 0.8175974838721409,
+          "one_sided_directional_z": 2.3288382152191627,
+          "optimally_scaled_loss_improvement": 6.472973783102063
+        },
+        "selected_deep_partial_surface_change": {
+          "confirmation_cross": 7.91706666273735,
+          "training_direction_squared_norm": 9.68333051276299,
+          "confirmation_amplitude": 0.817597483872141,
+          "one_sided_directional_z": 2.328838215219163,
+          "optimally_scaled_loss_improvement": 6.4729737831020655
+        }
+      },
+      "lead_field": {}
+    },
+    {
+      "variant": "trial_admm",
+      "case_id": "erp-v6-development-01-eeg+05-meg+05",
+      "scenario": "surface_only",
+      "has_deep_true": false,
+      "null_converged": true,
+      "full_converged": true,
+      "predictive_score": -0.05323584216520046,
+      "null_loss_noise_units": 1.300684850273987,
+      "full_loss_noise_units": 1.3539206924391873,
+      "selected_deep_index": 7501,
+      "true_deep_index": null,
+      "true_deep_active_energy_rank_of_16": null,
+      "true_deep_baseline_adjusted_rank_of_16": null,
+      "true_deep_energy_fraction_of_deep_peak": null,
+      "selected_deep_distance_to_truth_mm": null,
+      "deep_active_energy_auc_from_rank": null,
+      "deep_to_global_baseline_adjusted_peak_ratio": 1.0,
+      "directional_confirmation": {
+        "full_h1_minus_h0": {
+          "confirmation_cross": 87.19906906072853,
+          "training_direction_squared_norm": 257.1214751927482,
+          "confirmation_amplitude": 0.339135690612232,
+          "one_sided_directional_z": 5.4928832742421925,
+          "optimally_scaled_loss_improvement": 29.57231650665388
+        },
+        "all_deep_component": {
+          "confirmation_cross": 52.49541746605914,
+          "training_direction_squared_norm": 151.40038470677052,
+          "confirmation_amplitude": 0.34673239151757307,
+          "one_sided_directional_z": 4.043560565885728,
+          "optimally_scaled_loss_improvement": 18.20186164172006
+        },
+        "selected_deep_component": {
+          "confirmation_cross": 52.43189267676647,
+          "training_direction_squared_norm": 152.91163415356323,
+          "confirmation_amplitude": 0.3428901467635298,
+          "one_sided_directional_z": 4.006940837893005,
+          "optimally_scaled_loss_improvement": 17.9783793750261
+        },
+        "all_deep_partial_surface_change": {
+          "confirmation_cross": 62.71823532518349,
+          "training_direction_squared_norm": 129.0714187523025,
+          "confirmation_amplitude": 0.48591884966837146,
+          "one_sided_directional_z": 5.27704651594294,
+          "optimally_scaled_loss_improvement": 30.47597276244338
+        },
+        "selected_deep_partial_surface_change": {
+          "confirmation_cross": 62.170055987592974,
+          "training_direction_squared_norm": 132.6496732757405,
+          "confirmation_amplitude": 0.46867854591966707,
+          "one_sided_directional_z": 5.146979120554207,
+          "optimally_scaled_loss_improvement": 29.137771440009367
+        }
+      },
+      "lead_field": {}
+    },
+    {
+      "variant": "trial_admm",
+      "case_id": "erp-v6-development-02-eeg+05-meg+05",
+      "scenario": "deep_only",
+      "has_deep_true": true,
+      "null_converged": true,
+      "full_converged": true,
+      "predictive_score": 0.2919645691624742,
+      "null_loss_noise_units": 1.3779100643734563,
+      "full_loss_noise_units": 1.0859454952109822,
+      "selected_deep_index": 7498,
+      "true_deep_index": 7498,
+      "true_deep_active_energy_rank_of_16": 1,
+      "true_deep_baseline_adjusted_rank_of_16": 1,
+      "true_deep_energy_fraction_of_deep_peak": 1.0,
+      "selected_deep_distance_to_truth_mm": 0.0,
+      "deep_active_energy_auc_from_rank": 1.0,
+      "deep_to_global_baseline_adjusted_peak_ratio": 1.0,
+      "directional_confirmation": {
+        "full_h1_minus_h0": {
+          "confirmation_cross": 409.7541443384129,
+          "training_direction_squared_norm": 438.0265816405612,
+          "confirmation_amplitude": 0.9354549735400574,
+          "one_sided_directional_z": 20.7218411776224,
+          "optimally_scaled_loss_improvement": 383.3065522500189
+        },
+        "all_deep_component": {
+          "confirmation_cross": 488.97346015653267,
+          "training_direction_squared_norm": 3268.640385941642,
+          "confirmation_amplitude": 0.14959536762122805,
+          "one_sided_directional_z": 7.763576136710972,
+          "optimally_scaled_loss_improvement": 73.14816452914042
+        },
+        "selected_deep_component": {
+          "confirmation_cross": 488.97346015653267,
+          "training_direction_squared_norm": 3268.640385941642,
+          "confirmation_amplitude": 0.14959536762122805,
+          "one_sided_directional_z": 7.763576136710972,
+          "optimally_scaled_loss_improvement": 73.14816452914042
+        },
+        "all_deep_partial_surface_change": {
+          "confirmation_cross": 409.09042895013135,
+          "training_direction_squared_norm": 437.8311633078844,
+          "confirmation_amplitude": 0.9343565813346583,
+          "one_sided_directional_z": 20.636422529683603,
+          "optimally_scaled_loss_improvement": 382.23633465057367
+        },
+        "selected_deep_partial_surface_change": {
+          "confirmation_cross": 409.09042895013135,
+          "training_direction_squared_norm": 437.8311633078844,
+          "confirmation_amplitude": 0.9343565813346583,
+          "one_sided_directional_z": 20.636422529683603,
+          "optimally_scaled_loss_improvement": 382.23633465057367
+        }
+      },
+      "lead_field": {
+        "true_deep_weighted_gain_norm": 58.07040672578126,
+        "selected_to_true_abs_cosine": 0.9999999999999998,
+        "closest_surface_index_by_abs_cosine": 2045,
+        "closest_surface_abs_cosine": 0.943874138441597,
+        "closest_other_deep_index_by_abs_cosine": 7499,
+        "closest_other_deep_abs_cosine": 0.8568929244831671
+      }
+    },
+    {
+      "variant": "trial_admm",
+      "case_id": "erp-v6-development-03-eeg+05-meg+05",
+      "scenario": "deep_plus_surface",
+      "has_deep_true": true,
+      "null_converged": true,
+      "full_converged": true,
+      "predictive_score": -0.07901319460721669,
+      "null_loss_noise_units": 1.1811848096452693,
+      "full_loss_noise_units": 1.2601980042524858,
+      "selected_deep_index": 7498,
+      "true_deep_index": 7498,
+      "true_deep_active_energy_rank_of_16": 1,
+      "true_deep_baseline_adjusted_rank_of_16": 1,
+      "true_deep_energy_fraction_of_deep_peak": 1.0,
+      "selected_deep_distance_to_truth_mm": 0.0,
+      "deep_active_energy_auc_from_rank": 1.0,
+      "deep_to_global_baseline_adjusted_peak_ratio": 0.8549626251890226,
+      "directional_confirmation": {
+        "full_h1_minus_h0": {
+          "confirmation_cross": 38.81164979138482,
+          "training_direction_squared_norm": 205.0098283888959,
+          "confirmation_amplitude": 0.18931604448622136,
+          "one_sided_directional_z": 2.4971435651543894,
+          "optimally_scaled_loss_improvement": 7.347668018489454
+        },
+        "all_deep_component": {
+          "confirmation_cross": 89.38565008624691,
+          "training_direction_squared_norm": 364.1403769122368,
+          "confirmation_amplitude": 0.24547030692998426,
+          "one_sided_directional_z": 4.6635765047707585,
+          "optimally_scaled_loss_improvement": 21.941522961807202
+        },
+        "selected_deep_component": {
+          "confirmation_cross": 105.24397971705415,
+          "training_direction_squared_norm": 346.86856669131896,
+          "confirmation_amplitude": 0.30341169487032704,
+          "one_sided_directional_z": 5.779537113932297,
+          "optimally_scaled_loss_improvement": 31.932254260849717
+        },
+        "all_deep_partial_surface_change": {
+          "confirmation_cross": 54.51525474313543,
+          "training_direction_squared_norm": 164.52655863148635,
+          "confirmation_amplitude": 0.3313462288191479,
+          "one_sided_directional_z": 3.9961270967816365,
+          "optimally_scaled_loss_improvement": 18.06342407225309
+        },
+        "selected_deep_partial_surface_change": {
+          "confirmation_cross": 74.45763470971971,
+          "training_direction_squared_norm": 191.27446714802772,
+          "confirmation_amplitude": 0.3892711652522696,
+          "one_sided_directional_z": 5.101340463778912,
+          "optimally_scaled_loss_improvement": 28.98421022538043
+        }
+      },
+      "lead_field": {
+        "true_deep_weighted_gain_norm": 19.555131341749803,
+        "selected_to_true_abs_cosine": 0.9999999999999998,
+        "closest_surface_index_by_abs_cosine": 2117,
+        "closest_surface_abs_cosine": 0.8819764181817997,
+        "closest_other_deep_index_by_abs_cosine": 7499,
+        "closest_other_deep_abs_cosine": 0.8981255396892059
+      }
+    },
+    {
+      "variant": "trial_admm",
+      "case_id": "erp-v6-development-04-eeg+05-meg+05",
+      "scenario": "deep_plus_two_surface",
+      "has_deep_true": true,
+      "null_converged": true,
+      "full_converged": true,
+      "predictive_score": -0.06003043245090318,
+      "null_loss_noise_units": 1.1971621113419704,
+      "full_loss_noise_units": 1.2571925437928735,
+      "selected_deep_index": 7498,
+      "true_deep_index": 7498,
+      "true_deep_active_energy_rank_of_16": 1,
+      "true_deep_baseline_adjusted_rank_of_16": 1,
+      "true_deep_energy_fraction_of_deep_peak": 1.0,
+      "selected_deep_distance_to_truth_mm": 0.0,
+      "deep_active_energy_auc_from_rank": 1.0,
+      "deep_to_global_baseline_adjusted_peak_ratio": 1.0,
+      "directional_confirmation": {
+        "full_h1_minus_h0": {
+          "confirmation_cross": 132.2873241654818,
+          "training_direction_squared_norm": 360.60302111555916,
+          "confirmation_amplitude": 0.3668502935894397,
+          "one_sided_directional_z": 7.07674175310413,
+          "optimally_scaled_loss_improvement": 48.52964370826838
+        },
+        "all_deep_component": {
+          "confirmation_cross": 81.4998550073974,
+          "training_direction_squared_norm": 520.5932485766515,
+          "confirmation_amplitude": 0.1565518861994951,
+          "one_sided_directional_z": 3.481410418288731,
+          "optimally_scaled_loss_improvement": 12.758956026393427
+        },
+        "selected_deep_component": {
+          "confirmation_cross": 93.95018786771587,
+          "training_direction_squared_norm": 570.6148584294529,
+          "confirmation_amplitude": 0.16464728613324614,
+          "one_sided_directional_z": 3.530071397390253,
+          "optimally_scaled_loss_improvement": 15.468643464128045
+        },
+        "all_deep_partial_surface_change": {
+          "confirmation_cross": 114.47565407906191,
+          "training_direction_squared_norm": 294.6964527708659,
+          "confirmation_amplitude": 0.38845277234493786,
+          "one_sided_directional_z": 6.783337166868164,
+          "optimally_scaled_loss_improvement": 44.46838519301169
+        },
+        "selected_deep_partial_surface_change": {
+          "confirmation_cross": 124.60459152486646,
+          "training_direction_squared_norm": 375.40346648452197,
+          "confirmation_amplitude": 0.331921792549574,
+          "one_sided_directional_z": 5.739437549469989,
+          "optimally_scaled_loss_improvement": 41.358979378841134
+        }
+      },
+      "lead_field": {
+        "true_deep_weighted_gain_norm": 16.742012703394433,
+        "selected_to_true_abs_cosine": 1.0000000000000002,
+        "closest_surface_index_by_abs_cosine": 2117,
+        "closest_surface_abs_cosine": 0.9029762715934884,
+        "closest_other_deep_index_by_abs_cosine": 7499,
+        "closest_other_deep_abs_cosine": 0.8788503951813563
+      }
+    }
+  ],
+  "deep_point_tables": [
+    {
+      "variant": "mean_irls",
+      "case_id": "erp-v6-development-00-eeg+05-meg+05",
+      "deep_index": 7498,
+      "is_true": false,
+      "distance_to_true_mm": null,
+      "active_energy": 2.478651531679977e-07,
+      "active_energy_fraction_of_deep_peak": 0.655058768524877,
+      "baseline_adjusted_amplitude": 5.9494123975718326e-05,
+      "active_energy_rank": 3
+    },
+    {
+      "variant": "mean_irls",
+      "case_id": "erp-v6-development-00-eeg+05-meg+05",
+      "deep_index": 7499,
+      "is_true": false,
+      "distance_to_true_mm": null,
+      "active_energy": 1.8896296902381416e-07,
+      "active_energy_fraction_of_deep_peak": 0.49939190000478806,
+      "baseline_adjusted_amplitude": 5.220158677669164e-05,
+      "active_energy_rank": 9
+    },
+    {
+      "variant": "mean_irls",
+      "case_id": "erp-v6-development-00-eeg+05-meg+05",
+      "deep_index": 7500,
+      "is_true": false,
+      "distance_to_true_mm": null,
+      "active_energy": 3.7838613125683943e-07,
+      "active_energy_fraction_of_deep_peak": 1.0,
+      "baseline_adjusted_amplitude": 7.529577013209619e-05,
+      "active_energy_rank": 1
+    },
+    {
+      "variant": "mean_irls",
+      "case_id": "erp-v6-development-00-eeg+05-meg+05",
+      "deep_index": 7501,
+      "is_true": false,
+      "distance_to_true_mm": null,
+      "active_energy": 2.653478923059842e-07,
+      "active_energy_fraction_of_deep_peak": 0.701262203835564,
+      "baseline_adjusted_amplitude": 6.120291205062289e-05,
+      "active_energy_rank": 2
+    },
+    {
+      "variant": "mean_irls",
+      "case_id": "erp-v6-development-00-eeg+05-meg+05",
+      "deep_index": 7502,
+      "is_true": false,
+      "distance_to_true_mm": null,
+      "active_energy": 2.120031426829954e-07,
+      "active_energy_fraction_of_deep_peak": 0.5602825398986221,
+      "baseline_adjusted_amplitude": 5.417766225789917e-05,
+      "active_energy_rank": 6
+    },
+    {
+      "variant": "mean_irls",
+      "case_id": "erp-v6-development-00-eeg+05-meg+05",
+      "deep_index": 7503,
+      "is_true": false,
+      "distance_to_true_mm": null,
+      "active_energy": 1.963482060513248e-07,
+      "active_energy_fraction_of_deep_peak": 0.5189096265212965,
+      "baseline_adjusted_amplitude": 5.3635909953359926e-05,
+      "active_energy_rank": 8
+    },
+    {
+      "variant": "mean_irls",
+      "case_id": "erp-v6-development-00-eeg+05-meg+05",
+      "deep_index": 7504,
+      "is_true": false,
+      "distance_to_true_mm": null,
+      "active_energy": 1.7917649756212994e-07,
+      "active_energy_fraction_of_deep_peak": 0.4735281839399902,
+      "baseline_adjusted_amplitude": 5.013496193813211e-05,
+      "active_energy_rank": 11
+    },
+    {
+      "variant": "mean_irls",
+      "case_id": "erp-v6-development-00-eeg+05-meg+05",
+      "deep_index": 7505,
+      "is_true": false,
+      "distance_to_true_mm": null,
+      "active_energy": 2.0921440805311723e-07,
+      "active_energy_fraction_of_deep_peak": 0.5529124636735364,
+      "baseline_adjusted_amplitude": 5.343133453269849e-05,
+      "active_energy_rank": 7
+    },
+    {
+      "variant": "mean_irls",
+      "case_id": "erp-v6-development-00-eeg+05-meg+05",
+      "deep_index": 7506,
+      "is_true": false,
+      "distance_to_true_mm": null,
+      "active_energy": 1.4030652364078866e-07,
+      "active_energy_fraction_of_deep_peak": 0.3708025005428964,
+      "baseline_adjusted_amplitude": 4.325070500211325e-05,
+      "active_energy_rank": 15
+    },
+    {
+      "variant": "mean_irls",
+      "case_id": "erp-v6-development-00-eeg+05-meg+05",
+      "deep_index": 7507,
+      "is_true": false,
+      "distance_to_true_mm": null,
+      "active_energy": 1.7583013976638001e-07,
+      "active_energy_fraction_of_deep_peak": 0.4646844195434603,
+      "baseline_adjusted_amplitude": 5.0292200464624405e-05,
+      "active_energy_rank": 12
+    },
+    {
+      "variant": "mean_irls",
+      "case_id": "erp-v6-development-00-eeg+05-meg+05",
+      "deep_index": 7508,
+      "is_true": false,
+      "distance_to_true_mm": null,
+      "active_energy": 2.1253656499247335e-07,
+      "active_energy_fraction_of_deep_peak": 0.5616922699743682,
+      "baseline_adjusted_amplitude": 5.3332889596173124e-05,
+      "active_energy_rank": 5
+    },
+    {
+      "variant": "mean_irls",
+      "case_id": "erp-v6-development-00-eeg+05-meg+05",
+      "deep_index": 7509,
+      "is_true": false,
+      "distance_to_true_mm": null,
+      "active_energy": 1.491334161167713e-07,
+      "active_energy_fraction_of_deep_peak": 0.39413023839275735,
+      "baseline_adjusted_amplitude": 4.6648942279521565e-05,
+      "active_energy_rank": 14
+    },
+    {
+      "variant": "mean_irls",
+      "case_id": "erp-v6-development-00-eeg+05-meg+05",
+      "deep_index": 7510,
+      "is_true": false,
+      "distance_to_true_mm": null,
+      "active_energy": 1.508115049002924e-07,
+      "active_energy_fraction_of_deep_peak": 0.3985650964515007,
+      "baseline_adjusted_amplitude": 4.5832724419679846e-05,
+      "active_energy_rank": 13
+    },
+    {
+      "variant": "mean_irls",
+      "case_id": "erp-v6-development-00-eeg+05-meg+05",
+      "deep_index": 7511,
+      "is_true": false,
+      "distance_to_true_mm": null,
+      "active_energy": 2.2280146970940681e-07,
+      "active_energy_fraction_of_deep_peak": 0.5888203908778425,
+      "baseline_adjusted_amplitude": 5.468519387226333e-05,
+      "active_energy_rank": 4
+    },
+    {
+      "variant": "mean_irls",
+      "case_id": "erp-v6-development-00-eeg+05-meg+05",
+      "deep_index": 7512,
+      "is_true": false,
+      "distance_to_true_mm": null,
+      "active_energy": 1.3369021341988914e-07,
+      "active_energy_fraction_of_deep_peak": 0.353316896091901,
+      "baseline_adjusted_amplitude": 4.373350630370704e-05,
+      "active_energy_rank": 16
+    },
+    {
+      "variant": "mean_irls",
+      "case_id": "erp-v6-development-00-eeg+05-meg+05",
+      "deep_index": 7513,
+      "is_true": false,
+      "distance_to_true_mm": null,
+      "active_energy": 1.8182988730506357e-07,
+      "active_energy_fraction_of_deep_peak": 0.4805405702928414,
+      "baseline_adjusted_amplitude": 4.981175594422032e-05,
+      "active_energy_rank": 10
+    },
+    {
+      "variant": "mean_irls",
+      "case_id": "erp-v6-development-01-eeg+05-meg+05",
+      "deep_index": 7498,
+      "is_true": false,
+      "distance_to_true_mm": null,
+      "active_energy": 7.641299959631538e-07,
+      "active_energy_fraction_of_deep_peak": 6.972065556743985e-07,
+      "baseline_adjusted_amplitude": 0.00010864428455930002,
+      "active_energy_rank": 3
+    },
+    {
+      "variant": "mean_irls",
+      "case_id": "erp-v6-development-01-eeg+05-meg+05",
+      "deep_index": 7499,
+      "is_true": false,
+      "distance_to_true_mm": null,
+      "active_energy": 4.2677102782988156e-07,
+      "active_energy_fraction_of_deep_peak": 3.8939389887429865e-07,
+      "baseline_adjusted_amplitude": 8.021613439677777e-05,
+      "active_energy_rank": 5
+    },
+    {
+      "variant": "mean_irls",
+      "case_id": "erp-v6-development-01-eeg+05-meg+05",
+      "deep_index": 7500,
+      "is_true": false,
+      "distance_to_true_mm": null,
+      "active_energy": 2.3778646066620895e-07,
+      "active_energy_fraction_of_deep_peak": 2.1696083140686905e-07,
+      "baseline_adjusted_amplitude": 5.9389162519755734e-05,
+      "active_energy_rank": 7
+    },
+    {
+      "variant": "mean_irls",
+      "case_id": "erp-v6-development-01-eeg+05-meg+05",
+      "deep_index": 7501,
+      "is_true": false,
+      "distance_to_true_mm": null,
+      "active_energy": 7.20098855829987e-08,
+      "active_energy_fraction_of_deep_peak": 6.570317166851667e-08,
+      "baseline_adjusted_amplitude": 3.351571576321737e-05,
+      "active_energy_rank": 13
+    },
+    {
+      "variant": "mean_irls",
+      "case_id": "erp-v6-development-01-eeg+05-meg+05",
+      "deep_index": 7502,
+      "is_true": false,
+      "distance_to_true_mm": null,
+      "active_energy": 4.9873657088855556e-08,
+      "active_energy_fraction_of_deep_peak": 4.550566115910432e-08,
+      "baseline_adjusted_amplitude": 2.7122726495312553e-05,
+      "active_energy_rank": 15
+    },
+    {
+      "variant": "mean_irls",
+      "case_id": "erp-v6-development-01-eeg+05-meg+05",
+      "deep_index": 7503,
+      "is_true": false,
+      "distance_to_true_mm": null,
+      "active_energy": 9.907462539066756e-07,
+      "active_energy_fraction_of_deep_peak": 9.039754843845893e-07,
+      "baseline_adjusted_amplitude": 0.0001238489367593963,
+      "active_energy_rank": 2
+    },
+    {
+      "variant": "mean_irls",
+      "case_id": "erp-v6-development-01-eeg+05-meg+05",
+      "deep_index": 7504,
+      "is_true": false,
+      "distance_to_true_mm": null,
+      "active_energy": 4.468643268216611e-07,
+      "active_energy_fraction_of_deep_peak": 4.0772740214756893e-07,
+      "baseline_adjusted_amplitude": 8.283144451554717e-05,
+      "active_energy_rank": 4
+    },
+    {
+      "variant": "mean_irls",
+      "case_id": "erp-v6-development-01-eeg+05-meg+05",
+      "deep_index": 7505,
+      "is_true": false,
+      "distance_to_true_mm": null,
+      "active_energy": 1.0959879676174606,
+      "active_energy_fraction_of_deep_peak": 1.0,
+      "baseline_adjusted_amplitude": 0.13231692962372332,
+      "active_energy_rank": 1
+    },
+    {
+      "variant": "mean_irls",
+      "case_id": "erp-v6-development-01-eeg+05-meg+05",
+      "deep_index": 7506,
+      "is_true": false,
+      "distance_to_true_mm": null,
+      "active_energy": 1.0222180855853561e-07,
+      "active_energy_fraction_of_deep_peak": 9.326909745255041e-08,
+      "baseline_adjusted_amplitude": 3.9759252204241246e-05,
+      "active_energy_rank": 11
+    },
+    {
+      "variant": "mean_irls",
+      "case_id": "erp-v6-development-01-eeg+05-meg+05",
+      "deep_index": 7507,
+      "is_true": false,
+      "distance_to_true_mm": null,
+      "active_energy": 2.0488065209411839e-07,
+      "active_energy_fraction_of_deep_peak": 1.8693695382395762e-07,
+      "baseline_adjusted_amplitude": 5.4371047185901526e-05,
+      "active_energy_rank": 8
+    },
+    {
+      "variant": "mean_irls",
+      "case_id": "erp-v6-development-01-eeg+05-meg+05",
+      "deep_index": 7508,
+      "is_true": false,
+      "distance_to_true_mm": null,
+      "active_energy": 5.3428013761528916e-08,
+      "active_energy_fraction_of_deep_peak": 4.8748722924098036e-08,
+      "baseline_adjusted_amplitude": 2.8421334484494943e-05,
+      "active_energy_rank": 14
+    },
+    {
+      "variant": "mean_irls",
+      "case_id": "erp-v6-development-01-eeg+05-meg+05",
+      "deep_index": 7509,
+      "is_true": false,
+      "distance_to_true_mm": null,
+      "active_energy": 2.772800310757399e-07,
+      "active_energy_fraction_of_deep_peak": 2.529955065825327e-07,
+      "baseline_adjusted_amplitude": 6.398691581419403e-05,
+      "active_energy_rank": 6
+    },
+    {
+      "variant": "mean_irls",
+      "case_id": "erp-v6-development-01-eeg+05-meg+05",
+      "deep_index": 7510,
+      "is_true": false,
+      "distance_to_true_mm": null,
+      "active_energy": 1.6397272012837224e-07,
+      "active_energy_fraction_of_deep_peak": 1.4961178860825288e-07,
+      "baseline_adjusted_amplitude": 4.935844985780434e-05,
+      "active_energy_rank": 9
+    },
+    {
+      "variant": "mean_irls",
+      "case_id": "erp-v6-development-01-eeg+05-meg+05",
+      "deep_index": 7511,
+      "is_true": false,
+      "distance_to_true_mm": null,
+      "active_energy": 2.6169024896012825e-08,
+      "active_energy_fraction_of_deep_peak": 2.3877109666542215e-08,
+      "baseline_adjusted_amplitude": 1.9951345802360436e-05,
+      "active_energy_rank": 16
+    },
+    {
+      "variant": "mean_irls",
+      "case_id": "erp-v6-development-01-eeg+05-meg+05",
+      "deep_index": 7512,
+      "is_true": false,
+      "distance_to_true_mm": null,
+      "active_energy": 1.3221073254546105e-07,
+      "active_energy_fraction_of_deep_peak": 1.2063155477233064e-07,
+      "baseline_adjusted_amplitude": 4.4392051395478894e-05,
+      "active_energy_rank": 10
+    },
+    {
+      "variant": "mean_irls",
+      "case_id": "erp-v6-development-01-eeg+05-meg+05",
+      "deep_index": 7513,
+      "is_true": false,
+      "distance_to_true_mm": null,
+      "active_energy": 7.420976543473878e-08,
+      "active_energy_fraction_of_deep_peak": 6.771038335034045e-08,
+      "baseline_adjusted_amplitude": 3.380735943090902e-05,
+      "active_energy_rank": 12
+    },
+    {
+      "variant": "mean_irls",
+      "case_id": "erp-v6-development-02-eeg+05-meg+05",
+      "deep_index": 7498,
+      "is_true": true,
+      "distance_to_true_mm": 0.0,
+      "active_energy": 1.240756622275877,
+      "active_energy_fraction_of_deep_peak": 1.0,
+      "baseline_adjusted_amplitude": 0.14181997759432532,
+      "active_energy_rank": 1
+    },
+    {
+      "variant": "mean_irls",
+      "case_id": "erp-v6-development-02-eeg+05-meg+05",
+      "deep_index": 7499,
+      "is_true": false,
+      "distance_to_true_mm": 10.00000054854849,
+      "active_energy": 0.04643089470757214,
+      "active_energy_fraction_of_deep_peak": 0.03742143614144533,
+      "baseline_adjusted_amplitude": 0.02537824768899762,
+      "active_energy_rank": 5
+    },
+    {
+      "variant": "mean_irls",
+      "case_id": "erp-v6-development-02-eeg+05-meg+05",
+      "deep_index": 7500,
+      "is_true": false,
+      "distance_to_true_mm": 14.142136204249597,
+      "active_energy": 0.582714996950373,
+      "active_energy_fraction_of_deep_peak": 0.469644881589686,
+      "baseline_adjusted_amplitude": 0.09249963080083924,
+      "active_energy_rank": 3
+    },
+    {
+      "variant": "mean_irls",
+      "case_id": "erp-v6-development-02-eeg+05-meg+05",
+      "deep_index": 7501,
+      "is_true": false,
+      "distance_to_true_mm": 31.622777392010047,
+      "active_energy": 6.0877523033468945e-09,
+      "active_energy_fraction_of_deep_peak": 4.906483829343051e-09,
+      "baseline_adjusted_amplitude": 9.462613358451091e-06,
+      "active_energy_rank": 7
+    },
+    {
+      "variant": "mean_irls",
+      "case_id": "erp-v6-development-02-eeg+05-meg+05",
+      "deep_index": 7502,
+      "is_true": false,
+      "distance_to_true_mm": 41.23105720329179,
+      "active_energy": 6.8216459521909345e-09,
+      "active_energy_fraction_of_deep_peak": 5.497972631955996e-09,
+      "baseline_adjusted_amplitude": 9.989491649271759e-06,
+      "active_energy_rank": 6
+    },
+    {
+      "variant": "mean_irls",
+      "case_id": "erp-v6-development-02-eeg+05-meg+05",
+      "deep_index": 7503,
+      "is_true": false,
+      "distance_to_true_mm": 14.142136031724077,
+      "active_energy": 0.16115490125022056,
+      "active_energy_fraction_of_deep_peak": 0.12988437728796456,
+      "baseline_adjusted_amplitude": 0.048812411188693935,
+      "active_energy_rank": 4
+    },
+    {
+      "variant": "mean_irls",
+      "case_id": "erp-v6-development-02-eeg+05-meg+05",
+      "deep_index": 7504,
+      "is_true": false,
+      "distance_to_true_mm": 17.320508398326936,
+      "active_energy": 1.1347879429408652,
+      "active_energy_fraction_of_deep_peak": 0.9145935009070214,
+      "baseline_adjusted_amplitude": 0.13029479406773803,
+      "active_energy_rank": 2
+    },
+    {
+      "variant": "mean_irls",
+      "case_id": "erp-v6-development-02-eeg+05-meg+05",
+      "deep_index": 7505,
+      "is_true": false,
+      "distance_to_true_mm": 33.166248402824905,
+      "active_energy": 5.306452117577553e-09,
+      "active_energy_fraction_of_deep_peak": 4.276787262149858e-09,
+      "baseline_adjusted_amplitude": 8.8046037097561e-06,
+      "active_energy_rank": 10
+    },
+    {
+      "variant": "mean_irls",
+      "case_id": "erp-v6-development-02-eeg+05-meg+05",
+      "deep_index": 7506,
+      "is_true": false,
+      "distance_to_true_mm": 37.41657376384551,
+      "active_energy": 5.6625673921522805e-09,
+      "active_energy_fraction_of_deep_peak": 4.5638018693510005e-09,
+      "baseline_adjusted_amplitude": 8.981389973893216e-06,
+      "active_energy_rank": 9
+    },
+    {
+      "variant": "mean_irls",
+      "case_id": "erp-v6-development-02-eeg+05-meg+05",
+      "deep_index": 7507,
+      "is_true": false,
+      "distance_to_true_mm": 20.000001097096984,
+      "active_energy": 4.079806036216303e-10,
+      "active_energy_fraction_of_deep_peak": 3.288159791348005e-10,
+      "baseline_adjusted_amplitude": 2.4120263233712357e-06,
+      "active_energy_rank": 16
+    },
+    {
+      "variant": "mean_irls",
+      "case_id": "erp-v6-development-02-eeg+05-meg+05",
+      "deep_index": 7508,
+      "is_true": false,
+      "distance_to_true_mm": 36.05551397372256,
+      "active_energy": 5.9713942375060234e-09,
+      "active_energy_fraction_of_deep_peak": 4.812703902037533e-09,
+      "baseline_adjusted_amplitude": 9.297979768848295e-06,
+      "active_energy_rank": 8
+    },
+    {
+      "variant": "mean_irls",
+      "case_id": "erp-v6-development-02-eeg+05-meg+05",
+      "deep_index": 7509,
+      "is_true": false,
+      "distance_to_true_mm": 22.360681050326836,
+      "active_energy": 5.626617523515268e-10,
+      "active_energy_fraction_of_deep_peak": 4.5348277192303497e-10,
+      "baseline_adjusted_amplitude": 2.857385341869704e-06,
+      "active_energy_rank": 15
+    },
+    {
+      "variant": "mean_irls",
+      "case_id": "erp-v6-development-02-eeg+05-meg+05",
+      "deep_index": 7510,
+      "is_true": false,
+      "distance_to_true_mm": 24.494898618727973,
+      "active_energy": 1.088546541963161e-09,
+      "active_energy_fraction_of_deep_peak": 8.773247891004424e-10,
+      "baseline_adjusted_amplitude": 3.937274543974629e-06,
+      "active_energy_rank": 14
+    },
+    {
+      "variant": "mean_irls",
+      "case_id": "erp-v6-development-02-eeg+05-meg+05",
+      "deep_index": 7511,
+      "is_true": false,
+      "distance_to_true_mm": 37.4165749852163,
+      "active_energy": 4.799872759650082e-09,
+      "active_energy_fraction_of_deep_peak": 3.8685046474673176e-09,
+      "baseline_adjusted_amplitude": 8.296049693893977e-06,
+      "active_energy_rank": 11
+    },
+    {
+      "variant": "mean_irls",
+      "case_id": "erp-v6-development-02-eeg+05-meg+05",
+      "deep_index": 7512,
+      "is_true": false,
+      "distance_to_true_mm": 30.000000694243624,
+      "active_energy": 1.977407123723974e-09,
+      "active_energy_fraction_of_deep_peak": 1.5937107150771311e-09,
+      "baseline_adjusted_amplitude": 5.356839486240307e-06,
+      "active_energy_rank": 13
+    },
+    {
+      "variant": "mean_irls",
+      "case_id": "erp-v6-development-02-eeg+05-meg+05",
+      "deep_index": 7513,
+      "is_true": false,
+      "distance_to_true_mm": 41.23105692695092,
+      "active_energy": 3.3711961341111617e-09,
+      "active_energy_fraction_of_deep_peak": 2.7170486730326636e-09,
+      "baseline_adjusted_amplitude": 6.885486778884626e-06,
+      "active_energy_rank": 12
+    },
+    {
+      "variant": "mean_irls",
+      "case_id": "erp-v6-development-03-eeg+05-meg+05",
+      "deep_index": 7498,
+      "is_true": true,
+      "distance_to_true_mm": 0.0,
+      "active_energy": 1.9548841508241544e-07,
+      "active_energy_fraction_of_deep_peak": 2.673232660383302e-07,
+      "baseline_adjusted_amplitude": 5.375394990595585e-05,
+      "active_energy_rank": 8
+    },
+    {
+      "variant": "mean_irls",
+      "case_id": "erp-v6-development-03-eeg+05-meg+05",
+      "deep_index": 7499,
+      "is_true": false,
+      "distance_to_true_mm": 10.00000054854849,
+      "active_energy": 4.882385431312893e-08,
+      "active_energy_fraction_of_deep_peak": 6.676483713913577e-08,
+      "baseline_adjusted_amplitude": 2.6772197558606797e-05,
+      "active_energy_rank": 16
+    },
+    {
+      "variant": "mean_irls",
+      "case_id": "erp-v6-development-03-eeg+05-meg+05",
+      "deep_index": 7500,
+      "is_true": false,
+      "distance_to_true_mm": 14.142136204249597,
+      "active_energy": 0.7312809617341175,
+      "active_energy_fraction_of_deep_peak": 1.0,
+      "baseline_adjusted_amplitude": 0.10429032997891724,
+      "active_energy_rank": 1
+    },
+    {
+      "variant": "mean_irls",
+      "case_id": "erp-v6-development-03-eeg+05-meg+05",
+      "deep_index": 7501,
+      "is_true": false,
+      "distance_to_true_mm": 31.622777392010047,
+      "active_energy": 5.790753636904424e-07,
+      "active_energy_fraction_of_deep_peak": 7.918644050533689e-07,
+      "baseline_adjusted_amplitude": 9.364811243756068e-05,
+      "active_energy_rank": 4
+    },
+    {
+      "variant": "mean_irls",
+      "case_id": "erp-v6-development-03-eeg+05-meg+05",
+      "deep_index": 7502,
+      "is_true": false,
+      "distance_to_true_mm": 41.23105720329179,
+      "active_energy": 4.5382356407975263e-07,
+      "active_energy_fraction_of_deep_peak": 6.205871447871166e-07,
+      "baseline_adjusted_amplitude": 8.205120722116605e-05,
+      "active_energy_rank": 5
+    },
+    {
+      "variant": "mean_irls",
+      "case_id": "erp-v6-development-03-eeg+05-meg+05",
+      "deep_index": 7503,
+      "is_true": false,
+      "distance_to_true_mm": 14.142136031724077,
+      "active_energy": 7.687624117150404e-08,
+      "active_energy_fraction_of_deep_peak": 1.0512545135757965e-07,
+      "baseline_adjusted_amplitude": 3.27808004580144e-05,
+      "active_energy_rank": 13
+    },
+    {
+      "variant": "mean_irls",
+      "case_id": "erp-v6-development-03-eeg+05-meg+05",
+      "deep_index": 7504,
+      "is_true": false,
+      "distance_to_true_mm": 17.320508398326936,
+      "active_energy": 6.48882741749702e-08,
+      "active_energy_fraction_of_deep_peak": 8.873234443448095e-08,
+      "baseline_adjusted_amplitude": 3.106525063375897e-05,
+      "active_energy_rank": 14
+    },
+    {
+      "variant": "mean_irls",
+      "case_id": "erp-v6-development-03-eeg+05-meg+05",
+      "deep_index": 7505,
+      "is_true": false,
+      "distance_to_true_mm": 33.166248402824905,
+      "active_energy": 3.711020013880045e-07,
+      "active_energy_fraction_of_deep_peak": 5.074684297920113e-07,
+      "baseline_adjusted_amplitude": 7.526864108866456e-05,
+      "active_energy_rank": 6
+    },
+    {
+      "variant": "mean_irls",
+      "case_id": "erp-v6-development-03-eeg+05-meg+05",
+      "deep_index": 7506,
+      "is_true": false,
+      "distance_to_true_mm": 37.41657376384551,
+      "active_energy": 7.9500821081708e-08,
+      "active_energy_fraction_of_deep_peak": 1.0871446850357535e-07,
+      "baseline_adjusted_amplitude": 3.492201433970475e-05,
+      "active_energy_rank": 12
+    },
+    {
+      "variant": "mean_irls",
+      "case_id": "erp-v6-development-03-eeg+05-meg+05",
+      "deep_index": 7507,
+      "is_true": false,
+      "distance_to_true_mm": 20.000001097096984,
+      "active_energy": 5.6813587005894495e-08,
+      "active_energy_fraction_of_deep_peak": 7.769050471541065e-08,
+      "baseline_adjusted_amplitude": 2.8278043429091214e-05,
+      "active_energy_rank": 15
+    },
+    {
+      "variant": "mean_irls",
+      "case_id": "erp-v6-development-03-eeg+05-meg+05",
+      "deep_index": 7508,
+      "is_true": false,
+      "distance_to_true_mm": 36.05551397372256,
+      "active_energy": 9.591756941328258e-07,
+      "active_energy_fraction_of_deep_peak": 1.311637721100098e-06,
+      "baseline_adjusted_amplitude": 0.00011917822191569513,
+      "active_energy_rank": 2
+    },
+    {
+      "variant": "mean_irls",
+      "case_id": "erp-v6-development-03-eeg+05-meg+05",
+      "deep_index": 7509,
+      "is_true": false,
+      "distance_to_true_mm": 22.360681050326836,
+      "active_energy": 1.0488810899066597e-07,
+      "active_energy_fraction_of_deep_peak": 1.434306572701419e-07,
+      "baseline_adjusted_amplitude": 3.877840443374826e-05,
+      "active_energy_rank": 11
+    },
+    {
+      "variant": "mean_irls",
+      "case_id": "erp-v6-development-03-eeg+05-meg+05",
+      "deep_index": 7510,
+      "is_true": false,
+      "distance_to_true_mm": 24.494898618727973,
+      "active_energy": 1.4255557695162973e-07,
+      "active_energy_fraction_of_deep_peak": 1.9493954363803162e-07,
+      "baseline_adjusted_amplitude": 4.6487329823541116e-05,
+      "active_energy_rank": 9
+    },
+    {
+      "variant": "mean_irls",
+      "case_id": "erp-v6-development-03-eeg+05-meg+05",
+      "deep_index": 7511,
+      "is_true": false,
+      "distance_to_true_mm": 37.4165749852163,
+      "active_energy": 6.179830469267586e-07,
+      "active_energy_fraction_of_deep_peak": 8.450692405027327e-07,
+      "baseline_adjusted_amplitude": 9.637233722545515e-05,
+      "active_energy_rank": 3
+    },
+    {
+      "variant": "mean_irls",
+      "case_id": "erp-v6-development-03-eeg+05-meg+05",
+      "deep_index": 7512,
+      "is_true": false,
+      "distance_to_true_mm": 30.000000694243624,
+      "active_energy": 1.2873883686994322e-07,
+      "active_energy_fraction_of_deep_peak": 1.7604565632976328e-07,
+      "baseline_adjusted_amplitude": 4.377576242524254e-05,
+      "active_energy_rank": 10
+    },
+    {
+      "variant": "mean_irls",
+      "case_id": "erp-v6-development-03-eeg+05-meg+05",
+      "deep_index": 7513,
+      "is_true": false,
+      "distance_to_true_mm": 41.23105692695092,
+      "active_energy": 2.2246834103827453e-07,
+      "active_energy_fraction_of_deep_peak": 3.0421732915174755e-07,
+      "baseline_adjusted_amplitude": 5.8264657175444505e-05,
+      "active_energy_rank": 7
+    },
+    {
+      "variant": "mean_irls",
+      "case_id": "erp-v6-development-04-eeg+05-meg+05",
+      "deep_index": 7498,
+      "is_true": true,
+      "distance_to_true_mm": 0.0,
+      "active_energy": 1.4190722634330476e-07,
+      "active_energy_fraction_of_deep_peak": 6.08259831205892e-08,
+      "baseline_adjusted_amplitude": 4.6133297756632264e-05,
+      "active_energy_rank": 14
+    },
+    {
+      "variant": "mean_irls",
+      "case_id": "erp-v6-development-04-eeg+05-meg+05",
+      "deep_index": 7499,
+      "is_true": false,
+      "distance_to_true_mm": 10.00000054854849,
+      "active_energy": 5.778290619445949e-08,
+      "active_energy_fraction_of_deep_peak": 2.4767604634452837e-08,
+      "baseline_adjusted_amplitude": 2.9331932145196372e-05,
+      "active_energy_rank": 15
+    },
+    {
+      "variant": "mean_irls",
+      "case_id": "erp-v6-development-04-eeg+05-meg+05",
+      "deep_index": 7500,
+      "is_true": false,
+      "distance_to_true_mm": 14.142136204249597,
+      "active_energy": 2.33300341503679,
+      "active_energy_fraction_of_deep_peak": 1.0,
+      "baseline_adjusted_amplitude": 0.1918012037244941,
+      "active_energy_rank": 1
+    },
+    {
+      "variant": "mean_irls",
+      "case_id": "erp-v6-development-04-eeg+05-meg+05",
+      "deep_index": 7501,
+      "is_true": false,
+      "distance_to_true_mm": 31.622777392010047,
+      "active_energy": 1.6494845058378372e-06,
+      "active_energy_fraction_of_deep_peak": 7.070218994136474e-07,
+      "baseline_adjusted_amplitude": 0.0001627591610237604,
+      "active_energy_rank": 2
+    },
+    {
+      "variant": "mean_irls",
+      "case_id": "erp-v6-development-04-eeg+05-meg+05",
+      "deep_index": 7502,
+      "is_true": false,
+      "distance_to_true_mm": 41.23105720329179,
+      "active_energy": 1.5127776678948858e-06,
+      "active_energy_fraction_of_deep_peak": 6.484249693526618e-07,
+      "baseline_adjusted_amplitude": 0.000155489195561056,
+      "active_energy_rank": 3
+    },
+    {
+      "variant": "mean_irls",
+      "case_id": "erp-v6-development-04-eeg+05-meg+05",
+      "deep_index": 7503,
+      "is_true": false,
+      "distance_to_true_mm": 14.142136031724077,
+      "active_energy": 1.8637701412701926e-07,
+      "active_energy_fraction_of_deep_peak": 7.988715872671803e-08,
+      "baseline_adjusted_amplitude": 5.395599359095447e-05,
+      "active_energy_rank": 13
+    },
+    {
+      "variant": "mean_irls",
+      "case_id": "erp-v6-development-04-eeg+05-meg+05",
+      "deep_index": 7504,
+      "is_true": false,
+      "distance_to_true_mm": 17.320508398326936,
+      "active_energy": 2.2342559249390643e-07,
+      "active_energy_fraction_of_deep_peak": 9.576736624296075e-08,
+      "baseline_adjusted_amplitude": 5.970157063710678e-05,
+      "active_energy_rank": 10
+    },
+    {
+      "variant": "mean_irls",
+      "case_id": "erp-v6-development-04-eeg+05-meg+05",
+      "deep_index": 7505,
+      "is_true": false,
+      "distance_to_true_mm": 33.166248402824905,
+      "active_energy": 1.2542150787207855e-06,
+      "active_energy_fraction_of_deep_peak": 5.37596760740707e-07,
+      "baseline_adjusted_amplitude": 0.00014209792664123026,
+      "active_energy_rank": 4
+    },
+    {
+      "variant": "mean_irls",
+      "case_id": "erp-v6-development-04-eeg+05-meg+05",
+      "deep_index": 7506,
+      "is_true": false,
+      "distance_to_true_mm": 37.41657376384551,
+      "active_energy": 3.183092851538023e-07,
+      "active_energy_fraction_of_deep_peak": 1.364375564571485e-07,
+      "baseline_adjusted_amplitude": 7.117719702819728e-05,
+      "active_energy_rank": 9
+    },
+    {
+      "variant": "mean_irls",
+      "case_id": "erp-v6-development-04-eeg+05-meg+05",
+      "deep_index": 7507,
+      "is_true": false,
+      "distance_to_true_mm": 20.000001097096984,
+      "active_energy": 4.2272526293171906e-08,
+      "active_energy_fraction_of_deep_peak": 1.811935894337527e-08,
+      "baseline_adjusted_amplitude": 2.541264114354219e-05,
+      "active_energy_rank": 16
+    },
+    {
+      "variant": "mean_irls",
+      "case_id": "erp-v6-development-04-eeg+05-meg+05",
+      "deep_index": 7508,
+      "is_true": false,
+      "distance_to_true_mm": 36.05551397372256,
+      "active_energy": 8.925747084393719e-07,
+      "active_energy_fraction_of_deep_peak": 3.8258611311346776e-07,
+      "baseline_adjusted_amplitude": 0.00011923070071393136,
+      "active_energy_rank": 5
+    },
+    {
+      "variant": "mean_irls",
+      "case_id": "erp-v6-development-04-eeg+05-meg+05",
+      "deep_index": 7509,
+      "is_true": false,
+      "distance_to_true_mm": 22.360681050326836,
+      "active_energy": 1.9620124052654233e-07,
+      "active_energy_fraction_of_deep_peak": 8.409813687454391e-08,
+      "baseline_adjusted_amplitude": 5.581802688032062e-05,
+      "active_energy_rank": 11
+    },
+    {
+      "variant": "mean_irls",
+      "case_id": "erp-v6-development-04-eeg+05-meg+05",
+      "deep_index": 7510,
+      "is_true": false,
+      "distance_to_true_mm": 24.494898618727973,
+      "active_energy": 1.8901865004157953e-07,
+      "active_energy_fraction_of_deep_peak": 8.101944850286421e-08,
+      "baseline_adjusted_amplitude": 5.501821734184658e-05,
+      "active_energy_rank": 12
+    },
+    {
+      "variant": "mean_irls",
+      "case_id": "erp-v6-development-04-eeg+05-meg+05",
+      "deep_index": 7511,
+      "is_true": false,
+      "distance_to_true_mm": 37.4165749852163,
+      "active_energy": 8.327443746576441e-07,
+      "active_energy_fraction_of_deep_peak": 3.5694091542704077e-07,
+      "baseline_adjusted_amplitude": 0.00011581995696826404,
+      "active_energy_rank": 6
+    },
+    {
+      "variant": "mean_irls",
+      "case_id": "erp-v6-development-04-eeg+05-meg+05",
+      "deep_index": 7512,
+      "is_true": false,
+      "distance_to_true_mm": 30.000000694243624,
+      "active_energy": 3.990252059504538e-07,
+      "active_energy_fraction_of_deep_peak": 1.7103498579497853e-07,
+      "baseline_adjusted_amplitude": 7.983337923852693e-05,
+      "active_energy_rank": 7
+    },
+    {
+      "variant": "mean_irls",
+      "case_id": "erp-v6-development-04-eeg+05-meg+05",
+      "deep_index": 7513,
+      "is_true": false,
+      "distance_to_true_mm": 41.23105692695092,
+      "active_energy": 3.640753709536542e-07,
+      "active_energy_fraction_of_deep_peak": 1.5605436691909555e-07,
+      "baseline_adjusted_amplitude": 7.667892043707972e-05,
+      "active_energy_rank": 8
+    },
+    {
+      "variant": "trial_irls",
+      "case_id": "erp-v6-development-00-eeg+05-meg+05",
+      "deep_index": 7498,
+      "is_true": false,
+      "distance_to_true_mm": null,
+      "active_energy": 6.586113748469977e-07,
+      "active_energy_fraction_of_deep_peak": 0.7989242783126349,
+      "baseline_adjusted_amplitude": 0.00010027780107785102,
+      "active_energy_rank": 2
+    },
+    {
+      "variant": "trial_irls",
+      "case_id": "erp-v6-development-00-eeg+05-meg+05",
+      "deep_index": 7499,
+      "is_true": false,
+      "distance_to_true_mm": null,
+      "active_energy": 6.006558701533629e-07,
+      "active_energy_fraction_of_deep_peak": 0.7286217273244089,
+      "baseline_adjusted_amplitude": 9.653639589364637e-05,
+      "active_energy_rank": 3
+    },
+    {
+      "variant": "trial_irls",
+      "case_id": "erp-v6-development-00-eeg+05-meg+05",
+      "deep_index": 7500,
+      "is_true": false,
+      "distance_to_true_mm": null,
+      "active_energy": 8.243727130661436e-07,
+      "active_energy_fraction_of_deep_peak": 1.0,
+      "baseline_adjusted_amplitude": 0.00011296353522426428,
+      "active_energy_rank": 1
+    },
+    {
+      "variant": "trial_irls",
+      "case_id": "erp-v6-development-00-eeg+05-meg+05",
+      "deep_index": 7501,
+      "is_true": false,
+      "distance_to_true_mm": null,
+      "active_energy": 1.2014753776562656e-07,
+      "active_energy_fraction_of_deep_peak": 0.14574419538797434,
+      "baseline_adjusted_amplitude": 3.734398819549631e-05,
+      "active_energy_rank": 6
+    },
+    {
+      "variant": "trial_irls",
+      "case_id": "erp-v6-development-00-eeg+05-meg+05",
+      "deep_index": 7502,
+      "is_true": false,
+      "distance_to_true_mm": null,
+      "active_energy": 1.1888194435289477e-07,
+      "active_energy_fraction_of_deep_peak": 0.14420897546539277,
+      "baseline_adjusted_amplitude": 3.604073393435266e-05,
+      "active_energy_rank": 7
+    },
+    {
+      "variant": "trial_irls",
+      "case_id": "erp-v6-development-00-eeg+05-meg+05",
+      "deep_index": 7503,
+      "is_true": false,
+      "distance_to_true_mm": null,
+      "active_energy": 1.0746728474179317e-07,
+      "active_energy_fraction_of_deep_peak": 0.13036249628166735,
+      "baseline_adjusted_amplitude": 3.7317531117717543e-05,
+      "active_energy_rank": 10
+    },
+    {
+      "variant": "trial_irls",
+      "case_id": "erp-v6-development-00-eeg+05-meg+05",
+      "deep_index": 7504,
+      "is_true": false,
+      "distance_to_true_mm": null,
+      "active_energy": 1.2596111351719851e-07,
+      "active_energy_fraction_of_deep_peak": 0.15279631593906481,
+      "baseline_adjusted_amplitude": 4.070782098113671e-05,
+      "active_energy_rank": 5
+    },
+    {
+      "variant": "trial_irls",
+      "case_id": "erp-v6-development-00-eeg+05-meg+05",
+      "deep_index": 7505,
+      "is_true": false,
+      "distance_to_true_mm": null,
+      "active_energy": 1.0515991949384035e-07,
+      "active_energy_fraction_of_deep_peak": 0.12756356175680797,
+      "baseline_adjusted_amplitude": 3.447292151319168e-05,
+      "active_energy_rank": 12
+    },
+    {
+      "variant": "trial_irls",
+      "case_id": "erp-v6-development-00-eeg+05-meg+05",
+      "deep_index": 7506,
+      "is_true": false,
+      "distance_to_true_mm": null,
+      "active_energy": 8.04874365359641e-08,
+      "active_energy_fraction_of_deep_peak": 0.09763476551352832,
+      "baseline_adjusted_amplitude": 3.035880671973736e-05,
+      "active_energy_rank": 14
+    },
+    {
+      "variant": "trial_irls",
+      "case_id": "erp-v6-development-00-eeg+05-meg+05",
+      "deep_index": 7507,
+      "is_true": false,
+      "distance_to_true_mm": null,
+      "active_energy": 3.052170481384465e-07,
+      "active_energy_fraction_of_deep_peak": 0.37024157071287894,
+      "baseline_adjusted_amplitude": 6.703216974054609e-05,
+      "active_energy_rank": 4
+    },
+    {
+      "variant": "trial_irls",
+      "case_id": "erp-v6-development-00-eeg+05-meg+05",
+      "deep_index": 7508,
+      "is_true": false,
+      "distance_to_true_mm": null,
+      "active_energy": 1.1642114633646804e-07,
+      "active_energy_fraction_of_deep_peak": 0.1412239203108206,
+      "baseline_adjusted_amplitude": 3.503920474929429e-05,
+      "active_energy_rank": 8
+    },
+    {
+      "variant": "trial_irls",
+      "case_id": "erp-v6-development-00-eeg+05-meg+05",
+      "deep_index": 7509,
+      "is_true": false,
+      "distance_to_true_mm": null,
+      "active_energy": 5.300756914177048e-08,
+      "active_energy_fraction_of_deep_peak": 0.06430048969551155,
+      "baseline_adjusted_amplitude": 2.4291419248190423e-05,
+      "active_energy_rank": 16
+    },
+    {
+      "variant": "trial_irls",
+      "case_id": "erp-v6-development-00-eeg+05-meg+05",
+      "deep_index": 7510,
+      "is_true": false,
+      "distance_to_true_mm": null,
+      "active_energy": 1.0098319600485895e-07,
+      "active_energy_fraction_of_deep_peak": 0.12249701428042846,
+      "baseline_adjusted_amplitude": 3.5268460691371805e-05,
+      "active_energy_rank": 13
+    },
+    {
+      "variant": "trial_irls",
+      "case_id": "erp-v6-development-00-eeg+05-meg+05",
+      "deep_index": 7511,
+      "is_true": false,
+      "distance_to_true_mm": null,
+      "active_energy": 1.1532135539254986e-07,
+      "active_energy_fraction_of_deep_peak": 0.13988982600312855,
+      "baseline_adjusted_amplitude": 3.61398107987591e-05,
+      "active_energy_rank": 9
+    },
+    {
+      "variant": "trial_irls",
+      "case_id": "erp-v6-development-00-eeg+05-meg+05",
+      "deep_index": 7512,
+      "is_true": false,
+      "distance_to_true_mm": null,
+      "active_energy": 6.96800673928008e-08,
+      "active_energy_fraction_of_deep_peak": 0.08452495611315802,
+      "baseline_adjusted_amplitude": 2.9234724468682956e-05,
+      "active_energy_rank": 15
+    },
+    {
+      "variant": "trial_irls",
+      "case_id": "erp-v6-development-00-eeg+05-meg+05",
+      "deep_index": 7513,
+      "is_true": false,
+      "distance_to_true_mm": null,
+      "active_energy": 1.0605022764887388e-07,
+      "active_energy_fraction_of_deep_peak": 0.1286435443192125,
+      "baseline_adjusted_amplitude": 3.600647669449981e-05,
+      "active_energy_rank": 11
+    },
+    {
+      "variant": "trial_irls",
+      "case_id": "erp-v6-development-01-eeg+05-meg+05",
+      "deep_index": 7498,
+      "is_true": false,
+      "distance_to_true_mm": null,
+      "active_energy": 6.121107795791477e-07,
+      "active_energy_fraction_of_deep_peak": 0.08413495500606831,
+      "baseline_adjusted_amplitude": 9.427263721263632e-05,
+      "active_energy_rank": 10
+    },
+    {
+      "variant": "trial_irls",
+      "case_id": "erp-v6-development-01-eeg+05-meg+05",
+      "deep_index": 7499,
+      "is_true": false,
+      "distance_to_true_mm": null,
+      "active_energy": 5.57212304014322e-07,
+      "active_energy_fraction_of_deep_peak": 0.07658913009064365,
+      "baseline_adjusted_amplitude": 8.957675924498233e-05,
+      "active_energy_rank": 12
+    },
+    {
+      "variant": "trial_irls",
+      "case_id": "erp-v6-development-01-eeg+05-meg+05",
+      "deep_index": 7500,
+      "is_true": false,
+      "distance_to_true_mm": null,
+      "active_energy": 4.1024243463549175e-07,
+      "active_energy_fraction_of_deep_peak": 0.05638804270587761,
+      "baseline_adjusted_amplitude": 7.710957356921554e-05,
+      "active_energy_rank": 15
+    },
+    {
+      "variant": "trial_irls",
+      "case_id": "erp-v6-development-01-eeg+05-meg+05",
+      "deep_index": 7501,
+      "is_true": false,
+      "distance_to_true_mm": null,
+      "active_energy": 5.829817461705086e-06,
+      "active_energy_fraction_of_deep_peak": 0.8013115373844298,
+      "baseline_adjusted_amplitude": 0.0003037101442392466,
+      "active_energy_rank": 2
+    },
+    {
+      "variant": "trial_irls",
+      "case_id": "erp-v6-development-01-eeg+05-meg+05",
+      "deep_index": 7502,
+      "is_true": false,
+      "distance_to_true_mm": null,
+      "active_energy": 4.306860620923173e-06,
+      "active_energy_fraction_of_deep_peak": 0.5919803026633754,
+      "baseline_adjusted_amplitude": 0.0002614201868597328,
+      "active_energy_rank": 3
+    },
+    {
+      "variant": "trial_irls",
+      "case_id": "erp-v6-development-01-eeg+05-meg+05",
+      "deep_index": 7503,
+      "is_true": false,
+      "distance_to_true_mm": null,
+      "active_energy": 9.776373119696165e-07,
+      "active_energy_fraction_of_deep_peak": 0.13437677296153813,
+      "baseline_adjusted_amplitude": 0.00012052025633633907,
+      "active_energy_rank": 7
+    },
+    {
+      "variant": "trial_irls",
+      "case_id": "erp-v6-development-01-eeg+05-meg+05",
+      "deep_index": 7504,
+      "is_true": false,
+      "distance_to_true_mm": null,
+      "active_energy": 1.0212008634307763e-06,
+      "active_energy_fraction_of_deep_peak": 0.14036460647855153,
+      "baseline_adjusted_amplitude": 0.00012389919996223564,
+      "active_energy_rank": 6
+    },
+    {
+      "variant": "trial_irls",
+      "case_id": "erp-v6-development-01-eeg+05-meg+05",
+      "deep_index": 7505,
+      "is_true": false,
+      "distance_to_true_mm": null,
+      "active_energy": 7.2753444693112235e-06,
+      "active_energy_fraction_of_deep_peak": 1.0,
+      "baseline_adjusted_amplitude": 0.000338937053599213,
+      "active_energy_rank": 1
+    },
+    {
+      "variant": "trial_irls",
+      "case_id": "erp-v6-development-01-eeg+05-meg+05",
+      "deep_index": 7506,
+      "is_true": false,
+      "distance_to_true_mm": null,
+      "active_energy": 7.213789204944342e-07,
+      "active_energy_fraction_of_deep_peak": 0.09915391958928496,
+      "baseline_adjusted_amplitude": 0.00010461085360509559,
+      "active_energy_rank": 9
+    },
+    {
+      "variant": "trial_irls",
+      "case_id": "erp-v6-development-01-eeg+05-meg+05",
+      "deep_index": 7507,
+      "is_true": false,
+      "distance_to_true_mm": null,
+      "active_energy": 3.0604957834962076e-07,
+      "active_energy_fraction_of_deep_peak": 0.042066678717495185,
+      "baseline_adjusted_amplitude": 6.517357228081775e-05,
+      "active_energy_rank": 16
+    },
+    {
+      "variant": "trial_irls",
+      "case_id": "erp-v6-development-01-eeg+05-meg+05",
+      "deep_index": 7508,
+      "is_true": false,
+      "distance_to_true_mm": null,
+      "active_energy": 1.7747242969934538e-06,
+      "active_energy_fraction_of_deep_peak": 0.24393680663225994,
+      "baseline_adjusted_amplitude": 0.00016650566436579865,
+      "active_energy_rank": 5
+    },
+    {
+      "variant": "trial_irls",
+      "case_id": "erp-v6-development-01-eeg+05-meg+05",
+      "deep_index": 7509,
+      "is_true": false,
+      "distance_to_true_mm": null,
+      "active_energy": 4.674483110126269e-07,
+      "active_energy_fraction_of_deep_peak": 0.06425102110070693,
+      "baseline_adjusted_amplitude": 8.163845423696436e-05,
+      "active_energy_rank": 13
+    },
+    {
+      "variant": "trial_irls",
+      "case_id": "erp-v6-development-01-eeg+05-meg+05",
+      "deep_index": 7510,
+      "is_true": false,
+      "distance_to_true_mm": null,
+      "active_energy": 4.6092108521834306e-07,
+      "active_energy_fraction_of_deep_peak": 0.06335385041390071,
+      "baseline_adjusted_amplitude": 8.217227323174152e-05,
+      "active_energy_rank": 14
+    },
+    {
+      "variant": "trial_irls",
+      "case_id": "erp-v6-development-01-eeg+05-meg+05",
+      "deep_index": 7511,
+      "is_true": false,
+      "distance_to_true_mm": null,
+      "active_energy": 2.0414675799959516e-06,
+      "active_energy_fraction_of_deep_peak": 0.28060081396932435,
+      "baseline_adjusted_amplitude": 0.00017889093078623378,
+      "active_energy_rank": 4
+    },
+    {
+      "variant": "trial_irls",
+      "case_id": "erp-v6-development-01-eeg+05-meg+05",
+      "deep_index": 7512,
+      "is_true": false,
+      "distance_to_true_mm": null,
+      "active_energy": 5.611420682566492e-07,
+      "active_energy_fraction_of_deep_peak": 0.07712927829378421,
+      "baseline_adjusted_amplitude": 9.103082759188065e-05,
+      "active_energy_rank": 11
+    },
+    {
+      "variant": "trial_irls",
+      "case_id": "erp-v6-development-01-eeg+05-meg+05",
+      "deep_index": 7513,
+      "is_true": false,
+      "distance_to_true_mm": null,
+      "active_energy": 9.132281291791334e-07,
+      "active_energy_fraction_of_deep_peak": 0.12552369623614415,
+      "baseline_adjusted_amplitude": 0.00011815553652216027,
+      "active_energy_rank": 8
+    },
+    {
+      "variant": "trial_irls",
+      "case_id": "erp-v6-development-02-eeg+05-meg+05",
+      "deep_index": 7498,
+      "is_true": true,
+      "distance_to_true_mm": 0.0,
+      "active_energy": 1.172240105764823,
+      "active_energy_fraction_of_deep_peak": 1.0,
+      "baseline_adjusted_amplitude": 0.13754341276598364,
+      "active_energy_rank": 1
+    },
+    {
+      "variant": "trial_irls",
+      "case_id": "erp-v6-development-02-eeg+05-meg+05",
+      "deep_index": 7499,
+      "is_true": false,
+      "distance_to_true_mm": 10.00000054854849,
+      "active_energy": 0.05067001714912565,
+      "active_energy_fraction_of_deep_peak": 0.04322494760240796,
+      "baseline_adjusted_amplitude": 0.024602393797018923,
+      "active_energy_rank": 4
+    },
+    {
+      "variant": "trial_irls",
+      "case_id": "erp-v6-development-02-eeg+05-meg+05",
+      "deep_index": 7500,
+      "is_true": false,
+      "distance_to_true_mm": 14.142136204249597,
+      "active_energy": 0.18849097983141222,
+      "active_energy_fraction_of_deep_peak": 0.1607955391599847,
+      "baseline_adjusted_amplitude": 0.04833632240675548,
+      "active_energy_rank": 2
+    },
+    {
+      "variant": "trial_irls",
+      "case_id": "erp-v6-development-02-eeg+05-meg+05",
+      "deep_index": 7501,
+      "is_true": false,
+      "distance_to_true_mm": 31.622777392010047,
+      "active_energy": 2.9814947351815532e-09,
+      "active_energy_fraction_of_deep_peak": 2.543416421703376e-09,
+      "baseline_adjusted_amplitude": 6.075051513420485e-06,
+      "active_energy_rank": 5
+    },
+    {
+      "variant": "trial_irls",
+      "case_id": "erp-v6-development-02-eeg+05-meg+05",
+      "deep_index": 7502,
+      "is_true": false,
+      "distance_to_true_mm": 41.23105720329179,
+      "active_energy": 2.6013022812144127e-09,
+      "active_energy_fraction_of_deep_peak": 2.219086574859341e-09,
+      "baseline_adjusted_amplitude": 5.687301474447135e-06,
+      "active_energy_rank": 6
+    },
+    {
+      "variant": "trial_irls",
+      "case_id": "erp-v6-development-02-eeg+05-meg+05",
+      "deep_index": 7503,
+      "is_true": false,
+      "distance_to_true_mm": 14.142136031724077,
+      "active_energy": 1.7479823466098988e-10,
+      "active_energy_fraction_of_deep_peak": 1.491147025267008e-10,
+      "baseline_adjusted_amplitude": 1.342016999145552e-06,
+      "active_energy_rank": 16
+    },
+    {
+      "variant": "trial_irls",
+      "case_id": "erp-v6-development-02-eeg+05-meg+05",
+      "deep_index": 7504,
+      "is_true": false,
+      "distance_to_true_mm": 17.320508398326936,
+      "active_energy": 0.1710528006625771,
+      "active_energy_fraction_of_deep_peak": 0.14591959430612933,
+      "baseline_adjusted_amplitude": 0.046918814736176054,
+      "active_energy_rank": 3
+    },
+    {
+      "variant": "trial_irls",
+      "case_id": "erp-v6-development-02-eeg+05-meg+05",
+      "deep_index": 7505,
+      "is_true": false,
+      "distance_to_true_mm": 33.166248402824905,
+      "active_energy": 1.6729403719468006e-09,
+      "active_energy_fraction_of_deep_peak": 1.4271311514762564e-09,
+      "baseline_adjusted_amplitude": 4.619102693213144e-06,
+      "active_energy_rank": 8
+    },
+    {
+      "variant": "trial_irls",
+      "case_id": "erp-v6-development-02-eeg+05-meg+05",
+      "deep_index": 7506,
+      "is_true": false,
+      "distance_to_true_mm": 37.41657376384551,
+      "active_energy": 8.79637059301746e-10,
+      "active_energy_fraction_of_deep_peak": 7.503898347922763e-10,
+      "baseline_adjusted_amplitude": 3.167826174859657e-06,
+      "active_energy_rank": 12
+    },
+    {
+      "variant": "trial_irls",
+      "case_id": "erp-v6-development-02-eeg+05-meg+05",
+      "deep_index": 7507,
+      "is_true": false,
+      "distance_to_true_mm": 20.000001097096984,
+      "active_energy": 2.2020341955166858e-10,
+      "active_energy_fraction_of_deep_peak": 1.8784839255094228e-10,
+      "baseline_adjusted_amplitude": 1.535847880508927e-06,
+      "active_energy_rank": 15
+    },
+    {
+      "variant": "trial_irls",
+      "case_id": "erp-v6-development-02-eeg+05-meg+05",
+      "deep_index": 7508,
+      "is_true": false,
+      "distance_to_true_mm": 36.05551397372256,
+      "active_energy": 2.5225230632971937e-09,
+      "active_energy_fraction_of_deep_peak": 2.1518825801062184e-09,
+      "baseline_adjusted_amplitude": 5.33415229207994e-06,
+      "active_energy_rank": 7
+    },
+    {
+      "variant": "trial_irls",
+      "case_id": "erp-v6-development-02-eeg+05-meg+05",
+      "deep_index": 7509,
+      "is_true": false,
+      "distance_to_true_mm": 22.360681050326836,
+      "active_energy": 3.1678968897469625e-10,
+      "active_energy_fraction_of_deep_peak": 2.702430051802469e-10,
+      "baseline_adjusted_amplitude": 1.7568555905230872e-06,
+      "active_energy_rank": 14
+    },
+    {
+      "variant": "trial_irls",
+      "case_id": "erp-v6-development-02-eeg+05-meg+05",
+      "deep_index": 7510,
+      "is_true": false,
+      "distance_to_true_mm": 24.494898618727973,
+      "active_energy": 7.736238437881994e-10,
+      "active_energy_fraction_of_deep_peak": 6.599534003176352e-10,
+      "baseline_adjusted_amplitude": 3.1615250715529487e-06,
+      "active_energy_rank": 13
+    },
+    {
+      "variant": "trial_irls",
+      "case_id": "erp-v6-development-02-eeg+05-meg+05",
+      "deep_index": 7511,
+      "is_true": false,
+      "distance_to_true_mm": 37.4165749852163,
+      "active_energy": 1.6595726348042743e-09,
+      "active_energy_fraction_of_deep_peak": 1.4157275686464363e-09,
+      "baseline_adjusted_amplitude": 4.332270053076839e-06,
+      "active_energy_rank": 9
+    },
+    {
+      "variant": "trial_irls",
+      "case_id": "erp-v6-development-02-eeg+05-meg+05",
+      "deep_index": 7512,
+      "is_true": false,
+      "distance_to_true_mm": 30.000000694243624,
+      "active_energy": 9.027542601191615e-10,
+      "active_energy_fraction_of_deep_peak": 7.70110368754329e-10,
+      "baseline_adjusted_amplitude": 3.3132101613621737e-06,
+      "active_energy_rank": 11
+    },
+    {
+      "variant": "trial_irls",
+      "case_id": "erp-v6-development-02-eeg+05-meg+05",
+      "deep_index": 7513,
+      "is_true": false,
+      "distance_to_true_mm": 41.23105692695092,
+      "active_energy": 1.1668040583482635e-09,
+      "active_energy_fraction_of_deep_peak": 9.953626843256545e-10,
+      "baseline_adjusted_amplitude": 3.7208815367996077e-06,
+      "active_energy_rank": 10
+    },
+    {
+      "variant": "trial_irls",
+      "case_id": "erp-v6-development-03-eeg+05-meg+05",
+      "deep_index": 7498,
+      "is_true": true,
+      "distance_to_true_mm": 0.0,
+      "active_energy": 1.6117768214244508e-07,
+      "active_energy_fraction_of_deep_peak": 2.7092305783570724e-07,
+      "baseline_adjusted_amplitude": 4.555952557623915e-05,
+      "active_energy_rank": 16
+    },
+    {
+      "variant": "trial_irls",
+      "case_id": "erp-v6-development-03-eeg+05-meg+05",
+      "deep_index": 7499,
+      "is_true": false,
+      "distance_to_true_mm": 10.00000054854849,
+      "active_energy": 0.5949205041092746,
+      "active_energy_fraction_of_deep_peak": 1.0,
+      "baseline_adjusted_amplitude": 0.08880347875298943,
+      "active_energy_rank": 1
+    },
+    {
+      "variant": "trial_irls",
+      "case_id": "erp-v6-development-03-eeg+05-meg+05",
+      "deep_index": 7500,
+      "is_true": false,
+      "distance_to_true_mm": 14.142136204249597,
+      "active_energy": 0.5873624995228689,
+      "active_energy_fraction_of_deep_peak": 0.9872957739156736,
+      "baseline_adjusted_amplitude": 0.08504066040135962,
+      "active_energy_rank": 2
+    },
+    {
+      "variant": "trial_irls",
+      "case_id": "erp-v6-development-03-eeg+05-meg+05",
+      "deep_index": 7501,
+      "is_true": false,
+      "distance_to_true_mm": 31.622777392010047,
+      "active_energy": 2.0963856008290947e-06,
+      "active_energy_fraction_of_deep_peak": 3.523807948034738e-06,
+      "baseline_adjusted_amplitude": 0.0001812429601871843,
+      "active_energy_rank": 4
+    },
+    {
+      "variant": "trial_irls",
+      "case_id": "erp-v6-development-03-eeg+05-meg+05",
+      "deep_index": 7502,
+      "is_true": false,
+      "distance_to_true_mm": 41.23105720329179,
+      "active_energy": 1.0237498662431813e-06,
+      "active_energy_fraction_of_deep_peak": 1.7208179230197448e-06,
+      "baseline_adjusted_amplitude": 0.00012479059158031282,
+      "active_energy_rank": 8
+    },
+    {
+      "variant": "trial_irls",
+      "case_id": "erp-v6-development-03-eeg+05-meg+05",
+      "deep_index": 7503,
+      "is_true": false,
+      "distance_to_true_mm": 14.142136031724077,
+      "active_energy": 4.174851469610941e-07,
+      "active_energy_fraction_of_deep_peak": 7.017494674959308e-07,
+      "baseline_adjusted_amplitude": 8.167057285975954e-05,
+      "active_energy_rank": 13
+    },
+    {
+      "variant": "trial_irls",
+      "case_id": "erp-v6-development-03-eeg+05-meg+05",
+      "deep_index": 7504,
+      "is_true": false,
+      "distance_to_true_mm": 17.320508398326936,
+      "active_energy": 5.728743248244879e-07,
+      "active_energy_fraction_of_deep_peak": 9.629426467359793e-07,
+      "baseline_adjusted_amplitude": 9.580441262003782e-05,
+      "active_energy_rank": 12
+    },
+    {
+      "variant": "trial_irls",
+      "case_id": "erp-v6-development-03-eeg+05-meg+05",
+      "deep_index": 7505,
+      "is_true": false,
+      "distance_to_true_mm": 33.166248402824905,
+      "active_energy": 1.0767031314632885e-06,
+      "active_energy_fraction_of_deep_peak": 1.8098268996045906e-06,
+      "baseline_adjusted_amplitude": 0.00013063793193741568,
+      "active_energy_rank": 7
+    },
+    {
+      "variant": "trial_irls",
+      "case_id": "erp-v6-development-03-eeg+05-meg+05",
+      "deep_index": 7506,
+      "is_true": false,
+      "distance_to_true_mm": 37.41657376384551,
+      "active_energy": 3.506581685559717e-07,
+      "active_energy_fraction_of_deep_peak": 5.89420210152251e-07,
+      "baseline_adjusted_amplitude": 7.41915209338645e-05,
+      "active_energy_rank": 14
+    },
+    {
+      "variant": "trial_irls",
+      "case_id": "erp-v6-development-03-eeg+05-meg+05",
+      "deep_index": 7507,
+      "is_true": false,
+      "distance_to_true_mm": 20.000001097096984,
+      "active_energy": 1.9209473248089108e-07,
+      "active_energy_fraction_of_deep_peak": 3.228914302903355e-07,
+      "baseline_adjusted_amplitude": 5.0937348540618496e-05,
+      "active_energy_rank": 15
+    },
+    {
+      "variant": "trial_irls",
+      "case_id": "erp-v6-development-03-eeg+05-meg+05",
+      "deep_index": 7508,
+      "is_true": false,
+      "distance_to_true_mm": 36.05551397372256,
+      "active_energy": 2.554421357558215e-06,
+      "active_energy_fraction_of_deep_peak": 4.2937188076627815e-06,
+      "baseline_adjusted_amplitude": 0.00019556852012110292,
+      "active_energy_rank": 3
+    },
+    {
+      "variant": "trial_irls",
+      "case_id": "erp-v6-development-03-eeg+05-meg+05",
+      "deep_index": 7509,
+      "is_true": false,
+      "distance_to_true_mm": 22.360681050326836,
+      "active_energy": 7.804509349809821e-07,
+      "active_energy_fraction_of_deep_peak": 1.3118575164079897e-06,
+      "baseline_adjusted_amplitude": 0.00011054224527195926,
+      "active_energy_rank": 11
+    },
+    {
+      "variant": "trial_irls",
+      "case_id": "erp-v6-development-03-eeg+05-meg+05",
+      "deep_index": 7510,
+      "is_true": false,
+      "distance_to_true_mm": 24.494898618727973,
+      "active_energy": 8.567494565802629e-07,
+      "active_energy_fraction_of_deep_peak": 1.4401074608497538e-06,
+      "baseline_adjusted_amplitude": 0.00011525765903443095,
+      "active_energy_rank": 10
+    },
+    {
+      "variant": "trial_irls",
+      "case_id": "erp-v6-development-03-eeg+05-meg+05",
+      "deep_index": 7511,
+      "is_true": false,
+      "distance_to_true_mm": 37.4165749852163,
+      "active_energy": 1.8751473328699268e-06,
+      "active_energy_fraction_of_deep_peak": 3.1519292408276135e-06,
+      "baseline_adjusted_amplitude": 0.0001693219112935395,
+      "active_energy_rank": 5
+    },
+    {
+      "variant": "trial_irls",
+      "case_id": "erp-v6-development-03-eeg+05-meg+05",
+      "deep_index": 7512,
+      "is_true": false,
+      "distance_to_true_mm": 30.000000694243624,
+      "active_energy": 1.3107407026737167e-06,
+      "active_energy_fraction_of_deep_peak": 2.2032199152997436e-06,
+      "baseline_adjusted_amplitude": 0.00014419982965439802,
+      "active_energy_rank": 6
+    },
+    {
+      "variant": "trial_irls",
+      "case_id": "erp-v6-development-03-eeg+05-meg+05",
+      "deep_index": 7513,
+      "is_true": false,
+      "distance_to_true_mm": 41.23105692695092,
+      "active_energy": 9.372534318936192e-07,
+      "active_energy_fraction_of_deep_peak": 1.5754263391827308e-06,
+      "baseline_adjusted_amplitude": 0.00012129264004648144,
+      "active_energy_rank": 9
+    },
+    {
+      "variant": "trial_irls",
+      "case_id": "erp-v6-development-04-eeg+05-meg+05",
+      "deep_index": 7498,
+      "is_true": true,
+      "distance_to_true_mm": 0.0,
+      "active_energy": 1.630899304621066e-07,
+      "active_energy_fraction_of_deep_peak": 1.2987276427424098e-07,
+      "baseline_adjusted_amplitude": 4.670865368456989e-05,
+      "active_energy_rank": 11
+    },
+    {
+      "variant": "trial_irls",
+      "case_id": "erp-v6-development-04-eeg+05-meg+05",
+      "deep_index": 7499,
+      "is_true": false,
+      "distance_to_true_mm": 10.00000054854849,
+      "active_energy": 9.176929055568723e-08,
+      "active_energy_fraction_of_deep_peak": 7.307827899725717e-08,
+      "baseline_adjusted_amplitude": 3.687546876353229e-05,
+      "active_energy_rank": 14
+    },
+    {
+      "variant": "trial_irls",
+      "case_id": "erp-v6-development-04-eeg+05-meg+05",
+      "deep_index": 7500,
+      "is_true": false,
+      "distance_to_true_mm": 14.142136204249597,
+      "active_energy": 1.2557669914357397,
+      "active_energy_fraction_of_deep_peak": 1.0,
+      "baseline_adjusted_amplitude": 0.13437352973938563,
+      "active_energy_rank": 1
+    },
+    {
+      "variant": "trial_irls",
+      "case_id": "erp-v6-development-04-eeg+05-meg+05",
+      "deep_index": 7501,
+      "is_true": false,
+      "distance_to_true_mm": 31.622777392010047,
+      "active_energy": 1.4309209241685841e-06,
+      "active_energy_fraction_of_deep_peak": 1.1394796438570089e-06,
+      "baseline_adjusted_amplitude": 0.00014954283756154338,
+      "active_energy_rank": 2
+    },
+    {
+      "variant": "trial_irls",
+      "case_id": "erp-v6-development-04-eeg+05-meg+05",
+      "deep_index": 7502,
+      "is_true": false,
+      "distance_to_true_mm": 41.23105720329179,
+      "active_energy": 1.2757782348002091e-06,
+      "active_energy_fraction_of_deep_peak": 1.015935474893786e-06,
+      "baseline_adjusted_amplitude": 0.000140482591912433,
+      "active_energy_rank": 3
+    },
+    {
+      "variant": "trial_irls",
+      "case_id": "erp-v6-development-04-eeg+05-meg+05",
+      "deep_index": 7503,
+      "is_true": false,
+      "distance_to_true_mm": 14.142136031724077,
+      "active_energy": 2.1127545163202005e-07,
+      "active_energy_fraction_of_deep_peak": 1.682441512421546e-07,
+      "baseline_adjusted_amplitude": 5.678152596029171e-05,
+      "active_energy_rank": 9
+    },
+    {
+      "variant": "trial_irls",
+      "case_id": "erp-v6-development-04-eeg+05-meg+05",
+      "deep_index": 7504,
+      "is_true": false,
+      "distance_to_true_mm": 17.320508398326936,
+      "active_energy": 1.3289212386081107e-07,
+      "active_energy_fraction_of_deep_peak": 1.0582546345550399e-07,
+      "baseline_adjusted_amplitude": 4.5093426075789264e-05,
+      "active_energy_rank": 12
+    },
+    {
+      "variant": "trial_irls",
+      "case_id": "erp-v6-development-04-eeg+05-meg+05",
+      "deep_index": 7505,
+      "is_true": false,
+      "distance_to_true_mm": 33.166248402824905,
+      "active_energy": 9.26440422383559e-07,
+      "active_energy_fraction_of_deep_peak": 7.377486657173111e-07,
+      "baseline_adjusted_amplitude": 0.00012077226854617271,
+      "active_energy_rank": 4
+    },
+    {
+      "variant": "trial_irls",
+      "case_id": "erp-v6-development-04-eeg+05-meg+05",
+      "deep_index": 7506,
+      "is_true": false,
+      "distance_to_true_mm": 37.41657376384551,
+      "active_energy": 2.34657343680911e-07,
+      "active_energy_fraction_of_deep_peak": 1.868637615746081e-07,
+      "baseline_adjusted_amplitude": 6.0545317625446375e-05,
+      "active_energy_rank": 8
+    },
+    {
+      "variant": "trial_irls",
+      "case_id": "erp-v6-development-04-eeg+05-meg+05",
+      "deep_index": 7507,
+      "is_true": false,
+      "distance_to_true_mm": 20.000001097096984,
+      "active_energy": 4.840459511691317e-08,
+      "active_energy_fraction_of_deep_peak": 3.8545841264366545e-08,
+      "baseline_adjusted_amplitude": 2.7427556868976435e-05,
+      "active_energy_rank": 16
+    },
+    {
+      "variant": "trial_irls",
+      "case_id": "erp-v6-development-04-eeg+05-meg+05",
+      "deep_index": 7508,
+      "is_true": false,
+      "distance_to_true_mm": 36.05551397372256,
+      "active_energy": 7.459505561342369e-07,
+      "active_energy_fraction_of_deep_peak": 5.940198788641346e-07,
+      "baseline_adjusted_amplitude": 0.00010748874726920821,
+      "active_energy_rank": 5
+    },
+    {
+      "variant": "trial_irls",
+      "case_id": "erp-v6-development-04-eeg+05-meg+05",
+      "deep_index": 7509,
+      "is_true": false,
+      "distance_to_true_mm": 22.360681050326836,
+      "active_energy": 1.3048512205361667e-07,
+      "active_energy_fraction_of_deep_peak": 1.039087051527217e-07,
+      "baseline_adjusted_amplitude": 4.5044485660811633e-05,
+      "active_energy_rank": 13
+    },
+    {
+      "variant": "trial_irls",
+      "case_id": "erp-v6-development-04-eeg+05-meg+05",
+      "deep_index": 7510,
+      "is_true": false,
+      "distance_to_true_mm": 24.494898618727973,
+      "active_energy": 5.957553063641735e-08,
+      "active_energy_fraction_of_deep_peak": 4.744154850598807e-08,
+      "baseline_adjusted_amplitude": 2.9632456957041644e-05,
+      "active_energy_rank": 15
+    },
+    {
+      "variant": "trial_irls",
+      "case_id": "erp-v6-development-04-eeg+05-meg+05",
+      "deep_index": 7511,
+      "is_true": false,
+      "distance_to_true_mm": 37.4165749852163,
+      "active_energy": 7.032302945994879e-07,
+      "active_energy_fraction_of_deep_peak": 5.600006206529388e-07,
+      "baseline_adjusted_amplitude": 0.00010522902039975505,
+      "active_energy_rank": 6
+    },
+    {
+      "variant": "trial_irls",
+      "case_id": "erp-v6-development-04-eeg+05-meg+05",
+      "deep_index": 7512,
+      "is_true": false,
+      "distance_to_true_mm": 30.000000694243624,
+      "active_energy": 1.6660133552326667e-07,
+      "active_energy_fraction_of_deep_peak": 1.3266898768599463e-07,
+      "baseline_adjusted_amplitude": 5.040489482622099e-05,
+      "active_energy_rank": 10
+    },
+    {
+      "variant": "trial_irls",
+      "case_id": "erp-v6-development-04-eeg+05-meg+05",
+      "deep_index": 7513,
+      "is_true": false,
+      "distance_to_true_mm": 41.23105692695092,
+      "active_energy": 3.378764200865072e-07,
+      "active_energy_fraction_of_deep_peak": 2.690598036027427e-07,
+      "baseline_adjusted_amplitude": 7.314383301982372e-05,
+      "active_energy_rank": 7
+    },
+    {
+      "variant": "mean_admm",
+      "case_id": "erp-v6-development-00-eeg+05-meg+05",
+      "deep_index": 7498,
+      "is_true": false,
+      "distance_to_true_mm": null,
+      "active_energy": 0.0,
+      "active_energy_fraction_of_deep_peak": 0.0,
+      "baseline_adjusted_amplitude": 0.0,
+      "active_energy_rank": 4
+    },
+    {
+      "variant": "mean_admm",
+      "case_id": "erp-v6-development-00-eeg+05-meg+05",
+      "deep_index": 7499,
+      "is_true": false,
+      "distance_to_true_mm": null,
+      "active_energy": 0.0,
+      "active_energy_fraction_of_deep_peak": 0.0,
+      "baseline_adjusted_amplitude": 0.0,
+      "active_energy_rank": 4
+    },
+    {
+      "variant": "mean_admm",
+      "case_id": "erp-v6-development-00-eeg+05-meg+05",
+      "deep_index": 7500,
+      "is_true": false,
+      "distance_to_true_mm": null,
+      "active_energy": 0.901770282849023,
+      "active_energy_fraction_of_deep_peak": 1.0,
+      "baseline_adjusted_amplitude": 0.11838652613261763,
+      "active_energy_rank": 1
+    },
+    {
+      "variant": "mean_admm",
+      "case_id": "erp-v6-development-00-eeg+05-meg+05",
+      "deep_index": 7501,
+      "is_true": false,
+      "distance_to_true_mm": null,
+      "active_energy": 0.0,
+      "active_energy_fraction_of_deep_peak": 0.0,
+      "baseline_adjusted_amplitude": 0.0,
+      "active_energy_rank": 4
+    },
+    {
+      "variant": "mean_admm",
+      "case_id": "erp-v6-development-00-eeg+05-meg+05",
+      "deep_index": 7502,
+      "is_true": false,
+      "distance_to_true_mm": null,
+      "active_energy": 0.0,
+      "active_energy_fraction_of_deep_peak": 0.0,
+      "baseline_adjusted_amplitude": 0.0,
+      "active_energy_rank": 4
+    },
+    {
+      "variant": "mean_admm",
+      "case_id": "erp-v6-development-00-eeg+05-meg+05",
+      "deep_index": 7503,
+      "is_true": false,
+      "distance_to_true_mm": null,
+      "active_energy": 0.0,
+      "active_energy_fraction_of_deep_peak": 0.0,
+      "baseline_adjusted_amplitude": 0.0,
+      "active_energy_rank": 4
+    },
+    {
+      "variant": "mean_admm",
+      "case_id": "erp-v6-development-00-eeg+05-meg+05",
+      "deep_index": 7504,
+      "is_true": false,
+      "distance_to_true_mm": null,
+      "active_energy": 0.0,
+      "active_energy_fraction_of_deep_peak": 0.0,
+      "baseline_adjusted_amplitude": 0.0,
+      "active_energy_rank": 4
+    },
+    {
+      "variant": "mean_admm",
+      "case_id": "erp-v6-development-00-eeg+05-meg+05",
+      "deep_index": 7505,
+      "is_true": false,
+      "distance_to_true_mm": null,
+      "active_energy": 0.0,
+      "active_energy_fraction_of_deep_peak": 0.0,
+      "baseline_adjusted_amplitude": 0.0,
+      "active_energy_rank": 4
+    },
+    {
+      "variant": "mean_admm",
+      "case_id": "erp-v6-development-00-eeg+05-meg+05",
+      "deep_index": 7506,
+      "is_true": false,
+      "distance_to_true_mm": null,
+      "active_energy": 0.0,
+      "active_energy_fraction_of_deep_peak": 0.0,
+      "baseline_adjusted_amplitude": 0.0,
+      "active_energy_rank": 4
+    },
+    {
+      "variant": "mean_admm",
+      "case_id": "erp-v6-development-00-eeg+05-meg+05",
+      "deep_index": 7507,
+      "is_true": false,
+      "distance_to_true_mm": null,
+      "active_energy": 0.3446641360202332,
+      "active_energy_fraction_of_deep_peak": 0.3822083545837337,
+      "baseline_adjusted_amplitude": 0.0729819572703324,
+      "active_energy_rank": 2
+    },
+    {
+      "variant": "mean_admm",
+      "case_id": "erp-v6-development-00-eeg+05-meg+05",
+      "deep_index": 7508,
+      "is_true": false,
+      "distance_to_true_mm": null,
+      "active_energy": 0.18572117519780437,
+      "active_energy_fraction_of_deep_peak": 0.2059517581473666,
+      "baseline_adjusted_amplitude": 0.051705110799177764,
+      "active_energy_rank": 3
+    },
+    {
+      "variant": "mean_admm",
+      "case_id": "erp-v6-development-00-eeg+05-meg+05",
+      "deep_index": 7509,
+      "is_true": false,
+      "distance_to_true_mm": null,
+      "active_energy": 0.0,
+      "active_energy_fraction_of_deep_peak": 0.0,
+      "baseline_adjusted_amplitude": 0.0,
+      "active_energy_rank": 4
+    },
+    {
+      "variant": "mean_admm",
+      "case_id": "erp-v6-development-00-eeg+05-meg+05",
+      "deep_index": 7510,
+      "is_true": false,
+      "distance_to_true_mm": null,
+      "active_energy": 0.0,
+      "active_energy_fraction_of_deep_peak": 0.0,
+      "baseline_adjusted_amplitude": 0.0,
+      "active_energy_rank": 4
+    },
+    {
+      "variant": "mean_admm",
+      "case_id": "erp-v6-development-00-eeg+05-meg+05",
+      "deep_index": 7511,
+      "is_true": false,
+      "distance_to_true_mm": null,
+      "active_energy": 0.0,
+      "active_energy_fraction_of_deep_peak": 0.0,
+      "baseline_adjusted_amplitude": 0.0,
+      "active_energy_rank": 4
+    },
+    {
+      "variant": "mean_admm",
+      "case_id": "erp-v6-development-00-eeg+05-meg+05",
+      "deep_index": 7512,
+      "is_true": false,
+      "distance_to_true_mm": null,
+      "active_energy": 0.0,
+      "active_energy_fraction_of_deep_peak": 0.0,
+      "baseline_adjusted_amplitude": 0.0,
+      "active_energy_rank": 4
+    },
+    {
+      "variant": "mean_admm",
+      "case_id": "erp-v6-development-00-eeg+05-meg+05",
+      "deep_index": 7513,
+      "is_true": false,
+      "distance_to_true_mm": null,
+      "active_energy": 0.0,
+      "active_energy_fraction_of_deep_peak": 0.0,
+      "baseline_adjusted_amplitude": 0.0,
+      "active_energy_rank": 4
+    },
+    {
+      "variant": "mean_admm",
+      "case_id": "erp-v6-development-01-eeg+05-meg+05",
+      "deep_index": 7498,
+      "is_true": false,
+      "distance_to_true_mm": null,
+      "active_energy": 0.0,
+      "active_energy_fraction_of_deep_peak": 0.0,
+      "baseline_adjusted_amplitude": 0.0,
+      "active_energy_rank": 4
+    },
+    {
+      "variant": "mean_admm",
+      "case_id": "erp-v6-development-01-eeg+05-meg+05",
+      "deep_index": 7499,
+      "is_true": false,
+      "distance_to_true_mm": null,
+      "active_energy": 0.0,
+      "active_energy_fraction_of_deep_peak": 0.0,
+      "baseline_adjusted_amplitude": 0.0,
+      "active_energy_rank": 4
+    },
+    {
+      "variant": "mean_admm",
+      "case_id": "erp-v6-development-01-eeg+05-meg+05",
+      "deep_index": 7500,
+      "is_true": false,
+      "distance_to_true_mm": null,
+      "active_energy": 2.91781364116479,
+      "active_energy_fraction_of_deep_peak": 1.0,
+      "baseline_adjusted_amplitude": 0.21510123587246524,
+      "active_energy_rank": 1
+    },
+    {
+      "variant": "mean_admm",
+      "case_id": "erp-v6-development-01-eeg+05-meg+05",
+      "deep_index": 7501,
+      "is_true": false,
+      "distance_to_true_mm": null,
+      "active_energy": 0.8670458193303845,
+      "active_energy_fraction_of_deep_peak": 0.29715599622197264,
+      "baseline_adjusted_amplitude": 0.11626575912319498,
+      "active_energy_rank": 3
+    },
+    {
+      "variant": "mean_admm",
+      "case_id": "erp-v6-development-01-eeg+05-meg+05",
+      "deep_index": 7502,
+      "is_true": false,
+      "distance_to_true_mm": null,
+      "active_energy": 0.0,
+      "active_energy_fraction_of_deep_peak": 0.0,
+      "baseline_adjusted_amplitude": 0.0,
+      "active_energy_rank": 4
+    },
+    {
+      "variant": "mean_admm",
+      "case_id": "erp-v6-development-01-eeg+05-meg+05",
+      "deep_index": 7503,
+      "is_true": false,
+      "distance_to_true_mm": null,
+      "active_energy": 0.0,
+      "active_energy_fraction_of_deep_peak": 0.0,
+      "baseline_adjusted_amplitude": 0.0,
+      "active_energy_rank": 4
+    },
+    {
+      "variant": "mean_admm",
+      "case_id": "erp-v6-development-01-eeg+05-meg+05",
+      "deep_index": 7504,
+      "is_true": false,
+      "distance_to_true_mm": null,
+      "active_energy": 0.0,
+      "active_energy_fraction_of_deep_peak": 0.0,
+      "baseline_adjusted_amplitude": 0.0,
+      "active_energy_rank": 4
+    },
+    {
+      "variant": "mean_admm",
+      "case_id": "erp-v6-development-01-eeg+05-meg+05",
+      "deep_index": 7505,
+      "is_true": false,
+      "distance_to_true_mm": null,
+      "active_energy": 0.0,
+      "active_energy_fraction_of_deep_peak": 0.0,
+      "baseline_adjusted_amplitude": 0.0,
+      "active_energy_rank": 4
+    },
+    {
+      "variant": "mean_admm",
+      "case_id": "erp-v6-development-01-eeg+05-meg+05",
+      "deep_index": 7506,
+      "is_true": false,
+      "distance_to_true_mm": null,
+      "active_energy": 0.0,
+      "active_energy_fraction_of_deep_peak": 0.0,
+      "baseline_adjusted_amplitude": 0.0,
+      "active_energy_rank": 4
+    },
+    {
+      "variant": "mean_admm",
+      "case_id": "erp-v6-development-01-eeg+05-meg+05",
+      "deep_index": 7507,
+      "is_true": false,
+      "distance_to_true_mm": null,
+      "active_energy": 1.347706104036856,
+      "active_energy_fraction_of_deep_peak": 0.46188902712061225,
+      "baseline_adjusted_amplitude": 0.14688656711536724,
+      "active_energy_rank": 2
+    },
+    {
+      "variant": "mean_admm",
+      "case_id": "erp-v6-development-01-eeg+05-meg+05",
+      "deep_index": 7508,
+      "is_true": false,
+      "distance_to_true_mm": null,
+      "active_energy": 0.0,
+      "active_energy_fraction_of_deep_peak": 0.0,
+      "baseline_adjusted_amplitude": 0.0,
+      "active_energy_rank": 4
+    },
+    {
+      "variant": "mean_admm",
+      "case_id": "erp-v6-development-01-eeg+05-meg+05",
+      "deep_index": 7509,
+      "is_true": false,
+      "distance_to_true_mm": null,
+      "active_energy": 0.0,
+      "active_energy_fraction_of_deep_peak": 0.0,
+      "baseline_adjusted_amplitude": 0.0,
+      "active_energy_rank": 4
+    },
+    {
+      "variant": "mean_admm",
+      "case_id": "erp-v6-development-01-eeg+05-meg+05",
+      "deep_index": 7510,
+      "is_true": false,
+      "distance_to_true_mm": null,
+      "active_energy": 0.0,
+      "active_energy_fraction_of_deep_peak": 0.0,
+      "baseline_adjusted_amplitude": 0.0,
+      "active_energy_rank": 4
+    },
+    {
+      "variant": "mean_admm",
+      "case_id": "erp-v6-development-01-eeg+05-meg+05",
+      "deep_index": 7511,
+      "is_true": false,
+      "distance_to_true_mm": null,
+      "active_energy": 0.0,
+      "active_energy_fraction_of_deep_peak": 0.0,
+      "baseline_adjusted_amplitude": 0.0,
+      "active_energy_rank": 4
+    },
+    {
+      "variant": "mean_admm",
+      "case_id": "erp-v6-development-01-eeg+05-meg+05",
+      "deep_index": 7512,
+      "is_true": false,
+      "distance_to_true_mm": null,
+      "active_energy": 0.0,
+      "active_energy_fraction_of_deep_peak": 0.0,
+      "baseline_adjusted_amplitude": 0.0,
+      "active_energy_rank": 4
+    },
+    {
+      "variant": "mean_admm",
+      "case_id": "erp-v6-development-01-eeg+05-meg+05",
+      "deep_index": 7513,
+      "is_true": false,
+      "distance_to_true_mm": null,
+      "active_energy": 0.0,
+      "active_energy_fraction_of_deep_peak": 0.0,
+      "baseline_adjusted_amplitude": 0.0,
+      "active_energy_rank": 4
+    },
+    {
+      "variant": "mean_admm",
+      "case_id": "erp-v6-development-02-eeg+05-meg+05",
+      "deep_index": 7498,
+      "is_true": true,
+      "distance_to_true_mm": 0.0,
+      "active_energy": 0.9411531268616444,
+      "active_energy_fraction_of_deep_peak": 1.0,
+      "baseline_adjusted_amplitude": 0.12366911545767864,
+      "active_energy_rank": 1
+    },
+    {
+      "variant": "mean_admm",
+      "case_id": "erp-v6-development-02-eeg+05-meg+05",
+      "deep_index": 7499,
+      "is_true": false,
+      "distance_to_true_mm": 10.00000054854849,
+      "active_energy": 0.0,
+      "active_energy_fraction_of_deep_peak": 0.0,
+      "baseline_adjusted_amplitude": 0.0,
+      "active_energy_rank": 5
+    },
+    {
+      "variant": "mean_admm",
+      "case_id": "erp-v6-development-02-eeg+05-meg+05",
+      "deep_index": 7500,
+      "is_true": false,
+      "distance_to_true_mm": 14.142136204249597,
+      "active_energy": 0.0,
+      "active_energy_fraction_of_deep_peak": 0.0,
+      "baseline_adjusted_amplitude": 0.0,
+      "active_energy_rank": 5
+    },
+    {
+      "variant": "mean_admm",
+      "case_id": "erp-v6-development-02-eeg+05-meg+05",
+      "deep_index": 7501,
+      "is_true": false,
+      "distance_to_true_mm": 31.622777392010047,
+      "active_energy": 0.0,
+      "active_energy_fraction_of_deep_peak": 0.0,
+      "baseline_adjusted_amplitude": 0.0,
+      "active_energy_rank": 5
+    },
+    {
+      "variant": "mean_admm",
+      "case_id": "erp-v6-development-02-eeg+05-meg+05",
+      "deep_index": 7502,
+      "is_true": false,
+      "distance_to_true_mm": 41.23105720329179,
+      "active_energy": 0.0028366145456681533,
+      "active_energy_fraction_of_deep_peak": 0.0030139777095859917,
+      "baseline_adjusted_amplitude": 0.006384817324616237,
+      "active_energy_rank": 4
+    },
+    {
+      "variant": "mean_admm",
+      "case_id": "erp-v6-development-02-eeg+05-meg+05",
+      "deep_index": 7503,
+      "is_true": false,
+      "distance_to_true_mm": 14.142136031724077,
+      "active_energy": 0.0,
+      "active_energy_fraction_of_deep_peak": 0.0,
+      "baseline_adjusted_amplitude": 0.0,
+      "active_energy_rank": 5
+    },
+    {
+      "variant": "mean_admm",
+      "case_id": "erp-v6-development-02-eeg+05-meg+05",
+      "deep_index": 7504,
+      "is_true": false,
+      "distance_to_true_mm": 17.320508398326936,
+      "active_energy": 0.0,
+      "active_energy_fraction_of_deep_peak": 0.0,
+      "baseline_adjusted_amplitude": 0.0,
+      "active_energy_rank": 5
+    },
+    {
+      "variant": "mean_admm",
+      "case_id": "erp-v6-development-02-eeg+05-meg+05",
+      "deep_index": 7505,
+      "is_true": false,
+      "distance_to_true_mm": 33.166248402824905,
+      "active_energy": 0.0,
+      "active_energy_fraction_of_deep_peak": 0.0,
+      "baseline_adjusted_amplitude": 0.0,
+      "active_energy_rank": 5
+    },
+    {
+      "variant": "mean_admm",
+      "case_id": "erp-v6-development-02-eeg+05-meg+05",
+      "deep_index": 7506,
+      "is_true": false,
+      "distance_to_true_mm": 37.41657376384551,
+      "active_energy": 0.0,
+      "active_energy_fraction_of_deep_peak": 0.0,
+      "baseline_adjusted_amplitude": 0.0,
+      "active_energy_rank": 5
+    },
+    {
+      "variant": "mean_admm",
+      "case_id": "erp-v6-development-02-eeg+05-meg+05",
+      "deep_index": 7507,
+      "is_true": false,
+      "distance_to_true_mm": 20.000001097096984,
+      "active_energy": 0.0,
+      "active_energy_fraction_of_deep_peak": 0.0,
+      "baseline_adjusted_amplitude": 0.0,
+      "active_energy_rank": 5
+    },
+    {
+      "variant": "mean_admm",
+      "case_id": "erp-v6-development-02-eeg+05-meg+05",
+      "deep_index": 7508,
+      "is_true": false,
+      "distance_to_true_mm": 36.05551397372256,
+      "active_energy": 0.030061111567589126,
+      "active_energy_fraction_of_deep_peak": 0.0319407232570437,
+      "baseline_adjusted_amplitude": 0.020915289611306533,
+      "active_energy_rank": 2
+    },
+    {
+      "variant": "mean_admm",
+      "case_id": "erp-v6-development-02-eeg+05-meg+05",
+      "deep_index": 7509,
+      "is_true": false,
+      "distance_to_true_mm": 22.360681050326836,
+      "active_energy": 0.0,
+      "active_energy_fraction_of_deep_peak": 0.0,
+      "baseline_adjusted_amplitude": 0.0,
+      "active_energy_rank": 5
+    },
+    {
+      "variant": "mean_admm",
+      "case_id": "erp-v6-development-02-eeg+05-meg+05",
+      "deep_index": 7510,
+      "is_true": false,
+      "distance_to_true_mm": 24.494898618727973,
+      "active_energy": 0.0,
+      "active_energy_fraction_of_deep_peak": 0.0,
+      "baseline_adjusted_amplitude": 0.0,
+      "active_energy_rank": 5
+    },
+    {
+      "variant": "mean_admm",
+      "case_id": "erp-v6-development-02-eeg+05-meg+05",
+      "deep_index": 7511,
+      "is_true": false,
+      "distance_to_true_mm": 37.4165749852163,
+      "active_energy": 0.0,
+      "active_energy_fraction_of_deep_peak": 0.0,
+      "baseline_adjusted_amplitude": 0.0,
+      "active_energy_rank": 5
+    },
+    {
+      "variant": "mean_admm",
+      "case_id": "erp-v6-development-02-eeg+05-meg+05",
+      "deep_index": 7512,
+      "is_true": false,
+      "distance_to_true_mm": 30.000000694243624,
+      "active_energy": 0.025281635610594613,
+      "active_energy_fraction_of_deep_peak": 0.026862404096662133,
+      "baseline_adjusted_amplitude": 0.018940304892264025,
+      "active_energy_rank": 3
+    },
+    {
+      "variant": "mean_admm",
+      "case_id": "erp-v6-development-02-eeg+05-meg+05",
+      "deep_index": 7513,
+      "is_true": false,
+      "distance_to_true_mm": 41.23105692695092,
+      "active_energy": 0.0,
+      "active_energy_fraction_of_deep_peak": 0.0,
+      "baseline_adjusted_amplitude": 0.0,
+      "active_energy_rank": 5
+    },
+    {
+      "variant": "mean_admm",
+      "case_id": "erp-v6-development-03-eeg+05-meg+05",
+      "deep_index": 7498,
+      "is_true": true,
+      "distance_to_true_mm": 0.0,
+      "active_energy": 0.7500878318752188,
+      "active_energy_fraction_of_deep_peak": 0.3906792125442072,
+      "baseline_adjusted_amplitude": 0.10610077463331985,
+      "active_energy_rank": 4
+    },
+    {
+      "variant": "mean_admm",
+      "case_id": "erp-v6-development-03-eeg+05-meg+05",
+      "deep_index": 7499,
+      "is_true": false,
+      "distance_to_true_mm": 10.00000054854849,
+      "active_energy": 0.0,
+      "active_energy_fraction_of_deep_peak": 0.0,
+      "baseline_adjusted_amplitude": 0.0,
+      "active_energy_rank": 6
+    },
+    {
+      "variant": "mean_admm",
+      "case_id": "erp-v6-development-03-eeg+05-meg+05",
+      "deep_index": 7500,
+      "is_true": false,
+      "distance_to_true_mm": 14.142136204249597,
+      "active_energy": 1.9199583898780967,
+      "active_energy_fraction_of_deep_peak": 1.0,
+      "baseline_adjusted_amplitude": 0.17035529610911807,
+      "active_energy_rank": 1
+    },
+    {
+      "variant": "mean_admm",
+      "case_id": "erp-v6-development-03-eeg+05-meg+05",
+      "deep_index": 7501,
+      "is_true": false,
+      "distance_to_true_mm": 31.622777392010047,
+      "active_energy": 1.3992791308041481,
+      "active_energy_fraction_of_deep_peak": 0.7288070086211567,
+      "baseline_adjusted_amplitude": 0.14161032728736042,
+      "active_energy_rank": 2
+    },
+    {
+      "variant": "mean_admm",
+      "case_id": "erp-v6-development-03-eeg+05-meg+05",
+      "deep_index": 7502,
+      "is_true": false,
+      "distance_to_true_mm": 41.23105720329179,
+      "active_energy": 0.0,
+      "active_energy_fraction_of_deep_peak": 0.0,
+      "baseline_adjusted_amplitude": 0.0,
+      "active_energy_rank": 6
+    },
+    {
+      "variant": "mean_admm",
+      "case_id": "erp-v6-development-03-eeg+05-meg+05",
+      "deep_index": 7503,
+      "is_true": false,
+      "distance_to_true_mm": 14.142136031724077,
+      "active_energy": 0.0,
+      "active_energy_fraction_of_deep_peak": 0.0,
+      "baseline_adjusted_amplitude": 0.0,
+      "active_energy_rank": 6
+    },
+    {
+      "variant": "mean_admm",
+      "case_id": "erp-v6-development-03-eeg+05-meg+05",
+      "deep_index": 7504,
+      "is_true": false,
+      "distance_to_true_mm": 17.320508398326936,
+      "active_energy": 0.0,
+      "active_energy_fraction_of_deep_peak": 0.0,
+      "baseline_adjusted_amplitude": 0.0,
+      "active_energy_rank": 6
+    },
+    {
+      "variant": "mean_admm",
+      "case_id": "erp-v6-development-03-eeg+05-meg+05",
+      "deep_index": 7505,
+      "is_true": false,
+      "distance_to_true_mm": 33.166248402824905,
+      "active_energy": 0.0,
+      "active_energy_fraction_of_deep_peak": 0.0,
+      "baseline_adjusted_amplitude": 0.0,
+      "active_energy_rank": 6
+    },
+    {
+      "variant": "mean_admm",
+      "case_id": "erp-v6-development-03-eeg+05-meg+05",
+      "deep_index": 7506,
+      "is_true": false,
+      "distance_to_true_mm": 37.41657376384551,
+      "active_energy": 0.0,
+      "active_energy_fraction_of_deep_peak": 0.0,
+      "baseline_adjusted_amplitude": 0.0,
+      "active_energy_rank": 6
+    },
+    {
+      "variant": "mean_admm",
+      "case_id": "erp-v6-development-03-eeg+05-meg+05",
+      "deep_index": 7507,
+      "is_true": false,
+      "distance_to_true_mm": 20.000001097096984,
+      "active_energy": 0.648484349325542,
+      "active_energy_fraction_of_deep_peak": 0.3377595851786746,
+      "baseline_adjusted_amplitude": 0.09958700404846964,
+      "active_energy_rank": 5
+    },
+    {
+      "variant": "mean_admm",
+      "case_id": "erp-v6-development-03-eeg+05-meg+05",
+      "deep_index": 7508,
+      "is_true": false,
+      "distance_to_true_mm": 36.05551397372256,
+      "active_energy": 0.8829436137106241,
+      "active_energy_fraction_of_deep_peak": 0.45987643188802885,
+      "baseline_adjusted_amplitude": 0.11130190634302055,
+      "active_energy_rank": 3
+    },
+    {
+      "variant": "mean_admm",
+      "case_id": "erp-v6-development-03-eeg+05-meg+05",
+      "deep_index": 7509,
+      "is_true": false,
+      "distance_to_true_mm": 22.360681050326836,
+      "active_energy": 0.0,
+      "active_energy_fraction_of_deep_peak": 0.0,
+      "baseline_adjusted_amplitude": 0.0,
+      "active_energy_rank": 6
+    },
+    {
+      "variant": "mean_admm",
+      "case_id": "erp-v6-development-03-eeg+05-meg+05",
+      "deep_index": 7510,
+      "is_true": false,
+      "distance_to_true_mm": 24.494898618727973,
+      "active_energy": 0.0,
+      "active_energy_fraction_of_deep_peak": 0.0,
+      "baseline_adjusted_amplitude": 0.0,
+      "active_energy_rank": 6
+    },
+    {
+      "variant": "mean_admm",
+      "case_id": "erp-v6-development-03-eeg+05-meg+05",
+      "deep_index": 7511,
+      "is_true": false,
+      "distance_to_true_mm": 37.4165749852163,
+      "active_energy": 0.0,
+      "active_energy_fraction_of_deep_peak": 0.0,
+      "baseline_adjusted_amplitude": 0.0,
+      "active_energy_rank": 6
+    },
+    {
+      "variant": "mean_admm",
+      "case_id": "erp-v6-development-03-eeg+05-meg+05",
+      "deep_index": 7512,
+      "is_true": false,
+      "distance_to_true_mm": 30.000000694243624,
+      "active_energy": 0.0,
+      "active_energy_fraction_of_deep_peak": 0.0,
+      "baseline_adjusted_amplitude": 0.0,
+      "active_energy_rank": 6
+    },
+    {
+      "variant": "mean_admm",
+      "case_id": "erp-v6-development-03-eeg+05-meg+05",
+      "deep_index": 7513,
+      "is_true": false,
+      "distance_to_true_mm": 41.23105692695092,
+      "active_energy": 0.0,
+      "active_energy_fraction_of_deep_peak": 0.0,
+      "baseline_adjusted_amplitude": 0.0,
+      "active_energy_rank": 6
+    },
+    {
+      "variant": "mean_admm",
+      "case_id": "erp-v6-development-04-eeg+05-meg+05",
+      "deep_index": 7498,
+      "is_true": true,
+      "distance_to_true_mm": 0.0,
+      "active_energy": 1.8588772210770137,
+      "active_energy_fraction_of_deep_peak": 0.18965063035190058,
+      "baseline_adjusted_amplitude": 0.16863904610734295,
+      "active_energy_rank": 2
+    },
+    {
+      "variant": "mean_admm",
+      "case_id": "erp-v6-development-04-eeg+05-meg+05",
+      "deep_index": 7499,
+      "is_true": false,
+      "distance_to_true_mm": 10.00000054854849,
+      "active_energy": 0.0,
+      "active_energy_fraction_of_deep_peak": 0.0,
+      "baseline_adjusted_amplitude": 0.0,
+      "active_energy_rank": 6
+    },
+    {
+      "variant": "mean_admm",
+      "case_id": "erp-v6-development-04-eeg+05-meg+05",
+      "deep_index": 7500,
+      "is_true": false,
+      "distance_to_true_mm": 14.142136204249597,
+      "active_energy": 9.801587358965428,
+      "active_energy_fraction_of_deep_peak": 1.0,
+      "baseline_adjusted_amplitude": 0.3976921047175881,
+      "active_energy_rank": 1
+    },
+    {
+      "variant": "mean_admm",
+      "case_id": "erp-v6-development-04-eeg+05-meg+05",
+      "deep_index": 7501,
+      "is_true": false,
+      "distance_to_true_mm": 31.622777392010047,
+      "active_energy": 1.137331712454115,
+      "active_energy_fraction_of_deep_peak": 0.11603546148204325,
+      "baseline_adjusted_amplitude": 0.13249819921629677,
+      "active_energy_rank": 3
+    },
+    {
+      "variant": "mean_admm",
+      "case_id": "erp-v6-development-04-eeg+05-meg+05",
+      "deep_index": 7502,
+      "is_true": false,
+      "distance_to_true_mm": 41.23105720329179,
+      "active_energy": 0.24629392129553757,
+      "active_energy_fraction_of_deep_peak": 0.025127962673337258,
+      "baseline_adjusted_amplitude": 0.060366590336956356,
+      "active_energy_rank": 5
+    },
+    {
+      "variant": "mean_admm",
+      "case_id": "erp-v6-development-04-eeg+05-meg+05",
+      "deep_index": 7503,
+      "is_true": false,
+      "distance_to_true_mm": 14.142136031724077,
+      "active_energy": 0.0,
+      "active_energy_fraction_of_deep_peak": 0.0,
+      "baseline_adjusted_amplitude": 0.0,
+      "active_energy_rank": 6
+    },
+    {
+      "variant": "mean_admm",
+      "case_id": "erp-v6-development-04-eeg+05-meg+05",
+      "deep_index": 7504,
+      "is_true": false,
+      "distance_to_true_mm": 17.320508398326936,
+      "active_energy": 0.0,
+      "active_energy_fraction_of_deep_peak": 0.0,
+      "baseline_adjusted_amplitude": 0.0,
+      "active_energy_rank": 6
+    },
+    {
+      "variant": "mean_admm",
+      "case_id": "erp-v6-development-04-eeg+05-meg+05",
+      "deep_index": 7505,
+      "is_true": false,
+      "distance_to_true_mm": 33.166248402824905,
+      "active_energy": 0.0,
+      "active_energy_fraction_of_deep_peak": 0.0,
+      "baseline_adjusted_amplitude": 0.0,
+      "active_energy_rank": 6
+    },
+    {
+      "variant": "mean_admm",
+      "case_id": "erp-v6-development-04-eeg+05-meg+05",
+      "deep_index": 7506,
+      "is_true": false,
+      "distance_to_true_mm": 37.41657376384551,
+      "active_energy": 0.0,
+      "active_energy_fraction_of_deep_peak": 0.0,
+      "baseline_adjusted_amplitude": 0.0,
+      "active_energy_rank": 6
+    },
+    {
+      "variant": "mean_admm",
+      "case_id": "erp-v6-development-04-eeg+05-meg+05",
+      "deep_index": 7507,
+      "is_true": false,
+      "distance_to_true_mm": 20.000001097096984,
+      "active_energy": 1.0563404148825202,
+      "active_energy_fraction_of_deep_peak": 0.10777238177817133,
+      "baseline_adjusted_amplitude": 0.12879746867071148,
+      "active_energy_rank": 4
+    },
+    {
+      "variant": "mean_admm",
+      "case_id": "erp-v6-development-04-eeg+05-meg+05",
+      "deep_index": 7508,
+      "is_true": false,
+      "distance_to_true_mm": 36.05551397372256,
+      "active_energy": 0.0,
+      "active_energy_fraction_of_deep_peak": 0.0,
+      "baseline_adjusted_amplitude": 0.0,
+      "active_energy_rank": 6
+    },
+    {
+      "variant": "mean_admm",
+      "case_id": "erp-v6-development-04-eeg+05-meg+05",
+      "deep_index": 7509,
+      "is_true": false,
+      "distance_to_true_mm": 22.360681050326836,
+      "active_energy": 0.0,
+      "active_energy_fraction_of_deep_peak": 0.0,
+      "baseline_adjusted_amplitude": 0.0,
+      "active_energy_rank": 6
+    },
+    {
+      "variant": "mean_admm",
+      "case_id": "erp-v6-development-04-eeg+05-meg+05",
+      "deep_index": 7510,
+      "is_true": false,
+      "distance_to_true_mm": 24.494898618727973,
+      "active_energy": 0.0,
+      "active_energy_fraction_of_deep_peak": 0.0,
+      "baseline_adjusted_amplitude": 0.0,
+      "active_energy_rank": 6
+    },
+    {
+      "variant": "mean_admm",
+      "case_id": "erp-v6-development-04-eeg+05-meg+05",
+      "deep_index": 7511,
+      "is_true": false,
+      "distance_to_true_mm": 37.4165749852163,
+      "active_energy": 0.0,
+      "active_energy_fraction_of_deep_peak": 0.0,
+      "baseline_adjusted_amplitude": 0.0,
+      "active_energy_rank": 6
+    },
+    {
+      "variant": "mean_admm",
+      "case_id": "erp-v6-development-04-eeg+05-meg+05",
+      "deep_index": 7512,
+      "is_true": false,
+      "distance_to_true_mm": 30.000000694243624,
+      "active_energy": 0.0,
+      "active_energy_fraction_of_deep_peak": 0.0,
+      "baseline_adjusted_amplitude": 0.0,
+      "active_energy_rank": 6
+    },
+    {
+      "variant": "mean_admm",
+      "case_id": "erp-v6-development-04-eeg+05-meg+05",
+      "deep_index": 7513,
+      "is_true": false,
+      "distance_to_true_mm": 41.23105692695092,
+      "active_energy": 0.0,
+      "active_energy_fraction_of_deep_peak": 0.0,
+      "baseline_adjusted_amplitude": 0.0,
+      "active_energy_rank": 6
+    },
+    {
+      "variant": "trial_admm",
+      "case_id": "erp-v6-development-00-eeg+05-meg+05",
+      "deep_index": 7498,
+      "is_true": false,
+      "distance_to_true_mm": null,
+      "active_energy": 0.0,
+      "active_energy_fraction_of_deep_peak": 0.0,
+      "baseline_adjusted_amplitude": 0.0,
+      "active_energy_rank": 2
+    },
+    {
+      "variant": "trial_admm",
+      "case_id": "erp-v6-development-00-eeg+05-meg+05",
+      "deep_index": 7499,
+      "is_true": false,
+      "distance_to_true_mm": null,
+      "active_energy": 0.0,
+      "active_energy_fraction_of_deep_peak": 0.0,
+      "baseline_adjusted_amplitude": 0.0,
+      "active_energy_rank": 2
+    },
+    {
+      "variant": "trial_admm",
+      "case_id": "erp-v6-development-00-eeg+05-meg+05",
+      "deep_index": 7500,
+      "is_true": false,
+      "distance_to_true_mm": null,
+      "active_energy": 0.0711547721400511,
+      "active_energy_fraction_of_deep_peak": 1.0,
+      "baseline_adjusted_amplitude": 0.030031967672299664,
+      "active_energy_rank": 1
+    },
+    {
+      "variant": "trial_admm",
+      "case_id": "erp-v6-development-00-eeg+05-meg+05",
+      "deep_index": 7501,
+      "is_true": false,
+      "distance_to_true_mm": null,
+      "active_energy": 0.0,
+      "active_energy_fraction_of_deep_peak": 0.0,
+      "baseline_adjusted_amplitude": 0.0,
+      "active_energy_rank": 2
+    },
+    {
+      "variant": "trial_admm",
+      "case_id": "erp-v6-development-00-eeg+05-meg+05",
+      "deep_index": 7502,
+      "is_true": false,
+      "distance_to_true_mm": null,
+      "active_energy": 0.0,
+      "active_energy_fraction_of_deep_peak": 0.0,
+      "baseline_adjusted_amplitude": 0.0,
+      "active_energy_rank": 2
+    },
+    {
+      "variant": "trial_admm",
+      "case_id": "erp-v6-development-00-eeg+05-meg+05",
+      "deep_index": 7503,
+      "is_true": false,
+      "distance_to_true_mm": null,
+      "active_energy": 0.0,
+      "active_energy_fraction_of_deep_peak": 0.0,
+      "baseline_adjusted_amplitude": 0.0,
+      "active_energy_rank": 2
+    },
+    {
+      "variant": "trial_admm",
+      "case_id": "erp-v6-development-00-eeg+05-meg+05",
+      "deep_index": 7504,
+      "is_true": false,
+      "distance_to_true_mm": null,
+      "active_energy": 0.0,
+      "active_energy_fraction_of_deep_peak": 0.0,
+      "baseline_adjusted_amplitude": 0.0,
+      "active_energy_rank": 2
+    },
+    {
+      "variant": "trial_admm",
+      "case_id": "erp-v6-development-00-eeg+05-meg+05",
+      "deep_index": 7505,
+      "is_true": false,
+      "distance_to_true_mm": null,
+      "active_energy": 0.0,
+      "active_energy_fraction_of_deep_peak": 0.0,
+      "baseline_adjusted_amplitude": 0.0,
+      "active_energy_rank": 2
+    },
+    {
+      "variant": "trial_admm",
+      "case_id": "erp-v6-development-00-eeg+05-meg+05",
+      "deep_index": 7506,
+      "is_true": false,
+      "distance_to_true_mm": null,
+      "active_energy": 0.0,
+      "active_energy_fraction_of_deep_peak": 0.0,
+      "baseline_adjusted_amplitude": 0.0,
+      "active_energy_rank": 2
+    },
+    {
+      "variant": "trial_admm",
+      "case_id": "erp-v6-development-00-eeg+05-meg+05",
+      "deep_index": 7507,
+      "is_true": false,
+      "distance_to_true_mm": null,
+      "active_energy": 0.0,
+      "active_energy_fraction_of_deep_peak": 0.0,
+      "baseline_adjusted_amplitude": 0.0,
+      "active_energy_rank": 2
+    },
+    {
+      "variant": "trial_admm",
+      "case_id": "erp-v6-development-00-eeg+05-meg+05",
+      "deep_index": 7508,
+      "is_true": false,
+      "distance_to_true_mm": null,
+      "active_energy": 0.0,
+      "active_energy_fraction_of_deep_peak": 0.0,
+      "baseline_adjusted_amplitude": 0.0,
+      "active_energy_rank": 2
+    },
+    {
+      "variant": "trial_admm",
+      "case_id": "erp-v6-development-00-eeg+05-meg+05",
+      "deep_index": 7509,
+      "is_true": false,
+      "distance_to_true_mm": null,
+      "active_energy": 0.0,
+      "active_energy_fraction_of_deep_peak": 0.0,
+      "baseline_adjusted_amplitude": 0.0,
+      "active_energy_rank": 2
+    },
+    {
+      "variant": "trial_admm",
+      "case_id": "erp-v6-development-00-eeg+05-meg+05",
+      "deep_index": 7510,
+      "is_true": false,
+      "distance_to_true_mm": null,
+      "active_energy": 0.0,
+      "active_energy_fraction_of_deep_peak": 0.0,
+      "baseline_adjusted_amplitude": 0.0,
+      "active_energy_rank": 2
+    },
+    {
+      "variant": "trial_admm",
+      "case_id": "erp-v6-development-00-eeg+05-meg+05",
+      "deep_index": 7511,
+      "is_true": false,
+      "distance_to_true_mm": null,
+      "active_energy": 0.0,
+      "active_energy_fraction_of_deep_peak": 0.0,
+      "baseline_adjusted_amplitude": 0.0,
+      "active_energy_rank": 2
+    },
+    {
+      "variant": "trial_admm",
+      "case_id": "erp-v6-development-00-eeg+05-meg+05",
+      "deep_index": 7512,
+      "is_true": false,
+      "distance_to_true_mm": null,
+      "active_energy": 0.0,
+      "active_energy_fraction_of_deep_peak": 0.0,
+      "baseline_adjusted_amplitude": 0.0,
+      "active_energy_rank": 2
+    },
+    {
+      "variant": "trial_admm",
+      "case_id": "erp-v6-development-00-eeg+05-meg+05",
+      "deep_index": 7513,
+      "is_true": false,
+      "distance_to_true_mm": null,
+      "active_energy": 0.0,
+      "active_energy_fraction_of_deep_peak": 0.0,
+      "baseline_adjusted_amplitude": 0.0,
+      "active_energy_rank": 2
+    },
+    {
+      "variant": "trial_admm",
+      "case_id": "erp-v6-development-01-eeg+05-meg+05",
+      "deep_index": 7498,
+      "is_true": false,
+      "distance_to_true_mm": null,
+      "active_energy": 0.0,
+      "active_energy_fraction_of_deep_peak": 0.0,
+      "baseline_adjusted_amplitude": 0.0,
+      "active_energy_rank": 3
+    },
+    {
+      "variant": "trial_admm",
+      "case_id": "erp-v6-development-01-eeg+05-meg+05",
+      "deep_index": 7499,
+      "is_true": false,
+      "distance_to_true_mm": null,
+      "active_energy": 0.0,
+      "active_energy_fraction_of_deep_peak": 0.0,
+      "baseline_adjusted_amplitude": 0.0,
+      "active_energy_rank": 3
+    },
+    {
+      "variant": "trial_admm",
+      "case_id": "erp-v6-development-01-eeg+05-meg+05",
+      "deep_index": 7500,
+      "is_true": false,
+      "distance_to_true_mm": null,
+      "active_energy": 0.07111425133790548,
+      "active_energy_fraction_of_deep_peak": 0.055943723552936635,
+      "baseline_adjusted_amplitude": 0.029516622007338456,
+      "active_energy_rank": 2
+    },
+    {
+      "variant": "trial_admm",
+      "case_id": "erp-v6-development-01-eeg+05-meg+05",
+      "deep_index": 7501,
+      "is_true": false,
+      "distance_to_true_mm": null,
+      "active_energy": 1.271174795338994,
+      "active_energy_fraction_of_deep_peak": 1.0,
+      "baseline_adjusted_amplitude": 0.14207132218870502,
+      "active_energy_rank": 1
+    },
+    {
+      "variant": "trial_admm",
+      "case_id": "erp-v6-development-01-eeg+05-meg+05",
+      "deep_index": 7502,
+      "is_true": false,
+      "distance_to_true_mm": null,
+      "active_energy": 0.0,
+      "active_energy_fraction_of_deep_peak": 0.0,
+      "baseline_adjusted_amplitude": 0.0,
+      "active_energy_rank": 3
+    },
+    {
+      "variant": "trial_admm",
+      "case_id": "erp-v6-development-01-eeg+05-meg+05",
+      "deep_index": 7503,
+      "is_true": false,
+      "distance_to_true_mm": null,
+      "active_energy": 0.0,
+      "active_energy_fraction_of_deep_peak": 0.0,
+      "baseline_adjusted_amplitude": 0.0,
+      "active_energy_rank": 3
+    },
+    {
+      "variant": "trial_admm",
+      "case_id": "erp-v6-development-01-eeg+05-meg+05",
+      "deep_index": 7504,
+      "is_true": false,
+      "distance_to_true_mm": null,
+      "active_energy": 0.0,
+      "active_energy_fraction_of_deep_peak": 0.0,
+      "baseline_adjusted_amplitude": 0.0,
+      "active_energy_rank": 3
+    },
+    {
+      "variant": "trial_admm",
+      "case_id": "erp-v6-development-01-eeg+05-meg+05",
+      "deep_index": 7505,
+      "is_true": false,
+      "distance_to_true_mm": null,
+      "active_energy": 0.0,
+      "active_energy_fraction_of_deep_peak": 0.0,
+      "baseline_adjusted_amplitude": 0.0,
+      "active_energy_rank": 3
+    },
+    {
+      "variant": "trial_admm",
+      "case_id": "erp-v6-development-01-eeg+05-meg+05",
+      "deep_index": 7506,
+      "is_true": false,
+      "distance_to_true_mm": null,
+      "active_energy": 0.0,
+      "active_energy_fraction_of_deep_peak": 0.0,
+      "baseline_adjusted_amplitude": 0.0,
+      "active_energy_rank": 3
+    },
+    {
+      "variant": "trial_admm",
+      "case_id": "erp-v6-development-01-eeg+05-meg+05",
+      "deep_index": 7507,
+      "is_true": false,
+      "distance_to_true_mm": null,
+      "active_energy": 0.0,
+      "active_energy_fraction_of_deep_peak": 0.0,
+      "baseline_adjusted_amplitude": 0.0,
+      "active_energy_rank": 3
+    },
+    {
+      "variant": "trial_admm",
+      "case_id": "erp-v6-development-01-eeg+05-meg+05",
+      "deep_index": 7508,
+      "is_true": false,
+      "distance_to_true_mm": null,
+      "active_energy": 0.0,
+      "active_energy_fraction_of_deep_peak": 0.0,
+      "baseline_adjusted_amplitude": 0.0,
+      "active_energy_rank": 3
+    },
+    {
+      "variant": "trial_admm",
+      "case_id": "erp-v6-development-01-eeg+05-meg+05",
+      "deep_index": 7509,
+      "is_true": false,
+      "distance_to_true_mm": null,
+      "active_energy": 0.0,
+      "active_energy_fraction_of_deep_peak": 0.0,
+      "baseline_adjusted_amplitude": 0.0,
+      "active_energy_rank": 3
+    },
+    {
+      "variant": "trial_admm",
+      "case_id": "erp-v6-development-01-eeg+05-meg+05",
+      "deep_index": 7510,
+      "is_true": false,
+      "distance_to_true_mm": null,
+      "active_energy": 0.0,
+      "active_energy_fraction_of_deep_peak": 0.0,
+      "baseline_adjusted_amplitude": 0.0,
+      "active_energy_rank": 3
+    },
+    {
+      "variant": "trial_admm",
+      "case_id": "erp-v6-development-01-eeg+05-meg+05",
+      "deep_index": 7511,
+      "is_true": false,
+      "distance_to_true_mm": null,
+      "active_energy": 0.0,
+      "active_energy_fraction_of_deep_peak": 0.0,
+      "baseline_adjusted_amplitude": 0.0,
+      "active_energy_rank": 3
+    },
+    {
+      "variant": "trial_admm",
+      "case_id": "erp-v6-development-01-eeg+05-meg+05",
+      "deep_index": 7512,
+      "is_true": false,
+      "distance_to_true_mm": null,
+      "active_energy": 0.0,
+      "active_energy_fraction_of_deep_peak": 0.0,
+      "baseline_adjusted_amplitude": 0.0,
+      "active_energy_rank": 3
+    },
+    {
+      "variant": "trial_admm",
+      "case_id": "erp-v6-development-01-eeg+05-meg+05",
+      "deep_index": 7513,
+      "is_true": false,
+      "distance_to_true_mm": null,
+      "active_energy": 0.0,
+      "active_energy_fraction_of_deep_peak": 0.0,
+      "baseline_adjusted_amplitude": 0.0,
+      "active_energy_rank": 3
+    },
+    {
+      "variant": "trial_admm",
+      "case_id": "erp-v6-development-02-eeg+05-meg+05",
+      "deep_index": 7498,
+      "is_true": true,
+      "distance_to_true_mm": 0.0,
+      "active_energy": 0.9880573657331763,
+      "active_energy_fraction_of_deep_peak": 1.0,
+      "baseline_adjusted_amplitude": 0.1263330763046995,
+      "active_energy_rank": 1
+    },
+    {
+      "variant": "trial_admm",
+      "case_id": "erp-v6-development-02-eeg+05-meg+05",
+      "deep_index": 7499,
+      "is_true": false,
+      "distance_to_true_mm": 10.00000054854849,
+      "active_energy": 0.0,
+      "active_energy_fraction_of_deep_peak": 0.0,
+      "baseline_adjusted_amplitude": 0.0,
+      "active_energy_rank": 2
+    },
+    {
+      "variant": "trial_admm",
+      "case_id": "erp-v6-development-02-eeg+05-meg+05",
+      "deep_index": 7500,
+      "is_true": false,
+      "distance_to_true_mm": 14.142136204249597,
+      "active_energy": 0.0,
+      "active_energy_fraction_of_deep_peak": 0.0,
+      "baseline_adjusted_amplitude": 0.0,
+      "active_energy_rank": 2
+    },
+    {
+      "variant": "trial_admm",
+      "case_id": "erp-v6-development-02-eeg+05-meg+05",
+      "deep_index": 7501,
+      "is_true": false,
+      "distance_to_true_mm": 31.622777392010047,
+      "active_energy": 0.0,
+      "active_energy_fraction_of_deep_peak": 0.0,
+      "baseline_adjusted_amplitude": 0.0,
+      "active_energy_rank": 2
+    },
+    {
+      "variant": "trial_admm",
+      "case_id": "erp-v6-development-02-eeg+05-meg+05",
+      "deep_index": 7502,
+      "is_true": false,
+      "distance_to_true_mm": 41.23105720329179,
+      "active_energy": 0.0,
+      "active_energy_fraction_of_deep_peak": 0.0,
+      "baseline_adjusted_amplitude": 0.0,
+      "active_energy_rank": 2
+    },
+    {
+      "variant": "trial_admm",
+      "case_id": "erp-v6-development-02-eeg+05-meg+05",
+      "deep_index": 7503,
+      "is_true": false,
+      "distance_to_true_mm": 14.142136031724077,
+      "active_energy": 0.0,
+      "active_energy_fraction_of_deep_peak": 0.0,
+      "baseline_adjusted_amplitude": 0.0,
+      "active_energy_rank": 2
+    },
+    {
+      "variant": "trial_admm",
+      "case_id": "erp-v6-development-02-eeg+05-meg+05",
+      "deep_index": 7504,
+      "is_true": false,
+      "distance_to_true_mm": 17.320508398326936,
+      "active_energy": 0.0,
+      "active_energy_fraction_of_deep_peak": 0.0,
+      "baseline_adjusted_amplitude": 0.0,
+      "active_energy_rank": 2
+    },
+    {
+      "variant": "trial_admm",
+      "case_id": "erp-v6-development-02-eeg+05-meg+05",
+      "deep_index": 7505,
+      "is_true": false,
+      "distance_to_true_mm": 33.166248402824905,
+      "active_energy": 0.0,
+      "active_energy_fraction_of_deep_peak": 0.0,
+      "baseline_adjusted_amplitude": 0.0,
+      "active_energy_rank": 2
+    },
+    {
+      "variant": "trial_admm",
+      "case_id": "erp-v6-development-02-eeg+05-meg+05",
+      "deep_index": 7506,
+      "is_true": false,
+      "distance_to_true_mm": 37.41657376384551,
+      "active_energy": 0.0,
+      "active_energy_fraction_of_deep_peak": 0.0,
+      "baseline_adjusted_amplitude": 0.0,
+      "active_energy_rank": 2
+    },
+    {
+      "variant": "trial_admm",
+      "case_id": "erp-v6-development-02-eeg+05-meg+05",
+      "deep_index": 7507,
+      "is_true": false,
+      "distance_to_true_mm": 20.000001097096984,
+      "active_energy": 0.0,
+      "active_energy_fraction_of_deep_peak": 0.0,
+      "baseline_adjusted_amplitude": 0.0,
+      "active_energy_rank": 2
+    },
+    {
+      "variant": "trial_admm",
+      "case_id": "erp-v6-development-02-eeg+05-meg+05",
+      "deep_index": 7508,
+      "is_true": false,
+      "distance_to_true_mm": 36.05551397372256,
+      "active_energy": 0.0,
+      "active_energy_fraction_of_deep_peak": 0.0,
+      "baseline_adjusted_amplitude": 0.0,
+      "active_energy_rank": 2
+    },
+    {
+      "variant": "trial_admm",
+      "case_id": "erp-v6-development-02-eeg+05-meg+05",
+      "deep_index": 7509,
+      "is_true": false,
+      "distance_to_true_mm": 22.360681050326836,
+      "active_energy": 0.0,
+      "active_energy_fraction_of_deep_peak": 0.0,
+      "baseline_adjusted_amplitude": 0.0,
+      "active_energy_rank": 2
+    },
+    {
+      "variant": "trial_admm",
+      "case_id": "erp-v6-development-02-eeg+05-meg+05",
+      "deep_index": 7510,
+      "is_true": false,
+      "distance_to_true_mm": 24.494898618727973,
+      "active_energy": 0.0,
+      "active_energy_fraction_of_deep_peak": 0.0,
+      "baseline_adjusted_amplitude": 0.0,
+      "active_energy_rank": 2
+    },
+    {
+      "variant": "trial_admm",
+      "case_id": "erp-v6-development-02-eeg+05-meg+05",
+      "deep_index": 7511,
+      "is_true": false,
+      "distance_to_true_mm": 37.4165749852163,
+      "active_energy": 0.0,
+      "active_energy_fraction_of_deep_peak": 0.0,
+      "baseline_adjusted_amplitude": 0.0,
+      "active_energy_rank": 2
+    },
+    {
+      "variant": "trial_admm",
+      "case_id": "erp-v6-development-02-eeg+05-meg+05",
+      "deep_index": 7512,
+      "is_true": false,
+      "distance_to_true_mm": 30.000000694243624,
+      "active_energy": 0.0,
+      "active_energy_fraction_of_deep_peak": 0.0,
+      "baseline_adjusted_amplitude": 0.0,
+      "active_energy_rank": 2
+    },
+    {
+      "variant": "trial_admm",
+      "case_id": "erp-v6-development-02-eeg+05-meg+05",
+      "deep_index": 7513,
+      "is_true": false,
+      "distance_to_true_mm": 41.23105692695092,
+      "active_energy": 0.0,
+      "active_energy_fraction_of_deep_peak": 0.0,
+      "baseline_adjusted_amplitude": 0.0,
+      "active_energy_rank": 2
+    },
+    {
+      "variant": "trial_admm",
+      "case_id": "erp-v6-development-03-eeg+05-meg+05",
+      "deep_index": 7498,
+      "is_true": true,
+      "distance_to_true_mm": 0.0,
+      "active_energy": 1.0521135418692973,
+      "active_energy_fraction_of_deep_peak": 1.0,
+      "baseline_adjusted_amplitude": 0.12170278091462115,
+      "active_energy_rank": 1
+    },
+    {
+      "variant": "trial_admm",
+      "case_id": "erp-v6-development-03-eeg+05-meg+05",
+      "deep_index": 7499,
+      "is_true": false,
+      "distance_to_true_mm": 10.00000054854849,
+      "active_energy": 0.0,
+      "active_energy_fraction_of_deep_peak": 0.0,
+      "baseline_adjusted_amplitude": 0.0,
+      "active_energy_rank": 5
+    },
+    {
+      "variant": "trial_admm",
+      "case_id": "erp-v6-development-03-eeg+05-meg+05",
+      "deep_index": 7500,
+      "is_true": false,
+      "distance_to_true_mm": 14.142136204249597,
+      "active_energy": 0.25671527316475645,
+      "active_energy_fraction_of_deep_peak": 0.2439995902995875,
+      "baseline_adjusted_amplitude": 0.057933949870797176,
+      "active_energy_rank": 3
+    },
+    {
+      "variant": "trial_admm",
+      "case_id": "erp-v6-development-03-eeg+05-meg+05",
+      "deep_index": 7501,
+      "is_true": false,
+      "distance_to_true_mm": 31.622777392010047,
+      "active_energy": 0.0,
+      "active_energy_fraction_of_deep_peak": 0.0,
+      "baseline_adjusted_amplitude": 0.0,
+      "active_energy_rank": 5
+    },
+    {
+      "variant": "trial_admm",
+      "case_id": "erp-v6-development-03-eeg+05-meg+05",
+      "deep_index": 7502,
+      "is_true": false,
+      "distance_to_true_mm": 41.23105720329179,
+      "active_energy": 0.0,
+      "active_energy_fraction_of_deep_peak": 0.0,
+      "baseline_adjusted_amplitude": 0.0,
+      "active_energy_rank": 5
+    },
+    {
+      "variant": "trial_admm",
+      "case_id": "erp-v6-development-03-eeg+05-meg+05",
+      "deep_index": 7503,
+      "is_true": false,
+      "distance_to_true_mm": 14.142136031724077,
+      "active_energy": 0.0,
+      "active_energy_fraction_of_deep_peak": 0.0,
+      "baseline_adjusted_amplitude": 0.0,
+      "active_energy_rank": 5
+    },
+    {
+      "variant": "trial_admm",
+      "case_id": "erp-v6-development-03-eeg+05-meg+05",
+      "deep_index": 7504,
+      "is_true": false,
+      "distance_to_true_mm": 17.320508398326936,
+      "active_energy": 0.0,
+      "active_energy_fraction_of_deep_peak": 0.0,
+      "baseline_adjusted_amplitude": 0.0,
+      "active_energy_rank": 5
+    },
+    {
+      "variant": "trial_admm",
+      "case_id": "erp-v6-development-03-eeg+05-meg+05",
+      "deep_index": 7505,
+      "is_true": false,
+      "distance_to_true_mm": 33.166248402824905,
+      "active_energy": 0.0,
+      "active_energy_fraction_of_deep_peak": 0.0,
+      "baseline_adjusted_amplitude": 0.0,
+      "active_energy_rank": 5
+    },
+    {
+      "variant": "trial_admm",
+      "case_id": "erp-v6-development-03-eeg+05-meg+05",
+      "deep_index": 7506,
+      "is_true": false,
+      "distance_to_true_mm": 37.41657376384551,
+      "active_energy": 0.0,
+      "active_energy_fraction_of_deep_peak": 0.0,
+      "baseline_adjusted_amplitude": 0.0,
+      "active_energy_rank": 5
+    },
+    {
+      "variant": "trial_admm",
+      "case_id": "erp-v6-development-03-eeg+05-meg+05",
+      "deep_index": 7507,
+      "is_true": false,
+      "distance_to_true_mm": 20.000001097096984,
+      "active_energy": 0.0,
+      "active_energy_fraction_of_deep_peak": 0.0,
+      "baseline_adjusted_amplitude": 0.0,
+      "active_energy_rank": 5
+    },
+    {
+      "variant": "trial_admm",
+      "case_id": "erp-v6-development-03-eeg+05-meg+05",
+      "deep_index": 7508,
+      "is_true": false,
+      "distance_to_true_mm": 36.05551397372256,
+      "active_energy": 0.1243872910588553,
+      "active_energy_fraction_of_deep_peak": 0.11822610973893137,
+      "baseline_adjusted_amplitude": 0.03555595502466853,
+      "active_energy_rank": 4
+    },
+    {
+      "variant": "trial_admm",
+      "case_id": "erp-v6-development-03-eeg+05-meg+05",
+      "deep_index": 7509,
+      "is_true": false,
+      "distance_to_true_mm": 22.360681050326836,
+      "active_energy": 0.26223866727606876,
+      "active_energy_fraction_of_deep_peak": 0.24924939832078155,
+      "baseline_adjusted_amplitude": 0.06276185997209348,
+      "active_energy_rank": 2
+    },
+    {
+      "variant": "trial_admm",
+      "case_id": "erp-v6-development-03-eeg+05-meg+05",
+      "deep_index": 7510,
+      "is_true": false,
+      "distance_to_true_mm": 24.494898618727973,
+      "active_energy": 0.0,
+      "active_energy_fraction_of_deep_peak": 0.0,
+      "baseline_adjusted_amplitude": 0.0,
+      "active_energy_rank": 5
+    },
+    {
+      "variant": "trial_admm",
+      "case_id": "erp-v6-development-03-eeg+05-meg+05",
+      "deep_index": 7511,
+      "is_true": false,
+      "distance_to_true_mm": 37.4165749852163,
+      "active_energy": 0.0,
+      "active_energy_fraction_of_deep_peak": 0.0,
+      "baseline_adjusted_amplitude": 0.0,
+      "active_energy_rank": 5
+    },
+    {
+      "variant": "trial_admm",
+      "case_id": "erp-v6-development-03-eeg+05-meg+05",
+      "deep_index": 7512,
+      "is_true": false,
+      "distance_to_true_mm": 30.000000694243624,
+      "active_energy": 0.0,
+      "active_energy_fraction_of_deep_peak": 0.0,
+      "baseline_adjusted_amplitude": 0.0,
+      "active_energy_rank": 5
+    },
+    {
+      "variant": "trial_admm",
+      "case_id": "erp-v6-development-03-eeg+05-meg+05",
+      "deep_index": 7513,
+      "is_true": false,
+      "distance_to_true_mm": 41.23105692695092,
+      "active_energy": 0.0,
+      "active_energy_fraction_of_deep_peak": 0.0,
+      "baseline_adjusted_amplitude": 0.0,
+      "active_energy_rank": 5
+    },
+    {
+      "variant": "trial_admm",
+      "case_id": "erp-v6-development-04-eeg+05-meg+05",
+      "deep_index": 7498,
+      "is_true": true,
+      "distance_to_true_mm": 0.0,
+      "active_energy": 2.1745512690745263,
+      "active_energy_fraction_of_deep_peak": 1.0,
+      "baseline_adjusted_amplitude": 0.17518492030385482,
+      "active_energy_rank": 1
+    },
+    {
+      "variant": "trial_admm",
+      "case_id": "erp-v6-development-04-eeg+05-meg+05",
+      "deep_index": 7499,
+      "is_true": false,
+      "distance_to_true_mm": 10.00000054854849,
+      "active_energy": 0.0,
+      "active_energy_fraction_of_deep_peak": 0.0,
+      "baseline_adjusted_amplitude": 0.0,
+      "active_energy_rank": 4
+    },
+    {
+      "variant": "trial_admm",
+      "case_id": "erp-v6-development-04-eeg+05-meg+05",
+      "deep_index": 7500,
+      "is_true": false,
+      "distance_to_true_mm": 14.142136204249597,
+      "active_energy": 1.3698639634240384,
+      "active_energy_fraction_of_deep_peak": 0.6299524793485521,
+      "baseline_adjusted_amplitude": 0.13991385276511528,
+      "active_energy_rank": 3
+    },
+    {
+      "variant": "trial_admm",
+      "case_id": "erp-v6-development-04-eeg+05-meg+05",
+      "deep_index": 7501,
+      "is_true": false,
+      "distance_to_true_mm": 31.622777392010047,
+      "active_energy": 1.7462389592222851,
+      "active_energy_fraction_of_deep_peak": 0.8030341634416704,
+      "baseline_adjusted_amplitude": 0.16294821291434497,
+      "active_energy_rank": 2
+    },
+    {
+      "variant": "trial_admm",
+      "case_id": "erp-v6-development-04-eeg+05-meg+05",
+      "deep_index": 7502,
+      "is_true": false,
+      "distance_to_true_mm": 41.23105720329179,
+      "active_energy": 0.0,
+      "active_energy_fraction_of_deep_peak": 0.0,
+      "baseline_adjusted_amplitude": 0.0,
+      "active_energy_rank": 4
+    },
+    {
+      "variant": "trial_admm",
+      "case_id": "erp-v6-development-04-eeg+05-meg+05",
+      "deep_index": 7503,
+      "is_true": false,
+      "distance_to_true_mm": 14.142136031724077,
+      "active_energy": 0.0,
+      "active_energy_fraction_of_deep_peak": 0.0,
+      "baseline_adjusted_amplitude": 0.0,
+      "active_energy_rank": 4
+    },
+    {
+      "variant": "trial_admm",
+      "case_id": "erp-v6-development-04-eeg+05-meg+05",
+      "deep_index": 7504,
+      "is_true": false,
+      "distance_to_true_mm": 17.320508398326936,
+      "active_energy": 0.0,
+      "active_energy_fraction_of_deep_peak": 0.0,
+      "baseline_adjusted_amplitude": 0.0,
+      "active_energy_rank": 4
+    },
+    {
+      "variant": "trial_admm",
+      "case_id": "erp-v6-development-04-eeg+05-meg+05",
+      "deep_index": 7505,
+      "is_true": false,
+      "distance_to_true_mm": 33.166248402824905,
+      "active_energy": 0.0,
+      "active_energy_fraction_of_deep_peak": 0.0,
+      "baseline_adjusted_amplitude": 0.0,
+      "active_energy_rank": 4
+    },
+    {
+      "variant": "trial_admm",
+      "case_id": "erp-v6-development-04-eeg+05-meg+05",
+      "deep_index": 7506,
+      "is_true": false,
+      "distance_to_true_mm": 37.41657376384551,
+      "active_energy": 0.0,
+      "active_energy_fraction_of_deep_peak": 0.0,
+      "baseline_adjusted_amplitude": 0.0,
+      "active_energy_rank": 4
+    },
+    {
+      "variant": "trial_admm",
+      "case_id": "erp-v6-development-04-eeg+05-meg+05",
+      "deep_index": 7507,
+      "is_true": false,
+      "distance_to_true_mm": 20.000001097096984,
+      "active_energy": 0.0,
+      "active_energy_fraction_of_deep_peak": 0.0,
+      "baseline_adjusted_amplitude": 0.0,
+      "active_energy_rank": 4
+    },
+    {
+      "variant": "trial_admm",
+      "case_id": "erp-v6-development-04-eeg+05-meg+05",
+      "deep_index": 7508,
+      "is_true": false,
+      "distance_to_true_mm": 36.05551397372256,
+      "active_energy": 0.0,
+      "active_energy_fraction_of_deep_peak": 0.0,
+      "baseline_adjusted_amplitude": 0.0,
+      "active_energy_rank": 4
+    },
+    {
+      "variant": "trial_admm",
+      "case_id": "erp-v6-development-04-eeg+05-meg+05",
+      "deep_index": 7509,
+      "is_true": false,
+      "distance_to_true_mm": 22.360681050326836,
+      "active_energy": 0.0,
+      "active_energy_fraction_of_deep_peak": 0.0,
+      "baseline_adjusted_amplitude": 0.0,
+      "active_energy_rank": 4
+    },
+    {
+      "variant": "trial_admm",
+      "case_id": "erp-v6-development-04-eeg+05-meg+05",
+      "deep_index": 7510,
+      "is_true": false,
+      "distance_to_true_mm": 24.494898618727973,
+      "active_energy": 0.0,
+      "active_energy_fraction_of_deep_peak": 0.0,
+      "baseline_adjusted_amplitude": 0.0,
+      "active_energy_rank": 4
+    },
+    {
+      "variant": "trial_admm",
+      "case_id": "erp-v6-development-04-eeg+05-meg+05",
+      "deep_index": 7511,
+      "is_true": false,
+      "distance_to_true_mm": 37.4165749852163,
+      "active_energy": 0.0,
+      "active_energy_fraction_of_deep_peak": 0.0,
+      "baseline_adjusted_amplitude": 0.0,
+      "active_energy_rank": 4
+    },
+    {
+      "variant": "trial_admm",
+      "case_id": "erp-v6-development-04-eeg+05-meg+05",
+      "deep_index": 7512,
+      "is_true": false,
+      "distance_to_true_mm": 30.000000694243624,
+      "active_energy": 0.0,
+      "active_energy_fraction_of_deep_peak": 0.0,
+      "baseline_adjusted_amplitude": 0.0,
+      "active_energy_rank": 4
+    },
+    {
+      "variant": "trial_admm",
+      "case_id": "erp-v6-development-04-eeg+05-meg+05",
+      "deep_index": 7513,
+      "is_true": false,
+      "distance_to_true_mm": 41.23105692695092,
+      "active_energy": 0.0,
+      "active_energy_fraction_of_deep_peak": 0.0,
+      "baseline_adjusted_amplitude": 0.0,
+      "active_energy_rank": 4
+    }
+  ]
+}

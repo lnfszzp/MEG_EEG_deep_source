@@ -194,4 +194,4 @@ results/strict_blind/*_shards/
 !results/erp_whole_head/adaptive_v6/**/*.sha256
 !results/erp_whole_head/adaptive_v6/**/*.md
 !results/erp_whole_head/adaptive_v6/**/*.png
-!results/erp_whole_head/adaptive_v6/development_diagnosis/deep_leakage_saved_arrays.py
+!results/erp_whole_head/adaptive_v6/development_diagnosis/*.py

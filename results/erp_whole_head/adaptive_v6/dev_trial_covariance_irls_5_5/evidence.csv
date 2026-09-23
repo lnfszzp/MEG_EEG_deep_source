@@ -1,0 +1,6 @@
+﻿case_id,configuration_id,scenario,eeg_snr_db,meg_snr_db,score,null_converged,full_converged,all_converged,elapsed_seconds,covariance
+erp-v6-development-00-eeg+05-meg+05,erp-v6-development-00,surface_only,5,5,-1.0487720462762083e-05,1,1,1,9.749409299984109,trial
+erp-v6-development-01-eeg+05-meg+05,erp-v6-development-01,surface_only,5,5,0.00018414660040165599,1,1,1,5.882748399977572,trial
+erp-v6-development-02-eeg+05-meg+05,erp-v6-development-02,deep_only,5,5,0.1469988215736901,1,1,1,2.688347099989187,trial
+erp-v6-development-03-eeg+05-meg+05,erp-v6-development-03,deep_plus_surface,5,5,0.018106295512077288,1,1,1,5.995432200026698,trial
+erp-v6-development-04-eeg+05-meg+05,erp-v6-development-04,deep_plus_two_surface,5,5,-0.013128050761440389,1,1,1,5.312476700055413,trial

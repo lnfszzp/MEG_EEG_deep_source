@@ -1,0 +1,728 @@
+{
+  "case_id": "erp-v6-development-02-eeg-10-meg-10",
+  "simulation": {
+    "case_id": "erp-v6-development-02-eeg-10-meg-10",
+    "protocol": "phase-locked-erp-independent-means-v1",
+    "event_sample": 200,
+    "n_times": 601,
+    "n_trials": 40,
+    "active_window_s": [
+      0.02,
+      0.12
+    ],
+    "baseline_window_s": [
+      -0.18,
+      -0.02
+    ],
+    "groups": [
+      [
+        7498
+      ]
+    ],
+    "correlation_target": 0.0,
+    "correlation_actual": [
+      [
+        1.0
+      ]
+    ],
+    "waveform_assignment": [
+      0
+    ],
+    "deep_surface_ratio_actual": null,
+    "target_snr_db": {
+      "eeg": -10.0,
+      "meg": -10.0
+    },
+    "actual_snr_db": {
+      "eeg": {
+        "train": -13.07463107687913,
+        "confirmation": -12.88616339604615,
+        "combined": -9.919684307072712
+      },
+      "meg": {
+        "train": -13.31349131574539,
+        "confirmation": -12.800560470850641,
+        "combined": -10.080821105543214
+      }
+    },
+    "implied_single_trial_snr_db": {
+      "eeg": -26.02059991327962,
+      "meg": -26.02059991327962
+    },
+    "snr_level": "expected combined 40-trial-mean active-window energy ratio",
+    "noise_model": "two independent Gaussian 20-trial-mean equivalents; no stored individual epochs",
+    "waveform_model": "phase-locked transient ERP without sinusoidal carrier",
+    "seed_root": 2026092206,
+    "seed_case_key": 2479781888679089326,
+    "n_trials_combined": 40,
+    "n_trials_per_half": 20.0,
+    "expected_snr_db": {
+      "eeg": {
+        "combined": -10.0,
+        "each_half": -13.010299956639813
+      },
+      "meg": {
+        "combined": -10.0,
+        "each_half": -13.010299956639813
+      }
+    },
+    "noise_scale": {
+      "eeg": 36150997.34585524,
+      "meg": 42692162.25351103
+    },
+    "snr_realization_normalized": false,
+    "baseline_centering": "each half independently; analytic scale includes active variance from baseline centering",
+    "noise_scale_rule": "analytic expected baseline-centered noise energy; never normalize a noise realization",
+    "replica_seed_roots": {
+      "fit": 2026092206,
+      "check": 2026092207
+    },
+    "seed_entropy": {
+      "fit": [
+        2026092206,
+        2479781888679089326,
+        6001,
+        0
+      ],
+      "check": [
+        2026092207,
+        2479781888679089326,
+        6001,
+        1
+      ]
+    },
+    "seed_spawn_keys": {
+      "eeg": {
+        "train": [
+          0
+        ],
+        "confirmation": [
+          0
+        ]
+      },
+      "meg": {
+        "train": [
+          1
+        ],
+        "confirmation": [
+          1
+        ]
+      }
+    },
+    "seed_rule": "explicit replica_seed_roots fit/check (fallback seed_root) + SHA256(case_id)[:8] little endian + domain 6001 + half index; modality spawn",
+    "preprocessing": "raw halves independently baseline-centered; training first 200 samples define each whitener; training modality evidence weights applied to both halves",
+    "modality_weights": [
+      0.7251376095866395,
+      1.0
+    ],
+    "retained_channels": [
+      58,
+      99
+    ]
+  },
+  "fitting": {
+    "mode": "independent_confirmation_joint_vs_surface",
+    "solver_kind": "irls",
+    "structural_settings": {
+      "noise_multiplier": 1.0,
+      "edge_fraction": 0.5,
+      "mrf_strength": 0.5,
+      "calibration": "layer"
+    },
+    "solver_settings": {
+      "max_iter": 300,
+      "tolerance": 1e-05,
+      "epsilon_fraction": 1.0,
+      "smoothing_fraction": 0.1
+    },
+    "null_model": {
+      "mode": "joint_layer_calibrated_adaptive_graph",
+      "selected_templates": [],
+      "spatial_templates_used": false,
+      "graph_edges": 21320,
+      "deep_graph_edges": 0,
+      "mrf_strength": 0.5,
+      "calibration": "layer",
+      "temporal_mode": "smooth",
+      "solver_kind": "irls",
+      "solver_settings": {
+        "max_iter": 300,
+        "tolerance": 1e-05,
+        "epsilon_fraction": 1.0,
+        "smoothing_fraction": 0.1
+      },
+      "weighting_coordinates": "MRF_current_innovation",
+      "windows": [
+        {
+          "active_samples": 61,
+          "temporal_rank": 10,
+          "temporal_selection": "amplitude_independent_smooth_subspace",
+          "smoothing_fraction": 0.1,
+          "attenuation_floor": 0.01,
+          "source_lambda_surface": 12.675753620869056,
+          "source_lambda_deep": 0.0,
+          "source_lambda_global_reference": 12.675753620869056,
+          "edge_lambda": 1.114479369714777,
+          "noise_projection_blocks": 16,
+          "response_condition": 2.0816852127326606,
+          "null_rule": "separate layer maxima of baseline matched-filter norms; empirical regularization, not p-values",
+          "solver": {
+            "mode": "smooth_logsum_quadratic_majorization_irls",
+            "history": [
+              {
+                "outer": 0,
+                "iterations": 1,
+                "converged": true,
+                "linear_relative_residual": 1.6029691490156614e-15,
+                "gradient_relative": 0.4171096883452733,
+                "relative_change": 3.188525082173545,
+                "log_objective": 1316.7136873058114,
+                "objective_decrease": 3130.41382541673,
+                "objective_descent_slack": 4.4471275127225417e-07,
+                "active_rows": 7493
+              },
+              {
+                "outer": 1,
+                "iterations": 1,
+                "converged": true,
+                "linear_relative_residual": 6.69906493724461e-16,
+                "gradient_relative": 0.11290899090167592,
+                "relative_change": 0.9110852662760014,
+                "log_objective": 1115.7095920941777,
+                "objective_decrease": 201.00409521163374,
+                "objective_descent_slack": 1.3167136873058114e-07,
+                "active_rows": 7498
+              },
+              {
+                "outer": 2,
+                "iterations": 1,
+                "converged": true,
+                "linear_relative_residual": 5.785449058766074e-16,
+                "gradient_relative": 0.03340552645555688,
+                "relative_change": 0.24305726913418013,
+                "log_objective": 1102.5820422744926,
+                "objective_decrease": 13.1275498196851,
+                "objective_descent_slack": 1.1157095920941776e-07,
+                "active_rows": 7498
+              },
+              {
+                "outer": 3,
+                "iterations": 1,
+                "converged": true,
+                "linear_relative_residual": 6.311866893852314e-16,
+                "gradient_relative": 0.01184027604313786,
+                "relative_change": 0.07606389419591304,
+                "log_objective": 1101.3255514970533,
+                "objective_decrease": 1.2564907774392395,
+                "objective_descent_slack": 1.1025820422744926e-07,
+                "active_rows": 7498
+              },
+              {
+                "outer": 4,
+                "iterations": 1,
+                "converged": true,
+                "linear_relative_residual": 6.288499928448887e-16,
+                "gradient_relative": 0.005304897780616218,
+                "relative_change": 0.029104264949940676,
+                "log_objective": 1101.143585039389,
+                "objective_decrease": 0.1819664576642026,
+                "objective_descent_slack": 1.1013255514970533e-07,
+                "active_rows": 7498
+              },
+              {
+                "outer": 5,
+                "iterations": 1,
+                "converged": true,
+                "linear_relative_residual": 5.762843012526838e-16,
+                "gradient_relative": 0.0027967253043168078,
+                "relative_change": 0.01381673254962952,
+                "log_objective": 1101.1022806513838,
+                "objective_decrease": 0.04130438800530101,
+                "objective_descent_slack": 1.1011435850393892e-07,
+                "active_rows": 7498
+              },
+              {
+                "outer": 6,
+                "iterations": 1,
+                "converged": true,
+                "linear_relative_residual": 6.315660284422128e-16,
+                "gradient_relative": 0.0015761374833686591,
+                "relative_change": 0.007405572926391176,
+                "log_objective": 1101.090231210742,
+                "objective_decrease": 0.012049440641703768,
+                "objective_descent_slack": 1.1011022806513839e-07,
+                "active_rows": 7498
+              },
+              {
+                "outer": 7,
+                "iterations": 1,
+                "converged": true,
+                "linear_relative_residual": 6.644463409673525e-16,
+                "gradient_relative": 0.0009146709013840493,
+                "relative_change": 0.004191415788440179,
+                "log_objective": 1101.0863287866905,
+                "objective_decrease": 0.003902424051602793,
+                "objective_descent_slack": 1.1010902312107422e-07,
+                "active_rows": 7498
+              },
+              {
+                "outer": 8,
+                "iterations": 1,
+                "converged": true,
+                "linear_relative_residual": 5.93868783889286e-16,
+                "gradient_relative": 0.0005406415399664343,
+                "relative_change": 0.00244412943936079,
+                "log_objective": 1101.0849948981524,
+                "objective_decrease": 0.0013338885380562715,
+                "objective_descent_slack": 1.1010863287866906e-07,
+                "active_rows": 7498
+              },
+              {
+                "outer": 9,
+                "iterations": 1,
+                "converged": true,
+                "linear_relative_residual": 6.087673199225755e-16,
+                "gradient_relative": 0.0003240613125663142,
+                "relative_change": 0.0014540946074255681,
+                "log_objective": 1101.084522098747,
+                "objective_decrease": 0.0004727994055429008,
+                "objective_descent_slack": 1.1010849948981524e-07,
+                "active_rows": 7498
+              },
+              {
+                "outer": 10,
+                "iterations": 1,
+                "converged": true,
+                "linear_relative_residual": 4.930556441745312e-16,
+                "gradient_relative": 0.00019640467949656333,
+                "relative_change": 0.0008777411636246388,
+                "log_objective": 1101.0843499129603,
+                "objective_decrease": 0.0001721857865959464,
+                "objective_descent_slack": 1.101084522098747e-07,
+                "active_rows": 7498
+              },
+              {
+                "outer": 11,
+                "iterations": 1,
+                "converged": true,
+                "linear_relative_residual": 5.325044436002661e-16,
+                "gradient_relative": 0.00012008126198547008,
+                "relative_change": 0.0005355472120210005,
+                "log_objective": 1101.084285900489,
+                "objective_decrease": 6.40124712845136e-05,
+                "objective_descent_slack": 1.1010843499129603e-07,
+                "active_rows": 7498
+              },
+              {
+                "outer": 12,
+                "iterations": 1,
+                "converged": true,
+                "linear_relative_residual": 6.068544140524014e-16,
+                "gradient_relative": 7.392682827953941e-05,
+                "relative_change": 0.0003293904692010797,
+                "log_objective": 1101.084261724738,
+                "objective_decrease": 2.41757509229501e-05,
+                "objective_descent_slack": 1.1010842859004891e-07,
+                "active_rows": 7498
+              },
+              {
+                "outer": 13,
+                "iterations": 1,
+                "converged": true,
+                "linear_relative_residual": 6.482544473822205e-16,
+                "gradient_relative": 4.576357438245891e-05,
+                "relative_change": 0.00020383057745692029,
+                "log_objective": 1101.084252482158,
+                "objective_decrease": 9.242580063073547e-06,
+                "objective_descent_slack": 1.1010842617247381e-07,
+                "active_rows": 7498
+              },
+              {
+                "outer": 14,
+                "iterations": 1,
+                "converged": true,
+                "linear_relative_residual": 6.380072865077468e-16,
+                "gradient_relative": 2.8455018409577527e-05,
+                "relative_change": 0.00012672826236890874,
+                "log_objective": 1101.0842489146678,
+                "objective_decrease": 3.5674902392202057e-06,
+                "objective_descent_slack": 1.1010842524821581e-07,
+                "active_rows": 7498
+              },
+              {
+                "outer": 15,
+                "iterations": 1,
+                "converged": true,
+                "linear_relative_residual": 6.146264876687659e-16,
+                "gradient_relative": 1.7756334268611452e-05,
+                "relative_change": 7.908353433139463e-05,
+                "log_objective": 1101.0842475271554,
+                "objective_decrease": 1.3875123840989545e-06,
+                "objective_descent_slack": 1.1010842489146679e-07,
+                "active_rows": 7498
+              },
+              {
+                "outer": 16,
+                "iterations": 1,
+                "converged": true,
+                "linear_relative_residual": 5.753021989209135e-16,
+                "gradient_relative": 1.111254021859264e-05,
+                "relative_change": 4.949702651570897e-05,
+                "log_objective": 1101.0842469841996,
+                "objective_decrease": 5.429558314062888e-07,
+                "objective_descent_slack": 1.1010842475271555e-07,
+                "active_rows": 7498
+              },
+              {
+                "outer": 17,
+                "iterations": 1,
+                "converged": true,
+                "linear_relative_residual": 5.745417409447645e-16,
+                "gradient_relative": 6.971160089407182e-06,
+                "relative_change": 3.105274224554273e-05,
+                "log_objective": 1101.084246770681,
+                "objective_decrease": 2.1351866053009871e-07,
+                "objective_descent_slack": 1.1010842469841996e-07,
+                "active_rows": 7498
+              },
+              {
+                "outer": 18,
+                "iterations": 1,
+                "converged": true,
+                "linear_relative_residual": 5.52189523977497e-16,
+                "gradient_relative": 4.381648326243553e-06,
+                "relative_change": 1.9518648472871977e-05,
+                "log_objective": 1101.0842466863774,
+                "objective_decrease": 8.43035650177626e-08,
+                "objective_descent_slack": 1.101084246770681e-07,
+                "active_rows": 7498
+              },
+              {
+                "outer": 19,
+                "iterations": 1,
+                "converged": true,
+                "linear_relative_residual": 6.907625700427283e-16,
+                "gradient_relative": 2.758379354516781e-06,
+                "relative_change": 1.2287670100123867e-05,
+                "log_objective": 1101.084246652984,
+                "objective_decrease": 3.339346221764572e-08,
+                "objective_descent_slack": 1.1010842466863774e-07,
+                "active_rows": 7498
+              },
+              {
+                "outer": 20,
+                "iterations": 1,
+                "converged": true,
+                "linear_relative_residual": 6.059501501637443e-16,
+                "gradient_relative": 1.738703945574287e-06,
+                "relative_change": 7.745174808121559e-06,
+                "log_objective": 1101.0842466397212,
+                "objective_decrease": 1.3262706488603726e-08,
+                "objective_descent_slack": 1.1010842466529839e-07,
+                "active_rows": 7498
+              }
+            ],
+            "converged": true,
+            "inner_converged": true,
+            "outer_converged": true,
+            "descent_guard_triggered": false,
+            "linear_guard_triggered": false,
+            "descent_guard_step": null,
+            "initial_log_objective": 4447.127512722542,
+            "final_log_objective": 1101.0842466397212,
+            "gradient_relative": 1.738703945574287e-06,
+            "relative_change": 7.745174808121559e-06,
+            "gradient_reference": 1133.3243451270678,
+            "gradient_normalization": "norm(G.T @ Y)",
+            "iterations": 21,
+            "ridge_scale": 8.574856705735296,
+            "source_initial_scale": 0.21986008242179977,
+            "edge_initial_scale": 0.29636436592544313,
+            "amplitude_epsilon": 0.21986008242179977,
+            "edge_epsilon": 0.29636436592544313,
+            "amplitude_delta": 0.02198600824217998,
+            "edge_delta": 0.029636436592544314,
+            "epsilon_fraction": 1.0,
+            "smoothing_fraction": 0.1,
+            "ridge_fraction": 0.05,
+            "tolerance": 1e-05,
+            "objective_descent_tolerance": 1e-10,
+            "linear_tolerance": 1e-07,
+            "source_quadratic_weight_range": [
+              78.4139498788305,
+              1344.483082282904
+            ],
+            "edge_quadratic_weight_range": [
+              22.545465186730244,
+              34.18545596572249
+            ],
+            "smoothing_note": "Positive deltas change the objective and remove exact sparsity; no hard threshold applied.",
+            "convergence_note": "Stationarity and iterate-change tolerances for this smooth nonconvex objective; no global-optimality claim."
+          }
+        }
+      ]
+    },
+    "full_model": {
+      "mode": "joint_layer_calibrated_adaptive_graph",
+      "selected_templates": [],
+      "spatial_templates_used": false,
+      "graph_edges": 21320,
+      "deep_graph_edges": 0,
+      "mrf_strength": 0.5,
+      "calibration": "layer",
+      "temporal_mode": "smooth",
+      "solver_kind": "irls",
+      "solver_settings": {
+        "max_iter": 300,
+        "tolerance": 1e-05,
+        "epsilon_fraction": 1.0,
+        "smoothing_fraction": 0.1
+      },
+      "weighting_coordinates": "MRF_current_innovation",
+      "windows": [
+        {
+          "active_samples": 61,
+          "temporal_rank": 10,
+          "temporal_selection": "amplitude_independent_smooth_subspace",
+          "smoothing_fraction": 0.1,
+          "attenuation_floor": 0.01,
+          "source_lambda_surface": 12.681095445458451,
+          "source_lambda_deep": 3.0843732549161174,
+          "source_lambda_global_reference": 12.681095445458451,
+          "edge_lambda": 1.1149490343579675,
+          "noise_projection_blocks": 16,
+          "response_condition": 2.0816852127326606,
+          "null_rule": "separate layer maxima of baseline matched-filter norms; empirical regularization, not p-values",
+          "solver": {
+            "mode": "smooth_logsum_quadratic_majorization_irls",
+            "history": [
+              {
+                "outer": 0,
+                "iterations": 1,
+                "converged": true,
+                "linear_relative_residual": 1.304003924431366e-15,
+                "gradient_relative": 0.4170197047704639,
+                "relative_change": 3.1849061189986774,
+                "log_objective": 1316.4508290417816,
+                "objective_decrease": 3129.6313405438086,
+                "objective_descent_slack": 4.44608216958559e-07,
+                "active_rows": 7509
+              },
+              {
+                "outer": 1,
+                "iterations": 1,
+                "converged": true,
+                "linear_relative_residual": 6.077782903244054e-16,
+                "gradient_relative": 0.1129219356798219,
+                "relative_change": 0.9029548680991698,
+                "log_objective": 1115.3303061850588,
+                "objective_decrease": 201.1205228567228,
+                "objective_descent_slack": 1.3164508290417818e-07,
+                "active_rows": 7514
+              },
+              {
+                "outer": 2,
+                "iterations": 1,
+                "converged": true,
+                "linear_relative_residual": 6.526200358755994e-16,
+                "gradient_relative": 0.03351122324269072,
+                "relative_change": 0.2818008923493599,
+                "log_objective": 1101.9479200018432,
+                "objective_decrease": 13.382386183215658,
+                "objective_descent_slack": 1.1153303061850588e-07,
+                "active_rows": 7511
+              },
+              {
+                "outer": 3,
+                "iterations": 1,
+                "converged": true,
+                "linear_relative_residual": 6.93371294435909e-16,
+                "gradient_relative": 0.012233014546383135,
+                "relative_change": 0.3484800742418005,
+                "log_objective": 1099.9853418232963,
+                "objective_decrease": 1.9625781785468916,
+                "objective_descent_slack": 1.1019479200018432e-07,
+                "active_rows": 7220
+              },
+              {
+                "outer": 4,
+                "iterations": 1,
+                "converged": true,
+                "linear_relative_residual": 5.659265412252715e-16,
+                "gradient_relative": 0.006639500400198733,
+                "relative_change": 0.6290513932559906,
+                "log_objective": 1096.7303842669817,
+                "objective_decrease": 3.2549575563145936,
+                "objective_descent_slack": 1.0999853418232963e-07,
+                "active_rows": 1010
+              },
+              {
+                "outer": 5,
+                "iterations": 1,
+                "converged": true,
+                "linear_relative_residual": 6.079156820750305e-16,
+                "gradient_relative": 0.008653007379959363,
+                "relative_change": 0.8194742738270923,
+                "log_objective": 1077.4729440071712,
+                "objective_decrease": 19.257440259810437,
+                "objective_descent_slack": 1.0967303842669817e-07,
+                "active_rows": 8
+              },
+              {
+                "outer": 6,
+                "iterations": 1,
+                "converged": true,
+                "linear_relative_residual": 8.222656683287521e-16,
+                "gradient_relative": 0.009635840797721371,
+                "relative_change": 0.7801589959780059,
+                "log_objective": 1045.4595457857265,
+                "objective_decrease": 32.01339822144473,
+                "objective_descent_slack": 1.0774729440071713e-07,
+                "active_rows": 5
+              },
+              {
+                "outer": 7,
+                "iterations": 1,
+                "converged": true,
+                "linear_relative_residual": 1.5351442451767433e-14,
+                "gradient_relative": 0.003289821274681661,
+                "relative_change": 0.7460588304060635,
+                "log_objective": 1035.3906602377065,
+                "objective_decrease": 10.068885548020035,
+                "objective_descent_slack": 1.0454595457857265e-07,
+                "active_rows": 4
+              },
+              {
+                "outer": 8,
+                "iterations": 1,
+                "converged": true,
+                "linear_relative_residual": 9.025027933421036e-14,
+                "gradient_relative": 0.0022953627083918352,
+                "relative_change": 0.5469396252113198,
+                "log_objective": 1028.9118600836182,
+                "objective_decrease": 6.478800154088276,
+                "objective_descent_slack": 1.0353906602377066e-07,
+                "active_rows": 4
+              },
+              {
+                "outer": 9,
+                "iterations": 1,
+                "converged": true,
+                "linear_relative_residual": 3.904866202308493e-13,
+                "gradient_relative": 0.0006674382753502297,
+                "relative_change": 0.08198643853905306,
+                "log_objective": 1028.755722045122,
+                "objective_decrease": 0.15613803849623764,
+                "objective_descent_slack": 1.0289118600836182e-07,
+                "active_rows": 4
+              },
+              {
+                "outer": 10,
+                "iterations": 1,
+                "converged": true,
+                "linear_relative_residual": 4.1702563221952736e-13,
+                "gradient_relative": 0.00018139383779949212,
+                "relative_change": 0.0049030367995635624,
+                "log_objective": 1028.7544794490332,
+                "objective_decrease": 0.0012425960887867404,
+                "objective_descent_slack": 1.028755722045122e-07,
+                "active_rows": 4
+              },
+              {
+                "outer": 11,
+                "iterations": 1,
+                "converged": true,
+                "linear_relative_residual": 4.474338657470572e-13,
+                "gradient_relative": 5.914893434846527e-05,
+                "relative_change": 0.0003542051454221653,
+                "log_objective": 1028.7544394889571,
+                "objective_decrease": 3.996007603745966e-05,
+                "objective_descent_slack": 1.0287544794490332e-07,
+                "active_rows": 4
+              },
+              {
+                "outer": 12,
+                "iterations": 1,
+                "converged": true,
+                "linear_relative_residual": 3.615744095122006e-13,
+                "gradient_relative": 2.126403586819828e-05,
+                "relative_change": 4.428592072136944e-05,
+                "log_objective": 1028.754435450829,
+                "objective_decrease": 4.038128054162371e-06,
+                "objective_descent_slack": 1.0287544394889572e-07,
+                "active_rows": 4
+              },
+              {
+                "outer": 13,
+                "iterations": 1,
+                "converged": true,
+                "linear_relative_residual": 4.483071186327762e-13,
+                "gradient_relative": 7.982354810428296e-06,
+                "relative_change": 9.673409016336126e-06,
+                "log_objective": 1028.7544349318744,
+                "objective_decrease": 5.189547209738521e-07,
+                "objective_descent_slack": 1.0287544354508291e-07,
+                "active_rows": 4
+              }
+            ],
+            "converged": true,
+            "inner_converged": true,
+            "outer_converged": true,
+            "descent_guard_triggered": false,
+            "linear_guard_triggered": false,
+            "descent_guard_step": null,
+            "initial_log_objective": 4446.08216958559,
+            "final_log_objective": 1028.7544349318744,
+            "gradient_relative": 7.982354810428296e-06,
+            "relative_change": 9.673409016336126e-06,
+            "gradient_reference": 1135.7715755023087,
+            "gradient_normalization": "norm(G.T @ Y)",
+            "iterations": 14,
+            "ridge_scale": 8.61132493858266,
+            "source_initial_scale": 0.21939350288595008,
+            "edge_initial_scale": 0.29573283911952875,
+            "amplitude_epsilon": 0.21939350288595008,
+            "edge_epsilon": 0.29573283911952875,
+            "amplitude_delta": 0.02193935028859501,
+            "edge_delta": 0.029573283911952877,
+            "epsilon_fraction": 1.0,
+            "smoothing_fraction": 0.1,
+            "ridge_fraction": 0.05,
+            "tolerance": 1e-05,
+            "objective_descent_tolerance": 1e-10,
+            "linear_tolerance": 1e-07,
+            "source_quadratic_weight_range": [
+              1.5530185899190944e-05,
+              1348.836186684193
+            ],
+            "edge_quadratic_weight_range": [
+              25.52562885823809,
+              34.27278019906862
+            ],
+            "smoothing_note": "Positive deltas change the objective and remove exact sparsity; no hard threshold applied.",
+            "convergence_note": "Stationarity and iterate-change tolerances for this smooth nonconvex objective; no global-optimality claim."
+          }
+        }
+      ]
+    },
+    "confirmation_used_for_fit": false,
+    "spatial_templates_used": false
+  },
+  "evidence": {
+    "active_samples": 61,
+    "temporal_rank": 10,
+    "temporal_selection": "amplitude_independent_smooth_subspace",
+    "smoothing_fraction": 0.1,
+    "attenuation_floor": 0.01,
+    "null_loss": 2896.558120559017,
+    "full_loss": 2926.4205889426976,
+    "loss_improvement": -29.862468383680607,
+    "expected_response_noise_energy": 2510.608206269738,
+    "baseline_variance_sum": 236.20659166650293,
+    "baseline_mean_mode_correction": 0.6288659793814444,
+    "normalization": "confirmation baseline sample variance; temporal-white expectation",
+    "confirmation_refitted": false,
+    "score_clipped": false
+  },
+  "decision": null
+}

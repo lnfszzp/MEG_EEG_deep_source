@@ -1,0 +1,6 @@
+﻿case_id,configuration_id,scenario,eeg_snr_db,meg_snr_db,score,null_converged,full_converged,all_converged,p_value,deep_present_decision,elapsed_seconds
+erp-v6-development-00-eeg+05-meg+05,erp-v6-development-00,surface_only,5,5,-0.006524683847030355,1,1,1,nan,,196.07888159999857
+erp-v6-development-01-eeg+05-meg+05,erp-v6-development-01,surface_only,5,5,-0.0029073717455747453,1,1,1,nan,,221.46006439998746
+erp-v6-development-02-eeg+05-meg+05,erp-v6-development-02,deep_only,5,5,0.24287017341977374,1,1,1,nan,,110.45338439999614
+erp-v6-development-03-eeg+05-meg+05,erp-v6-development-03,deep_plus_surface,5,5,-0.06720398197260603,0,1,0,nan,,362.2090341000003
+erp-v6-development-04-eeg+05-meg+05,erp-v6-development-04,deep_plus_two_surface,5,5,0.051304105156883315,0,1,0,nan,,311.5949362000101

@@ -1,0 +1,46 @@
+{
+  "phase": "development",
+  "manifest": "D:\\博士\\工作＆汇报\\源定位\\新建文件夹\\results\\erp_whole_head\\adaptive_v6\\protocol\\development_manifest.json",
+  "manifest_sha256": "70f376c2c753e5f9d2adc22b067fdb2f0aba797f80bca7eb1d7951f884f3260e",
+  "seed_root": 2026092206,
+  "case_ids": [
+    "erp-v6-development-00-eeg+05-meg+05",
+    "erp-v6-development-01-eeg+05-meg+05",
+    "erp-v6-development-02-eeg+05-meg+05",
+    "erp-v6-development-03-eeg+05-meg+05",
+    "erp-v6-development-04-eeg+05-meg+05"
+  ],
+  "code_sha256": {
+    "作者风格版\\23-独立观测浅深检出仿真.py": "b7f4ff54f6bb02976b431e429f32bc2bad591fa5907b72fb10472a65260ced24",
+    "candidates\\oaster_predictive.py": "6bf5df4a6e9f91d46b5ec53d34e4319241bbda34ba0f4003f3eecc1288f7361f",
+    "candidates\\oaster_balanced.py": "3948d7e08ef343649cae439d9eacfcb1993d561d53ecf995b23da8e06f6b51c6",
+    "candidates\\graph_irls.py": "9e6fec79d97e1c331e824fc165b71732e0ed90a1573d0183ea167d5c0cccd760",
+    "candidates\\graph_reweight_solver.py": "46b75a4bfbfdc7b9ab227b1dc381e8ebfded9cec7a83618124abf159993f7444",
+    "candidates\\oaster_rebuilt.py": "4032f015ed06df64df3ad10d128b67605c49fb76a2e5bef302ed5160519e00f0",
+    "algorithms\\spatial_fused_fusion.py": "68c65de7c6c41628f36f72cb8b9f913ea569aec8ff675109461acdad6353197d",
+    "benchmark\\erp_replicates.py": "28d02d09b3c55e70d6d384df4ce304bca1227d261e0acfbd6a591fd71c4161a4",
+    "benchmark\\erp_protocol.py": "f74f9b1dd33036105d50d4ccd6242c1a068cb090fe4a234eb7736f8071e16647",
+    "benchmark\\protocol.py": "26f816e0530cf6f36445b7222fc5db3d0ce216f4ec089f0a2779c65e1c4c8d4a",
+    "benchmark\\methods.py": "1625c67d91d20112d711a3d77de175ed0509c1acfa45c1561845f6761c307dcf",
+    "benchmark\\metrics.py": "f07a42e26dc2118c418744e3a4971c5fcd3037b7b93e26a7e2e4e899400986d8",
+    "metrics\\user_metrics\\An_auc.py": "7a4f59da932648851e3a0bc1f28101c79d616ac0d99bf37925b57473bd767194",
+    "run_strict_oaster.py": "9a63e37a0b32265732e03f24751191e8734df4be2585fb8dec7e30a1d0195e47",
+    "run_erp_whole_head_matrix.py": "ef0605204c632b14d3aefce288ec58f3a999e5728d0485c4bec3b218968c358b"
+  },
+  "shared_fingerprint": "a97e6991fde1cedfac66857d5c07683c43af62f16ad19bfa31ea7199a9083556",
+  "environment": {
+    "python": "3.13.15",
+    "numpy": "2.5.2",
+    "scipy": "1.18.1",
+    "mne": "1.12.1",
+    "OMP_NUM_THREADS": "1",
+    "MKL_NUM_THREADS": "1",
+    "OPENBLAS_NUM_THREADS": "1"
+  },
+  "solver_settings": {
+    "solver_kind": "admm"
+  },
+  "alpha": 0.05,
+  "comparison_data": "v6 H0/H1 fitted to train-20 mean, confirmation-20 used only for prediction score; seven comparators reported separately on train-20 and combined-40 means, not treated as identical data usage",
+  "scope": "engineering development/calibration/stress validation; no universal or clinical FPR guarantee"
+}

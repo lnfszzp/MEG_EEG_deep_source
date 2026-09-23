@@ -27,6 +27,7 @@ parser.add_argument("--manifest", type=Path, required=True)
 parser.add_argument("--output", type=Path, required=True)
 parser.add_argument("--seed-root", type=int, required=True)
 parser.add_argument("--calibration", type=Path)
+parser.add_argument("--covariance", choices=("mean", "trial"), default="mean")
 parser.add_argument("--solver-settings", type=json.loads, default={})
 parser.add_argument("--snr-pair", nargs=2, type=int)
 parser.add_argument("--limit", type=int)
@@ -53,43 +54,55 @@ if args.phase == "calibration":
     assert hashlib.sha256(args.manifest.read_bytes()).hexdigest() == "459b7b983b9ad4bbbc8b84e3d0a494e8466dbe093a32af02b78e7d871119a313", "不是冻结的57例校准集"
     assert all(case.get("deep_index") is None for case in cases)
     assert min(Counter((case["eeg_snr_db"], case["meg_snr_db"]) for case in cases).values()) >= 19
+consumed_path = root / "results/erp_whole_head/adaptive_v6/protocol" / f"{args.phase}_manifest_consumed.json"
+if args.phase != "development" and consumed_path.exists():
+    raise FileExistsError(f"冻结{args.phase}病例已消费，不可换目录重新调参/校准：{consumed_path}")
+prepare = prepare_replicated_case
+if args.covariance == "trial":
+    from benchmark.erp_trial_covariance import prepare_trial_covariance_case
+    prepare = prepare_trial_covariance_case
 
 # %% 冻结算法、指标、仿真、环境指纹。更改其中任何一项都不能沿用旧校准。
 paths = [Path(__file__), *[root / name for name in (
     "candidates/oaster_predictive.py", "candidates/oaster_balanced.py", "candidates/graph_irls.py",
     "candidates/graph_reweight_solver.py", "candidates/oaster_rebuilt.py", "algorithms/spatial_fused_fusion.py",
-    "benchmark/erp_replicates.py", "benchmark/erp_protocol.py", "benchmark/protocol.py",
-    "benchmark/methods.py", "benchmark/metrics.py", "metrics/user_metrics/An_auc.py",
-    "run_strict_oaster.py", "run_erp_whole_head_matrix.py")]]
-if args.phase != "development":
-    paths.append(root / "benchmark/deep_acceptance.py")
+    "benchmark/erp_trial_covariance.py", "benchmark/erp_replicates.py", "benchmark/erp_protocol.py", "benchmark/protocol.py",
+    "benchmark/methods.py", "benchmark/metrics.py", "benchmark/deep_acceptance.py",
+    "run_strict_oaster.py", "run_erp_whole_head_matrix.py", "protected_multilayer.py", "auc_metric.py")],
+    *sorted((root / "metrics/user_metrics").glob("*.py"))]
 code_hashes = {str(path.relative_to(root)): hashlib.sha256(path.read_bytes()).hexdigest() for path in paths}
-shared = protocol.load_shared(root / "corrected_v2/generated", original.DEFAULT_SAMPLE_PATH)
-shared_hash = original._shared_fingerprint(shared)
-environment = original._environment_versions()
 calibration = None
 if args.phase == "validation":
     if args.calibration is None:
         raise ValueError("验证必须指定完成的纯表层校准目录")
     calibration = json.loads((args.calibration / "frozen_calibration.json").read_text(encoding="utf-8"))
+    if calibration.get("covariance") != args.covariance:
+        raise ValueError("校准后不能改变 covariance；缺少该记录的旧校准也不可沿用")
+shared = protocol.load_shared(root / "corrected_v2/generated", original.DEFAULT_SAMPLE_PATH)
+shared_hash = original._shared_fingerprint(shared)
+environment = original._environment_versions()
+if args.phase == "validation":
     for key, value in (("code_sha256", code_hashes), ("shared_fingerprint", shared_hash),
-                       ("environment", environment), ("solver_settings", args.solver_settings)):
+                       ("environment", environment), ("solver_settings", args.solver_settings), ("covariance", args.covariance)):
         assert calibration[key] == value, f"校准后发生改变：{key}"
     assert calibration["complete"] and calibration["all_converged"] and calibration["alpha"] == .05
     assert not ({case["case_id"] for case in cases} & set(calibration["case_ids"]))
-    # 在反演前消费测试标记；不因结果不好重置。只允许另立新的未来验证集。
-    consumed_path = args.manifest.with_name(args.manifest.stem + "_consumed.json")
+if args.phase != "development":
+    # 校准和验证均一次性消费；固定位置标记，复制相同 manifest 也不能绕过。
     with consumed_path.open("x", encoding="utf-8") as stream:
-        json.dump({"output": str(args.output.resolve()), "calibration": str(args.calibration.resolve()),
+        json.dump({"phase": args.phase, "manifest_sha256": hashlib.sha256(args.manifest.read_bytes()).hexdigest(),
+                   "output": str(args.output.resolve()), "calibration": None if args.calibration is None else str(args.calibration.resolve()),
+                   "covariance": args.covariance, "solver_settings": args.solver_settings,
                    "code_sha256": code_hashes}, stream, ensure_ascii=False, indent=2)
 args.output.mkdir(parents=True)
 metadata = {"phase": args.phase, "manifest": str(args.manifest.resolve()),
     "manifest_sha256": hashlib.sha256(args.manifest.read_bytes()).hexdigest(),
     "seed_root": args.seed_root, "case_ids": [case["case_id"] for case in cases],
     "code_sha256": code_hashes, "shared_fingerprint": shared_hash, "environment": environment,
-    "solver_settings": args.solver_settings, "alpha": .05,
+    "solver_settings": args.solver_settings, "covariance": args.covariance, "alpha": .05,
     "comparison_data": "v6 H0/H1 fitted to train-20 mean, confirmation-20 used only for prediction score; seven comparators reported separately on train-20 and combined-40 means, not treated as identical data usage",
-    "scope": "engineering development/calibration/stress validation; no universal or clinical FPR guarantee"}
+    "scope": "engineering development/calibration/stress validation; no universal or clinical FPR guarantee",
+    "calibration_use": "one-use empirical null calibration, not a reusable independent test or a parameter-tuning set; raw half-means are independent but share training-derived preprocessing"}
 (args.output / "metadata.json").write_text(json.dumps(metadata, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 rows, evidence_rows = [], []
 started = time.perf_counter()
@@ -99,7 +112,7 @@ for case in cases:
     assert code_hashes == {str(path.relative_to(root)): hashlib.sha256(path.read_bytes()).hexdigest() for path in paths}
     tick = time.perf_counter()
     print(f"{args.phase}: {case['case_id']} starting", flush=True)
-    observation = prepare_replicated_case(shared, case, seed_root=args.seed_root)
+    observation = prepare(shared, case, seed_root=args.seed_root)
     null, full, fitting = fit_predictive_models(observation["training"], observation["gain"], shared["n_surf"],
         adjacency=shared["adjacency"], baseline=observation["baseline"], active=observation["active_windows"][0],
         channel_weights=observation["channel_weights"], solver_settings=args.solver_settings)

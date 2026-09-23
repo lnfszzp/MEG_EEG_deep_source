@@ -1,0 +1,256 @@
+{
+  "scope": "Completed development runs only; descriptive matched comparison, not calibrated deep-presence performance",
+  "validation_not_run": true,
+  "calibration_scores_read": false,
+  "paired_case_ids": [
+    "erp-v6-development-00-eeg+05-meg+05",
+    "erp-v6-development-01-eeg+05-meg+05",
+    "erp-v6-development-02-eeg+05-meg+05",
+    "erp-v6-development-03-eeg+05-meg+05",
+    "erp-v6-development-04-eeg+05-meg+05"
+  ],
+  "completed_variants": [
+    "IRLS wide, 100",
+    "IRLS wide, 300",
+    "ADMM",
+    "IRLS near-convex"
+  ],
+  "skipped_incomplete": [],
+  "all_requested_batches_completed": true,
+  "source_provenance": {
+    "IRLS wide, 100": {
+      "directory": "D:\\博士\\工作＆汇报\\源定位\\新建文件夹\\results\\erp_whole_head\\adaptive_v6\\dev_predictive_wide_5_5",
+      "completion": {
+        "complete": true,
+        "case_count": 5,
+        "all_converged": false,
+        "wall_seconds": 37.526838699996006
+      },
+      "requested_solver_settings": {},
+      "effective_solver_settings": {
+        "max_iter": 100,
+        "tolerance": 1e-05,
+        "epsilon_fraction": 1.0,
+        "smoothing_fraction": 0.1
+      },
+      "solver_kind": "irls",
+      "structural_settings": null,
+      "older_structural_metadata_note": "wide-100 did not serialize structural_settings; original null/full model metadata retained in raw case JSON",
+      "changed_code_vs_reference": [],
+      "code_sha256": {
+        "作者风格版\\23-独立观测浅深检出仿真.py": "4a322c05d61341075faac3d64f0e6d0f9b53bab8d19fe2992533f259927fccf2",
+        "candidates\\oaster_predictive.py": "00c2012e282653a527006595e54d4e372c9ddd59eb4c1426caa68690bcee68c8",
+        "candidates\\oaster_balanced.py": "3948d7e08ef343649cae439d9eacfcb1993d561d53ecf995b23da8e06f6b51c6",
+        "candidates\\graph_irls.py": "9e6fec79d97e1c331e824fc165b71732e0ed90a1573d0183ea167d5c0cccd760",
+        "candidates\\graph_reweight_solver.py": "46b75a4bfbfdc7b9ab227b1dc381e8ebfded9cec7a83618124abf159993f7444",
+        "candidates\\oaster_rebuilt.py": "4032f015ed06df64df3ad10d128b67605c49fb76a2e5bef302ed5160519e00f0",
+        "algorithms\\spatial_fused_fusion.py": "68c65de7c6c41628f36f72cb8b9f913ea569aec8ff675109461acdad6353197d",
+        "benchmark\\erp_replicates.py": "28d02d09b3c55e70d6d384df4ce304bca1227d261e0acfbd6a591fd71c4161a4",
+        "benchmark\\erp_protocol.py": "f74f9b1dd33036105d50d4ccd6242c1a068cb090fe4a234eb7736f8071e16647",
+        "benchmark\\protocol.py": "26f816e0530cf6f36445b7222fc5db3d0ce216f4ec089f0a2779c65e1c4c8d4a",
+        "benchmark\\methods.py": "1625c67d91d20112d711a3d77de175ed0509c1acfa45c1561845f6761c307dcf",
+        "benchmark\\metrics.py": "f07a42e26dc2118c418744e3a4971c5fcd3037b7b93e26a7e2e4e899400986d8",
+        "metrics\\user_metrics\\An_auc.py": "7a4f59da932648851e3a0bc1f28101c79d616ac0d99bf37925b57473bd767194",
+        "run_strict_oaster.py": "9a63e37a0b32265732e03f24751191e8734df4be2585fb8dec7e30a1d0195e47",
+        "run_erp_whole_head_matrix.py": "ef0605204c632b14d3aefce288ec58f3a999e5728d0485c4bec3b218968c358b"
+      },
+      "input_hashes": {
+        "metadata.json": "7d48b4bf2a36891da78bc3d2de3f35e8a07b64b8998d06b6d3b59a38220a4386",
+        "completion.json": "d1c11cdbb62dee4afea12f876dfb0283e32fab0b35cbb69f950d189e127aeb46",
+        "rows.csv": "8f12da16b56e11fe9b3a3d50180bbc887514895fa464e27c78aa4edfc236e8db",
+        "evidence.csv": "45bf59876cf2b9b6ee0a3edb178b38d3ff35a58e60f09824a5518cbcb156d3a4"
+      }
+    },
+    "IRLS wide, 300": {
+      "directory": "D:\\博士\\工作＆汇报\\源定位\\新建文件夹\\results\\erp_whole_head\\adaptive_v6\\dev_predictive_wide_300",
+      "completion": {
+        "complete": true,
+        "case_count": 20,
+        "all_converged": true,
+        "wall_seconds": 132.65989920002175
+      },
+      "requested_solver_settings": {
+        "max_iter": 300
+      },
+      "effective_solver_settings": {
+        "max_iter": 300,
+        "tolerance": 1e-05,
+        "epsilon_fraction": 1.0,
+        "smoothing_fraction": 0.1
+      },
+      "solver_kind": "irls",
+      "structural_settings": {
+        "noise_multiplier": 1.0,
+        "edge_fraction": 0.5,
+        "mrf_strength": 0.5,
+        "calibration": "layer"
+      },
+      "older_structural_metadata_note": "wide-100 did not serialize structural_settings; original null/full model metadata retained in raw case JSON",
+      "changed_code_vs_reference": [
+        "作者风格版\\23-独立观测浅深检出仿真.py",
+        "candidates\\oaster_predictive.py"
+      ],
+      "code_sha256": {
+        "作者风格版\\23-独立观测浅深检出仿真.py": "b7f4ff54f6bb02976b431e429f32bc2bad591fa5907b72fb10472a65260ced24",
+        "candidates\\oaster_predictive.py": "6bf5df4a6e9f91d46b5ec53d34e4319241bbda34ba0f4003f3eecc1288f7361f",
+        "candidates\\oaster_balanced.py": "3948d7e08ef343649cae439d9eacfcb1993d561d53ecf995b23da8e06f6b51c6",
+        "candidates\\graph_irls.py": "9e6fec79d97e1c331e824fc165b71732e0ed90a1573d0183ea167d5c0cccd760",
+        "candidates\\graph_reweight_solver.py": "46b75a4bfbfdc7b9ab227b1dc381e8ebfded9cec7a83618124abf159993f7444",
+        "candidates\\oaster_rebuilt.py": "4032f015ed06df64df3ad10d128b67605c49fb76a2e5bef302ed5160519e00f0",
+        "algorithms\\spatial_fused_fusion.py": "68c65de7c6c41628f36f72cb8b9f913ea569aec8ff675109461acdad6353197d",
+        "benchmark\\erp_replicates.py": "28d02d09b3c55e70d6d384df4ce304bca1227d261e0acfbd6a591fd71c4161a4",
+        "benchmark\\erp_protocol.py": "f74f9b1dd33036105d50d4ccd6242c1a068cb090fe4a234eb7736f8071e16647",
+        "benchmark\\protocol.py": "26f816e0530cf6f36445b7222fc5db3d0ce216f4ec089f0a2779c65e1c4c8d4a",
+        "benchmark\\methods.py": "1625c67d91d20112d711a3d77de175ed0509c1acfa45c1561845f6761c307dcf",
+        "benchmark\\metrics.py": "f07a42e26dc2118c418744e3a4971c5fcd3037b7b93e26a7e2e4e899400986d8",
+        "metrics\\user_metrics\\An_auc.py": "7a4f59da932648851e3a0bc1f28101c79d616ac0d99bf37925b57473bd767194",
+        "run_strict_oaster.py": "9a63e37a0b32265732e03f24751191e8734df4be2585fb8dec7e30a1d0195e47",
+        "run_erp_whole_head_matrix.py": "ef0605204c632b14d3aefce288ec58f3a999e5728d0485c4bec3b218968c358b"
+      },
+      "input_hashes": {
+        "metadata.json": "be451682485d9066f77f9f165ae7eafb74957f0265dc475b30a03724cffb310b",
+        "completion.json": "00a4981e805f62fc831f5aba4ead2db2fd485d49726f969f642c7cfc780ee3b6",
+        "rows.csv": "dd7522a89cfadaed9f4df654150bc91e200dfb765c954f552c1cd8142969b628",
+        "evidence.csv": "0ac36d0bf3abf9434646ab7642a86a1c2f0f531bf05550e7743cdb7955f4742c"
+      }
+    },
+    "ADMM": {
+      "directory": "D:\\博士\\工作＆汇报\\源定位\\新建文件夹\\results\\erp_whole_head\\adaptive_v6\\dev_predictive_admm_5_5",
+      "completion": {
+        "complete": true,
+        "case_count": 5,
+        "all_converged": false,
+        "wall_seconds": 1207.2407097999821
+      },
+      "requested_solver_settings": {
+        "solver_kind": "admm"
+      },
+      "effective_solver_settings": {
+        "outer_iterations": 20,
+        "max_iter": 2000,
+        "tolerance": 0.001,
+        "outer_tolerance": 0.01
+      },
+      "solver_kind": "admm",
+      "structural_settings": {
+        "noise_multiplier": 1.0,
+        "edge_fraction": 0.5,
+        "mrf_strength": 0.5,
+        "calibration": "layer"
+      },
+      "older_structural_metadata_note": "wide-100 did not serialize structural_settings; original null/full model metadata retained in raw case JSON",
+      "changed_code_vs_reference": [
+        "作者风格版\\23-独立观测浅深检出仿真.py",
+        "candidates\\oaster_predictive.py"
+      ],
+      "code_sha256": {
+        "作者风格版\\23-独立观测浅深检出仿真.py": "b7f4ff54f6bb02976b431e429f32bc2bad591fa5907b72fb10472a65260ced24",
+        "candidates\\oaster_predictive.py": "6bf5df4a6e9f91d46b5ec53d34e4319241bbda34ba0f4003f3eecc1288f7361f",
+        "candidates\\oaster_balanced.py": "3948d7e08ef343649cae439d9eacfcb1993d561d53ecf995b23da8e06f6b51c6",
+        "candidates\\graph_irls.py": "9e6fec79d97e1c331e824fc165b71732e0ed90a1573d0183ea167d5c0cccd760",
+        "candidates\\graph_reweight_solver.py": "46b75a4bfbfdc7b9ab227b1dc381e8ebfded9cec7a83618124abf159993f7444",
+        "candidates\\oaster_rebuilt.py": "4032f015ed06df64df3ad10d128b67605c49fb76a2e5bef302ed5160519e00f0",
+        "algorithms\\spatial_fused_fusion.py": "68c65de7c6c41628f36f72cb8b9f913ea569aec8ff675109461acdad6353197d",
+        "benchmark\\erp_replicates.py": "28d02d09b3c55e70d6d384df4ce304bca1227d261e0acfbd6a591fd71c4161a4",
+        "benchmark\\erp_protocol.py": "f74f9b1dd33036105d50d4ccd6242c1a068cb090fe4a234eb7736f8071e16647",
+        "benchmark\\protocol.py": "26f816e0530cf6f36445b7222fc5db3d0ce216f4ec089f0a2779c65e1c4c8d4a",
+        "benchmark\\methods.py": "1625c67d91d20112d711a3d77de175ed0509c1acfa45c1561845f6761c307dcf",
+        "benchmark\\metrics.py": "f07a42e26dc2118c418744e3a4971c5fcd3037b7b93e26a7e2e4e899400986d8",
+        "metrics\\user_metrics\\An_auc.py": "7a4f59da932648851e3a0bc1f28101c79d616ac0d99bf37925b57473bd767194",
+        "run_strict_oaster.py": "9a63e37a0b32265732e03f24751191e8734df4be2585fb8dec7e30a1d0195e47",
+        "run_erp_whole_head_matrix.py": "ef0605204c632b14d3aefce288ec58f3a999e5728d0485c4bec3b218968c358b"
+      },
+      "input_hashes": {
+        "metadata.json": "f8ed2953ccffdfc4c88c8fc400489bec4c8ef17956acc5a1e11db3084281e816",
+        "completion.json": "cc82c04f987239f856eadc5e713e753566c18d388e04e14df64a4aacda51a6f4",
+        "rows.csv": "067b580c8fc7aa5596c18fcb786100c13784e451e1f33e584ecd4631965a13e7",
+        "evidence.csv": "1f1b8c53d9de2e40a3a6b04a0cd6598d371ccb4a26a13608d1be7e18b25c01c0"
+      }
+    },
+    "IRLS near-convex": {
+      "directory": "D:\\博士\\工作＆汇报\\源定位\\新建文件夹\\results\\erp_whole_head\\adaptive_v6\\dev_predictive_nearconvex_5_5",
+      "completion": {
+        "complete": true,
+        "case_count": 5,
+        "all_converged": false,
+        "wall_seconds": 144.30538650002563
+      },
+      "requested_solver_settings": {
+        "max_iter": 300,
+        "epsilon_fraction": 100000000
+      },
+      "effective_solver_settings": {
+        "max_iter": 300,
+        "tolerance": 1e-05,
+        "epsilon_fraction": 100000000,
+        "smoothing_fraction": 0.1
+      },
+      "solver_kind": "irls",
+      "structural_settings": {
+        "noise_multiplier": 1.0,
+        "edge_fraction": 0.5,
+        "mrf_strength": 0.5,
+        "calibration": "layer"
+      },
+      "older_structural_metadata_note": "wide-100 did not serialize structural_settings; original null/full model metadata retained in raw case JSON",
+      "changed_code_vs_reference": [
+        "作者风格版\\23-独立观测浅深检出仿真.py",
+        "candidates\\oaster_predictive.py"
+      ],
+      "code_sha256": {
+        "作者风格版\\23-独立观测浅深检出仿真.py": "b7f4ff54f6bb02976b431e429f32bc2bad591fa5907b72fb10472a65260ced24",
+        "candidates\\oaster_predictive.py": "6bf5df4a6e9f91d46b5ec53d34e4319241bbda34ba0f4003f3eecc1288f7361f",
+        "candidates\\oaster_balanced.py": "3948d7e08ef343649cae439d9eacfcb1993d561d53ecf995b23da8e06f6b51c6",
+        "candidates\\graph_irls.py": "9e6fec79d97e1c331e824fc165b71732e0ed90a1573d0183ea167d5c0cccd760",
+        "candidates\\graph_reweight_solver.py": "46b75a4bfbfdc7b9ab227b1dc381e8ebfded9cec7a83618124abf159993f7444",
+        "candidates\\oaster_rebuilt.py": "4032f015ed06df64df3ad10d128b67605c49fb76a2e5bef302ed5160519e00f0",
+        "algorithms\\spatial_fused_fusion.py": "68c65de7c6c41628f36f72cb8b9f913ea569aec8ff675109461acdad6353197d",
+        "benchmark\\erp_replicates.py": "28d02d09b3c55e70d6d384df4ce304bca1227d261e0acfbd6a591fd71c4161a4",
+        "benchmark\\erp_protocol.py": "f74f9b1dd33036105d50d4ccd6242c1a068cb090fe4a234eb7736f8071e16647",
+        "benchmark\\protocol.py": "26f816e0530cf6f36445b7222fc5db3d0ce216f4ec089f0a2779c65e1c4c8d4a",
+        "benchmark\\methods.py": "1625c67d91d20112d711a3d77de175ed0509c1acfa45c1561845f6761c307dcf",
+        "benchmark\\metrics.py": "f07a42e26dc2118c418744e3a4971c5fcd3037b7b93e26a7e2e4e899400986d8",
+        "metrics\\user_metrics\\An_auc.py": "7a4f59da932648851e3a0bc1f28101c79d616ac0d99bf37925b57473bd767194",
+        "run_strict_oaster.py": "9a63e37a0b32265732e03f24751191e8734df4be2585fb8dec7e30a1d0195e47",
+        "run_erp_whole_head_matrix.py": "ef0605204c632b14d3aefce288ec58f3a999e5728d0485c4bec3b218968c358b"
+      },
+      "input_hashes": {
+        "metadata.json": "f09df74ab772c80875594b201bee50602be7708b9d93bad2bd49f3c15cea2fba",
+        "completion.json": "3745f2f6c48fadabe716485b07bbeb6f4793c1335e66fffb8089a6936741ad15",
+        "rows.csv": "20a0a0f93a7482a8ccde313efe4c82bcfc9e21e9cd686d4cfb3b0075aea2b9c1",
+        "evidence.csv": "7017c2899961dea8130ff839e2d651a58f5787c968b0cd2a20fc0c7b93febd41"
+      }
+    }
+  },
+  "manifest_sha256": "70f376c2c753e5f9d2adc22b067fdb2f0aba797f80bca7eb1d7951f884f3260e",
+  "shared_fingerprint": "a97e6991fde1cedfac66857d5c07683c43af62f16ad19bfa31ea7199a9083556",
+  "missing_distance_penalty_mm": 234.02911185627735,
+  "gaps": [
+    {
+      "variant": "IRLS wide, 100",
+      "max_pure_surface_T": 0.006514946568334512,
+      "min_mixed_T": -0.0025640821853482824,
+      "mixed_cases_above_max_surface": 0
+    },
+    {
+      "variant": "IRLS wide, 300",
+      "max_pure_surface_T": 0.006514946568334512,
+      "min_mixed_T": -0.0025640821853482824,
+      "mixed_cases_above_max_surface": 0
+    },
+    {
+      "variant": "ADMM",
+      "max_pure_surface_T": -0.0029073717455747453,
+      "min_mixed_T": -0.06720398197260603,
+      "mixed_cases_above_max_surface": 1
+    },
+    {
+      "variant": "IRLS near-convex",
+      "max_pure_surface_T": 0.00023379348028762121,
+      "min_mixed_T": -0.001363970184457496,
+      "mixed_cases_above_max_surface": 1
+    }
+  ],
+  "raw_detection_rule": "amplitude ratio >=0.14; TP additionally peak distance <=10mm; not a calibrated decision",
+  "script_sha256": "ffc2fdf15115477e3dbcd09d4c0b75ccf4cad0b2c602a5e9a0081ee9427a9ea2"
+}

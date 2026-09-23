@@ -1,0 +1,319 @@
+{
+  "scope": "Five completed 5/5 dB development cases only; preprocessing audit, no inverses and no calibration/validation reads",
+  "raw_means_unchanged": true,
+  "metadata_and_code_fingerprints_checked": true,
+  "oracle_covariance_used_only_for_diagnostic_whitening_quality": true,
+  "source_means": "exact original train/check means regenerated and matched to saved hashes",
+  "rows": [
+    {
+      "case_id": "erp-v6-development-00-eeg+05-meg+05",
+      "configuration_kind": "single_surface",
+      "modality": "eeg",
+      "raw_channels": 59,
+      "mean_covariance_dof": 199,
+      "trial_covariance_dof": 1824,
+      "old_modality_weight": 0.9231432512465715,
+      "trial_modality_weight": 1.0,
+      "mean": {
+        "retained_rank": 58,
+        "condition_full": 3007697397.0262914,
+        "condition_retained": 9665.000717859268,
+        "trace_relative_to_generating_covariance": 0.9917897612003238,
+        "expected_white_noise_variance_mean": 1.4593467951114993,
+        "expected_white_noise_variance_min": 0.44357070136901827,
+        "expected_white_noise_variance_max": 4.486775953238531,
+        "confirmation_first200_white_variance_per_retained_channel": 1.4770649403455045
+      },
+      "trial": {
+        "retained_rank": 58,
+        "condition_full": 2579354735.9715543,
+        "condition_retained": 4199.518178762023,
+        "trace_relative_to_generating_covariance": 1.0153955810462763,
+        "expected_white_noise_variance_mean": 1.023946454497651,
+        "expected_white_noise_variance_min": 0.734157120748969,
+        "expected_white_noise_variance_max": 1.498869989632091,
+        "confirmation_first200_white_variance_per_retained_channel": 1.0315038879279221
+      },
+      "largest_kept_subspace_angle_degrees": 0.020041772203809434
+    },
+    {
+      "case_id": "erp-v6-development-00-eeg+05-meg+05",
+      "configuration_kind": "single_surface",
+      "modality": "meg",
+      "raw_channels": 102,
+      "mean_covariance_dof": 199,
+      "trial_covariance_dof": 1824,
+      "old_modality_weight": 1.0,
+      "trial_modality_weight": 0.807019710423496,
+      "mean": {
+        "retained_rank": 99,
+        "condition_full": 1835910260.5898712,
+        "condition_retained": 757.4016569602824,
+        "trace_relative_to_generating_covariance": 1.029222286554235,
+        "expected_white_noise_variance_mean": 2.0172627969690202,
+        "expected_white_noise_variance_min": 0.3642712263375742,
+        "expected_white_noise_variance_max": 9.751110621543509,
+        "confirmation_first200_white_variance_per_retained_channel": 2.0618715291619827
+      },
+      "trial": {
+        "retained_rank": 99,
+        "condition_full": 973217377.605908,
+        "condition_retained": 176.39613383051662,
+        "trace_relative_to_generating_covariance": 1.0030249054140226,
+        "expected_white_noise_variance_mean": 1.0617650852280676,
+        "expected_white_noise_variance_min": 0.658365085694271,
+        "expected_white_noise_variance_max": 1.6869939827616327,
+        "confirmation_first200_white_variance_per_retained_channel": 1.0711333179301568
+      },
+      "largest_kept_subspace_angle_degrees": 0.03486524521422744
+    },
+    {
+      "case_id": "erp-v6-development-01-eeg+05-meg+05",
+      "configuration_kind": "two_surface_only",
+      "modality": "eeg",
+      "raw_channels": 59,
+      "mean_covariance_dof": 199,
+      "trial_covariance_dof": 1824,
+      "old_modality_weight": 0.6994265544963172,
+      "trial_modality_weight": 0.8917288019310411,
+      "mean": {
+        "retained_rank": 58,
+        "condition_full": 3891272017.7344656,
+        "condition_retained": 6383.414215487395,
+        "trace_relative_to_generating_covariance": 1.0164446108496366,
+        "expected_white_noise_variance_mean": 1.4117531706351532,
+        "expected_white_noise_variance_min": 0.4480185816856731,
+        "expected_white_noise_variance_max": 4.083791913180926,
+        "confirmation_first200_white_variance_per_retained_channel": 1.3934067374353876
+      },
+      "trial": {
+        "retained_rank": 58,
+        "condition_full": 2366368005.5868034,
+        "condition_retained": 4005.100423875678,
+        "trace_relative_to_generating_covariance": 0.9844411695565684,
+        "expected_white_noise_variance_mean": 1.0329142939243767,
+        "expected_white_noise_variance_min": 0.7217803635390223,
+        "expected_white_noise_variance_max": 1.470034461535631,
+        "confirmation_first200_white_variance_per_retained_channel": 1.0202380564392337
+      },
+      "largest_kept_subspace_angle_degrees": 0.017399692129323623
+    },
+    {
+      "case_id": "erp-v6-development-01-eeg+05-meg+05",
+      "configuration_kind": "two_surface_only",
+      "modality": "meg",
+      "raw_channels": 102,
+      "mean_covariance_dof": 199,
+      "trial_covariance_dof": 1824,
+      "old_modality_weight": 1.0,
+      "trial_modality_weight": 1.0,
+      "mean": {
+        "retained_rank": 99,
+        "condition_full": 1653802157.4654872,
+        "condition_retained": 606.7341334632748,
+        "trace_relative_to_generating_covariance": 1.0104351931739661,
+        "expected_white_noise_variance_mean": 1.98068798440346,
+        "expected_white_noise_variance_min": 0.3424682895275429,
+        "expected_white_noise_variance_max": 9.119135033509075,
+        "confirmation_first200_white_variance_per_retained_channel": 1.9949741576423294
+      },
+      "trial": {
+        "retained_rank": 99,
+        "condition_full": 910356915.3685606,
+        "condition_retained": 169.6004679314297,
+        "trace_relative_to_generating_covariance": 0.9964701647261289,
+        "expected_white_noise_variance_mean": 1.0562019966480218,
+        "expected_white_noise_variance_min": 0.6648284475139815,
+        "expected_white_noise_variance_max": 1.636002797046852,
+        "confirmation_first200_white_variance_per_retained_channel": 1.0555703585003509
+      },
+      "largest_kept_subspace_angle_degrees": 0.027659394956716737
+    },
+    {
+      "case_id": "erp-v6-development-02-eeg+05-meg+05",
+      "configuration_kind": "deep_only",
+      "modality": "eeg",
+      "raw_channels": 59,
+      "mean_covariance_dof": 199,
+      "trial_covariance_dof": 1824,
+      "old_modality_weight": 0.5547771440090532,
+      "trial_modality_weight": 0.5674847472575333,
+      "mean": {
+        "retained_rank": 58,
+        "condition_full": 4732141059.82623,
+        "condition_retained": 7935.916861688483,
+        "trace_relative_to_generating_covariance": 1.0520836921291576,
+        "expected_white_noise_variance_mean": 1.461598508762306,
+        "expected_white_noise_variance_min": 0.4321449372757045,
+        "expected_white_noise_variance_max": 4.511041229735946,
+        "confirmation_first200_white_variance_per_retained_channel": 1.458519030065897
+      },
+      "trial": {
+        "retained_rank": 58,
+        "condition_full": 2520797020.757637,
+        "condition_retained": 4033.5578130514536,
+        "trace_relative_to_generating_covariance": 1.0081023212055915,
+        "expected_white_noise_variance_mean": 1.0346158320526506,
+        "expected_white_noise_variance_min": 0.7093478667993052,
+        "expected_white_noise_variance_max": 1.4431066937558543,
+        "confirmation_first200_white_variance_per_retained_channel": 1.0288298707904315
+      },
+      "largest_kept_subspace_angle_degrees": 0.020674115769624444
+    },
+    {
+      "case_id": "erp-v6-development-02-eeg+05-meg+05",
+      "configuration_kind": "deep_only",
+      "modality": "meg",
+      "raw_channels": 102,
+      "mean_covariance_dof": 199,
+      "trial_covariance_dof": 1824,
+      "old_modality_weight": 1.0,
+      "trial_modality_weight": 1.0,
+      "mean": {
+        "retained_rank": 99,
+        "condition_full": 1527690227.0131512,
+        "condition_retained": 613.5522044454597,
+        "trace_relative_to_generating_covariance": 0.9911141200010419,
+        "expected_white_noise_variance_mean": 1.9893661038038288,
+        "expected_white_noise_variance_min": 0.33751509613506137,
+        "expected_white_noise_variance_max": 9.283770831248448,
+        "confirmation_first200_white_variance_per_retained_channel": 1.9864415645280427
+      },
+      "trial": {
+        "retained_rank": 99,
+        "condition_full": 911410709.4931129,
+        "condition_retained": 176.40314706838646,
+        "trace_relative_to_generating_covariance": 1.0022458094458317,
+        "expected_white_noise_variance_mean": 1.0568009161987295,
+        "expected_white_noise_variance_min": 0.6658987400277694,
+        "expected_white_noise_variance_max": 1.6561227739370121,
+        "confirmation_first200_white_variance_per_retained_channel": 1.0628610597385877
+      },
+      "largest_kept_subspace_angle_degrees": 0.03610788426820919
+    },
+    {
+      "case_id": "erp-v6-development-03-eeg+05-meg+05",
+      "configuration_kind": "deep_plus_surface",
+      "modality": "eeg",
+      "raw_channels": 59,
+      "mean_covariance_dof": 199,
+      "trial_covariance_dof": 1824,
+      "old_modality_weight": 0.7882201125371096,
+      "trial_modality_weight": 1.0,
+      "mean": {
+        "retained_rank": 58,
+        "condition_full": 4379890155.857435,
+        "condition_retained": 6685.738349975499,
+        "trace_relative_to_generating_covariance": 1.0313613248439748,
+        "expected_white_noise_variance_mean": 1.3894144705049982,
+        "expected_white_noise_variance_min": 0.4583811219932666,
+        "expected_white_noise_variance_max": 4.594019572081892,
+        "confirmation_first200_white_variance_per_retained_channel": 1.429346431655324
+      },
+      "trial": {
+        "retained_rank": 58,
+        "condition_full": 2524432663.6850305,
+        "condition_retained": 3897.787542931075,
+        "trace_relative_to_generating_covariance": 1.0035586074425404,
+        "expected_white_noise_variance_mean": 1.0316969497998092,
+        "expected_white_noise_variance_min": 0.7385589212881823,
+        "expected_white_noise_variance_max": 1.4592283887953115,
+        "confirmation_first200_white_variance_per_retained_channel": 1.0540899706583797
+      },
+      "largest_kept_subspace_angle_degrees": 0.018470595064011493
+    },
+    {
+      "case_id": "erp-v6-development-03-eeg+05-meg+05",
+      "configuration_kind": "deep_plus_surface",
+      "modality": "meg",
+      "raw_channels": 102,
+      "mean_covariance_dof": 199,
+      "trial_covariance_dof": 1824,
+      "old_modality_weight": 1.0,
+      "trial_modality_weight": 0.9384359627479937,
+      "mean": {
+        "retained_rank": 99,
+        "condition_full": 1774645279.7967725,
+        "condition_retained": 674.8390948202359,
+        "trace_relative_to_generating_covariance": 1.0333514473832581,
+        "expected_white_noise_variance_mean": 1.9395368634366383,
+        "expected_white_noise_variance_min": 0.37168290865908815,
+        "expected_white_noise_variance_max": 8.773840388891625,
+        "confirmation_first200_white_variance_per_retained_channel": 1.9185964559306443
+      },
+      "trial": {
+        "retained_rank": 99,
+        "condition_full": 924845832.5568647,
+        "condition_retained": 188.96218898253156,
+        "trace_relative_to_generating_covariance": 1.0162375569015862,
+        "expected_white_noise_variance_mean": 1.0525142815147248,
+        "expected_white_noise_variance_min": 0.666301987338288,
+        "expected_white_noise_variance_max": 1.6657947866673009,
+        "confirmation_first200_white_variance_per_retained_channel": 1.0534655692062562
+      },
+      "largest_kept_subspace_angle_degrees": 0.03234018984758669
+    },
+    {
+      "case_id": "erp-v6-development-04-eeg+05-meg+05",
+      "configuration_kind": "deep_plus_two_surface",
+      "modality": "eeg",
+      "raw_channels": 59,
+      "mean_covariance_dof": 199,
+      "trial_covariance_dof": 1824,
+      "old_modality_weight": 0.6521832575177388,
+      "trial_modality_weight": 0.8318240651174162,
+      "mean": {
+        "retained_rank": 58,
+        "condition_full": 4946324708.809209,
+        "condition_retained": 7089.655813314144,
+        "trace_relative_to_generating_covariance": 1.0685452200074808,
+        "expected_white_noise_variance_mean": 1.373102930096824,
+        "expected_white_noise_variance_min": 0.4337181692597154,
+        "expected_white_noise_variance_max": 3.836993529562397,
+        "confirmation_first200_white_variance_per_retained_channel": 1.3997009264404532
+      },
+      "trial": {
+        "retained_rank": 58,
+        "condition_full": 2473184698.772252,
+        "condition_retained": 3906.5994203490663,
+        "trace_relative_to_generating_covariance": 0.9956087723297017,
+        "expected_white_noise_variance_mean": 1.0343628414694235,
+        "expected_white_noise_variance_min": 0.7399641700619137,
+        "expected_white_noise_variance_max": 1.4427466025715434,
+        "confirmation_first200_white_variance_per_retained_channel": 1.0451926086343195
+      },
+      "largest_kept_subspace_angle_degrees": 0.01839660650943941
+    },
+    {
+      "case_id": "erp-v6-development-04-eeg+05-meg+05",
+      "configuration_kind": "deep_plus_two_surface",
+      "modality": "meg",
+      "raw_channels": 102,
+      "mean_covariance_dof": 199,
+      "trial_covariance_dof": 1824,
+      "old_modality_weight": 1.0,
+      "trial_modality_weight": 1.0,
+      "mean": {
+        "retained_rank": 99,
+        "condition_full": 1679096638.5337045,
+        "condition_retained": 680.3991627475734,
+        "trace_relative_to_generating_covariance": 0.9970410647381468,
+        "expected_white_noise_variance_mean": 2.0196919945475047,
+        "expected_white_noise_variance_min": 0.3461672749688096,
+        "expected_white_noise_variance_max": 9.638199764002625,
+        "confirmation_first200_white_variance_per_retained_channel": 2.0525986277554313
+      },
+      "trial": {
+        "retained_rank": 99,
+        "condition_full": 894844980.3027402,
+        "condition_retained": 169.9633719382614,
+        "trace_relative_to_generating_covariance": 1.0005585861468351,
+        "expected_white_noise_variance_mean": 1.0647924892360217,
+        "expected_white_noise_variance_min": 0.6748536928606138,
+        "expected_white_noise_variance_max": 1.6740753164351116,
+        "confirmation_first200_white_variance_per_retained_channel": 1.0878557345512825
+      },
+      "largest_kept_subspace_angle_degrees": 0.030552452840090463
+    }
+  ]
+}

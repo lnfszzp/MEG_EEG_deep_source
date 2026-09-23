@@ -142,16 +142,20 @@ def evaluate_acceptance(cases, rows, evidence_rows, penalty_mm):
         cell["localized_deep_sensitivity"] = cell["localized_true_positives"] / cell["positive_count"]
     summary = archive._aggregate(effective_rows, penalty_mm)
     conditional_dle = sum(detected_dle) / len(detected_dle) if detected_dle else None
+    # Match evaluate_estimate's 10 mm radius rounding tolerance, not a new
+    # scientific threshold. Keep unrounded measured distances in the report.
+    distance_tolerance_mm = 1e-6
     gates = {
         "false_positive_rate_each_snr_at_most_05": all(cell["false_positive_rate"] <= 0.05 for cell in by_snr.values()),
         "deep_detection_at_least_80": summary["deep_sensitivity"] >= 0.8,
-        "detected_deep_dle_at_most_10mm": conditional_dle is not None and conditional_dle <= 10.0,
-        "deep_miss_penalized_dle_at_most_60mm": summary["deep_dle_mm_penalized"] <= 60.0,
+        "detected_deep_dle_at_most_10mm": conditional_dle is not None and conditional_dle <= 10.0 + distance_tolerance_mm,
+        "deep_miss_penalized_dle_at_most_60mm": summary["deep_dle_mm_penalized"] <= 60.0 + distance_tolerance_mm,
         "all_models_converged": all_converged,
     }
     return {"passed": all(gates.values()), "gates": gates, "summary": summary,
             "legacy_metric_summary": archive._aggregate(list(selected.values()), penalty_mm),
             "by_snr": by_snr, "detected_deep_dle_mean_mm": conditional_dle, "penalty_mm": penalty_mm,
+            "distance_tolerance_mm": distance_tolerance_mm,
             "false_positive_definition": "deep_present_decision on a true cortex-only case; legacy 0.14 threshold cannot mask a presence-gate false positive",
             "localized_true_positive_definition": "deep_present_decision AND original deep_detected",
             "warning": "24-case engineering pilot; repeated SNRs are not independent locations and passing does not prove population FPR <= 5%"}
