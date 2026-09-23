@@ -1,0 +1,26 @@
+{
+  "complete": true,
+  "phase": "development",
+  "snr_eeg_meg_db": [
+    -10,
+    -10
+  ],
+  "solver_settings": {
+    "solver_kind": "admm",
+    "outer_iterations": 1,
+    "mrf_strength": 0.8
+  },
+  "primary_metric": "canonical tied-rank An_auc",
+  "minimum_An_auc": 0.9454587335590722,
+  "mean_old_An_auc": 0.9274916984797658,
+  "mean_new_An_auc": 0.9777624695354541,
+  "primary_AUC_gate_090": true,
+  "local_An_cal_gate_090": false,
+  "all_converged": true,
+  "all_deep_positive_localized": true,
+  "development_negative_score_max": 0.004414793855750179,
+  "development_positive_score_min": 0.014177475347699062,
+  "accepted_as_spatial_development_candidate": true,
+  "accepted_as_final_algorithm": false,
+  "reason_not_final": "The displayed family is selected with development truth; a frozen pure-surface calibration and untouched multi-SNR validation are still required. Local An_cal_AUC also remains below 0.90."
+}
