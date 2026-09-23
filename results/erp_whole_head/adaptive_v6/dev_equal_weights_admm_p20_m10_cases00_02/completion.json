@@ -1,0 +1,7 @@
+{
+  "complete": true,
+  "case_count": 2,
+  "all_equal_fits_converged": true,
+  "wall_seconds": 629.5178249999954,
+  "interpretation": "Development ablation only. Scores are uncalibrated; no FPR or held-out validation claim."
+}

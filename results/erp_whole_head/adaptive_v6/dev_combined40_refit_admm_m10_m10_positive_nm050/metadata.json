@@ -1,0 +1,31 @@
+{
+  "phase": "development",
+  "complete": false,
+  "early_stopped": true,
+  "processed_case_count": 1,
+  "planned_positive_case_count": 3,
+  "processed_case_ids": [
+    "erp-v6-development-02-eeg-10-meg-10"
+  ],
+  "unrun_case_ids": [
+    "erp-v6-development-03-eeg-10-meg-10",
+    "erp-v6-development-04-eeg-10-meg-10"
+  ],
+  "source": "results/erp_whole_head/adaptive_v6/dev_trial_admm_m10_m10",
+  "strategy": "post-decision combined40 localization refit with the frozen training-trial whitener",
+  "solver_kind": "admm",
+  "noise_multiplier": 0.5,
+  "calibration_or_validation_read": false,
+  "all_processed_models_converged": true,
+  "hard_failure": {
+    "rule": "stop after the first positive case worsens deep localization and remains outside the frozen 10 mm radius",
+    "deep_An_auc": 0.8,
+    "deep_DLE_mm": 14.142136031724077,
+    "deep_detected_within_10mm": false,
+    "reference_combined40_noise_multiplier_1_deep_An_auc": 1.0,
+    "reference_combined40_noise_multiplier_1_deep_DLE_mm": 0.0
+  },
+  "interpretation": "Global penalty reduction is rejected on development evidence; the two mixed cases were deliberately not run after the hard failure.",
+  "rows_sha256": "a99a5c6d97df7ee443ce70c5184d42ca2f87cdf09bf7abd84f41f3eb9e7e3dfb",
+  "script_sha256": "a2c8f641e3d29b5db48cfb90e15d2c61bd2d871b85b3c1a3e6dd10d5899e5506"
+}
