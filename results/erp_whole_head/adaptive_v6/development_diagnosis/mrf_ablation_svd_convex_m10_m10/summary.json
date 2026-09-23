@@ -1,0 +1,16 @@
+{
+  "complete": true,
+  "phase": "development",
+  "snr_eeg_meg_db": [
+    -10,
+    -10
+  ],
+  "local_AUC_gate": 0.9,
+  "physical_local_gate_passed": false,
+  "physical_case01_An_auc": 0.5462695505954438,
+  "physical_case03_An_auc": 0.5759137670727853,
+  "physical_case03_deep_detected": 1,
+  "all_converged": true,
+  "accepted": false,
+  "reason": "Removing MRF collapsed cortical ranking to about 0.55 and did not pass the local AUC gate."
+}
