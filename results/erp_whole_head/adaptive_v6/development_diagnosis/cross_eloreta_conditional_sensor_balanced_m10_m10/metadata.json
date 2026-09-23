@@ -1,0 +1,136 @@
+{
+  "complete": true,
+  "phase": "development",
+  "diagnosis": "conditional_cross_eloreta_localization",
+  "manifest": "D:\\博士\\工作＆汇报\\源定位\\新建文件夹\\results\\erp_whole_head\\adaptive_v6\\protocol\\development_sensor_balanced_m10_m10.json",
+  "manifest_sha256": "3432879db311544eb1eea7ae08a417e08bcb4842ae9f3a77cef0def5d87b00ad",
+  "case_ids": [
+    "erp-v6-development-00-eeg-10-meg-10",
+    "erp-v6-development-01-eeg-10-meg-10",
+    "erp-v6-development-02-eeg-10-meg-10",
+    "erp-v6-development-03-eeg-10-meg-10",
+    "erp-v6-development-04-eeg-10-meg-10"
+  ],
+  "seed_root": 2026092206,
+  "conditional_family_rule": "case00/01 use saved H0; case02/03/04 use saved H1",
+  "blind_detection_result": false,
+  "surface_rule": "positive train/check eLORETA active-window cross-energy, then anatomical random-walk resolvent MRF",
+  "surface_peak_normalization": "preserve selected OASTER map maximum active-window L2 amplitude",
+  "deep_rule": "saved OASTER H1 deep block followed by fixed symmetric Euclidean 3NN random-walk resolvent MRF",
+  "mrf_strength": 0.8,
+  "deep_neighbors": 3,
+  "minimum_An_cal_AUC_each_case": 0.9,
+  "maximum_DLE_worsening_mm": 5.0,
+  "candidate_grid_or_fusion_weight_search": false,
+  "calibration_or_validation_read": false,
+  "truth_used_for_family_selection": true,
+  "truth_used_for_spatial_map_or_weight_selection": false,
+  "code_sha256": {
+    "作者风格版\\34-交叉eLORETA条件定位诊断.py": "9cf3d92ea92b164e46359d7464cd40c07e1145dd7dcf44bd5064992097a1a499",
+    "benchmark\\erp_trial_covariance.py": "818e41cd1e3c75921db386b9858f78e3722551cc9e32ddbd2e88e819b22e7d89",
+    "benchmark\\erp_replicates.py": "e999e001d9a23d99e63e6bd33831c3e1702a7b25bbdaffe1debee9ec4b7f4487",
+    "benchmark\\erp_protocol.py": "f74f9b1dd33036105d50d4ccd6242c1a068cb090fe4a234eb7736f8071e16647",
+    "benchmark\\protocol.py": "26f816e0530cf6f36445b7222fc5db3d0ce216f4ec089f0a2779c65e1c4c8d4a",
+    "benchmark\\methods.py": "1625c67d91d20112d711a3d77de175ed0509c1acfa45c1561845f6761c307dcf",
+    "benchmark\\metrics.py": "f07a42e26dc2118c418744e3a4971c5fcd3037b7b93e26a7e2e4e899400986d8",
+    "run_erp_whole_head_matrix.py": "ef0605204c632b14d3aefce288ec58f3a999e5728d0485c4bec3b218968c358b",
+    "run_strict_oaster.py": "9a63e37a0b32265732e03f24751191e8734df4be2585fb8dec7e30a1d0195e47",
+    "protected_multilayer.py": "bf35006d1945dc96ac7fc13edf4149e0d4f8520dbe6825730c40ab38697521c8",
+    "metrics\\user_metrics\\__init__.py": "7b504a4dca65f17a4ff9e150729a67a479165e3b0dd156de34f91f0144e66a46",
+    "metrics\\user_metrics\\_common.py": "e50de172818c087108a2f06303e5f0302ac4d9d4167eff153a84b0a6142b9379",
+    "metrics\\user_metrics\\An_auc.py": "7a4f59da932648851e3a0bc1f28101c79d616ac0d99bf37925b57473bd767194",
+    "metrics\\user_metrics\\An_cal_AUC.py": "e635455a5bb0fb7cd51bf7989f69d025b2ee54c98cf2fc7e510a0009db269b5e",
+    "metrics\\user_metrics\\An_roc.py": "182e82076715a1b0ccefa72c0360a8f43a98b70d85fbf24fe0e0592b267bf673",
+    "metrics\\user_metrics\\DLE_an.py": "c63752183cb8ffd144ea1a12d786cb049ecde3baf11116193a7f4f5eacefa669",
+    "metrics\\user_metrics\\RMSE.py": "0b243d526692bcee7a7cf7fddddb37fc12a652c92e2013ae5e4814bbf38aea0d",
+    "metrics\\user_metrics\\SD.py": "dacd584ed3fd74a0af9b3b123489448853c2ecb190de28cc8b9bfd1e4714ff93"
+  },
+  "shared_fingerprint": "a97e6991fde1cedfac66857d5c07683c43af62f16ad19bfa31ea7199a9083556",
+  "source_sha256": {
+    "erp-v6-development-00-eeg-10-meg-10": {
+      ".json": "fae8aab37deca9acbbe40e6d3f33576a056d83e152ce6f0da7d4d1c2adfea6cb",
+      ".npz": "cbd67c61f666f494f1e095796861a635939c4a823dcf612d935dbb702fbda620"
+    },
+    "erp-v6-development-01-eeg-10-meg-10": {
+      ".json": "c05914cf4fd9f827da667faf6f83170af59d30b8a07f95971784cc6b810eb76a",
+      ".npz": "67ba42e2aa574c0642b69ab5cf1548d905f6d487289c44d9f5a48a94be30eb5f"
+    },
+    "erp-v6-development-02-eeg-10-meg-10": {
+      ".json": "59260ca3841c27ff426ffe9c9c826cacb8ca2f821ebb73944e86002f294713bf",
+      ".npz": "3c811f84f12e5904f985923e39f8611267162582a779f2e7512887a9faf52a52"
+    },
+    "erp-v6-development-03-eeg-10-meg-10": {
+      ".json": "1e067dd12f192771c02abbd24cd11c4721fee52d971e658d4753ec3862266f55",
+      ".npz": "0561866cc72f79314ea549cb9285938b8ffa0f0c197fc734b3d2d13fd5ab34a2"
+    },
+    "erp-v6-development-04-eeg-10-meg-10": {
+      ".json": "131f14be7fd8f8d5f265dfb1972a2068db9b5ae9a63cc32054c1fbc9d5703bda",
+      ".npz": "9bf70e832495aaf7134ceae8d35405a00e91650f11ffdacbfd5f92bd3c399e6e"
+    }
+  },
+  "case_count": 5,
+  "conditional_not_blind": true,
+  "all_An_cal_AUC_at_least_0.9": false,
+  "all_required_DLE_checks_pass": false,
+  "accepted": false,
+  "decision": "reject",
+  "dle_checks": [
+    {
+      "case_id": "erp-v6-development-00-eeg-10-meg-10",
+      "layer": "surface",
+      "baseline_DLE_mm": 31.530702327656556,
+      "diagnostic_DLE_mm": 7.755141529980423,
+      "worsening_mm": -23.775560797676132,
+      "passed": true
+    },
+    {
+      "case_id": "erp-v6-development-01-eeg-10-meg-10",
+      "layer": "surface",
+      "baseline_DLE_mm": null,
+      "diagnostic_DLE_mm": 37.41071561828437,
+      "worsening_mm": null,
+      "passed": true
+    },
+    {
+      "case_id": "erp-v6-development-02-eeg-10-meg-10",
+      "layer": "deep",
+      "baseline_DLE_mm": 10.00000054854849,
+      "diagnostic_DLE_mm": 14.142136031724077,
+      "worsening_mm": 4.142135483175586,
+      "passed": true
+    },
+    {
+      "case_id": "erp-v6-development-03-eeg-10-meg-10",
+      "layer": "surface",
+      "baseline_DLE_mm": 11.822374003563763,
+      "diagnostic_DLE_mm": 27.28245918731176,
+      "worsening_mm": 15.460085183747996,
+      "passed": false
+    },
+    {
+      "case_id": "erp-v6-development-03-eeg-10-meg-10",
+      "layer": "deep",
+      "baseline_DLE_mm": 0.0,
+      "diagnostic_DLE_mm": 0.0,
+      "worsening_mm": 0.0,
+      "passed": true
+    },
+    {
+      "case_id": "erp-v6-development-04-eeg-10-meg-10",
+      "layer": "surface",
+      "baseline_DLE_mm": null,
+      "diagnostic_DLE_mm": 38.639858768420176,
+      "worsening_mm": null,
+      "passed": true
+    },
+    {
+      "case_id": "erp-v6-development-04-eeg-10-meg-10",
+      "layer": "deep",
+      "baseline_DLE_mm": 0.0,
+      "diagnostic_DLE_mm": 10.00000054854849,
+      "worsening_mm": 10.00000054854849,
+      "passed": false
+    }
+  ],
+  "wall_seconds": 13.720491399988532
+}
