@@ -1,0 +1,68 @@
+{
+  "complete": true,
+  "case_count": 5,
+  "conditional_not_blind": true,
+  "all_An_cal_AUC_at_least_0.9": false,
+  "all_required_DLE_checks_pass": false,
+  "accepted": false,
+  "decision": "reject",
+  "dle_checks": [
+    {
+      "case_id": "erp-v6-development-00-eeg-10-meg-10",
+      "layer": "surface",
+      "baseline_DLE_mm": 31.530702327656556,
+      "diagnostic_DLE_mm": 9.582599556323082,
+      "worsening_mm": -21.948102771333474,
+      "passed": true
+    },
+    {
+      "case_id": "erp-v6-development-01-eeg-10-meg-10",
+      "layer": "surface",
+      "baseline_DLE_mm": null,
+      "diagnostic_DLE_mm": null,
+      "worsening_mm": null,
+      "passed": false
+    },
+    {
+      "case_id": "erp-v6-development-02-eeg-10-meg-10",
+      "layer": "deep",
+      "baseline_DLE_mm": 10.00000054854849,
+      "diagnostic_DLE_mm": 10.00000054854849,
+      "worsening_mm": 0.0,
+      "passed": true
+    },
+    {
+      "case_id": "erp-v6-development-03-eeg-10-meg-10",
+      "layer": "surface",
+      "baseline_DLE_mm": 11.822374003563763,
+      "diagnostic_DLE_mm": 11.822374003563763,
+      "worsening_mm": 0.0,
+      "passed": true
+    },
+    {
+      "case_id": "erp-v6-development-03-eeg-10-meg-10",
+      "layer": "deep",
+      "baseline_DLE_mm": 0.0,
+      "diagnostic_DLE_mm": 0.0,
+      "worsening_mm": 0.0,
+      "passed": true
+    },
+    {
+      "case_id": "erp-v6-development-04-eeg-10-meg-10",
+      "layer": "surface",
+      "baseline_DLE_mm": null,
+      "diagnostic_DLE_mm": null,
+      "worsening_mm": null,
+      "passed": false
+    },
+    {
+      "case_id": "erp-v6-development-04-eeg-10-meg-10",
+      "layer": "deep",
+      "baseline_DLE_mm": 0.0,
+      "diagnostic_DLE_mm": 0.0,
+      "worsening_mm": 0.0,
+      "passed": true
+    }
+  ],
+  "wall_seconds": 14.71448120000423
+}
