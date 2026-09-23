@@ -1,0 +1,22 @@
+{
+  "complete": true,
+  "phase": "development",
+  "cases": [
+    1,
+    3
+  ],
+  "snr_eeg_meg_db": [
+    -10,
+    -10
+  ],
+  "calibration_or_validation_read": false,
+  "confirmation_role": "cluster selection; old held-out deep score and calibration invalid",
+  "local_An_cal_AUC_gate": 0.9,
+  "passes_local_gate": false,
+  "all_converged": true,
+  "case01_full_ungated_deep_false_positive": 1,
+  "case03_deep_detected": 1,
+  "case03_deep_DLE_mm": 0.0,
+  "accepted": false,
+  "reason": "Development candidate only; acceptance requires both local AUCs >=0.90 and a newly frozen calibration."
+}
