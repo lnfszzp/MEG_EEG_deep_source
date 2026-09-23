@@ -67,3 +67,24 @@ def test_zero_signal_and_budget_exhaustion_are_distinguished():
     assert np.isfinite(estimate).all()
     assert not diagnostics["converged"]
     assert diagnostics["history"][0]["iterations"] == 1
+
+
+def test_per_source_amplitude_floor_preserves_zero_default_and_matches_objective():
+    data = np.array([[3., 4.], [-2., 1.]])
+    graph = sparse.csr_matrix((0, 2))
+    settings = dict(source_penalty=np.array([.2, .3]), edge_penalty=0.,
+                    outer_iterations=3, max_iter=500, tolerance=1e-8)
+    default, _ = solve_reweighted_graph_v5(data, np.eye(2), graph, **settings)
+    explicit_zero, _ = solve_reweighted_graph_v5(
+        data, np.eye(2), graph, amplitude_weight_floor=np.zeros(2), **settings)
+    assert np.array_equal(default, explicit_zero)
+
+    estimate, diagnostics = solve_reweighted_graph_v5(
+        data, np.eye(2), graph, amplitude_weight_floor=np.array([0., 1.]), **settings)
+    norms = np.linalg.norm(estimate, axis=1)
+    epsilon = diagnostics["amplitude_epsilon"]
+    expected = (.5 * np.sum((estimate - data) ** 2)
+                + settings["source_penalty"][0] * epsilon * np.log1p(norms[0] / epsilon)
+                + settings["source_penalty"][1] * norms[1])
+    assert np.isclose(diagnostics["history"][-1]["log_objective"], expected)
+    assert diagnostics["amplitude_weight_floor_range"] == [0., 1.]

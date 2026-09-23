@@ -61,3 +61,27 @@ def test_no_temporal_evidence_returns_exact_zero_without_solver(monkeypatch):
         baseline=baseline, active_windows=(active,), temporal_mode="v4")
     assert not source.any()
     assert diagnostic["windows"][0]["solver"] is None
+
+
+def test_deep_reweight_floor_is_applied_only_to_deep_admm_rows(monkeypatch):
+    baseline = np.arange(30) < 15
+    active = (np.arange(30) >= 20) & (np.arange(30) < 25)
+    captured = {}
+
+    def capture(response, gain, incidence, **kwargs):
+        captured.update(kwargs)
+        return np.zeros((gain.shape[1], response.shape[1])), {"converged": True}
+
+    monkeypatch.setattr(inverse, "solve_reweighted_graph_v5", capture)
+    source, info = inverse.reconstruct_evoked_oaster_v5_from_whitened(
+        np.arange(90, dtype=float).reshape(3, 30), np.eye(3), 2,
+        adjacency=sparse.eye(3), baseline=baseline, active_windows=(active,),
+        mrf_strength=0, deep_reweight_floor=.4)
+    assert source.shape == (3, 30)
+    assert np.array_equal(captured["amplitude_weight_floor"], [0., 0., .4])
+    assert info["deep_reweight_floor"] == .4
+    for invalid in (-.1, 1.1):
+        with np.testing.assert_raises(ValueError):
+            inverse.reconstruct_evoked_oaster_v5_from_whitened(
+                np.zeros((3, 30)), np.eye(3), 2, adjacency=sparse.eye(3),
+                baseline=baseline, active_windows=(active,), deep_reweight_floor=invalid)

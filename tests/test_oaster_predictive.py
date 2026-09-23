@@ -28,6 +28,7 @@ def test_fit_uses_only_training_and_keeps_complete_null(monkeypatch):
     assert [call[3]["adjacency"].shape for call in calls] == [(2, 2), (3, 3)]
     assert np.all(null[:2] == 2) and not null[2:].any() and np.all(full == 3)
     assert calls[0][3]["epsilon_fraction"] == 1 and calls[0][3]["solver_kind"] == "irls"
+    assert calls[0][3]["deep_reweight_floor"] == 0
     assert calls[0][3]["max_iter"] == 100 and calls[0][3]["smoothing_fraction"] == .1
     assert not info["confirmation_used_for_fit"]
     assert "confirmation" not in inspect.signature(inverse.fit_predictive_models).parameters
@@ -47,7 +48,7 @@ def test_admm_defaults_and_structural_overrides_are_forwarded_without_mutation(m
 
     monkeypatch.setattr(inverse, "reconstruct_evoked_oaster_v5_from_whitened", capture)
     settings = dict(solver_kind="admm", noise_multiplier=2., edge_fraction=.25,
-                    mrf_strength=.3, calibration="global")
+                    mrf_strength=.3, calibration="global", deep_reweight_floor=.4)
     original = settings.copy()
     _, _, diagnostics = inverse.fit_predictive_models(
         data, np.eye(3), 2, adjacency=sparse.eye(3), baseline=baseline,
@@ -59,6 +60,7 @@ def test_admm_defaults_and_structural_overrides_are_forwarded_without_mutation(m
         assert options["tolerance"] == .001 and options["outer_tolerance"] == .01
         assert options["noise_multiplier"] == 2 and options["edge_fraction"] == .25
         assert options["mrf_strength"] == .3 and options["calibration"] == "global"
+        assert options["deep_reweight_floor"] == .4
         assert "smoothing_fraction" not in options and "epsilon_fraction" not in options
     assert diagnostics["solver_kind"] == "admm"
     for malformed in ({"solver_kind": "unknown"}, {"temporal_mode": "v4"}):

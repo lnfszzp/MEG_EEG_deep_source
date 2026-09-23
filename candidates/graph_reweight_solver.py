@@ -53,13 +53,17 @@ def _certificate(data, gain, incidence, x, edge_dual, amplitude_penalty, edge_pe
 def solve_reweighted_graph_v5(data, gain, incidence, *, source_penalty, edge_penalty,
                               outer_iterations=12, max_iter=2000, tolerance=3e-4,
                               epsilon_fraction=.05, rho=1., outer_tolerance=.01,
-                              adaptive_rho=True, max_inner_retries=2):
+                              adaptive_rho=True, max_inner_retries=2,
+                              amplitude_weight_floor=0.):
     """Solve the v4 log-sum objective with verified, monotone MM updates.
 
     ``max_iter`` is one inner budget; an unfinished convex subproblem continues
     with unchanged weights for at most ``max_inner_retries`` additional budgets.
     Final convergence needs a primal-dual gap for the *current* MM weights, not
     just a small iterate change. Earlier approximate steps remain in history.
+    A per-source floor ``f`` changes the amplitude penalty to
+    ``lambda * (f * norm + (1-f) * eps * log1p(norm / eps))``; zero exactly
+    retains the original log-sum path.
     """
     data, gain = np.asarray(data, float), np.asarray(gain, float)
     if data.ndim != 2 or gain.ndim != 2 or data.shape[0] != gain.shape[0]:
@@ -68,9 +72,13 @@ def solve_reweighted_graph_v5(data, gain, incidence, *, source_penalty, edge_pen
     incidence = sparse.csr_matrix(incidence)
     source_penalty = np.broadcast_to(np.asarray(source_penalty, float), (n,)).copy()
     edge_penalty = np.broadcast_to(np.asarray(edge_penalty, float), (incidence.shape[0],)).copy()
+    amplitude_weight_floor = np.broadcast_to(
+        np.asarray(amplitude_weight_floor, float), (n,)).copy()
     if (not n or not data.shape[1] or incidence.shape[1] != n
-            or any(not np.isfinite(v).all() for v in (data, gain, incidence.data, source_penalty, edge_penalty))
+            or any(not np.isfinite(v).all() for v in (
+                data, gain, incidence.data, source_penalty, edge_penalty, amplitude_weight_floor))
             or np.any(source_penalty < 0) or np.any(edge_penalty < 0)
+            or np.any(amplitude_weight_floor < 0) or np.any(amplitude_weight_floor > 1)
             or not np.isfinite([rho, tolerance, epsilon_fraction, outer_tolerance]).all()
             or min(rho, tolerance, epsilon_fraction, outer_tolerance) <= 0
             or min(outer_iterations, max_iter) < 1 or max_inner_retries < 0):
@@ -160,11 +168,20 @@ def solve_reweighted_graph_v5(data, gain, incidence, *, source_penalty, edge_pen
         if eps_a is None:
             eps_a = max(epsilon_fraction * float(norms.max(initial=0)), 1e-12)
             eps_e = max(epsilon_fraction * float(jumps.max(initial=0)), 1e-12)
-        log_objective = (.5 * np.sum((gain @ x - data) ** 2)
-                         + np.sum(source_penalty * eps_a * np.log1p(norms / eps_a))
+        if np.any(amplitude_weight_floor):
+            source_shape = (amplitude_weight_floor * norms
+                            + (1 - amplitude_weight_floor) * eps_a * np.log1p(norms / eps_a))
+            source_objective = np.sum(source_penalty * source_shape)
+        else:
+            source_objective = np.sum(source_penalty * eps_a * np.log1p(norms / eps_a))
+        log_objective = (.5 * np.sum((gain @ x - data) ** 2) + source_objective
                          + np.sum(edge_penalty * eps_e * np.log1p(jumps / eps_e)))
         change = np.linalg.norm(x - previous) / max(np.linalg.norm(x), 1e-12)
-        amplitude_weights, edge_weights = eps_a / (norms + eps_a), eps_e / (jumps + eps_e)
+        amplitude_weights = eps_a / (norms + eps_a)
+        if np.any(amplitude_weight_floor):
+            amplitude_weights = (amplitude_weight_floor
+                                 + (1 - amplitude_weight_floor) * amplitude_weights)
+        edge_weights = eps_e / (jumps + eps_e)
         local_certificate = _certificate(data, gain, incidence, x, rho * h,
             source_penalty * amplitude_weights, edge_penalty * edge_weights, linear_residual)
         history.append(dict(outer=outer, iterations=iteration, retries=(iteration - 1) // max_iter,
@@ -191,6 +208,9 @@ def solve_reweighted_graph_v5(data, gain, incidence, *, source_penalty, edge_pen
         numerical_stall=stalled, descent_guard_triggered=stalled,
         amplitude_epsilon=eps_a, edge_epsilon=eps_e,
         amplitude_weight_range=[float(amplitude_weights.min()), float(amplitude_weights.max())],
+        amplitude_weight_floor_range=[float(amplitude_weight_floor.min()),
+                                      float(amplitude_weight_floor.max())],
+        amplitude_penalty_model="per-source linear/log-sum mixture",
         edge_weight_range=[float(edge_weights.min(initial=1)), float(edge_weights.max(initial=0))],
         rho_initial=initial_rho, rho_final=float(rho), rho_updates=rho_updates,
         outer_tolerance=float(outer_tolerance), adaptive_rho=bool(adaptive_rho),
