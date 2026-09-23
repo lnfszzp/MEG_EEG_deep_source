@@ -1,0 +1,26 @@
+{
+  "complete": true,
+  "phase": "development",
+  "snr_eeg_meg_db": [
+    -10,
+    -10
+  ],
+  "cases": [
+    1,
+    3
+  ],
+  "primary_metric": "canonical tied-rank An_auc",
+  "local_metric": "parcel-local An_cal_AUC",
+  "local_AUC_gate": 0.9,
+  "full_SISSES_local_gate_passed": false,
+  "full_SISSES_all_converged": true,
+  "full_SISSES_case01_ungated_deep_false_positive": 1,
+  "full_SISSES_case03_deep_detected": 0,
+  "full_SISSES_case03_deep_DLE_mm": 20.000001097096984,
+  "full_SISSES_wall_seconds": [
+    1261.9822905000037,
+    1329.2752113999886
+  ],
+  "accepted": false,
+  "reason": "Local AUC stayed below 0.90; the pure-surface H1 reported deep activity and the true deep peak was 20 mm away."
+}
