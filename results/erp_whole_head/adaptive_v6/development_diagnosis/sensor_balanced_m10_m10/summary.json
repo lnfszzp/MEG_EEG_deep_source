@@ -1,0 +1,89 @@
+{
+  "complete": true,
+  "phase": "development",
+  "snr_eeg_meg_db": [
+    -10,
+    -10
+  ],
+  "mrf_strength": 0.8,
+  "case_count": 5,
+  "all_fits_converged": false,
+  "An_cal_AUC_gate": 0.9,
+  "passed_cases_H1": 1,
+  "accepted": false,
+  "reason": "case00, case01, case03 and case04 H1 An_cal_AUC remain below 0.90; case01 H1 did not converge",
+  "protocol_note": "Only mixed cases 03/04 rescale the deep component to a fixed 0.5 joint EEG/MEG noise-normalized sensor-amplitude ratio; no truth enters the inverse.",
+  "provenance_note": "Combined from an intentionally stopped two-case shard and one completed three-case shard; calibration and validation were not read.",
+  "cases": [
+    {
+      "case": 0,
+      "scenario": "surface_only",
+      "h0_An_cal_AUC": 0.9416512345679012,
+      "h1_An_cal_AUC": 0.4941666666666667,
+      "old_h1_An_cal_AUC": 0.4941666666666667,
+      "h1_An_auc": 0.9958125815249615,
+      "surface_An_auc": 0.9960710041592394,
+      "deep_An_auc": null,
+      "surface_DLE_mm": 9.90334530420756,
+      "deep_DLE_mm": null,
+      "H0_converged": true,
+      "H1_converged": true
+    },
+    {
+      "case": 1,
+      "scenario": "surface_only",
+      "h0_An_cal_AUC": 0.7166792929292929,
+      "h1_An_cal_AUC": 0.739263468013468,
+      "old_h1_An_cal_AUC": 0.739263468013468,
+      "h1_An_auc": 0.7127312095455278,
+      "surface_An_auc": 0.7126305972733273,
+      "deep_An_auc": null,
+      "surface_DLE_mm": null,
+      "deep_DLE_mm": null,
+      "H0_converged": true,
+      "H1_converged": false
+    },
+    {
+      "case": 2,
+      "scenario": "deep_only",
+      "h0_An_cal_AUC": 0.5,
+      "h1_An_cal_AUC": 1.0,
+      "old_h1_An_cal_AUC": 1.0,
+      "h1_An_auc": 0.9997337947557567,
+      "surface_An_auc": null,
+      "deep_An_auc": 0.8666666666666667,
+      "surface_DLE_mm": null,
+      "deep_DLE_mm": 10.00000054854849,
+      "H0_converged": true,
+      "H1_converged": true
+    },
+    {
+      "case": 3,
+      "scenario": "deep_plus_surface",
+      "h0_An_cal_AUC": 0.48569444444444443,
+      "h1_An_cal_AUC": 0.7381944444444444,
+      "old_h1_An_cal_AUC": 0.6011882716049382,
+      "h1_An_auc": 0.9690741195884974,
+      "surface_An_auc": 0.9674242424242424,
+      "deep_An_auc": 1.0,
+      "surface_DLE_mm": 11.822374003563763,
+      "deep_DLE_mm": 0.0,
+      "H0_converged": true,
+      "H1_converged": true
+    },
+    {
+      "case": 4,
+      "scenario": "deep_plus_two_surface",
+      "h0_An_cal_AUC": 0.7230235860286364,
+      "h1_An_cal_AUC": 0.732913393191171,
+      "old_h1_An_cal_AUC": 0.732913393191171,
+      "h1_An_auc": 0.7231204347051486,
+      "surface_An_auc": 0.7135955050992377,
+      "deep_An_auc": 1.0,
+      "surface_DLE_mm": null,
+      "deep_DLE_mm": 0.0,
+      "H0_converged": true,
+      "H1_converged": true
+    }
+  ]
+}
