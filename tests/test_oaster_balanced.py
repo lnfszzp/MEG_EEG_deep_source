@@ -63,7 +63,7 @@ def test_no_temporal_evidence_returns_exact_zero_without_solver(monkeypatch):
     assert diagnostic["windows"][0]["solver"] is None
 
 
-def test_deep_reweight_floor_is_applied_only_to_deep_admm_rows(monkeypatch):
+def test_reweight_floors_are_applied_to_their_admm_layers(monkeypatch):
     baseline = np.arange(30) < 15
     active = (np.arange(30) >= 20) & (np.arange(30) < 25)
     captured = {}
@@ -76,12 +76,14 @@ def test_deep_reweight_floor_is_applied_only_to_deep_admm_rows(monkeypatch):
     source, info = inverse.reconstruct_evoked_oaster_v5_from_whitened(
         np.arange(90, dtype=float).reshape(3, 30), np.eye(3), 2,
         adjacency=sparse.eye(3), baseline=baseline, active_windows=(active,),
-        mrf_strength=0, deep_reweight_floor=.4)
+        mrf_strength=0, surface_reweight_floor=.2, deep_reweight_floor=.4)
     assert source.shape == (3, 30)
-    assert np.array_equal(captured["amplitude_weight_floor"], [0., 0., .4])
+    assert np.array_equal(captured["amplitude_weight_floor"], [.2, .2, .4])
+    assert info["surface_reweight_floor"] == .2
     assert info["deep_reweight_floor"] == .4
-    for invalid in (-.1, 1.1):
-        with np.testing.assert_raises(ValueError):
-            inverse.reconstruct_evoked_oaster_v5_from_whitened(
-                np.zeros((3, 30)), np.eye(3), 2, adjacency=sparse.eye(3),
-                baseline=baseline, active_windows=(active,), deep_reweight_floor=invalid)
+    for name in ("surface_reweight_floor", "deep_reweight_floor"):
+        for invalid in (-.1, 1.1):
+            with np.testing.assert_raises(ValueError):
+                inverse.reconstruct_evoked_oaster_v5_from_whitened(
+                    np.zeros((3, 30)), np.eye(3), 2, adjacency=sparse.eye(3),
+                    baseline=baseline, active_windows=(active,), **{name: invalid})

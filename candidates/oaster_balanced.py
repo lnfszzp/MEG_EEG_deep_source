@@ -44,8 +44,8 @@ def reconstruct_evoked_oaster_v5_from_whitened(
         data, gain, n_surf, kernels=(), *, adjacency, baseline, active_windows,
         window_channel_weights=None, require_one=False, edge_fraction=0.5,
         noise_multiplier=1.0, mrf_strength=0.5, calibration="layer",
-        temporal_mode="smooth", solver_kind="admm", deep_reweight_floor=0.,
-        **solver_settings):
+        temporal_mode="smooth", solver_kind="admm", surface_reweight_floor=0.,
+        deep_reweight_floor=0., **solver_settings):
     """Joint surface/deep solve; no truth, template selection or forced deep source.
 
     Calibration='global' is a numerical-solver-only ablation against v4.
@@ -63,12 +63,14 @@ def reconstruct_evoked_oaster_v5_from_whitened(
             or temporal_mode not in {"v4", "smooth"}
             or solver_kind not in {"admm", "irls"}
             or not np.isfinite([
-                edge_fraction, noise_multiplier, mrf_strength, deep_reweight_floor]).all()
+                edge_fraction, noise_multiplier, mrf_strength,
+                surface_reweight_floor, deep_reweight_floor]).all()
             or edge_fraction < 0 or noise_multiplier <= 0 or not 0 <= mrf_strength < 1
+            or not 0 <= surface_reweight_floor <= 1
             or not 0 <= deep_reweight_floor <= 1):
         raise ValueError("invalid v5 inputs; use one window and no forced source detection")
-    if solver_kind != "admm" and deep_reweight_floor:
-        raise ValueError("deep_reweight_floor is supported only by the ADMM solver")
+    if solver_kind != "admm" and (surface_reweight_floor or deep_reweight_floor):
+        raise ValueError("reweight floors are supported only by the ADMM solver")
     graph = sparse.csr_matrix(adjacency)
     if graph.shape != (gain.shape[1], gain.shape[1]) or not np.isfinite(graph.data).all():
         raise ValueError("finite anatomical adjacency must match the complete source grid")
@@ -96,6 +98,7 @@ def reconstruct_evoked_oaster_v5_from_whitened(
     metadata = dict(mode="joint_layer_calibrated_adaptive_graph", selected_templates=[],
                     spatial_templates_used=False, graph_edges=int(incidence.shape[0]),
                     deep_graph_edges=0, mrf_strength=mrf_strength, calibration=calibration,
+                    surface_reweight_floor=float(surface_reweight_floor),
                     deep_reweight_floor=float(deep_reweight_floor),
                     temporal_mode=temporal_mode, solver_kind=solver_kind,
                     solver_settings=solver_settings,
@@ -137,7 +140,7 @@ def reconstruct_evoked_oaster_v5_from_whitened(
         spatial_solver = solve_reweighted_graph_irls
     spatial_settings = dict(solver_settings)
     if solver_kind == "admm":
-        amplitude_weight_floor = np.zeros(gain.shape[1])
+        amplitude_weight_floor = np.full(gain.shape[1], surface_reweight_floor)
         amplitude_weight_floor[n_surf:] = deep_reweight_floor
         spatial_settings["amplitude_weight_floor"] = amplitude_weight_floor
     coefficients, diagnostics = spatial_solver(
