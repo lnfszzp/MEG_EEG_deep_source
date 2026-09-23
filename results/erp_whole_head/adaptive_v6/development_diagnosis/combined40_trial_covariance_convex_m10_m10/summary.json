@@ -1,0 +1,37 @@
+{
+  "complete": true,
+  "phase": "development",
+  "covariance": "trial",
+  "snr_eeg_meg_db": [
+    -10,
+    -10
+  ],
+  "solver_settings": {
+    "solver_kind": "admm",
+    "mrf_strength": 0.8,
+    "outer_iterations": 1
+  },
+  "comparison_is_same_current_code_and_whitener": true,
+  "oracle_family_selection_for_diagnostic": true,
+  "deployable_presence_decision_evaluated": false,
+  "local_AUC_target": 0.9,
+  "exploratory_local_target_met": false,
+  "case01_local_AUC_delta": 0.11439253647586989,
+  "case03_local_AUC_delta": 0.0,
+  "case01_full_raw_deep_false_positive": 1,
+  "case03_deep_detected": 1,
+  "all_converged": true,
+  "accepted": false,
+  "wall_seconds": 292.57513329999347,
+  "code_sha256": {
+    "candidates\\oaster_predictive.py": "9ace116274a469280f91d0a654bbf8b25b62eeff036e224cd6be5fafc2f22431",
+    "candidates\\oaster_balanced.py": "81091e31a011e315abc1c2fe1372bec40f50475c73dcc5bb6f80611d2dd70c7d",
+    "candidates\\graph_reweight_solver.py": "051e54ee959f155daa4d55260fe1787acaa799ac3df75b9956169813de763b74",
+    "algorithms\\spatial_fused_fusion.py": "68c65de7c6c41628f36f72cb8b9f913ea569aec8ff675109461acdad6353197d",
+    "benchmark\\erp_trial_covariance.py": "818e41cd1e3c75921db386b9858f78e3722551cc9e32ddbd2e88e819b22e7d89",
+    "benchmark\\erp_replicates.py": "ef5f3c8869dc71800c537940c71f4e67e53cd04906535a5672e3460f8e0b7a39",
+    "benchmark\\erp_protocol.py": "f74f9b1dd33036105d50d4ccd6242c1a068cb090fe4a234eb7736f8071e16647",
+    "benchmark\\protocol.py": "26f816e0530cf6f36445b7222fc5db3d0ce216f4ec089f0a2779c65e1c4c8d4a",
+    "benchmark\\metrics.py": "f07a42e26dc2118c418744e3a4971c5fcd3037b7b93e26a7e2e4e899400986d8"
+  }
+}
