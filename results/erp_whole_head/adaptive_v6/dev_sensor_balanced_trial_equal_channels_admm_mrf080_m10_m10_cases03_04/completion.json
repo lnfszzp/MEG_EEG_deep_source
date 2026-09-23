@@ -1,0 +1,21 @@
+{
+  "complete": true,
+  "case_count": 2,
+  "all_equal_fits_converged": true,
+  "clear_An_cal_AUC_gain_in_both_cases": false,
+  "accepted": false,
+  "decision": "reject",
+  "deltas": [
+    {
+      "case_id": "erp-v6-development-03-eeg-10-meg-10",
+      "An_cal_AUC_gain": 0.11299382716049378,
+      "An_auc_gain": 0.026951300867244843
+    },
+    {
+      "case_id": "erp-v6-development-04-eeg-10-meg-10",
+      "An_cal_AUC_gain": 0.0,
+      "An_auc_gain": -0.00022715125601291408
+    }
+  ],
+  "wall_seconds": 524.6073525000102
+}
