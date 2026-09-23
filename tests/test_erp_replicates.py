@@ -94,6 +94,30 @@ def test_sensor_balancing_rejects_nonmixed_truth():
         erp_replicates.simulate_replicated_case(shared, case, 9)
 
 
+def test_opt_in_surface_components_have_equal_sensor_energy():
+    shared, case = _toy()
+    shared.update(vertices=np.array([[0., 0., 0.], [.01, 0., 0.], [0., 0., .02]]),
+                  adjacency=np.zeros((3, 3)))
+    case.update(surface_centers=[0, 1], deep_index=None, correlation=0.,
+                surface_component_sensor_balance=True)
+    result = erp_replicates.simulate_replicated_case(shared, case, 9)
+    before = result["metadata"]["surface_component_sensor_energies_before"]
+    after = result["metadata"]["surface_component_sensor_energies_after"]
+    assert before[0] != pytest.approx(before[1])
+    assert after[0] == pytest.approx(after[1])
+    assert result["metadata"]["surface_component_sensor_balance"] is True
+
+
+def test_surface_component_balancing_rejects_one_surface_component():
+    shared, case = _toy()
+    shared.update(vertices=np.array([[0., 0., 0.], [.01, 0., 0.], [0., 0., .02]]),
+                  adjacency=np.zeros((3, 3)))
+    case.update(surface_centers=[0], deep_index=None,
+                surface_component_sensor_balance=True)
+    with pytest.raises(ValueError, match="at least two"):
+        erp_replicates.simulate_replicated_case(shared, case, 9)
+
+
 def test_explicit_half_roots_override_fallback_and_change_only_the_requested_half():
     shared, case = _toy()
     case["replica_seed_roots"] = dict(fit=2026092206, check=2026092207)

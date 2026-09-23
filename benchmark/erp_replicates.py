@@ -13,6 +13,20 @@ import numpy as np
 from . import erp_protocol, methods
 
 
+def _joint_sensor_energy(shared: dict, source: np.ndarray, active: np.ndarray) -> float:
+    """EEG+MEG energy after generation-noise whitening and rank normalization."""
+    energy = 0.
+    for modality in ("eeg", "meg"):
+        factor = np.asarray(shared["noise_factor_" + modality], float)
+        covariance = factor @ factor.T
+        values, vectors = np.linalg.eigh((covariance + covariance.T) / 2)
+        keep = values > values[-1] * 1e-8
+        whitener = (vectors[:, keep] / np.sqrt(values[keep])).T
+        gain = np.asarray(shared["gain_" + modality], float)
+        energy += np.linalg.norm((whitener @ gain @ source)[:, active]) ** 2 / keep.sum()
+    return float(energy)
+
+
 def simulate_replicated_case(shared: dict, case: dict, seed_root=erp_protocol.ERP_SEED_ROOT) -> dict:
     """Keep old truth; generate independent training/confirmation observations.
 
@@ -36,6 +50,34 @@ def simulate_replicated_case(shared: dict, case: dict, seed_root=erp_protocol.ER
             raise ValueError("finite gain and square channel noise factor required")
     _, _, truth, groups, baseline, windows, active, old_metadata = erp_protocol.simulate_case(
         shared, case, seed_root=seed_root)
+    if case.get("surface_component_sensor_balance", False):
+        surface_groups = groups[:len(case.get("surface_centers", []))]
+        if len(surface_groups) < 2:
+            raise ValueError("surface component balancing requires at least two surface components")
+        if len(np.unique(np.concatenate(surface_groups))) != sum(map(len, surface_groups)):
+            raise ValueError("surface component balancing requires disjoint surface components")
+        components = []
+        for group in surface_groups:
+            component = np.zeros_like(truth)
+            component[group] = truth[group]
+            components.append(component)
+        before = np.array([_joint_sensor_energy(shared, component, active)
+                           for component in components])
+        if np.any(before <= 0) or not np.isfinite(before).all():
+            raise ValueError("surface components need positive finite sensor energy")
+        target = float(np.exp(np.mean(np.log(before))))
+        scales = np.sqrt(target / before)
+        surface_indices = np.concatenate(surface_groups)
+        truth[surface_indices] = 0.
+        truth += sum((scale * component for scale, component in zip(scales, components)),
+                     start=np.zeros_like(truth))
+        after = [_joint_sensor_energy(shared, scale * component, active)
+                 for scale, component in zip(scales, components)]
+        old_metadata.update(
+            surface_component_sensor_balance=True,
+            surface_component_sensor_energies_before=before.tolist(),
+            surface_component_sensor_energies_after=after,
+            surface_component_sensor_scales=scales.tolist())
     sensor_ratio = case.get("deep_surface_sensor_amplitude_ratio")
     if sensor_ratio is not None:
         sensor_ratio = float(sensor_ratio)
@@ -46,18 +88,8 @@ def simulate_replicated_case(shared: dict, case: dict, seed_root=erp_protocol.ER
         deep = np.zeros_like(truth)
         deep[int(deep_index)] = truth[int(deep_index)]
         surface = truth - deep
-        energies = {}
-        for layer, source in (("surface", surface), ("deep", deep)):
-            energies[layer] = 0.
-            for modality in ("eeg", "meg"):
-                factor = np.asarray(shared["noise_factor_" + modality], float)
-                covariance = factor @ factor.T
-                values, vectors = np.linalg.eigh((covariance + covariance.T) / 2)
-                keep = values > values[-1] * 1e-8
-                whitener = (vectors[:, keep] / np.sqrt(values[keep])).T
-                gain = np.asarray(shared["gain_" + modality], float)
-                energies[layer] += (np.linalg.norm((whitener @ gain @ source)[:, active]) ** 2
-                                    / keep.sum())
+        energies = {layer: _joint_sensor_energy(shared, source, active)
+                    for layer, source in (("surface", surface), ("deep", deep))}
         if min(energies.values()) <= 0 or not np.isfinite(list(energies.values())).all():
             raise ValueError("mixed components need positive finite noise-normalized sensor energy")
         scale = sensor_ratio * np.sqrt(energies["surface"] / energies["deep"])
