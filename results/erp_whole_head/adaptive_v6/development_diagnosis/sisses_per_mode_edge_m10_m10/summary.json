@@ -1,0 +1,25 @@
+{
+  "complete": true,
+  "phase": "development",
+  "snr_eeg_meg_db": [
+    -10,
+    -10
+  ],
+  "cases": [
+    1,
+    3
+  ],
+  "calibration_or_validation_read": false,
+  "solver_settings": {
+    "solver_kind": "admm",
+    "mrf_strength": 0.8,
+    "surface_reweight_floor": 1.0,
+    "deep_reweight_floor": 1.0,
+    "edge_penalty_mode": "elementwise"
+  },
+  "local_An_cal_AUC_gate": 0.9,
+  "passes_local_gate": false,
+  "all_converged": true,
+  "accepted": false,
+  "reason": "Per-mode edge reweighting improves both cases but reaches only 0.644 and 0.851 local An_cal_AUC, below the frozen 0.90 gate."
+}
