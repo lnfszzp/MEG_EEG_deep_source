@@ -1,0 +1,26 @@
+{
+  "complete": true,
+  "phase": "development",
+  "candidate_count": 8,
+  "formula": "per-layer average percentile ranks; product across candidates; square for support sharpening",
+  "truth_used_in_consensus": false,
+  "candidates_selected_during_development": true,
+  "oracle_family_selection_for_diagnostic": true,
+  "deployable_presence_decision_evaluated": false,
+  "local_AUC_target": 0.9,
+  "development_target_met": true,
+  "case01_null_deep_false_positive": 0,
+  "case03_full_deep_detected": 1,
+  "independent_validation_passed": false,
+  "accepted": false,
+  "candidate_directories": [
+    "dev_component_balanced_convex_admm_mrf080_m10_m10_case{}",
+    "dev_component_balanced_sissessource_admm_mrf080_m10_m10_case{}",
+    "dev_component_balanced_sissesedge_admm_mrf080_m10_m10_case{}",
+    "dev_component_balanced_sissesfull_admm_mrf080_m10_m10_case{}",
+    "dev_component_balanced_sissessource_svd_admm_mrf080_m10_m10_case{}",
+    "dev_component_balanced_sissesedge_svd_admm_mrf080_m10_m10_case{}",
+    "dev_component_balanced_sissesconvex_svd_admm_mrf080_m10_m10_case{}",
+    "dev_component_balanced_physical_sissesconvex_svd_m10_m10_case{}"
+  ]
+}
