@@ -21,19 +21,32 @@ def _project_rows(values, radii):
 
 
 def _certificate(data, gain, incidence, x, edge_dual, amplitude_penalty,
-                 edge_penalty, data_dual=None, ridge_penalty=0.):
+                 edge_penalty, data_dual=None, ridge_penalty=0.,
+                 edge_penalty_mode="group"):
     """A feasible convex dual gives a rigorous lower bound on the optimum."""
     ridge_penalty = float(ridge_penalty)
-    if not np.isfinite(ridge_penalty) or ridge_penalty < 0:
-        raise ValueError("ridge_penalty must be finite and nonnegative")
+    if (not np.isfinite(ridge_penalty) or ridge_penalty < 0
+            or edge_penalty_mode not in {"group", "elementwise"}):
+        raise ValueError("invalid ridge_penalty or edge_penalty_mode")
     residual = gain @ x - data
     dx = incidence @ x
-    objective = (.5 * np.sum(residual ** 2)
-                 + amplitude_penalty @ np.linalg.norm(x, axis=1)
-                 + edge_penalty @ np.linalg.norm(dx, axis=1))
+    if edge_penalty_mode == "group":
+        objective = (.5 * np.sum(residual ** 2)
+                     + amplitude_penalty @ np.linalg.norm(x, axis=1)
+                     + edge_penalty @ np.linalg.norm(dx, axis=1))
+        q = _project_rows(edge_dual, edge_penalty)
+    else:
+        edge_penalty = np.asarray(edge_penalty, float)
+        if edge_penalty.ndim < 2:
+            edge_penalty = np.broadcast_to(
+                edge_penalty, (incidence.shape[0],))[:, None]
+        edge_penalty = np.broadcast_to(edge_penalty, dx.shape)
+        objective = (.5 * np.sum(residual ** 2)
+                     + amplitude_penalty @ np.linalg.norm(x, axis=1)
+                     + np.sum(edge_penalty * np.abs(dx)))
+        q = np.clip(edge_dual, -edge_penalty, edge_penalty)
     if ridge_penalty:
         objective += .5 * ridge_penalty * np.sum(x ** 2)
-    q = _project_rows(edge_dual, edge_penalty)
     edge_gradient = incidence.T @ q
     dual, scale, violation, excess_max = -np.inf, 0., 0., 0.
     conjugate, dual_candidate = 0., "primal_residual"
@@ -77,7 +90,8 @@ def solve_reweighted_graph_v5(data, gain, incidence, *, source_penalty, edge_pen
                               outer_iterations=12, max_iter=2000, tolerance=3e-4,
                               epsilon_fraction=.05, rho=1., outer_tolerance=.01,
                               adaptive_rho=True, max_inner_retries=2,
-                              amplitude_weight_floor=0., ridge_penalty=0.):
+                              amplitude_weight_floor=0., ridge_penalty=0.,
+                              edge_penalty_mode="group"):
     """Solve the v4 log-sum objective with verified, monotone MM updates.
 
     ``max_iter`` is one inner budget; an unfinished convex subproblem continues
@@ -100,7 +114,7 @@ def solve_reweighted_graph_v5(data, gain, incidence, *, source_penalty, edge_pen
         np.asarray(amplitude_weight_floor, float), (n,)).copy()
     ridge_value = np.asarray(ridge_penalty, float)
     if (not n or not data.shape[1] or incidence.shape[1] != n
-            or ridge_value.ndim != 0
+            or ridge_value.ndim != 0 or edge_penalty_mode not in {"group", "elementwise"}
             or any(not np.isfinite(v).all() for v in (
                 data, gain, incidence.data, source_penalty, edge_penalty, amplitude_weight_floor))
             or np.any(source_penalty < 0) or np.any(edge_penalty < 0)
@@ -127,7 +141,9 @@ def solve_reweighted_graph_v5(data, gain, incidence, *, source_penalty, edge_pen
     z, u = x.copy(), x.copy()
     v = np.zeros((incidence.shape[0], data.shape[1]))
     h = v.copy()
-    amplitude_weights, edge_weights = np.ones(n), np.ones(incidence.shape[0])
+    amplitude_weights = np.ones(n)
+    edge_weights = (np.ones(incidence.shape[0]) if edge_penalty_mode == "group" else
+                    np.ones((incidence.shape[0], data.shape[1])))
     eps_a = eps_e = None
     history = []
     initial_rho, rho_updates = float(rho), 0
@@ -137,14 +153,17 @@ def solve_reweighted_graph_v5(data, gain, incidence, *, source_penalty, edge_pen
 
     for outer in range(outer_iterations):
         previous = x.copy()
-        a, b = source_penalty * amplitude_weights, edge_penalty * edge_weights
+        a = source_penalty * amplitude_weights
+        b = (edge_penalty * edge_weights if edge_penalty_mode == "group" else
+             edge_penalty[:, None] * edge_weights)
         # Reweighting changes the dual balls. Keep valid warm duals and start
         # both consensus variables at the previously accepted physical point.
         u = _project_rows(rho * u, a) / rho
-        h = _project_rows(rho * h, b) / rho
+        h = (_project_rows(rho * h, b) if edge_penalty_mode == "group" else
+             np.clip(rho * h, -b, b)) / rho
         z, v = previous.copy(), incidence @ previous
         reference = _certificate(data, gain, incidence, previous, rho * h, a, b,
-                                 linear_residual, ridge_penalty)
+                                 linear_residual, ridge_penalty, edge_penalty_mode)
         roundoff = 128 * np.finfo(float).eps * max(1., reference["objective"])
         previous_rho_updates = rho_updates
         inner_converged = False
@@ -157,7 +176,11 @@ def solve_reweighted_graph_v5(data, gain, incidence, *, source_penalty, edge_pen
                 sensor_factor, gain @ solved, check_finite=False)) / rho
             dx = incidence @ linear_x
             z = vector_soft_threshold(linear_x + u, a / rho)
-            v = vector_soft_threshold(dx + h, b / rho)
+            if edge_penalty_mode == "group":
+                v = vector_soft_threshold(dx + h, b / rho)
+            else:
+                shifted = dx + h
+                v = np.sign(shifted) * np.maximum(np.abs(shifted) - b / rho, 0.)
             u += linear_x - z
             h += dx - v
             primal = float(np.hypot(np.linalg.norm(linear_x - z), np.linalg.norm(dx - v)))
@@ -166,7 +189,7 @@ def solve_reweighted_graph_v5(data, gain, incidence, *, source_penalty, edge_pen
             if iteration % 25 == 0 or iteration == total_budget:
                 linear_residual = gain @ linear_x - data
                 certificate = _certificate(data, gain, incidence, z, rho * h, a, b,
-                                           linear_residual, ridge_penalty)
+                                           linear_residual, ridge_penalty, edge_penalty_mode)
                 descent = certificate["objective"] <= reference["objective"] + roundoff
                 if certificate["gap_relative"] <= tolerance and descent:
                     inner_converged = True
@@ -195,7 +218,7 @@ def solve_reweighted_graph_v5(data, gain, incidence, *, source_penalty, edge_pen
                 step = .5 ** exponent
                 candidate = previous + step * direction
                 trial = _certificate(data, gain, incidence, candidate, rho * h, a, b,
-                                     linear_residual, ridge_penalty)
+                                     linear_residual, ridge_penalty, edge_penalty_mode)
                 if trial["objective"] <= reference["objective"] + roundoff:
                     x, certificate = candidate, trial
                     inner_converged = certificate["gap_relative"] <= tolerance
@@ -203,21 +226,32 @@ def solve_reweighted_graph_v5(data, gain, incidence, *, source_penalty, edge_pen
             else:
                 x, step = previous, 0.
                 certificate = _certificate(data, gain, incidence, previous, rho * h,
-                                           a, b, linear_residual, ridge_penalty)
+                                           a, b, linear_residual, ridge_penalty,
+                                           edge_penalty_mode)
                 inner_converged = certificate["gap_relative"] <= tolerance
                 stalled = not inner_converged
-        norms, jumps = np.linalg.norm(x, axis=1), np.linalg.norm(incidence @ x, axis=1)
+        norms = np.linalg.norm(x, axis=1)
+        if edge_penalty_mode == "group":
+            jumps = np.linalg.norm(incidence @ x, axis=1)
+        else:
+            jumps = np.abs(incidence @ x)
         if eps_a is None:
             eps_a = max(epsilon_fraction * float(norms.max(initial=0)), 1e-12)
-            eps_e = max(epsilon_fraction * float(jumps.max(initial=0)), 1e-12)
+            eps_e = (max(epsilon_fraction * float(jumps.max(initial=0)), 1e-12)
+                     if edge_penalty_mode == "group" else
+                     np.maximum(epsilon_fraction * jumps.max(axis=0, initial=0.), 1e-12))
         if np.any(amplitude_weight_floor):
             source_shape = (amplitude_weight_floor * norms
                             + (1 - amplitude_weight_floor) * eps_a * np.log1p(norms / eps_a))
             source_objective = np.sum(source_penalty * source_shape)
         else:
             source_objective = np.sum(source_penalty * eps_a * np.log1p(norms / eps_a))
+        edge_objective = (np.sum(edge_penalty * eps_e * np.log1p(jumps / eps_e))
+                          if edge_penalty_mode == "group" else
+                          np.sum(edge_penalty[:, None] * eps_e
+                                 * np.log1p(jumps / eps_e)))
         log_objective = (.5 * np.sum((gain @ x - data) ** 2) + source_objective
-                         + np.sum(edge_penalty * eps_e * np.log1p(jumps / eps_e)))
+                         + edge_objective)
         if ridge_penalty:
             log_objective += .5 * ridge_penalty * np.sum(x ** 2)
         change = np.linalg.norm(x - previous) / max(np.linalg.norm(x), 1e-12)
@@ -226,9 +260,12 @@ def solve_reweighted_graph_v5(data, gain, incidence, *, source_penalty, edge_pen
             amplitude_weights = (amplitude_weight_floor
                                  + (1 - amplitude_weight_floor) * amplitude_weights)
         edge_weights = eps_e / (jumps + eps_e)
+        local_edge_penalty = (edge_penalty * edge_weights
+                              if edge_penalty_mode == "group" else
+                              edge_penalty[:, None] * edge_weights)
         local_certificate = _certificate(data, gain, incidence, x, rho * h,
-            source_penalty * amplitude_weights, edge_penalty * edge_weights,
-            linear_residual, ridge_penalty)
+            source_penalty * amplitude_weights, local_edge_penalty,
+            linear_residual, ridge_penalty, edge_penalty_mode)
         history.append(dict(outer=outer, iterations=iteration, retries=(iteration - 1) // max_iter,
             converged=inner_converged, primal_relative=primal / magnitude, dual_relative=dual / magnitude,
             surrogate_reference=reference["objective"], surrogate_objective=certificate["objective"],
@@ -251,12 +288,14 @@ def solve_reweighted_graph_v5(data, gain, incidence, *, source_penalty, edge_pen
         inner_converged=all(item["converged"] for item in history), outer_converged=outer_converged,
         final_stationarity_gap_relative=final_certificate["gap_relative"],
         numerical_stall=stalled, descent_guard_triggered=stalled,
-        amplitude_epsilon=eps_a, edge_epsilon=eps_e,
+        amplitude_epsilon=eps_a,
+        edge_epsilon=(eps_e if edge_penalty_mode == "group" else eps_e.tolist()),
         amplitude_weight_range=[float(amplitude_weights.min()), float(amplitude_weights.max())],
         amplitude_weight_floor_range=[float(amplitude_weight_floor.min()),
                                       float(amplitude_weight_floor.max())],
         amplitude_penalty_model="per-source linear/log-sum mixture",
         ridge_penalty=ridge_penalty,
+        edge_penalty_mode=edge_penalty_mode,
         edge_weight_range=[float(edge_weights.min(initial=1)), float(edge_weights.max(initial=0))],
         rho_initial=initial_rho, rho_final=float(rho), rho_updates=rho_updates,
         outer_tolerance=float(outer_tolerance), adaptive_rho=bool(adaptive_rho),

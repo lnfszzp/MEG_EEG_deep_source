@@ -45,7 +45,8 @@ def reconstruct_evoked_oaster_v5_from_whitened(
         window_channel_weights=None, require_one=False, edge_fraction=0.5,
         noise_multiplier=1.0, mrf_strength=0.5, calibration="layer",
         temporal_mode="smooth", solver_kind="admm", surface_reweight_floor=0.,
-        deep_reweight_floor=0., ridge_fraction=0., **solver_settings):
+        deep_reweight_floor=0., ridge_fraction=0., edge_penalty_mode="group",
+        **solver_settings):
     """Joint surface/deep solve; no truth, template selection or forced deep source.
 
     Calibration='global' is a numerical-solver-only ablation against v4.
@@ -62,6 +63,7 @@ def reconstruct_evoked_oaster_v5_from_whitened(
             or require_one or calibration not in {"global", "layer"}
             or temporal_mode not in {"v4", "smooth"}
             or solver_kind not in {"admm", "irls"}
+            or edge_penalty_mode not in {"group", "elementwise"}
             or not np.isfinite([
                 edge_fraction, noise_multiplier, mrf_strength,
                 surface_reweight_floor, deep_reweight_floor, ridge_fraction]).all()
@@ -73,6 +75,8 @@ def reconstruct_evoked_oaster_v5_from_whitened(
         raise ValueError("reweight floors are supported only by the ADMM solver")
     if solver_kind != "admm" and ridge_fraction:
         raise ValueError("ridge_fraction is supported only by the ADMM solver")
+    if solver_kind != "admm" and edge_penalty_mode != "group":
+        raise ValueError("elementwise edge penalties are supported only by the ADMM solver")
     if "ridge_penalty" in solver_settings:
         raise ValueError("use the design-scaled ridge_fraction setting")
     graph = sparse.csr_matrix(adjacency)
@@ -105,6 +109,7 @@ def reconstruct_evoked_oaster_v5_from_whitened(
                     surface_reweight_floor=float(surface_reweight_floor),
                     deep_reweight_floor=float(deep_reweight_floor),
                     ridge_fraction=float(ridge_fraction),
+                    edge_penalty_mode=edge_penalty_mode,
                     temporal_mode=temporal_mode, solver_kind=solver_kind,
                     solver_settings=solver_settings,
                     weighting_coordinates="physical_current" if not mrf_strength else "MRF_current_innovation")
@@ -151,6 +156,7 @@ def reconstruct_evoked_oaster_v5_from_whitened(
         amplitude_weight_floor = np.full(gain.shape[1], surface_reweight_floor)
         amplitude_weight_floor[n_surf:] = deep_reweight_floor
         spatial_settings["amplitude_weight_floor"] = amplitude_weight_floor
+        spatial_settings["edge_penalty_mode"] = edge_penalty_mode
         if ridge_penalty:
             spatial_settings["ridge_penalty"] = ridge_penalty
     coefficients, diagnostics = spatial_solver(

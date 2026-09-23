@@ -1,4 +1,6 @@
 """Numerical certificates and monotone MM, independent of source ground truth."""
+import json
+
 import numpy as np
 import pytest
 from scipy import sparse
@@ -102,6 +104,48 @@ def test_ridge_zero_is_exactly_the_default():
     assert default_info == explicit_info
 
 
+def test_group_edge_mode_is_exactly_the_default():
+    data = np.array([[3., 4.], [-2., 1.]])
+    graph = _incidence_matrix(2, np.array([0]), np.array([1]))
+    settings = dict(source_penalty=.2, edge_penalty=.3, outer_iterations=3,
+                    max_iter=500, tolerance=1e-8)
+    default, default_info = solve_reweighted_graph_v5(data, np.eye(2), graph, **settings)
+    explicit, explicit_info = solve_reweighted_graph_v5(
+        data, np.eye(2), graph, edge_penalty_mode="group", **settings)
+    assert np.array_equal(default, explicit)
+    assert default_info == explicit_info
+
+
+def test_elementwise_edge_mode_matches_two_sample_fused_ridge_solution():
+    data = np.array([[0., 0.], [4., 1.]])
+    graph = _incidence_matrix(2, np.array([0]), np.array([1]))
+    estimate, diagnostics = solve_reweighted_graph_v5(
+        data, np.eye(2), graph, source_penalty=0., edge_penalty=.5,
+        ridge_penalty=.5, edge_penalty_mode="elementwise",
+        outer_iterations=1, max_iter=1000, tolerance=1e-9)
+    expected = np.array([[1 / 3, 1 / 3], [7 / 3, 1 / 3]])
+    assert np.allclose(estimate, expected, atol=2e-6)
+    objective = (.5 * np.sum((estimate - data) ** 2)
+                 + .25 * np.sum(estimate ** 2)
+                 + .5 * np.sum(np.abs(graph @ estimate)))
+    assert np.isclose(diagnostics["history"][0]["surrogate_objective"], objective)
+    assert diagnostics["converged"]
+    assert diagnostics["final_stationarity_gap_relative"] <= 1e-9
+    assert diagnostics["edge_penalty_mode"] == "elementwise"
+    expected_epsilon = np.maximum(.05 * np.abs(graph @ estimate).max(axis=0), 1e-12)
+    assert np.allclose(diagnostics["edge_epsilon"], expected_epsilon)
+    json.dumps(diagnostics)
+
+    _, reweighted = solve_reweighted_graph_v5(
+        data, np.eye(2), graph, source_penalty=0., edge_penalty=.5,
+        ridge_penalty=.5, edge_penalty_mode="elementwise",
+        outer_iterations=5, outer_tolerance=1e-6, max_iter=1000, tolerance=1e-9)
+    assert reweighted["converged"] and len(reweighted["history"]) > 1
+    assert np.allclose(reweighted["edge_epsilon"], expected_epsilon)
+    assert np.all(np.diff([item["log_objective"] for item in reweighted["history"]]) <= 1e-10)
+    json.dumps(reweighted)
+
+
 @pytest.mark.parametrize("rho", [1e-3, 1., 1e3])
 def test_positive_ridge_matches_group_elastic_net_kkt_and_dual_gap(rho):
     data = np.array([[3., 4.], [-2., 0.]])
@@ -131,3 +175,10 @@ def test_invalid_ridge_is_rejected(ridge):
         solve_reweighted_graph_v5(
             np.ones((2, 2)), np.eye(2), sparse.csr_matrix((0, 2)),
             source_penalty=1., edge_penalty=0., ridge_penalty=ridge)
+
+
+def test_invalid_edge_penalty_mode_is_rejected():
+    with pytest.raises(ValueError):
+        solve_reweighted_graph_v5(
+            np.ones((2, 2)), np.eye(2), sparse.csr_matrix((0, 2)),
+            source_penalty=1., edge_penalty=0., edge_penalty_mode="per_mode")
