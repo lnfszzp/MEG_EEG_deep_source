@@ -45,7 +45,7 @@ def reconstruct_evoked_oaster_v5_from_whitened(
         window_channel_weights=None, require_one=False, edge_fraction=0.5,
         noise_multiplier=1.0, mrf_strength=0.5, calibration="layer",
         temporal_mode="smooth", solver_kind="admm", surface_reweight_floor=0.,
-        deep_reweight_floor=0., **solver_settings):
+        deep_reweight_floor=0., ridge_fraction=0., **solver_settings):
     """Joint surface/deep solve; no truth, template selection or forced deep source.
 
     Calibration='global' is a numerical-solver-only ablation against v4.
@@ -64,13 +64,17 @@ def reconstruct_evoked_oaster_v5_from_whitened(
             or solver_kind not in {"admm", "irls"}
             or not np.isfinite([
                 edge_fraction, noise_multiplier, mrf_strength,
-                surface_reweight_floor, deep_reweight_floor]).all()
+                surface_reweight_floor, deep_reweight_floor, ridge_fraction]).all()
             or edge_fraction < 0 or noise_multiplier <= 0 or not 0 <= mrf_strength < 1
             or not 0 <= surface_reweight_floor <= 1
-            or not 0 <= deep_reweight_floor <= 1):
+            or not 0 <= deep_reweight_floor <= 1 or ridge_fraction < 0):
         raise ValueError("invalid v5 inputs; use one window and no forced source detection")
     if solver_kind != "admm" and (surface_reweight_floor or deep_reweight_floor):
         raise ValueError("reweight floors are supported only by the ADMM solver")
+    if solver_kind != "admm" and ridge_fraction:
+        raise ValueError("ridge_fraction is supported only by the ADMM solver")
+    if "ridge_penalty" in solver_settings:
+        raise ValueError("use the design-scaled ridge_fraction setting")
     graph = sparse.csr_matrix(adjacency)
     if graph.shape != (gain.shape[1], gain.shape[1]) or not np.isfinite(graph.data).all():
         raise ValueError("finite anatomical adjacency must match the complete source grid")
@@ -100,6 +104,7 @@ def reconstruct_evoked_oaster_v5_from_whitened(
                     deep_graph_edges=0, mrf_strength=mrf_strength, calibration=calibration,
                     surface_reweight_floor=float(surface_reweight_floor),
                     deep_reweight_floor=float(deep_reweight_floor),
+                    ridge_fraction=float(ridge_fraction),
                     temporal_mode=temporal_mode, solver_kind=solver_kind,
                     solver_settings=solver_settings,
                     weighting_coordinates="physical_current" if not mrf_strength else "MRF_current_innovation")
@@ -113,6 +118,9 @@ def reconstruct_evoked_oaster_v5_from_whitened(
     design = weighted_gain / gain_scale
     if mrf_factor is not None:
         design = mrf_factor.solve(design.T, trans="T").T
+    column_energy = np.sum(design ** 2, axis=0)
+    ridge_scale = float(np.median(column_energy[column_energy > 0]))
+    ridge_penalty = float(ridge_fraction * ridge_scale)
     response = weighted_data @ basis.T
     local_basis = basis[:, active].T
     noise_projection = design.T @ weighted_data[:, baseline]
@@ -143,6 +151,8 @@ def reconstruct_evoked_oaster_v5_from_whitened(
         amplitude_weight_floor = np.full(gain.shape[1], surface_reweight_floor)
         amplitude_weight_floor[n_surf:] = deep_reweight_floor
         spatial_settings["amplitude_weight_floor"] = amplitude_weight_floor
+        if ridge_penalty:
+            spatial_settings["ridge_penalty"] = ridge_penalty
     coefficients, diagnostics = spatial_solver(
         response, design, incidence, source_penalty=source_penalties,
         edge_penalty=edge_penalty, **spatial_settings)
@@ -155,6 +165,8 @@ def reconstruct_evoked_oaster_v5_from_whitened(
                 source_lambda_deep=float(layer_lambdas[1]),
                 source_lambda_global_reference=global_lambda, edge_lambda=edge_penalty,
                 noise_projection_blocks=len(starts),
+                ridge_penalty=ridge_penalty,
+                ridge_scale=ridge_scale,
                 response_condition=float(singular[0] / max(singular[-1], np.finfo(float).tiny)),
                 null_rule="separate layer maxima of baseline matched-filter norms; empirical regularization, not p-values",
                 solver=diagnostics)

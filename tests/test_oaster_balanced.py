@@ -76,14 +76,28 @@ def test_reweight_floors_are_applied_to_their_admm_layers(monkeypatch):
     source, info = inverse.reconstruct_evoked_oaster_v5_from_whitened(
         np.arange(90, dtype=float).reshape(3, 30), np.eye(3), 2,
         adjacency=sparse.eye(3), baseline=baseline, active_windows=(active,),
-        mrf_strength=0, surface_reweight_floor=.2, deep_reweight_floor=.4)
+        mrf_strength=0, surface_reweight_floor=.2, deep_reweight_floor=.4,
+        ridge_fraction=.25)
     assert source.shape == (3, 30)
     assert np.array_equal(captured["amplitude_weight_floor"], [.2, .2, .4])
     assert info["surface_reweight_floor"] == .2
     assert info["deep_reweight_floor"] == .4
+    assert captured["ridge_penalty"] == .25
+    assert info["ridge_fraction"] == .25
+    assert info["windows"][0]["ridge_scale"] == 1.
     for name in ("surface_reweight_floor", "deep_reweight_floor"):
         for invalid in (-.1, 1.1):
             with np.testing.assert_raises(ValueError):
                 inverse.reconstruct_evoked_oaster_v5_from_whitened(
                     np.zeros((3, 30)), np.eye(3), 2, adjacency=sparse.eye(3),
                     baseline=baseline, active_windows=(active,), **{name: invalid})
+    for invalid in (-.1, np.nan):
+        with np.testing.assert_raises(ValueError):
+            inverse.reconstruct_evoked_oaster_v5_from_whitened(
+                np.zeros((3, 30)), np.eye(3), 2, adjacency=sparse.eye(3),
+                baseline=baseline, active_windows=(active,), ridge_fraction=invalid)
+    with np.testing.assert_raises(ValueError):
+        inverse.reconstruct_evoked_oaster_v5_from_whitened(
+            np.zeros((3, 30)), np.eye(3), 2, adjacency=sparse.eye(3),
+            baseline=baseline, active_windows=(active,), ridge_fraction=.1,
+            solver_kind="irls")

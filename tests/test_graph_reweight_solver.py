@@ -88,3 +88,46 @@ def test_per_source_amplitude_floor_preserves_zero_default_and_matches_objective
                 + settings["source_penalty"][1] * norms[1])
     assert np.isclose(diagnostics["history"][-1]["log_objective"], expected)
     assert diagnostics["amplitude_weight_floor_range"] == [0., 1.]
+
+
+def test_ridge_zero_is_exactly_the_default():
+    data = np.array([[3., 4.], [-2., 1.]])
+    graph = sparse.csr_matrix((0, 2))
+    settings = dict(source_penalty=.2, edge_penalty=0., outer_iterations=3,
+                    max_iter=500, tolerance=1e-8)
+    default, default_info = solve_reweighted_graph_v5(data, np.eye(2), graph, **settings)
+    explicit, explicit_info = solve_reweighted_graph_v5(
+        data, np.eye(2), graph, ridge_penalty=0., **settings)
+    assert np.array_equal(default, explicit)
+    assert default_info == explicit_info
+
+
+@pytest.mark.parametrize("rho", [1e-3, 1., 1e3])
+def test_positive_ridge_matches_group_elastic_net_kkt_and_dual_gap(rho):
+    data = np.array([[3., 4.], [-2., 0.]])
+    graph = sparse.csr_matrix((0, 2))
+    ridge = .5
+    shrink = np.maximum(1 - 1 / np.linalg.norm(data, axis=1), 0)[:, None]
+    optimum = data * shrink / (1 + ridge)
+    estimate, diagnostics = solve_reweighted_graph_v5(
+        data, np.eye(2), graph, source_penalty=1., edge_penalty=0.,
+        ridge_penalty=ridge, outer_iterations=1, max_iter=1000,
+        tolerance=1e-9, rho=rho)
+    assert np.allclose(estimate, optimum, atol=2e-6)
+    kkt = estimate - data + ridge * estimate + estimate / np.linalg.norm(estimate, axis=1)[:, None]
+    assert np.linalg.norm(kkt) < 5e-6
+    certificate = _certificate(data, np.eye(2), graph, optimum, np.zeros((0, 2)),
+                               np.ones(2), np.ones(0), optimum - data,
+                               ridge_penalty=ridge)
+    assert certificate["dual_objective"] <= certificate["objective"] + 1e-12
+    assert certificate["gap"] < 1e-10
+    assert diagnostics["converged"]
+    assert diagnostics["final_stationarity_gap_relative"] <= 1e-9
+
+
+@pytest.mark.parametrize("ridge", [-1., np.nan, np.inf, np.array([0., 1.])])
+def test_invalid_ridge_is_rejected(ridge):
+    with pytest.raises(ValueError):
+        solve_reweighted_graph_v5(
+            np.ones((2, 2)), np.eye(2), sparse.csr_matrix((0, 2)),
+            source_penalty=1., edge_penalty=0., ridge_penalty=ridge)
