@@ -33,6 +33,7 @@ directory_templates = [
     "dev_component_balanced_sissesconvex_svd_admm_mrf080_m10_m10_case{}",
     "dev_component_balanced_physical_sissesconvex_svd_m10_m10_case{}",
 ]
+candidate_covariance = ["trial", "mean", "trial", "mean", "mean", "mean", "mean", "mean"]
 shared = protocol.load_shared(root / "corrected_v2/generated", original.DEFAULT_SAMPLE_PATH)
 n_surf = shared["n_surf"]
 rows, report_rows, robustness = [], [], []
@@ -46,6 +47,10 @@ for case, oracle_key in (("01", "null"), ("03", "full")):
     if not all(path.is_file() for path in files):
         raise FileNotFoundError([str(path) for path in files if not path.is_file()])
     packages = [np.load(path) for path in files]
+    metadata = [json.loads((path.parent / "metadata.json").read_text(encoding="utf-8"))
+                for path in files]
+    assert [item["covariance"] for item in metadata] == candidate_covariance
+    assert all(item["phase"] == "development" for item in metadata)
     truth, active, baseline = packages[0]["truth"], packages[0]["active"], packages[0]["baseline"]
     assert all(np.array_equal(package["truth"], truth) and
                np.array_equal(package["active"], active) and
@@ -126,7 +131,9 @@ summary = {"complete": True, "phase": "development", "candidate_count": 8,
     "case01_null_deep_false_positive": report_rows[0]["deep_false_positive"],
     "case03_full_deep_detected": report_rows[1]["deep_detected"],
     "independent_validation_passed": False, "accepted": False,
-    "candidate_directories": directory_templates}
+    "candidate_directories": directory_templates,
+    "candidate_covariance": candidate_covariance,
+    "heterogeneous_cached_artifacts_recomputed_at_current_commit": False}
 (output / "summary.json").write_text(
     json.dumps(summary, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 
@@ -151,7 +158,7 @@ figure.savefig(output / "comparison.png", dpi=220, facecolor="white")
 plt.close(figure)
 
 lines = ["# 八模型分层秩共识（仅开发诊断）", "",
-    "每个模型先在表层/深层内转成百分位秩，再将八个秩逐点相乘；逆解和共识计算均不读取真值。平方仅锐化默认能量支持，不改变 AUC 排序。", "",
+    "每个模型先在表层/深层内转成百分位秩，再将八个秩逐点相乘；逆解和共识计算均不读取真值。平方仅锐化默认能量支持，不改变 AUC 排序。当前候选是 2 个 trial-covariance 与 6 个 mean-covariance 的开发期旧产物，尚未在同一提交上统一重跑。", "",
     "| case | oracle family | 最佳单模型局部 AUC | 共识局部 AUC | An_auc | 表层 SD/DLE mm | 深层 DLE mm | 深层检出 | 支持点数 |",
     "|---:|---|---:|---:|---:|---:|---:|---:|---:|"]
 for row in report_rows:

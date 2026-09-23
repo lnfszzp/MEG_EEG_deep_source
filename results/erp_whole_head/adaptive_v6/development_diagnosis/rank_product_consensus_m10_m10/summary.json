@@ -22,5 +22,16 @@
     "dev_component_balanced_sissesedge_svd_admm_mrf080_m10_m10_case{}",
     "dev_component_balanced_sissesconvex_svd_admm_mrf080_m10_m10_case{}",
     "dev_component_balanced_physical_sissesconvex_svd_m10_m10_case{}"
-  ]
+  ],
+  "candidate_covariance": [
+    "trial",
+    "mean",
+    "trial",
+    "mean",
+    "mean",
+    "mean",
+    "mean",
+    "mean"
+  ],
+  "heterogeneous_cached_artifacts_recomputed_at_current_commit": false
 }
