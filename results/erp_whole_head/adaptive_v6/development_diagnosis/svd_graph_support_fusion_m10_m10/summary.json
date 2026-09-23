@@ -1,0 +1,28 @@
+{
+  "complete": true,
+  "phase": "development",
+  "case_count": 5,
+  "input": "cached trial-covariance convex graph inverse artifacts listed by case",
+  "fixed_parameters": {
+    "svd_modes": 2,
+    "depth_exponent": 0.6,
+    "graph_walk_steps": 2,
+    "mode_weighting": "training singular values",
+    "sensitivity_floor": ".1 x median",
+    "base_support_threshold": 0.1,
+    "support_band_mm": 15,
+    "mixing": 0.5,
+    "layer_score_normalization": "separate surface/deep maxima after family selection"
+  },
+  "truth_used_in_localization": false,
+  "parameters_selected_during_development": true,
+  "oracle_family_selection_for_diagnostic": true,
+  "deployable_presence_decision_evaluated": false,
+  "local_AUC_target": 0.9,
+  "all_development_local_AUC_at_least_0p9": true,
+  "all_surface_DLE_finite_when_surface_true": false,
+  "all_oracle_H1_deep_peaks_within_10mm": true,
+  "pure_surface_raw_full_base_false_positives": 2,
+  "independent_validation_passed": false,
+  "accepted": false
+}
