@@ -1,0 +1,39 @@
+{
+  "complete": true,
+  "phase": "development",
+  "case_count": 5,
+  "source": "results\\erp_whole_head\\adaptive_v6\\dev_trial_admm_m10_p20",
+  "source_completion_sha256": "4c8c0d0ec3c80bd94c757b96b40957b4591335c0f388b7da500bc724c87c5577",
+  "manifest_sha256": "70f376c2c753e5f9d2adc22b067fdb2f0aba797f80bca7eb1d7951f884f3260e",
+  "eeg_snr_db": -10,
+  "meg_snr_db": 20,
+  "candidate_sha256": "363648bc81fe274d00025cf77fa5730636c4129f6eb32d84e689eabd9164debd",
+  "decision_threshold": null,
+  "calibration_or_validation_read": false,
+  "source_producer_verification": [
+    "source code SHA + simulation replica roots + NPZ truth + solver convergence"
+  ],
+  "mean_An_auc": 0.9930625266362529,
+  "mean_surface_An_auc": 0.991529835792163,
+  "mean_deep_An_auc_positive": 0.9777777777777779,
+  "localized_positive_count_at_10mm": 2,
+  "positive_count": 3,
+  "partial_scores_negative": [
+    -0.4830181423640031,
+    -0.026604235207869364
+  ],
+  "partial_scores_positive": [
+    3.809855889953983,
+    1.896731394648938,
+    0.5200282626309358
+  ],
+  "pure_surface_deep_peak_amplitude": [
+    0.05662281974555203,
+    0.15584954054458278
+  ],
+  "pure_surface_deep_to_global_ratio": [
+    1.0,
+    1.0
+  ],
+  "interpretation": "定位指标来自训练 ADMM H1；partial_score 仅是未校准的独立确认统计量，不能据此宣称假阳性率。"
+}
