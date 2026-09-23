@@ -1,0 +1,657 @@
+{
+  "case_id": "erp-v6-development-03-eeg-10-meg-10",
+  "simulation": {
+    "case_id": "erp-v6-development-03-eeg-10-meg-10",
+    "protocol": "phase-locked-erp-independent-means-v1",
+    "event_sample": 200,
+    "n_times": 601,
+    "n_trials": 40,
+    "active_window_s": [
+      0.02,
+      0.12
+    ],
+    "baseline_window_s": [
+      -0.18,
+      -0.02
+    ],
+    "groups": [
+      [
+        1125,
+        1187,
+        1215,
+        1219,
+        1256,
+        1258,
+        1290,
+        1317,
+        1319,
+        1321,
+        1352,
+        1357,
+        1359,
+        1360,
+        1362,
+        1394,
+        1477,
+        1553
+      ],
+      [
+        7498
+      ]
+    ],
+    "correlation_target": 0.0,
+    "correlation_actual": [
+      [
+        1.0,
+        4.1080613593211067e-17
+      ],
+      [
+        4.1080613593211067e-17,
+        1.0
+      ]
+    ],
+    "waveform_assignment": [
+      1,
+      0
+    ],
+    "deep_surface_ratio_actual": 2.6568714862963776,
+    "target_snr_db": {
+      "eeg": -10.0,
+      "meg": -10.0
+    },
+    "actual_snr_db": {
+      "eeg": {
+        "train": -13.236216705436178,
+        "confirmation": -13.17416314203519,
+        "combined": -10.032779623664405
+      },
+      "meg": {
+        "train": -12.743026363596893,
+        "confirmation": -13.185805690117409,
+        "combined": -9.898240359590048
+      }
+    },
+    "implied_single_trial_snr_db": {
+      "eeg": -26.02059991327962,
+      "meg": -26.02059991327962
+    },
+    "snr_level": "expected combined 40-trial-mean active-window energy ratio",
+    "noise_model": "two independent Gaussian 20-trial-mean equivalents; no stored individual epochs",
+    "waveform_model": "phase-locked transient ERP without sinusoidal carrier",
+    "seed_root": 2026092206,
+    "seed_case_key": 7423464450865463483,
+    "source_deep_surface_ratio_before_sensor_balance": 0.5000000000000001,
+    "deep_surface_sensor_amplitude_ratio": 0.5,
+    "deep_sensor_scale": 5.313742972592754,
+    "component_scaling": "joint EEG/MEG noise-normalized sensor amplitude; covariance eigenvalue cutoff 1e-8; modality energies divided by retained rank",
+    "n_trials_combined": 40,
+    "n_trials_per_half": 20.0,
+    "expected_snr_db": {
+      "eeg": {
+        "combined": -10.0,
+        "each_half": -13.010299956639813
+      },
+      "meg": {
+        "combined": -10.0,
+        "each_half": -13.010299956639813
+      }
+    },
+    "noise_scale": {
+      "eeg": 112700081.7235579,
+      "meg": 184561862.1880138
+    },
+    "snr_realization_normalized": false,
+    "baseline_centering": "each half independently; analytic scale includes active variance from baseline centering",
+    "noise_scale_rule": "analytic expected baseline-centered noise energy; never normalize a noise realization",
+    "replica_seed_roots": {
+      "fit": 2026092206,
+      "check": 2026092207
+    },
+    "seed_entropy": {
+      "fit": [
+        2026092206,
+        7423464450865463483,
+        6001,
+        0
+      ],
+      "check": [
+        2026092207,
+        7423464450865463483,
+        6001,
+        1
+      ]
+    },
+    "seed_spawn_keys": {
+      "eeg": {
+        "train": [
+          0
+        ],
+        "confirmation": [
+          0
+        ]
+      },
+      "meg": {
+        "train": [
+          1
+        ],
+        "confirmation": [
+          1
+        ]
+      }
+    },
+    "seed_rule": "explicit replica_seed_roots fit/check (fallback seed_root) + SHA256(case_id)[:8] little endian + domain 6001 + half index; modality spawn",
+    "preprocessing": "raw halves independently baseline-centered; training first 200 samples define each whitener; training modality evidence weights applied to both halves",
+    "modality_weights": [
+      0.6021932200584683,
+      1.0
+    ],
+    "retained_channels": [
+      58,
+      99
+    ]
+  },
+  "fitting": {
+    "mode": "independent_confirmation_joint_vs_surface",
+    "solver_kind": "admm",
+    "structural_settings": {
+      "noise_multiplier": 1.0,
+      "edge_fraction": 0.5,
+      "mrf_strength": 0.8,
+      "calibration": "layer",
+      "surface_reweight_floor": 1.0,
+      "deep_reweight_floor": 1.0,
+      "ridge_fraction": 0.0
+    },
+    "solver_settings": {
+      "outer_iterations": 20,
+      "max_iter": 2000,
+      "tolerance": 0.001,
+      "outer_tolerance": 0.01,
+      "edge_penalty_mode": "elementwise"
+    },
+    "null_model": {
+      "mode": "joint_layer_calibrated_adaptive_graph",
+      "selected_templates": [],
+      "spatial_templates_used": false,
+      "graph_edges": 21320,
+      "deep_graph_edges": 0,
+      "mrf_strength": 0.8,
+      "calibration": "layer",
+      "surface_reweight_floor": 1.0,
+      "deep_reweight_floor": 1.0,
+      "ridge_fraction": 0.0,
+      "edge_penalty_mode": "elementwise",
+      "source_penalty_mode": "group",
+      "surface_penalty_multiplier_count": 0,
+      "surface_penalty_multiplier_range": [
+        1.0,
+        1.0
+      ],
+      "temporal_mode": "smooth",
+      "solver_kind": "admm",
+      "solver_settings": {
+        "outer_iterations": 20,
+        "tolerance": 0.001,
+        "max_iter": 2000,
+        "outer_tolerance": 0.01
+      },
+      "weighting_coordinates": "MRF_current_innovation",
+      "windows": [
+        {
+          "active_samples": 61,
+          "temporal_rank": 10,
+          "temporal_selection": "amplitude_independent_smooth_subspace",
+          "smoothing_fraction": 0.1,
+          "attenuation_floor": 0.01,
+          "temporal_rotation": "training_sensor_svd_with_blockwise_null",
+          "temporal_rotation_singular_values": [
+            27.548944534002867,
+            19.31406740262121,
+            18.291166752989238,
+            16.649987737092633,
+            15.895359964277992,
+            14.532754348072642,
+            13.904744266360236,
+            12.665211905310215,
+            12.051889334486154,
+            11.194837155389298
+          ],
+          "source_lambda_surface": 37.90868151145766,
+          "source_lambda_deep": 0.0,
+          "source_lambda_global_reference": 37.90868151145766,
+          "edge_lambda": 2.4446304516543202,
+          "edge_lambda_surface_reference": 27.8044925202828,
+          "noise_projection_blocks": 16,
+          "ridge_penalty": 0.0,
+          "ridge_scale": 6.324490342092565,
+          "response_condition": 2.4608615696335123,
+          "null_rule": "separate layer maxima of baseline matched-filter norms; elementwise modes repeat the sensor-SVD rotation in every null block; empirical regularization, not p-values",
+          "solver": {
+            "history": [
+              {
+                "outer": 0,
+                "iterations": 1750,
+                "retries": 0,
+                "converged": true,
+                "primal_relative": 0.01918805325730821,
+                "dual_relative": 0.04067054160552277,
+                "surrogate_reference": 1415.9758779613135,
+                "surrogate_objective": 1374.6237440564332,
+                "surrogate_roundoff": 4.024445496387766e-11,
+                "primal_dual_gap": 1.3727522334424975,
+                "primal_dual_gap_relative": 0.0009986385288177746,
+                "dual_scale": 0.9998204647202321,
+                "dual_candidate": "admm_linear_residual",
+                "source_dual_violation": 0.0,
+                "log_objective": 1361.6967037557415,
+                "local_stationarity_gap_relative": 0.09647085597633225,
+                "relative_change": 1.0,
+                "accepted_step": 1.0,
+                "rho": 16.0,
+                "rho_updates": 4,
+                "active_rows": 21
+              },
+              {
+                "outer": 1,
+                "iterations": 700,
+                "retries": 0,
+                "converged": true,
+                "primal_relative": 0.006640686442048344,
+                "dual_relative": 0.003527289462589354,
+                "surrogate_reference": 1359.345276445841,
+                "surrogate_objective": 1345.038209116367,
+                "surrogate_roundoff": 3.86349164627359e-11,
+                "primal_dual_gap": 1.2388033818729127,
+                "primal_dual_gap_relative": 0.0009210172420951179,
+                "dual_scale": 1.0,
+                "dual_candidate": "admm_linear_residual",
+                "source_dual_violation": 0.0,
+                "log_objective": 1341.8844645397016,
+                "local_stationarity_gap_relative": 0.008716281643801291,
+                "relative_change": 0.8608572514627727,
+                "accepted_step": 1.0,
+                "rho": 8.0,
+                "rho_updates": 5,
+                "active_rows": 4
+              },
+              {
+                "outer": 2,
+                "iterations": 575,
+                "retries": 0,
+                "converged": true,
+                "primal_relative": 0.006062079449543471,
+                "dual_relative": 0.0043732020603753745,
+                "surrogate_reference": 1339.8828213312722,
+                "surrogate_objective": 1339.1834298546755,
+                "surrogate_roundoff": 3.808176021866735e-11,
+                "primal_dual_gap": 1.2668498732525677,
+                "primal_dual_gap_relative": 0.0009459868192888578,
+                "dual_scale": 1.0,
+                "dual_candidate": "admm_linear_residual",
+                "source_dual_violation": 0.0,
+                "log_objective": 1340.9019477549534,
+                "local_stationarity_gap_relative": 0.001463097292939785,
+                "relative_change": 0.13428459216542177,
+                "accepted_step": 1.0,
+                "rho": 8.0,
+                "rho_updates": 6,
+                "active_rows": 4
+              },
+              {
+                "outer": 3,
+                "iterations": 125,
+                "retries": 0,
+                "converged": true,
+                "primal_relative": 0.006139302051709092,
+                "dual_relative": 0.007248074291634186,
+                "surrogate_reference": 1338.797739703245,
+                "surrogate_objective": 1338.7601340307149,
+                "surrogate_roundoff": 3.805092034392729e-11,
+                "primal_dual_gap": 1.2139648554777978,
+                "primal_dual_gap_relative": 0.0009067829438742056,
+                "dual_scale": 1.0,
+                "dual_candidate": "admm_linear_residual",
+                "source_dual_violation": 0.0,
+                "log_objective": 1340.8628126037925,
+                "local_stationarity_gap_relative": 0.0010615050994070493,
+                "relative_change": 0.05042558661397288,
+                "accepted_step": 1.0,
+                "rho": 4.0,
+                "rho_updates": 1,
+                "active_rows": 4
+              },
+              {
+                "outer": 4,
+                "iterations": 25,
+                "retries": 0,
+                "converged": true,
+                "primal_relative": 0.006071993032725454,
+                "dual_relative": 0.013551562675208552,
+                "surrogate_reference": 1338.7599851199811,
+                "surrogate_objective": 1338.7381933176193,
+                "surrogate_roundoff": 3.8049847294132097e-11,
+                "primal_dual_gap": 1.1595943428508235,
+                "primal_dual_gap_relative": 0.0008661845524681363,
+                "dual_scale": 0.9999407525917584,
+                "dual_candidate": "admm_linear_residual",
+                "source_dual_violation": 0.0,
+                "log_objective": 1340.7331370905301,
+                "local_stationarity_gap_relative": 0.0016885016917425376,
+                "relative_change": 0.013302075946721227,
+                "accepted_step": 1.0,
+                "rho": 4.0,
+                "rho_updates": 0,
+                "active_rows": 4
+              },
+              {
+                "outer": 5,
+                "iterations": 125,
+                "retries": 0,
+                "converged": true,
+                "primal_relative": 0.0074786906855656195,
+                "dual_relative": 0.002920881690064685,
+                "surrogate_reference": 1338.6097620385033,
+                "surrogate_objective": 1338.566337076416,
+                "surrogate_roundoff": 3.804557769736059e-11,
+                "primal_dual_gap": 1.2849837134037898,
+                "primal_dual_gap_relative": 0.0009599701395526973,
+                "dual_scale": 0.9999901245175277,
+                "dual_candidate": "admm_linear_residual",
+                "source_dual_violation": 0.0,
+                "log_objective": 1340.66674554698,
+                "local_stationarity_gap_relative": 0.001096326889550218,
+                "relative_change": 0.06994034925952602,
+                "accepted_step": 1.0,
+                "rho": 2.0,
+                "rho_updates": 1,
+                "active_rows": 4
+              },
+              {
+                "outer": 6,
+                "iterations": 150,
+                "retries": 0,
+                "converged": true,
+                "primal_relative": 0.005921608994349302,
+                "dual_relative": 0.0008850102927074128,
+                "surrogate_reference": 1338.5510815378898,
+                "surrogate_objective": 1338.536214812371,
+                "surrogate_roundoff": 3.8043909897222926e-11,
+                "primal_dual_gap": 1.1652368924437724,
+                "primal_dual_gap_relative": 0.00087053071821976,
+                "dual_scale": 0.9999689695615992,
+                "dual_candidate": "admm_linear_residual",
+                "source_dual_violation": 0.0,
+                "log_objective": 1340.6512457950364,
+                "local_stationarity_gap_relative": 0.0008893255818124034,
+                "relative_change": 0.027352994056316398,
+                "accepted_step": 1.0,
+                "rho": 2.0,
+                "rho_updates": 0,
+                "active_rows": 4
+              },
+              {
+                "outer": 7,
+                "iterations": 50,
+                "retries": 0,
+                "converged": true,
+                "primal_relative": 0.005770205332915807,
+                "dual_relative": 0.0024018957984325725,
+                "surrogate_reference": 1338.5193548075372,
+                "surrogate_objective": 1338.4885657618047,
+                "surrogate_roundoff": 3.804300816931167e-11,
+                "primal_dual_gap": 1.1126490310275585,
+                "primal_dual_gap_relative": 0.0008312727202075806,
+                "dual_scale": 1.0,
+                "dual_candidate": "admm_linear_residual",
+                "source_dual_violation": 0.0,
+                "log_objective": 1340.6204304194146,
+                "local_stationarity_gap_relative": 0.0008327826421092256,
+                "relative_change": 0.0035444875208190843,
+                "accepted_step": 1.0,
+                "rho": 2.0,
+                "rho_updates": 0,
+                "active_rows": 4
+              }
+            ],
+            "converged": true,
+            "inner_converged": true,
+            "outer_converged": true,
+            "final_stationarity_gap_relative": 0.0008327826421092256,
+            "numerical_stall": false,
+            "descent_guard_triggered": false,
+            "amplitude_epsilon": 0.00878033163410342,
+            "edge_epsilon": [
+              0.0063130459779891755,
+              0.005901527696060162,
+              0.0014311933669836907,
+              0.000255600600235574,
+              0.0002795148100097148,
+              0.0009755243684501247,
+              1.3597637633530786e-05,
+              0.0004671504712216555,
+              5.6983242266033094e-05,
+              8.164253470724172e-05
+            ],
+            "amplitude_weight_range": [
+              1.0,
+              1.0
+            ],
+            "amplitude_weight_floor_range": [
+              1.0,
+              1.0
+            ],
+            "amplitude_penalty_model": "per-source linear/log-sum mixture",
+            "source_penalty_mode": "group",
+            "elementwise_source_count": 0,
+            "ridge_penalty": 0.0,
+            "edge_penalty_mode": "elementwise",
+            "edge_weight_range": [
+              0.0008635175184950059,
+              1.0
+            ],
+            "rho_initial": 1.0,
+            "rho_final": 2.0,
+            "rho_updates": 17,
+            "outer_tolerance": 0.01,
+            "adaptive_rho": true,
+            "convergence_note": "Feasible primal-dual bound for the current convex MM surrogate; no global-optimality claim for log-sum."
+          }
+        }
+      ]
+    },
+    "full_model": {
+      "mode": "joint_layer_calibrated_adaptive_graph",
+      "selected_templates": [],
+      "spatial_templates_used": false,
+      "graph_edges": 21320,
+      "deep_graph_edges": 0,
+      "mrf_strength": 0.8,
+      "calibration": "layer",
+      "surface_reweight_floor": 1.0,
+      "deep_reweight_floor": 1.0,
+      "ridge_fraction": 0.0,
+      "edge_penalty_mode": "elementwise",
+      "source_penalty_mode": "group",
+      "surface_penalty_multiplier_count": 0,
+      "surface_penalty_multiplier_range": [
+        1.0,
+        1.0
+      ],
+      "temporal_mode": "smooth",
+      "solver_kind": "admm",
+      "solver_settings": {
+        "outer_iterations": 20,
+        "tolerance": 0.001,
+        "max_iter": 2000,
+        "outer_tolerance": 0.01
+      },
+      "weighting_coordinates": "MRF_current_innovation",
+      "windows": [
+        {
+          "active_samples": 61,
+          "temporal_rank": 10,
+          "temporal_selection": "amplitude_independent_smooth_subspace",
+          "smoothing_fraction": 0.1,
+          "attenuation_floor": 0.01,
+          "temporal_rotation": "training_sensor_svd_with_blockwise_null",
+          "temporal_rotation_singular_values": [
+            27.548944534002867,
+            19.31406740262121,
+            18.291166752989238,
+            16.649987737092633,
+            15.895359964277992,
+            14.532754348072642,
+            13.904744266360236,
+            12.665211905310215,
+            12.051889334486154,
+            11.194837155389298
+          ],
+          "source_lambda_surface": 37.92323095306791,
+          "source_lambda_deep": 3.52258156193906,
+          "source_lambda_global_reference": 37.92323095306791,
+          "edge_lambda": 2.4455687066027085,
+          "edge_lambda_surface_reference": 27.815163950263933,
+          "noise_projection_blocks": 16,
+          "ridge_penalty": 0.0,
+          "ridge_scale": 6.325671988088827,
+          "response_condition": 2.4608615696335123,
+          "null_rule": "separate layer maxima of baseline matched-filter norms; elementwise modes repeat the sensor-SVD rotation in every null block; empirical regularization, not p-values",
+          "solver": {
+            "history": [
+              {
+                "outer": 0,
+                "iterations": 3475,
+                "retries": 1,
+                "converged": true,
+                "primal_relative": 0.00024218141576351075,
+                "dual_relative": 0.0002906968164607857,
+                "surrogate_reference": 1415.9758779613135,
+                "surrogate_objective": 1332.5984181346007,
+                "surrogate_roundoff": 4.024445496387766e-11,
+                "primal_dual_gap": 1.3217653880085436,
+                "primal_dual_gap_relative": 0.0009918707466715882,
+                "dual_scale": 0.9937786881651857,
+                "dual_candidate": "admm_linear_residual",
+                "source_dual_violation": 0.0,
+                "log_objective": 1323.3261597289927,
+                "local_stationarity_gap_relative": 0.04364092606816388,
+                "relative_change": 1.0,
+                "accepted_step": 1.0,
+                "rho": 8.0,
+                "rho_updates": 3,
+                "active_rows": 5
+              },
+              {
+                "outer": 1,
+                "iterations": 400,
+                "retries": 0,
+                "converged": true,
+                "primal_relative": 0.0007045098438487705,
+                "dual_relative": 0.00017710327955393302,
+                "surrogate_reference": 1322.146794597088,
+                "surrogate_objective": 1320.7521726998557,
+                "surrogate_roundoff": 3.757767202037849e-11,
+                "primal_dual_gap": 1.2900364326214913,
+                "primal_dual_gap_relative": 0.0009767437519973365,
+                "dual_scale": 0.9979097617706113,
+                "dual_candidate": "admm_linear_residual",
+                "source_dual_violation": 0.0,
+                "log_objective": 1321.6609306915352,
+                "local_stationarity_gap_relative": 0.001389491441456304,
+                "relative_change": 0.04450839105207463,
+                "accepted_step": 1.0,
+                "rho": 2.0,
+                "rho_updates": 2,
+                "active_rows": 12
+              },
+              {
+                "outer": 2,
+                "iterations": 50,
+                "retries": 0,
+                "converged": true,
+                "primal_relative": 0.0010824100467086847,
+                "dual_relative": 0.004979852724884217,
+                "surrogate_reference": 1320.330231963472,
+                "surrogate_objective": 1320.3005818825395,
+                "surrogate_roundoff": 3.752604220504372e-11,
+                "primal_dual_gap": 1.2887242308188434,
+                "primal_dual_gap_relative": 0.0009760839679259451,
+                "dual_scale": 0.9983533266870105,
+                "dual_candidate": "admm_linear_residual",
+                "source_dual_violation": 0.0,
+                "log_objective": 1321.610135814023,
+                "local_stationarity_gap_relative": 0.0009699018166943775,
+                "relative_change": 0.004430184457410575,
+                "accepted_step": 1.0,
+                "rho": 2.0,
+                "rho_updates": 0,
+                "active_rows": 8
+              }
+            ],
+            "converged": true,
+            "inner_converged": true,
+            "outer_converged": true,
+            "final_stationarity_gap_relative": 0.0009699018166943775,
+            "numerical_stall": false,
+            "descent_guard_triggered": false,
+            "amplitude_epsilon": 1.0586893740565526,
+            "edge_epsilon": [
+              0.008852133371529236,
+              0.0017298241938804816,
+              5.369967449877041e-06,
+              0.0001584272519322726,
+              4.148794621853393e-06,
+              0.0013789168723521536,
+              4.2104771939448605e-06,
+              0.0004220552402518712,
+              3.2688136038240236e-06,
+              5.074648111441603e-06
+            ],
+            "amplitude_weight_range": [
+              1.0,
+              1.0
+            ],
+            "amplitude_weight_floor_range": [
+              1.0,
+              1.0
+            ],
+            "amplitude_penalty_model": "per-source linear/log-sum mixture",
+            "source_penalty_mode": "group",
+            "elementwise_source_count": 0,
+            "ridge_penalty": 0.0,
+            "edge_penalty_mode": "elementwise",
+            "edge_weight_range": [
+              0.00022216454925097688,
+              1.0
+            ],
+            "rho_initial": 1.0,
+            "rho_final": 2.0,
+            "rho_updates": 5,
+            "outer_tolerance": 0.01,
+            "adaptive_rho": true,
+            "convergence_note": "Feasible primal-dual bound for the current convex MM surrogate; no global-optimality claim for log-sum."
+          }
+        }
+      ]
+    },
+    "confirmation_used_for_fit": false,
+    "spatial_templates_used": false
+  },
+  "evidence": {
+    "active_samples": 61,
+    "temporal_rank": 10,
+    "temporal_selection": "amplitude_independent_smooth_subspace",
+    "smoothing_fraction": 0.1,
+    "attenuation_floor": 0.01,
+    "null_loss": 2557.5948201596166,
+    "full_loss": 2541.7911508127168,
+    "loss_improvement": 15.803669346899824,
+    "expected_response_noise_energy": 2341.0521802303924,
+    "baseline_variance_sum": 220.25418184514842,
+    "baseline_mean_mode_correction": 0.6288659793814444,
+    "normalization": "confirmation baseline sample variance; temporal-white expectation",
+    "confirmation_refitted": false,
+    "score_clipped": false
+  },
+  "decision": null
+}

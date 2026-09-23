@@ -1,0 +1,20 @@
+{
+  "complete": true,
+  "phase": "development",
+  "snr_eeg_meg_db": [
+    -10,
+    -10
+  ],
+  "cases": [
+    1,
+    3
+  ],
+  "local_AUC_gate": 0.9,
+  "best_case01_local_AUC": 0.6454576063666972,
+  "best_case03_local_AUC": 0.7381944444444444,
+  "all_SVD_local_gates_passed": false,
+  "SVD_deep_localization_successes": 3,
+  "all_converged": true,
+  "accepted": false,
+  "reason": "SVD restored the case03 deep peak but no SVD-aligned variant reached local AUC 0.90; case01 remained at or below 0.645."
+}
