@@ -46,6 +46,7 @@ def reconstruct_evoked_oaster_v5_from_whitened(
         noise_multiplier=1.0, mrf_strength=0.5, calibration="layer",
         temporal_mode="smooth", solver_kind="admm", surface_reweight_floor=0.,
         deep_reweight_floor=0., ridge_fraction=0., edge_penalty_mode="group",
+        surface_penalty_multiplier=None,
         **solver_settings):
     """Joint surface/deep solve; no truth, template selection or forced deep source.
 
@@ -93,8 +94,17 @@ def reconstruct_evoked_oaster_v5_from_whitened(
         mrf_factor = splu((sparse.eye(gain.shape[1]) - mrf_strength * transition).tocsc())
     weights = (np.ones(data.shape[0]) if window_channel_weights is None
                else np.asarray(window_channel_weights[0], float))
+    surface_penalty_multiplier = (np.ones(n_surf) if surface_penalty_multiplier is None
+                                  else np.asarray(surface_penalty_multiplier, float))
     if weights.shape != (data.shape[0],) or not np.isfinite(weights).all() or np.any(weights < 0):
         raise ValueError("channel weights must be finite nonnegative sensor weights")
+    if (surface_penalty_multiplier.shape != (n_surf,)
+            or not np.isfinite(surface_penalty_multiplier).all()
+            or np.any(surface_penalty_multiplier <= 0)):
+        raise ValueError("surface penalty multipliers must be finite positive values")
+    surface_penalty_range = ([float(surface_penalty_multiplier.min()),
+                              float(surface_penalty_multiplier.max())]
+                             if n_surf else [1., 1.])
     centered = data - data[:, baseline].mean(axis=1, keepdims=True)
     weighted_data = weights[:, None] * centered
     weighted_gain = weights[:, None] * gain
@@ -110,6 +120,9 @@ def reconstruct_evoked_oaster_v5_from_whitened(
                     deep_reweight_floor=float(deep_reweight_floor),
                     ridge_fraction=float(ridge_fraction),
                     edge_penalty_mode=edge_penalty_mode,
+                    surface_penalty_multiplier_count=int(np.count_nonzero(
+                        surface_penalty_multiplier != 1)),
+                    surface_penalty_multiplier_range=surface_penalty_range,
                     temporal_mode=temporal_mode, solver_kind=solver_kind,
                     solver_settings=solver_settings,
                     weighting_coordinates="physical_current" if not mrf_strength else "MRF_current_innovation")
@@ -145,6 +158,7 @@ def reconstruct_evoked_oaster_v5_from_whitened(
     source_penalties = depth_weights.copy()
     for layer, threshold in zip(layers, layer_lambdas):
         source_penalties[layer] *= threshold
+    source_penalties[:n_surf] *= surface_penalty_multiplier
     mean_degree = 2 * incidence.shape[0] / max(n_surf, 1)
     edge_penalty = float(layer_lambdas[0] * edge_fraction / max(mean_degree, 1))
     spatial_solver = solve_reweighted_graph_v5

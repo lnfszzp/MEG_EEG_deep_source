@@ -77,7 +77,8 @@ def test_reweight_floors_are_applied_to_their_admm_layers(monkeypatch):
         np.arange(90, dtype=float).reshape(3, 30), np.eye(3), 2,
         adjacency=sparse.eye(3), baseline=baseline, active_windows=(active,),
         mrf_strength=0, surface_reweight_floor=.2, deep_reweight_floor=.4,
-        ridge_fraction=.25, edge_penalty_mode="elementwise")
+        ridge_fraction=.25, edge_penalty_mode="elementwise",
+        surface_penalty_multiplier=np.array([.5, .75]))
     assert source.shape == (3, 30)
     assert np.array_equal(captured["amplitude_weight_floor"], [.2, .2, .4])
     assert info["surface_reweight_floor"] == .2
@@ -85,6 +86,9 @@ def test_reweight_floors_are_applied_to_their_admm_layers(monkeypatch):
     assert captured["ridge_penalty"] == .25
     assert captured["edge_penalty_mode"] == "elementwise"
     assert info["edge_penalty_mode"] == "elementwise"
+    assert info["surface_penalty_multiplier_count"] == 2
+    assert info["surface_penalty_multiplier_range"] == [.5, .75]
+    assert np.isclose(captured["source_penalty"][0] / captured["source_penalty"][1], 2 / 3)
     assert info["ridge_fraction"] == .25
     assert info["windows"][0]["ridge_scale"] == 1.
     for name in ("surface_reweight_floor", "deep_reweight_floor"):
@@ -112,3 +116,8 @@ def test_reweight_floors_are_applied_to_their_admm_layers(monkeypatch):
         inverse.reconstruct_evoked_oaster_v5_from_whitened(
             np.zeros((3, 30)), np.eye(3), 2, adjacency=sparse.eye(3),
             baseline=baseline, active_windows=(active,), edge_penalty_mode="bad")
+    with np.testing.assert_raises(ValueError):
+        inverse.reconstruct_evoked_oaster_v5_from_whitened(
+            np.zeros((3, 30)), np.eye(3), 2, adjacency=sparse.eye(3),
+            baseline=baseline, active_windows=(active,),
+            surface_penalty_multiplier=[1.])
