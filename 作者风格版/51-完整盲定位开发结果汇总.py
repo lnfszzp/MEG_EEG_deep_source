@@ -1,6 +1,7 @@
 """# %% 重画balanced20完整盲定位结果，并补充分SNR统计。"""
 
 # %% 读取已经完成的定位结果；不重算、不改任何病例决定。
+import argparse
 import csv
 import hashlib
 import json
@@ -10,14 +11,20 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 root = Path(__file__).resolve().parents[1]
-output = root / "results/erp_whole_head/adaptive_v6/development_diagnosis/blind_gate_combined40_localization_excess_balanced_full20"
+parser = argparse.ArgumentParser(description=__doc__)
+parser.add_argument("--output", type=Path, default=root /
+    "results/erp_whole_head/adaptive_v6/development_diagnosis/blind_gate_combined40_localization_adaptive_mix_balanced_full20")
+args = parser.parse_args()
+output = args.output.resolve()
 summary_path = output / "summary.json"
 summary = json.loads(summary_path.read_text(encoding="utf-8"))
-assert summary["complete"] and summary["case_count"] == 20
+assert summary["complete"] and summary["case_count"] > 0
 with (output / "metrics_table.csv").open(encoding="utf-8-sig", newline="") as stream:
     rows = list(csv.DictReader(stream))
-assert len(rows) == 20
+assert len(rows) == summary["case_count"]
 numeric = ("eeg_snr_db", "meg_snr_db", "predictive_score", "development_threshold",
+           "decision_p_value", "training_eeg_weight", "training_meg_weight",
+           "amplitude_evidence_mix",
            "deep_present_decision", "has_deep_true_posthoc", "family_correct_posthoc",
            "conditional_local_AUC", "surface_An_auc", "deep_An_auc", "surface_SD_mm",
            "surface_DLE_mm", "deep_DLE_mm", "active_count")
@@ -26,8 +33,8 @@ for row in rows:
         row[name] = float(row[name])
 
 # %% 分SNR统计，DLE只在存在表层真值时汇总。
-pairs = [(-10, -10), (-10, 20), (20, -10), (5, 5)]
-pair_labels = ["−10/−10", "−10/+20", "+20/−10", "+5/+5"]
+pairs = list(dict.fromkeys((int(row["eeg_snr_db"]), int(row["meg_snr_db"])) for row in rows))
+pair_labels = [f"{eeg:+d}/{meg:+d}".replace("-", "−") for eeg, meg in pairs]
 snr_rows = []
 for pair, label in zip(pairs, pair_labels):
     subset = [row for row in rows if (row["eeg_snr_db"], row["meg_snr_db"]) == pair]
@@ -57,7 +64,7 @@ for index, pair in enumerate(pairs):
                            label=label if index == 0 else None, zorder=3)
 axes[0, 0].axhline(summary["development_threshold"], color="#C44E52",
                     linestyle=":", linewidth=1.8, label="Development threshold")
-axes[0, 0].set(yscale="log", xticks=np.arange(4), xticklabels=pair_labels,
+axes[0, 0].set(yscale="log", xticks=np.arange(len(pairs)), xticklabels=pair_labels,
                ylabel="Excess-loss fraction U", title="Independent blind-family gate")
 axes[0, 0].legend(frameon=False, fontsize=9)
 
@@ -78,7 +85,7 @@ for index, pair in enumerate(pairs):
               and np.isfinite(row["surface_DLE_mm"])]
     axes[1, 0].scatter(index + np.linspace(-.08, .08, len(values)), values,
                        color="#007C83", marker="s", s=48)
-axes[1, 0].set(xticks=np.arange(4), xticklabels=pair_labels, ylabel="Surface DLE (mm)",
+axes[1, 0].set(xticks=np.arange(len(pairs)), xticklabels=pair_labels, ylabel="Surface DLE (mm)",
                ylim=(0, 1.12 * max(row["surface_DLE_mm"] for row in rows
                                    if np.isfinite(row["surface_DLE_mm"]))),
                title="Surface peak error (uncropped)")
@@ -90,14 +97,14 @@ axes[1, 1].scatter([row["surface_SD_mm"] for row in surface_rows],
                    [row["surface_DLE_mm"] for row in surface_rows], color=colors, s=48)
 axes[1, 1].set(xlabel="Surface SD (mm)", ylabel="Surface DLE (mm)",
                title="Spread versus peak error")
-figure.suptitle("Balanced20 blind gate + combined40 localization (development)", fontweight="bold")
+figure.suptitle(f"Blind gate + combined40 localization ({summary['phase']})", fontweight="bold")
 figure.savefig(output / "comparison.png", dpi=220, facecolor="white")
 plt.close(figure)
 
 # %% 修正摘要措辞并记录未裁剪的最差定位误差。
 summary["decision_statistic"] = "independent confirmation excess-loss fraction"
 summary["threshold_status"] = "chosen inside the labeled development gap; must be replaced by frozen null calibration"
-summary["localization_script_sha256"] = hashlib.sha256(
+assert summary["localization_script_sha256"] == hashlib.sha256(
     (root / "作者风格版/48-独立门控后40试次盲定位.py").read_bytes()).hexdigest()
 summary["minimum_local_AUC"] = min(row["conditional_local_AUC"] for row in rows)
 summary["maximum_surface_DLE_mm"] = max(row["surface_DLE_mm"] for row in surface_rows)
@@ -105,7 +112,9 @@ summary["maximum_surface_SD_mm"] = max(row["surface_SD_mm"] for row in surface_r
 summary["snr_summary"] = snr_rows
 summary_path.write_text(json.dumps(summary, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 
-lines = ["# balanced20完整盲定位（开发闭环）", "",
+surface_count = sum(not row["has_deep_true_posthoc"] for row in rows)
+deep_count = len(rows) - surface_count
+lines = [f"# 完整盲定位（{summary['phase']}）", "",
     "train20拟合H0/H1，独立confirmation20以U盲选family，随后combined40重定位。真值只用于本报告的后验评价。", "",
     "| EEG/MEG SNR | 最低/平均局部AUC | 平均/最大表层DLE mm | 平均表层SD mm | 最大深层DLE mm |",
     "|---|---:|---:|---:|---:|"]
@@ -113,9 +122,10 @@ for row in snr_rows:
     lines.append(f"| {row['eeg_meg_snr_db']} | {row['minimum_local_AUC']:.3f}/{row['mean_local_AUC']:.3f} | "
         f"{row['mean_surface_DLE_mm']:.2f}/{row['maximum_surface_DLE_mm']:.2f} | "
         f"{row['mean_surface_SD_mm']:.2f} | {row['maximum_deep_DLE_mm']:.2f} |")
-lines += ["", "盲选正确20/20；纯表层误报0/8；深源检出12/12；所选family全部收敛；所有局部AUC≥0.90；所有深源DLE=0。",
-    f"当前最差局部AUC={summary['minimum_local_AUC']:.3f}，最大表层DLE={summary['maximum_surface_DLE_mm']:.2f} mm。+20/−10的表层DLE系统性偏高，仍需改进定位后处理。",
-    "0.12看过开发标签，正式校准/验证尚未消费，accepted=false。", ""]
+lines += ["", f"盲选正确{summary['family_correct_posthoc_count']}/{len(rows)}；纯表层误报{summary['pure_surface_false_positive_count']}/{surface_count}；深源检出{summary['deep_true_detected_count']}/{deep_count}；所选family全部收敛={summary['all_selected_families_converged']}。",
+    f"当前最差局部AUC={summary['minimum_local_AUC']:.3f}，最大表层DLE={summary['maximum_surface_DLE_mm']:.2f} mm。",
+    ("开发阈值看过标签，正式校准/验证尚未消费，accepted=false。"
+     if summary["phase"] == "development" else "病例决定来自冻结校准；accepted以冻结正式验收报告为准。"), ""]
 (output / "REPORT.md").write_text("\n".join(lines), encoding="utf-8")
 print(json.dumps({"minimum_local_AUC": summary["minimum_local_AUC"],
                   "maximum_surface_DLE_mm": summary["maximum_surface_DLE_mm"],
