@@ -1,0 +1,2 @@
+﻿case_id,configuration_id,scenario,eeg_snr_db,meg_snr_db,score,null_converged,full_converged,all_converged,p_value,deep_present_decision,elapsed_seconds
+erp-v6-component-balanced-v3-calibration-018-eeg-10-meg+20,erp-v6-component-balanced-v3-calibration-018,surface_only,-10,20,0.07291868494188963,1,1,1,nan,,239.87432460000855

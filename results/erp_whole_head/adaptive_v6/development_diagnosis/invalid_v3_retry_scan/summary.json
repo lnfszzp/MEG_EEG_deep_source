@@ -1,0 +1,36 @@
+{
+  "status": "development_diagnosis_only",
+  "formal_v3_calibration_valid": false,
+  "protected_validation_read_or_run": false,
+  "case_id": "erp-v6-component-balanced-v3-calibration-018-eeg-10-meg+20",
+  "scenario": "surface_only",
+  "eeg_snr_db": -10,
+  "meg_snr_db": 20,
+  "formal_retry10": {
+    "full_converged": false,
+    "iterations": 22000,
+    "retries": 10,
+    "primal_dual_gap_relative": 0.0012169201177103972,
+    "tolerance": 0.001,
+    "numerical_stall": false,
+    "descent_guard_triggered": false,
+    "source_dual_violation": 0.0,
+    "excess_fraction_score": 0.07279936838528958
+  },
+  "development_retry11": {
+    "full_converged": true,
+    "iterations": 23500,
+    "retries": 11,
+    "primal_dual_gap_relative": 0.000998708581269358,
+    "tolerance": 0.001,
+    "numerical_stall": false,
+    "descent_guard_triggered": false,
+    "source_dual_violation": 0.0,
+    "excess_fraction_score": 0.07291868494188963
+  },
+  "minimal_observed_safe_max_inner_retries": 11,
+  "higher_retry_caps_run": [],
+  "score_delta_retry11_minus_formal": 0.00011931655660005225,
+  "full_loss_delta_retry11_minus_formal": -0.4650790622908971,
+  "diagnosis": "Iteration-budget exhaustion: the same convex surrogate continued past the retry-10 budget and crossed the frozen 0.001 primal-dual-gap tolerance after 1500 additional iterations. No numerical stall, descent-guard event, or source-dual violation occurred."
+}

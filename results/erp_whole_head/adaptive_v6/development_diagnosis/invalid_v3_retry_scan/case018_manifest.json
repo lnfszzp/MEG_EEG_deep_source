@@ -1,0 +1,35 @@
+[
+  {
+    "case_id": "erp-v6-component-balanced-v3-calibration-018-eeg-10-meg+20",
+    "case_number": 21,
+    "component_balance_revision": "formal_component_balanced_v3_independent_calibration",
+    "configuration_id": "erp-v6-component-balanced-v3-calibration-018",
+    "configuration_kind": "single_surface",
+    "configuration_number": 18,
+    "correlation": 0.0,
+    "deep_index": null,
+    "deep_local": null,
+    "deep_surface_ratio": null,
+    "eeg_snr_db": -10,
+    "location": null,
+    "meg_snr_db": 20,
+    "pair_index": 1,
+    "panel": "erp_v6_component_balanced_v3_calibration",
+    "replica_seed_roots": {
+      "check": 2026092502,
+      "fit": 2026092501
+    },
+    "replicate": 0,
+    "scenario": "surface_only",
+    "scenario_code": 0,
+    "seed": [
+      2026092501,
+      1,
+      18
+    ],
+    "snr_db": -10,
+    "surface_centers": [
+      5888
+    ]
+  }
+]
