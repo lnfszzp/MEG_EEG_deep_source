@@ -1,0 +1,14 @@
+{
+  "complete": true,
+  "development_only": true,
+  "formal_acceptance_allowed": false,
+  "candidate": "conjunctive",
+  "predeclared_rule": "max(T00,T10) < min(T02,T04)",
+  "all_eight_fits_valid": true,
+  "max_h0_score": 0.00011551329396842994,
+  "min_h1_score": 0.0017487001119785124,
+  "separation_margin": 0.0016331868180100824,
+  "probe_passed": true,
+  "old_v4_threshold_used_for_acceptance": false,
+  "script_sha256": "df315eebebd18df85ac8c8ffb847600347ae7fa26effb019dd3535747fa96780"
+}

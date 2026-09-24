@@ -1,0 +1,5 @@
+﻿case_id,case_number,scenario,truth_group,score,posthoc_method,posthoc_AUC,posthoc_surface_DLE_mm,posthoc_deep_peak_distance_mm
+erp-v6-localization-v5-development-00-eeg-10-meg-10,0,surface_only,H0,-0.03173385419095774,v6-surface-only,0.5,nan,nan
+erp-v6-localization-v5-development-02-eeg-10-meg-10,2,deep_only,H1,0.01862875788034571,v6-full-ungated,1.0,nan,0.0
+erp-v6-localization-v5-development-04-eeg-10-meg-10,4,deep_plus_two_surface,H1,0.0017487001119785124,v6-full-ungated,0.6594891640866872,nan,30.00000056669801
+erp-v6-localization-v5-development-10-eeg+20-meg-10,10,surface_only,H0,0.00011551329396842994,v6-surface-only,0.9987257617728531,3.976676349880353,nan

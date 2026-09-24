@@ -1,0 +1,9 @@
+﻿case_id,case_number,family,outer_steps,converged,final_inner_converged,outer_converged,stationarity_gap,minimum_amplitude_weight,minimum_edge_weight,objective_monotone
+erp-v6-localization-v5-development-00-eeg-10-meg-10,0,null,3,1,1,1,0.0,1.0,1.0,1
+erp-v6-localization-v5-development-00-eeg-10-meg-10,0,full,5,1,1,1,0.0008825153686595954,0.5181107807827926,1.0,1
+erp-v6-localization-v5-development-02-eeg-10-meg-10,2,null,3,1,1,1,0.0,1.0,1.0,1
+erp-v6-localization-v5-development-02-eeg-10-meg-10,2,full,4,1,1,1,0.0006590414177421135,0.5120929992485005,1.0,1
+erp-v6-localization-v5-development-04-eeg-10-meg-10,4,null,3,1,1,1,0.0,1.0,1.0,1
+erp-v6-localization-v5-development-04-eeg-10-meg-10,4,full,5,1,1,1,0.0009759913019113817,0.5106668966397057,0.626324904752634,1
+erp-v6-localization-v5-development-10-eeg+20-meg-10,10,null,8,1,1,1,0.0007496848893891824,0.5226002976251699,0.5226002867135566,1
+erp-v6-localization-v5-development-10-eeg+20-meg-10,10,full,12,1,1,1,0.0009580556142150364,0.5274935511810741,0.5199801571254544,1
