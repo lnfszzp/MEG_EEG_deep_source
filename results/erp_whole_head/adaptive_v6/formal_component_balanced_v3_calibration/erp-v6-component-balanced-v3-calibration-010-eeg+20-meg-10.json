@@ -1,0 +1,481 @@
+{
+  "case_id": "erp-v6-component-balanced-v3-calibration-010-eeg+20-meg-10",
+  "simulation": {
+    "case_id": "erp-v6-component-balanced-v3-calibration-010-eeg+20-meg-10",
+    "protocol": "phase-locked-erp-independent-means-v1",
+    "event_sample": 200,
+    "n_times": 601,
+    "n_trials": 40,
+    "active_window_s": [
+      0.02,
+      0.12
+    ],
+    "baseline_window_s": [
+      -0.18,
+      -0.02
+    ],
+    "groups": [
+      [
+        2422,
+        2491,
+        2517,
+        2546,
+        2573,
+        2600,
+        2629,
+        2650,
+        2651,
+        2675,
+        2676,
+        2700,
+        2701,
+        2750,
+        2771,
+        2772,
+        2822,
+        2851,
+        2902
+      ],
+      [
+        5698,
+        5700,
+        5701,
+        5702,
+        5738,
+        5775,
+        5815,
+        5816,
+        5817,
+        5853,
+        5882,
+        5883,
+        5886,
+        5918,
+        5919,
+        5953,
+        5956,
+        5957,
+        6036
+      ]
+    ],
+    "correlation_target": 0.0,
+    "correlation_actual": [
+      [
+        1.0,
+        -2.745202449403375e-17
+      ],
+      [
+        -2.7452024494033743e-17,
+        0.9999999999999998
+      ]
+    ],
+    "waveform_assignment": [
+      0,
+      1
+    ],
+    "deep_surface_ratio_actual": null,
+    "target_snr_db": {
+      "eeg": 20.0,
+      "meg": -10.0
+    },
+    "actual_snr_db": {
+      "eeg": {
+        "train": 16.99481862504828,
+        "confirmation": 17.033751928953656,
+        "combined": 20.044953976776647
+      },
+      "meg": {
+        "train": -12.976170315080548,
+        "confirmation": -12.893872049722344,
+        "combined": -9.899433233452276
+      }
+    },
+    "implied_single_trial_snr_db": {
+      "eeg": 3.9794000867203785,
+      "meg": -26.02059991327962
+    },
+    "snr_level": "expected combined 40-trial-mean active-window energy ratio",
+    "noise_model": "two independent Gaussian 20-trial-mean equivalents; no stored individual epochs",
+    "waveform_model": "phase-locked transient ERP without sinusoidal carrier",
+    "seed_root": 2026092501,
+    "seed_case_key": 14457905170612427409,
+    "surface_component_sensor_balance": true,
+    "surface_component_sensor_energies_before": [
+      1556567034617675.2,
+      1.3203313841911166e+16
+    ],
+    "surface_component_sensor_energies_after": [
+      4533414063818820.0,
+      4533414063818824.0
+    ],
+    "surface_component_sensor_scales": [
+      1.7065883613375834,
+      0.5859643852347769
+    ],
+    "n_trials_combined": 40,
+    "n_trials_per_half": 20.0,
+    "expected_snr_db": {
+      "eeg": {
+        "combined": 20.0,
+        "each_half": 16.989700043360187
+      },
+      "meg": {
+        "combined": -10.0,
+        "each_half": -13.010299956639813
+      }
+    },
+    "noise_scale": {
+      "eeg": 4272160.421230036,
+      "meg": 251111925.38937116
+    },
+    "snr_realization_normalized": false,
+    "baseline_centering": "each half independently; analytic scale includes active variance from baseline centering",
+    "noise_scale_rule": "analytic expected baseline-centered noise energy; never normalize a noise realization",
+    "replica_seed_roots": {
+      "fit": 2026092501,
+      "check": 2026092502
+    },
+    "seed_entropy": {
+      "fit": [
+        2026092501,
+        14457905170612427409,
+        6001,
+        0
+      ],
+      "check": [
+        2026092502,
+        14457905170612427409,
+        6001,
+        1
+      ]
+    },
+    "seed_spawn_keys": {
+      "eeg": {
+        "train": [
+          0
+        ],
+        "confirmation": [
+          0
+        ]
+      },
+      "meg": {
+        "train": [
+          1
+        ],
+        "confirmation": [
+          1
+        ]
+      }
+    },
+    "seed_rule": "explicit replica_seed_roots fit/check (fallback seed_root) + SHA256(case_id)[:8] little endian + domain 6001 + half index; modality spawn",
+    "preprocessing": "raw independent half-means unchanged; empirical training-trial baseline contrast covariance defines both whiteners; training-only modality evidence weights",
+    "modality_weights": [
+      1.0,
+      0.010622906667842172
+    ],
+    "retained_channels": [
+      58,
+      99
+    ],
+    "trial_baseline_covariance": {
+      "rule": "C_mean = Z Z.T / ((N-1)*(B-1)*N), Z centered over trials and baseline time",
+      "representation": "independent Gaussian half-mean and training-baseline contrasts; sufficient-statistic equivalent, no stored forty epochs",
+      "generator_covariance_passed_to_inverse": false,
+      "independent_of_training_mean_under_gaussian_model": true,
+      "confirmation_used_for_covariance": false,
+      "n_training_trials": 20,
+      "n_baseline": 97,
+      "contrast_degrees_of_freedom": 1824,
+      "modalities": {
+        "eeg": {
+          "seed_entropy": [
+            2026092501,
+            14457905170612427409,
+            6002
+          ],
+          "seed_spawn_key": [
+            0
+          ],
+          "retained_channels": 58,
+          "covariance_trace": 1050.0893243064984,
+          "eigenvalue_condition_before_cutoff": 2569846916.4379525,
+          "eigenvalue_condition_retained": 4038.53487872745,
+          "eigenvalue_relative_cutoff": 1e-08
+        },
+        "meg": {
+          "seed_entropy": [
+            2026092501,
+            14457905170612427409,
+            6002
+          ],
+          "seed_spawn_key": [
+            1
+          ],
+          "retained_channels": 99,
+          "covariance_trace": 7.668421036224506e-10,
+          "eigenvalue_condition_before_cutoff": 814976219.8155758,
+          "eigenvalue_condition_retained": 152.40626543993415,
+          "eigenvalue_relative_cutoff": 1e-08
+        }
+      }
+    }
+  },
+  "fitting": {
+    "mode": "independent_confirmation_joint_vs_surface",
+    "solver_kind": "admm",
+    "structural_settings": {
+      "noise_multiplier": 1.0,
+      "edge_fraction": 0.5,
+      "mrf_strength": 0.8,
+      "calibration": "layer",
+      "surface_reweight_floor": 0.0,
+      "deep_reweight_floor": 0.0,
+      "ridge_fraction": 0.0
+    },
+    "solver_settings": {
+      "outer_iterations": 1,
+      "max_iter": 2000,
+      "tolerance": 0.001,
+      "outer_tolerance": 0.01,
+      "max_inner_retries": 10
+    },
+    "null_model": {
+      "mode": "joint_layer_calibrated_adaptive_graph",
+      "selected_templates": [],
+      "spatial_templates_used": false,
+      "graph_edges": 21320,
+      "deep_graph_edges": 0,
+      "mrf_strength": 0.8,
+      "calibration": "layer",
+      "surface_reweight_floor": 0.0,
+      "deep_reweight_floor": 0.0,
+      "ridge_fraction": 0.0,
+      "edge_penalty_mode": "group",
+      "source_penalty_mode": "group",
+      "surface_penalty_multiplier_count": 0,
+      "surface_penalty_multiplier_range": [
+        1.0,
+        1.0
+      ],
+      "temporal_mode": "smooth",
+      "solver_kind": "admm",
+      "solver_settings": {
+        "outer_iterations": 1,
+        "tolerance": 0.001,
+        "max_iter": 2000,
+        "outer_tolerance": 0.01,
+        "max_inner_retries": 10
+      },
+      "weighting_coordinates": "MRF_current_innovation",
+      "windows": [
+        {
+          "active_samples": 61,
+          "temporal_rank": 10,
+          "temporal_selection": "amplitude_independent_smooth_subspace",
+          "smoothing_fraction": 0.1,
+          "attenuation_floor": 0.01,
+          "temporal_rotation": "none",
+          "source_lambda_surface": 27.48531952534634,
+          "source_lambda_deep": 0.0,
+          "source_lambda_global_reference": 27.48531952534634,
+          "edge_lambda": 2.416568079280568,
+          "edge_lambda_surface_reference": 27.48531952534634,
+          "noise_projection_blocks": 16,
+          "ridge_penalty": 0.0,
+          "ridge_scale": 8.693318963869089,
+          "response_condition": 82.06527320402893,
+          "null_rule": "separate layer maxima of baseline matched-filter norms; elementwise modes repeat the sensor-SVD rotation in every null block; empirical regularization, not p-values",
+          "solver": {
+            "history": [
+              {
+                "outer": 0,
+                "iterations": 4125,
+                "retries": 2,
+                "converged": true,
+                "primal_relative": 0.0003396227034889311,
+                "dual_relative": 0.0003333571983955758,
+                "surrogate_reference": 104988.5539072804,
+                "surrogate_objective": 5523.056980574419,
+                "surrogate_roundoff": 2.9839541726710307e-09,
+                "primal_dual_gap": 4.981351271782842,
+                "primal_dual_gap_relative": 0.0009019192250420639,
+                "dual_scale": 0.9995067889476599,
+                "dual_candidate": "admm_linear_residual",
+                "source_dual_violation": 0.0,
+                "log_objective": 2238.5856452772446,
+                "local_stationarity_gap_relative": 0.8451748789186965,
+                "relative_change": 1.0,
+                "accepted_step": 1.0,
+                "rho": 8.0,
+                "rho_updates": 3,
+                "active_rows": 49
+              }
+            ],
+            "converged": true,
+            "inner_converged": true,
+            "outer_converged": true,
+            "final_stationarity_gap_relative": 0.0009019192250420639,
+            "numerical_stall": false,
+            "descent_guard_triggered": false,
+            "amplitude_epsilon": 0.7098742876138734,
+            "edge_epsilon": 0.7098742876138734,
+            "amplitude_weight_range": [
+              0.04761904761904762,
+              1.0
+            ],
+            "amplitude_weight_floor_range": [
+              0.0,
+              0.0
+            ],
+            "amplitude_penalty_model": "per-source linear/log-sum mixture",
+            "source_penalty_mode": "group",
+            "elementwise_source_count": 0,
+            "ridge_penalty": 0.0,
+            "edge_penalty_mode": "group",
+            "edge_weight_range": [
+              0.04761904761904762,
+              1.0
+            ],
+            "rho_initial": 1.0,
+            "rho_final": 8.0,
+            "rho_updates": 3,
+            "outer_tolerance": 0.01,
+            "adaptive_rho": true,
+            "convergence_note": "Feasible primal-dual bound for the current convex MM surrogate; no global-optimality claim for log-sum."
+          }
+        }
+      ]
+    },
+    "full_model": {
+      "mode": "joint_layer_calibrated_adaptive_graph",
+      "selected_templates": [],
+      "spatial_templates_used": false,
+      "graph_edges": 21320,
+      "deep_graph_edges": 0,
+      "mrf_strength": 0.8,
+      "calibration": "layer",
+      "surface_reweight_floor": 0.0,
+      "deep_reweight_floor": 0.0,
+      "ridge_fraction": 0.0,
+      "edge_penalty_mode": "group",
+      "source_penalty_mode": "group",
+      "surface_penalty_multiplier_count": 0,
+      "surface_penalty_multiplier_range": [
+        1.0,
+        1.0
+      ],
+      "temporal_mode": "smooth",
+      "solver_kind": "admm",
+      "solver_settings": {
+        "outer_iterations": 1,
+        "tolerance": 0.001,
+        "max_iter": 2000,
+        "outer_tolerance": 0.01,
+        "max_inner_retries": 10
+      },
+      "weighting_coordinates": "MRF_current_innovation",
+      "windows": [
+        {
+          "active_samples": 61,
+          "temporal_rank": 10,
+          "temporal_selection": "amplitude_independent_smooth_subspace",
+          "smoothing_fraction": 0.1,
+          "attenuation_floor": 0.01,
+          "temporal_rotation": "none",
+          "source_lambda_surface": 27.501163588033045,
+          "source_lambda_deep": 4.847719587372172,
+          "source_lambda_global_reference": 27.501163588033045,
+          "edge_lambda": 2.4179611231598472,
+          "edge_lambda_surface_reference": 27.501163588033045,
+          "noise_projection_blocks": 16,
+          "ridge_penalty": 0.0,
+          "ridge_scale": 8.714909205123584,
+          "response_condition": 82.06527320402893,
+          "null_rule": "separate layer maxima of baseline matched-filter norms; elementwise modes repeat the sensor-SVD rotation in every null block; empirical regularization, not p-values",
+          "solver": {
+            "history": [
+              {
+                "outer": 0,
+                "iterations": 4075,
+                "retries": 2,
+                "converged": true,
+                "primal_relative": 0.0003539346423978419,
+                "dual_relative": 0.00024116173207454212,
+                "surrogate_reference": 104988.5539072804,
+                "surrogate_objective": 5514.543452112696,
+                "surrogate_roundoff": 2.9839541726710307e-09,
+                "primal_dual_gap": 5.508436244556833,
+                "primal_dual_gap_relative": 0.0009988925270770106,
+                "dual_scale": 0.9993930206613095,
+                "dual_candidate": "admm_linear_residual",
+                "source_dual_violation": 0.0,
+                "log_objective": 2203.7212993876306,
+                "local_stationarity_gap_relative": 0.8440984486726785,
+                "relative_change": 1.0,
+                "accepted_step": 1.0,
+                "rho": 4.0,
+                "rho_updates": 2,
+                "active_rows": 57
+              }
+            ],
+            "converged": true,
+            "inner_converged": true,
+            "outer_converged": true,
+            "final_stationarity_gap_relative": 0.0009988925270770106,
+            "numerical_stall": false,
+            "descent_guard_triggered": false,
+            "amplitude_epsilon": 0.6797602953998476,
+            "edge_epsilon": 0.6797602953998476,
+            "amplitude_weight_range": [
+              0.047619047619047616,
+              1.0
+            ],
+            "amplitude_weight_floor_range": [
+              0.0,
+              0.0
+            ],
+            "amplitude_penalty_model": "per-source linear/log-sum mixture",
+            "source_penalty_mode": "group",
+            "elementwise_source_count": 0,
+            "ridge_penalty": 0.0,
+            "edge_penalty_mode": "group",
+            "edge_weight_range": [
+              0.047619047619047616,
+              1.0
+            ],
+            "rho_initial": 1.0,
+            "rho_final": 4.0,
+            "rho_updates": 2,
+            "outer_tolerance": 0.01,
+            "adaptive_rho": true,
+            "convergence_note": "Feasible primal-dual bound for the current convex MM surrogate; no global-optimality claim for log-sum."
+          }
+        }
+      ]
+    },
+    "confirmation_used_for_fit": false,
+    "spatial_templates_used": false
+  },
+  "evidence": {
+    "active_samples": 61,
+    "temporal_rank": 10,
+    "temporal_selection": "amplitude_independent_smooth_subspace",
+    "smoothing_fraction": 0.1,
+    "attenuation_floor": 0.01,
+    "null_loss": 1106.2146707871862,
+    "full_loss": 1094.7551000316953,
+    "loss_improvement": 11.459570755490859,
+    "expected_response_noise_energy": 631.9842035669888,
+    "null_excess_loss": 474.2304672201974,
+    "excess_noise_floor_fraction": 0.05,
+    "excess_normalization_denominator": 474.2304672201974,
+    "excess_fraction_score": 0.024164560372224853,
+    "excess_normalization": "(null_loss-full_loss)/max(null_loss-expected_noise, 0.05*expected_noise)",
+    "baseline_variance_sum": 59.459231567408246,
+    "baseline_mean_mode_correction": 0.6288659793814444,
+    "normalization": "confirmation baseline sample variance; temporal-white expectation",
+    "confirmation_refitted": false,
+    "score_clipped": false
+  },
+  "decision": null
+}
