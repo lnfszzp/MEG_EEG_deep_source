@@ -278,7 +278,9 @@ def solve_reweighted_graph_v5(data, gain, incidence, *, source_penalty, edge_pen
                 if certificate["gap_relative"] <= tolerance and descent:
                     inner_converged = True
                     break
-                if adaptive_rho:
+                # Learn a scale on the first convex surrogate, then keep it
+                # fixed so later MM weight changes cannot make rho oscillate.
+                if adaptive_rho and outer == 0:
                     new_rho = (min(2 * rho, 1e6) if primal > 5 * dual else
                                max(rho / 2, 1e-6) if dual > 5 * primal else rho)
                     if new_rho != rho:
@@ -428,4 +430,5 @@ def solve_reweighted_graph_v5(data, gain, incidence, *, source_penalty, edge_pen
         edge_weight_range=[float(edge_weights.min(initial=1)), float(edge_weights.max(initial=0))],
         rho_initial=initial_rho, rho_final=float(rho), rho_updates=rho_updates,
         outer_tolerance=float(outer_tolerance), adaptive_rho=bool(adaptive_rho),
+        rho_adaptation_policy=("first_convex_surrogate_only" if adaptive_rho else "fixed"),
         convergence_note="Feasible primal-dual bound for the current convex MM surrogate; no global-optimality claim for log-sum.")

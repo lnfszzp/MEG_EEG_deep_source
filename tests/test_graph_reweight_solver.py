@@ -65,6 +65,8 @@ def test_reweighted_steps_are_monotone_and_invariant_under_temporal_rotation():
         assert entry["surrogate_objective"] <= entry["surrogate_reference"] + entry["surrogate_roundoff"]
         if entry["converged"]:
             assert entry["primal_dual_gap_relative"] <= settings["tolerance"]
+    assert diagnostics["rho_adaptation_policy"] == "first_convex_surrogate_only"
+    assert all(entry["rho_updates"] == 0 for entry in diagnostics["history"][1:])
 
 
 def test_zero_signal_and_budget_exhaustion_are_distinguished():
