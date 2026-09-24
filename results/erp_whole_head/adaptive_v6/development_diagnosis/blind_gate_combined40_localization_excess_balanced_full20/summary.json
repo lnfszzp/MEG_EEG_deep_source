@@ -1,0 +1,84 @@
+{
+  "complete": true,
+  "phase": "development",
+  "case_count": 20,
+  "solver_settings": {
+    "solver_kind": "admm",
+    "mrf_strength": 0.8,
+    "outer_iterations": 1,
+    "max_inner_retries": 5
+  },
+  "covariance": "trial",
+  "decision_statistic": "independent confirmation excess-loss fraction",
+  "score_kind": "excess",
+  "development_threshold": 0.12,
+  "threshold_status": "chosen inside the labeled development gap; must be replaced by frozen null calibration",
+  "runtime_family_choice_used_truth": false,
+  "parameters_selected_during_development": true,
+  "all_selected_families_converged": true,
+  "localization_script_sha256": "b64641d023ed801786f78f4afc7db187a0798959c189957ee958cb836fe8373c",
+  "localization_parameters": {
+    "svd_modes": 2,
+    "sensitivity_floor_fraction": 0.1,
+    "depth_exponent": 0.6,
+    "graph_steps": 2,
+    "support_seed_fraction": 0.1,
+    "support_radius_m": 0.015,
+    "amplitude_evidence_mix": 0.5
+  },
+  "family_correct_posthoc_count": 20,
+  "pure_surface_false_positive_count": 0,
+  "deep_true_detected_count": 12,
+  "all_conditional_local_AUC_at_least_0p9": true,
+  "all_surface_DLE_finite_when_surface_true": true,
+  "all_deep_DLE_zero_when_deep_true": true,
+  "calibration_consumed": false,
+  "validation_consumed": false,
+  "accepted": false,
+  "wall_seconds": 1456.0809950999974,
+  "minimum_local_AUC": 0.9109362565044383,
+  "maximum_surface_DLE_mm": 27.054572893232315,
+  "maximum_surface_SD_mm": 17.187639446113888,
+  "snr_summary": [
+    {
+      "eeg_meg_snr_db": "−10/−10",
+      "case_count": 5,
+      "minimum_local_AUC": 0.9109362565044383,
+      "mean_local_AUC": 0.9493968302554162,
+      "mean_surface_SD_mm": 11.694714228459581,
+      "mean_surface_DLE_mm": 10.294409454854268,
+      "maximum_surface_DLE_mm": 12.641081973653314,
+      "maximum_deep_DLE_mm": 0.0
+    },
+    {
+      "eeg_meg_snr_db": "−10/+20",
+      "case_count": 5,
+      "minimum_local_AUC": 0.9599631840288406,
+      "mean_local_AUC": 0.9764901115532428,
+      "mean_surface_SD_mm": 10.461148936134466,
+      "mean_surface_DLE_mm": 8.198686271291788,
+      "maximum_surface_DLE_mm": 11.592156564316303,
+      "maximum_deep_DLE_mm": 0.0
+    },
+    {
+      "eeg_meg_snr_db": "+20/−10",
+      "case_count": 5,
+      "minimum_local_AUC": 0.9333950617283949,
+      "mean_local_AUC": 0.9669641448151548,
+      "mean_surface_SD_mm": 16.82773200317484,
+      "mean_surface_DLE_mm": 22.05737289925583,
+      "maximum_surface_DLE_mm": 27.054572893232315,
+      "maximum_deep_DLE_mm": 0.0
+    },
+    {
+      "eeg_meg_snr_db": "+5/+5",
+      "case_count": 5,
+      "minimum_local_AUC": 0.9432489031731457,
+      "mean_local_AUC": 0.9737700489745944,
+      "mean_surface_SD_mm": 9.817773796280456,
+      "mean_surface_DLE_mm": 8.804494138462772,
+      "maximum_surface_DLE_mm": 13.132546972484306,
+      "maximum_deep_DLE_mm": 0.0
+    }
+  ]
+}
