@@ -18,7 +18,7 @@ import run_strict_oaster as archive
 parser = argparse.ArgumentParser(description=__doc__)
 parser.add_argument("--source", type=Path, required=True)
 parser.add_argument("--output", type=Path, required=True)
-parser.add_argument("--candidate", choices=("floor", "alias"), required=True)
+parser.add_argument("--candidate", choices=("floor", "alias", "conjunctive"), required=True)
 args = parser.parse_args()
 source, output = args.source.resolve(), args.output.resolve()
 if output.exists():
@@ -34,9 +34,10 @@ expected_settings = {
 }
 if args.candidate == "alias":
     expected_settings["deep_alias_penalty"] = True
+expected_score_kind = "conjunctive" if args.candidate == "conjunctive" else "excess"
 if metadata["phase"] != "development" or metadata["covariance"] != "trial" or \
-        metadata.get("score_kind") != "excess" or metadata["solver_settings"] != expected_settings:
-    raise ValueError("探针必须使用预声明的 trial/excess/多轮 MM 设置")
+        metadata.get("score_kind") != expected_score_kind or metadata["solver_settings"] != expected_settings:
+    raise ValueError(f"探针必须使用预声明的 trial/{expected_score_kind}/多轮 MM 设置")
 if not completion["complete"] or completion["case_count"] != 4:
     raise ValueError("四病例探针尚未完整运行")
 for relative, expected in metadata["code_sha256"].items():
@@ -57,11 +58,13 @@ rows, fit_rows = [], []
 for case in cases:
     name = case["case_id"]
     payload = json.loads((source / (name + ".json")).read_text(encoding="utf-8"))
-    score = float(payload["evidence"]["excess_fraction_score"])
+    score_field = ("conjunctive_modality_score" if args.candidate == "conjunctive"
+                   else "excess_fraction_score")
+    score = float(payload["evidence"][score_field])
     is_surface = case["scenario"] == "surface_only"
     rows.append({"case_id": name, "case_number": case["case_number"],
                  "scenario": case["scenario"], "truth_group": "H0" if is_surface else "H1",
-                 "excess_score": score})
+                 "score": score})
     for family in ("null", "full"):
         solver = payload["fitting"][family + "_model"]["windows"][0]["solver"]
         history = solver["history"]
@@ -78,8 +81,8 @@ for case in cases:
             "objective_monotone": int(monotone),
         })
 
-h0_scores = [row["excess_score"] for row in rows if row["truth_group"] == "H0"]
-h1_scores = [row["excess_score"] for row in rows if row["truth_group"] == "H1"]
+h0_scores = [row["score"] for row in rows if row["truth_group"] == "H0"]
+h1_scores = [row["score"] for row in rows if row["truth_group"] == "H1"]
 separation_margin = float(min(h1_scores) - max(h0_scores))
 all_fits_valid = all(
     row["converged"] and row["final_inner_converged"] and row["outer_converged"]
@@ -123,11 +126,11 @@ figure, axes = plt.subplots(1, 2, figsize=(11.5, 4.5), constrained_layout=True)
 colors = ["#D55E00" if row["truth_group"] == "H0" else "#007C83" for row in rows]
 markers = ["s" if row["truth_group"] == "H0" else "o" for row in rows]
 for index, (row, color, marker) in enumerate(zip(rows, colors, markers)):
-    axes[0].scatter(index, row["excess_score"], color=color, marker=marker, s=65)
+    axes[0].scatter(index, row["score"], color=color, marker=marker, s=65)
 axes[0].axhline(max(h0_scores), color="#D55E00", linestyle=":", linewidth=1.4)
 axes[0].axhline(min(h1_scores), color="#007C83", linestyle=":", linewidth=1.4)
 axes[0].set(title=f"Predeclared score separation (margin={separation_margin:.4f})",
-            ylabel="Independent excess score", xticks=np.arange(4),
+            ylabel=f"Independent {expected_score_kind} score", xticks=np.arange(4),
             xticklabels=[f"case {row['case_number']:02d}\n{row['truth_group']}" for row in rows])
 fit_x = np.arange(len(fit_rows))
 axes[1].scatter(fit_x, [row["stationarity_gap"] for row in fit_rows],
@@ -147,13 +150,13 @@ plt.close(figure)
 lines = [f"# v5 多轮 MM 四病例探针结果（{args.candidate}）", "",
     f"预声明分离条件：`max(H0) < min(H1)`；margin = {separation_margin:.6f}。",
     f"八个拟合全部达到多轮固定点：{all_fits_valid}；探针通过：{probe_passed}。", "",
-    "| 病例 | 真值组 | excess | 事后方法 | AUC | 表层DLE mm | 深峰距离 mm |",
+    f"| 病例 | 真值组 | {expected_score_kind} score | 事后方法 | AUC | 表层DLE mm | 深峰距离 mm |",
     "|---:|---|---:|---|---:|---:|---:|"]
 for row in rows:
     surface_dle = "—" if not np.isfinite(row["posthoc_surface_DLE_mm"]) else f"{row['posthoc_surface_DLE_mm']:.2f}"
     deep_distance = ("—" if not np.isfinite(row["posthoc_deep_peak_distance_mm"])
                      else f"{row['posthoc_deep_peak_distance_mm']:.2f}")
-    lines.append(f"| {row['case_number']:02d} | {row['truth_group']} | {row['excess_score']:.6f} | "
+    lines.append(f"| {row['case_number']:02d} | {row['truth_group']} | {row['score']:.6f} | "
                  f"{row['posthoc_method']} | {row['posthoc_AUC']:.3f} | {surface_dle} | {deep_distance} |")
 lines += ["", "这是有标签开发探针，不是正式校准或 validation。", ""]
 (output / "REPORT.md").write_text("\n".join(lines), encoding="utf-8")

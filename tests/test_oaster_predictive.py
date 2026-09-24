@@ -87,6 +87,11 @@ def test_prediction_sign_basis_rotation_and_baseline_only_scale(monkeypatch):
     null = np.zeros_like(full)
     options = dict(baseline=baseline, active=active, channel_weights=np.array([1., .7, 2.]))
     score, info = inverse.score_predictive_models(confirmation, gain, null, full, **options)
+    _, modality_info = inverse.score_predictive_models(
+        confirmation, gain, null, full, modality_sizes=(1, 2), **options)
+    _, reweighted_modality_info = inverse.score_predictive_models(
+        confirmation, gain, null, full, baseline=baseline, active=active,
+        channel_weights=np.array([3., .1, .2]), modality_sizes=(1, 2))
     opposite, _ = inverse.score_predictive_models(confirmation, gain, full, null, **options)
     tied, _ = inverse.score_predictive_models(confirmation, gain, full, full, **options)
     assert score > 0 and opposite == -score and tied == 0
@@ -97,6 +102,25 @@ def test_prediction_sign_basis_rotation_and_baseline_only_scale(monkeypatch):
     assert info["excess_fraction_score"] == pytest.approx(
         info["loss_improvement"] / expected_denominator)
     assert np.isclose(info["baseline_mean_mode_correction"], active.sum() / baseline.sum())
+    assert len(modality_info["modality_noise_scores"]) == 2
+    assert modality_info["conjunctive_modality_score"] == min(
+        modality_info["modality_noise_scores"])
+    assert modality_info["modality_scoring_weights"] == "none_after_whitening"
+    assert np.allclose(modality_info["modality_noise_scores"],
+                       reweighted_modality_info["modality_noise_scores"])
+    basis = inverse._smooth_temporal_basis(confirmation, baseline, active)[0]
+    source_modes = (null @ basis.T, full @ basis.T)
+    for index, block in enumerate((slice(0, 1), slice(1, 3))):
+        response = centered[block] @ basis.T
+        manual_null = np.sum((response - gain[block] @ source_modes[0]) ** 2)
+        manual_full = np.sum((response - gain[block] @ source_modes[1]) ** 2)
+        manual_noise = (np.sum(centered[block, baseline] ** 2) / (baseline.sum() - 1)
+                        * (len(basis) + active.sum() / baseline.sum()))
+        assert modality_info["modality_null_losses"][index] == pytest.approx(manual_null)
+        assert modality_info["modality_full_losses"][index] == pytest.approx(manual_full)
+        assert modality_info["modality_expected_response_noise_energy"][index] == pytest.approx(manual_noise)
+        assert modality_info["modality_noise_scores"][index] == pytest.approx(
+            (manual_null - manual_full) / manual_noise)
     changed = confirmation.copy()
     changed[:, active] *= 8
     _, changed_info = inverse.score_predictive_models(changed, gain, null, full, **options)
@@ -167,3 +191,10 @@ def test_malformed_observations_are_rejected_before_inverse():
     with pytest.raises(ValueError):
         inverse.score_predictive_models(np.zeros((3, 30)), np.eye(3), np.zeros((3, 30)),
             np.zeros((3, 30)), baseline=baseline, active=active, channel_weights=np.ones(3))
+    finite_confirmation = np.arange(90, dtype=float).reshape(3, 30)
+    for sizes in ((), (1, 1), (1., 2.), (1, -1, 3)):
+        with pytest.raises(ValueError):
+            inverse.score_predictive_models(
+                finite_confirmation, np.eye(3), np.zeros((3, 30)), np.zeros((3, 30)),
+                baseline=baseline, active=active, channel_weights=np.ones(3),
+                modality_sizes=sizes)

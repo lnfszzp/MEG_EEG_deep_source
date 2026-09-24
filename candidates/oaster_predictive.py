@@ -84,12 +84,14 @@ def fit_predictive_models(training, gain, n_surf, *, adjacency, baseline, active
 
 
 def score_predictive_models(confirmation, gain, null_estimate, full_estimate, *,
-                            baseline, active, channel_weights):
+                            baseline, active, channel_weights, modality_sizes=None):
     """Return signed held-out loss improvement in the fixed smooth ERP basis.
 
     Confirmation is never refit. Its baseline alone supplies the scalar noise
     normalization. This finite-baseline estimate assumes temporal white noise;
     independent null calibration, not a Gaussian reference law, sets decisions.
+    When modality sizes are supplied, each whitened block is also scored before
+    applying training-derived modality weights and their minimum is reported.
     """
     confirmation, gain, baseline, active, weights = _validate_observations(
         confirmation, gain, baseline, active, channel_weights)
@@ -119,6 +121,30 @@ def score_predictive_models(confirmation, gain, null_estimate, full_estimate, *,
     excess_fraction = (null_loss - full_loss) / excess_denominator
     if not np.isfinite(score) or not np.isfinite(excess_fraction):
         raise ValueError("predictive score is nonfinite")
+
+    raw_sizes = np.array([confirmation.shape[0]]) if modality_sizes is None else np.asarray(modality_sizes)
+    if (raw_sizes.ndim != 1 or not raw_sizes.size or raw_sizes.dtype.kind not in "iu"
+            or np.any(raw_sizes <= 0) or raw_sizes.sum() != confirmation.shape[0]):
+        raise ValueError("modality_sizes must be positive integer blocks covering all channels")
+    source_modes = null_estimate @ basis.T, full_estimate @ basis.T
+    modality_scores, modality_null_losses, modality_full_losses, modality_noise = [], [], [], []
+    start = 0
+    for size in raw_sizes:
+        block = slice(start, start + int(size))
+        raw_response = centered[block] @ basis.T
+        raw_gain = gain[block]
+        block_null = float(np.sum((raw_response - raw_gain @ source_modes[0]) ** 2))
+        block_full = float(np.sum((raw_response - raw_gain @ source_modes[1]) ** 2))
+        block_variance = float(np.sum(centered[block, baseline] ** 2) / (baseline.sum() - 1))
+        block_noise = block_variance * (len(basis) + mean_correction)
+        if not np.isfinite(block_noise) or block_noise <= 0:
+            raise ValueError("every modality must have positive finite confirmation baseline variance")
+        modality_null_losses.append(block_null)
+        modality_full_losses.append(block_full)
+        modality_noise.append(block_noise)
+        modality_scores.append((block_null - block_full) / block_noise)
+        start += int(size)
+    conjunctive_score = float(min(modality_scores))
     return float(score), dict(**basis_info, null_loss=null_loss, full_loss=full_loss,
         loss_improvement=null_loss - full_loss, expected_response_noise_energy=expected_noise,
         null_excess_loss=null_loss - expected_noise,
@@ -127,6 +153,12 @@ def score_predictive_models(confirmation, gain, null_estimate, full_estimate, *,
         excess_normalization="(null_loss-full_loss)/max(null_loss-expected_noise, 0.05*expected_noise)",
         baseline_variance_sum=variance_sum, baseline_mean_mode_correction=mean_correction,
         normalization="confirmation baseline sample variance; temporal-white expectation",
+        modality_sizes=raw_sizes.astype(int).tolist(),
+        modality_null_losses=modality_null_losses, modality_full_losses=modality_full_losses,
+        modality_expected_response_noise_energy=modality_noise,
+        modality_noise_scores=modality_scores, conjunctive_modality_score=conjunctive_score,
+        conjunctive_rule="min modality held-out improvement / modality baseline-noise expectation",
+        modality_scoring_weights="none_after_whitening",
         confirmation_refitted=False, score_clipped=False)
 
 

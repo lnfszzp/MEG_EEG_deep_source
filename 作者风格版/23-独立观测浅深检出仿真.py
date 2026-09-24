@@ -29,7 +29,7 @@ parser.add_argument("--seed-root", type=int, required=True)
 parser.add_argument("--calibration", type=Path)
 parser.add_argument("--covariance", choices=("mean", "trial"), default="mean")
 parser.add_argument("--solver-settings", type=json.loads, default={})
-parser.add_argument("--score-kind", choices=("noise", "excess"), default="noise")
+parser.add_argument("--score-kind", choices=("noise", "excess", "conjunctive"), default="noise")
 parser.add_argument("--snr-pair", nargs=2, type=int)
 parser.add_argument("--limit", type=int)
 parser.add_argument("--comparators", action="store_true")
@@ -239,8 +239,11 @@ for case in cases:
         adjacency=shared["adjacency"], baseline=observation["baseline"], active=observation["active_windows"][0],
         channel_weights=observation["channel_weights"], solver_settings=args.solver_settings)
     noise_score, evidence = score_predictive_models(observation["confirmation"], observation["gain"], null, full,
-        baseline=observation["baseline"], active=observation["active_windows"][0], channel_weights=observation["channel_weights"])
-    score = noise_score if args.score_kind == "noise" else evidence["excess_fraction_score"]
+        baseline=observation["baseline"], active=observation["active_windows"][0],
+        channel_weights=observation["channel_weights"],
+        modality_sizes=observation["metadata"]["retained_channels"])
+    score = {"noise": noise_score, "excess": evidence["excess_fraction_score"],
+             "conjunctive": evidence["conjunctive_modality_score"]}[args.score_kind]
     pair_key = f"{int(case['eeg_snr_db'])},{int(case['meg_snr_db'])}"
     model_convergence = {name: bool(fitting[name + "_model"]["windows"][0]["solver"]["converged"]) for name in ("null", "full")}
     converged = all(model_convergence.values())
