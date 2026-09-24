@@ -1,0 +1,47 @@
+{
+  "case_count": 15,
+  "cases_per_snr": 5,
+  "configuration_count": 5,
+  "development_deep_global": [
+    7508,
+    7499,
+    7507
+  ],
+  "development_deep_local": [
+    10,
+    1,
+    9
+  ],
+  "eligible_center_count_after_selection": 6474,
+  "eligible_center_count_before_selection": 6772,
+  "formal_acceptance_allowed": false,
+  "geometry_seed_material": "ERP-v6-localization-v5-new-position-development-v2-paired-SNR\u0000c64d02429fd5e9e9c2a7831a36b7f86c2a0fe614ecb2c837fa0284fe96fb5425\u00004d091c2cbc12d1ec2165ff27e754bf1e3d540c2b4f00c89d3967ac6a3e89eefb\u0000bb9f1a7d949efa6ba91dc8aceff604edca79752ecfb507134d06e4ccf56421d2\u000009dde6a2c14ceeeaa4a3185d218f8017bc6141b37e4172d19f6f85c22cf73ff1\u000068a405ace52d0c04a193c37198304682a0440a0007fed0433fe3a43e686d9aa7",
+  "geometry_seed_sha256": "2e6b424818146e99d8970d8707b633852c4a4f3cdb6bd5b5c83ce8c51db97770",
+  "geometry_seed_uint64": 11055796229765229358,
+  "historical_exact_center_overlap_count": 0,
+  "input_sha256": {
+    "consumed_validation": "68a405ace52d0c04a193c37198304682a0440a0007fed0433fe3a43e686d9aa7",
+    "old_development": "c64d02429fd5e9e9c2a7831a36b7f86c2a0fe614ecb2c837fa0284fe96fb5425",
+    "v2_calibration": "4d091c2cbc12d1ec2165ff27e754bf1e3d540c2b4f00c89d3967ac6a3e89eefb",
+    "v3_calibration": "bb9f1a7d949efa6ba91dc8aceff604edca79752ecfb507134d06e4ccf56421d2",
+    "v4_acceptance": "e6979c8bde9b5b517948ce0f4b4abe48446513f7b358ad549e0f2eeb2123a4bd",
+    "v4_calibration": "09dde6a2c14ceeeaa4a3185d218f8017bc6141b37e4172d19f6f85c22cf73ff1",
+    "validation_marker": "e748e5bc3348a028a1a4a6f3fe70173aadb5201ef9cb9bda3dfaa7fdcf3c3d65"
+  },
+  "minimum_two_surface_distance_mm": 111.96376150855929,
+  "old_development_and_validation_patch_overlap_count": 0,
+  "protocol": "erp-v6-localization-v5-new-position-development-v2-paired-SNR",
+  "purpose": "development only; no formal calibration or validation",
+  "replica_seed_roots": {
+    "check": 2026092702,
+    "fit": 2026092701
+  },
+  "surface_center_count": 6,
+  "surface_center_occurrence_count": 18,
+  "surface_lh_rh": [
+    3,
+    3
+  ],
+  "validation_results_used_to_select_geometry": false,
+  "within_panel_patch_overlap_count": 0
+}
