@@ -22,6 +22,7 @@ for _name in ("OMP_NUM_THREADS", "MKL_NUM_THREADS", "OPENBLAS_NUM_THREADS"):
     os.environ.setdefault(_name, "1")
 
 import numpy as np
+from scipy import sparse
 
 import protected_multilayer as protected
 import run_strict_comparators as comparators
@@ -87,8 +88,19 @@ def _shared_fingerprint(shared: dict) -> str:
         "n_surf",
         "n_deep",
     ):
-        values = np.ascontiguousarray(np.asarray(shared[name]))
         digest.update(name.encode("ascii"))
+        if sparse.issparse(shared[name]):
+            values = sparse.csr_matrix(shared[name], copy=True)
+            values.sum_duplicates()
+            values.sort_indices()
+            digest.update(b"csr")
+            digest.update(np.asarray(values.shape, dtype=np.int64).tobytes())
+            for part in (values.data, values.indices, values.indptr):
+                part = np.ascontiguousarray(part)
+                digest.update(part.dtype.str.encode("ascii"))
+                digest.update(part.tobytes())
+            continue
+        values = np.ascontiguousarray(np.asarray(shared[name]))
         digest.update(values.dtype.str.encode("ascii"))
         digest.update(np.asarray(values.shape, dtype=np.int64).tobytes())
         digest.update(values.tobytes())

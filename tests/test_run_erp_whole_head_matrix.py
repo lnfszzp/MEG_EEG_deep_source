@@ -5,8 +5,24 @@ from types import SimpleNamespace
 
 import numpy as np
 import pytest
+from scipy import sparse
 
 import run_erp_whole_head_matrix as runner
+
+
+def test_shared_fingerprint_is_stable_across_sparse_copies_and_formats():
+    adjacency = sparse.csr_matrix(([1.0, 2.0], ([0, 1], [1, 0])), shape=(2, 2))
+    shared = {
+        "gain_eeg": np.ones((1, 2)), "gain_meg": np.ones((1, 2)),
+        "vertices": np.zeros((2, 3)), "adjacency": adjacency,
+        "times": np.arange(2), "noise_factor_eeg": np.ones((1, 1)),
+        "noise_factor_meg": np.ones((1, 1)), "n_surf": 2, "n_deep": 0,
+    }
+
+    expected = runner._shared_fingerprint(shared)
+    assert runner._shared_fingerprint({**shared, "adjacency": adjacency.copy()}) == expected
+    assert runner._shared_fingerprint({**shared, "adjacency": adjacency.tocoo()}) == expected
+    assert runner._shared_fingerprint({**shared, "adjacency": adjacency * 2}) != expected
 
 
 def test_v3_entry_point_is_explicitly_versioned() -> None:
