@@ -35,8 +35,18 @@ def test_certified_convex_identity_solution_is_independent_of_admm_rho(rho):
         sparse.csr_matrix((0, 3)), source_penalty=1., edge_penalty=0.,
         outer_iterations=1, max_iter=500, tolerance=1e-8, rho=rho)
     assert np.allclose(estimate, [[2.4, 3.2], [0., 0.], [-1., 0.]], atol=1e-5)
-    assert diagnostics["converged"]
-    assert diagnostics["final_stationarity_gap_relative"] <= 1e-8
+    assert diagnostics["inner_converged"]
+    assert not diagnostics["outer_converged"] and not diagnostics["converged"]
+    assert diagnostics["history"][0]["primal_dual_gap_relative"] <= 1e-8
+
+
+def test_one_outer_is_converged_only_when_the_objective_is_fixed_convex():
+    estimate, diagnostics = solve_reweighted_graph_v5(
+        np.array([[3., 4.], [-2., 0.]]), np.eye(2), sparse.csr_matrix((0, 2)),
+        source_penalty=1., edge_penalty=0., amplitude_weight_floor=1.,
+        outer_iterations=1, max_iter=500, tolerance=1e-8)
+    assert np.allclose(estimate, [[2.4, 3.2], [-1., 0.]], atol=1e-5)
+    assert diagnostics["converged"] and not diagnostics["adaptive_objective"]
 
 
 def test_reweighted_steps_are_monotone_and_invariant_under_temporal_rotation():
@@ -90,6 +100,29 @@ def test_per_source_amplitude_floor_preserves_zero_default_and_matches_objective
                 + settings["source_penalty"][1] * norms[1])
     assert np.isclose(diagnostics["history"][-1]["log_objective"], expected)
     assert diagnostics["amplitude_weight_floor_range"] == [0., 1.]
+
+
+def test_edge_floor_preserves_zero_default_and_matches_objective():
+    data = np.array([[0., 0.], [4., 1.]])
+    graph = _incidence_matrix(2, np.array([0]), np.array([1]))
+    settings = dict(source_penalty=0., edge_penalty=.5, outer_iterations=4,
+                    max_iter=1000, tolerance=1e-8)
+    default, default_info = solve_reweighted_graph_v5(data, np.eye(2), graph, **settings)
+    explicit, explicit_info = solve_reweighted_graph_v5(
+        data, np.eye(2), graph, edge_weight_floor=0., **settings)
+    assert np.array_equal(default, explicit) and default_info == explicit_info
+
+    estimate, diagnostics = solve_reweighted_graph_v5(
+        data, np.eye(2), graph, edge_weight_floor=.5, **settings)
+    jump = np.linalg.norm(graph @ estimate, axis=1)
+    epsilon = diagnostics["edge_epsilon"]
+    expected = (.5 * np.sum((estimate - data) ** 2)
+                + .5 * np.sum(.5 * jump + .5 * epsilon * np.log1p(jump / epsilon)))
+    assert np.isclose(diagnostics["history"][-1]["log_objective"], expected)
+    assert diagnostics["edge_weight_floor"] == .5
+    assert diagnostics["edge_weight_range"][0] >= .5
+    objectives = [entry["log_objective"] for entry in diagnostics["history"]]
+    assert np.all(np.diff(objectives) <= 1e-10)
 
 
 def test_ridge_zero_is_exactly_the_default():
@@ -154,7 +187,7 @@ def test_mixed_source_penalty_matches_elastic_net_kkt_and_certificate():
         source_penalty_mode="surface_elementwise", elementwise_source_mask=mask)
     assert certificate["dual_objective"] <= certificate["objective"] + 1e-12
     assert certificate["gap"] < 1e-10
-    assert diagnostics["converged"]
+    assert diagnostics["inner_converged"] and not diagnostics["outer_converged"]
     assert diagnostics["source_penalty_mode"] == "surface_elementwise"
     assert np.allclose(diagnostics["amplitude_epsilon"]["surface_elementwise"],
                        np.maximum(.05 * np.abs(expected[0]), 1e-12))
@@ -176,8 +209,8 @@ def test_elementwise_edge_mode_matches_two_sample_fused_ridge_solution():
                  + .25 * np.sum(estimate ** 2)
                  + .5 * np.sum(np.abs(graph @ estimate)))
     assert np.isclose(diagnostics["history"][0]["surrogate_objective"], objective)
-    assert diagnostics["converged"]
-    assert diagnostics["final_stationarity_gap_relative"] <= 1e-9
+    assert diagnostics["inner_converged"] and not diagnostics["outer_converged"]
+    assert diagnostics["history"][0]["primal_dual_gap_relative"] <= 1e-9
     assert diagnostics["edge_penalty_mode"] == "elementwise"
     expected_epsilon = np.maximum(.05 * np.abs(graph @ estimate).max(axis=0), 1e-12)
     assert np.allclose(diagnostics["edge_epsilon"], expected_epsilon)
@@ -212,8 +245,8 @@ def test_positive_ridge_matches_group_elastic_net_kkt_and_dual_gap(rho):
                                ridge_penalty=ridge)
     assert certificate["dual_objective"] <= certificate["objective"] + 1e-12
     assert certificate["gap"] < 1e-10
-    assert diagnostics["converged"]
-    assert diagnostics["final_stationarity_gap_relative"] <= 1e-9
+    assert diagnostics["inner_converged"] and not diagnostics["outer_converged"]
+    assert diagnostics["history"][0]["primal_dual_gap_relative"] <= 1e-9
 
 
 @pytest.mark.parametrize("ridge", [-1., np.nan, np.inf, np.array([0., 1.])])
@@ -222,6 +255,14 @@ def test_invalid_ridge_is_rejected(ridge):
         solve_reweighted_graph_v5(
             np.ones((2, 2)), np.eye(2), sparse.csr_matrix((0, 2)),
             source_penalty=1., edge_penalty=0., ridge_penalty=ridge)
+
+
+@pytest.mark.parametrize("floor", [-.1, 1.1, np.nan, np.inf, np.array([0., 1.])])
+def test_invalid_edge_weight_floor_is_rejected(floor):
+    with pytest.raises(ValueError):
+        solve_reweighted_graph_v5(
+            np.ones((2, 2)), np.eye(2), sparse.csr_matrix((0, 2)),
+            source_penalty=1., edge_penalty=0., edge_weight_floor=floor)
 
 
 def test_invalid_edge_penalty_mode_is_rejected():

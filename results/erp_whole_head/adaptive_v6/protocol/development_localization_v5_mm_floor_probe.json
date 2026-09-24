@@ -1,0 +1,135 @@
+[
+  {
+    "case_id": "erp-v6-localization-v5-development-00-eeg-10-meg-10",
+    "case_number": 0,
+    "component_balance_revision": "development_localization_v5_new_positions_paired_snr",
+    "configuration_id": "erp-v6-localization-v5-geometry-00",
+    "configuration_kind": "single_surface",
+    "configuration_number": 0,
+    "correlation": 0.0,
+    "deep_index": null,
+    "deep_local": null,
+    "deep_surface_ratio": null,
+    "eeg_snr_db": -10,
+    "location": null,
+    "meg_snr_db": -10,
+    "pair_index": 0,
+    "panel": "erp_v6_localization_v5_new_position_development",
+    "replica_seed_roots": {
+      "check": 2026092702,
+      "fit": 2026092701
+    },
+    "replicate": 0,
+    "scenario": "surface_only",
+    "scenario_code": 0,
+    "seed": [
+      2026092701,
+      0,
+      0
+    ],
+    "snr_db": -10,
+    "surface_centers": [
+      2733
+    ]
+  },
+  {
+    "case_id": "erp-v6-localization-v5-development-02-eeg-10-meg-10",
+    "case_number": 2,
+    "component_balance_revision": "development_localization_v5_new_positions_paired_snr",
+    "configuration_id": "erp-v6-localization-v5-geometry-02",
+    "configuration_kind": "deep_only",
+    "configuration_number": 2,
+    "correlation": 0.0,
+    "deep_index": 7508,
+    "deep_local": 10,
+    "deep_surface_ratio": null,
+    "eeg_snr_db": -10,
+    "location": null,
+    "meg_snr_db": -10,
+    "pair_index": 0,
+    "panel": "erp_v6_localization_v5_new_position_development",
+    "replica_seed_roots": {
+      "check": 2026092702,
+      "fit": 2026092701
+    },
+    "replicate": 0,
+    "scenario": "deep_only",
+    "scenario_code": 1,
+    "seed": [
+      2026092701,
+      0,
+      2
+    ],
+    "snr_db": -10,
+    "surface_centers": []
+  },
+  {
+    "case_id": "erp-v6-localization-v5-development-04-eeg-10-meg-10",
+    "case_number": 4,
+    "component_balance_revision": "development_localization_v5_new_positions_paired_snr",
+    "configuration_id": "erp-v6-localization-v5-geometry-04",
+    "configuration_kind": "deep_plus_two_surface",
+    "configuration_number": 4,
+    "correlation": 0.5,
+    "deep_index": 7507,
+    "deep_local": 9,
+    "deep_surface_ratio": 0.5,
+    "deep_surface_sensor_amplitude_ratio": 0.5,
+    "eeg_snr_db": -10,
+    "location": null,
+    "meg_snr_db": -10,
+    "pair_index": 0,
+    "panel": "erp_v6_localization_v5_new_position_development",
+    "replica_seed_roots": {
+      "check": 2026092702,
+      "fit": 2026092701
+    },
+    "replicate": 0,
+    "scenario": "deep_plus_two_surface",
+    "scenario_code": 3,
+    "seed": [
+      2026092701,
+      0,
+      4
+    ],
+    "snr_db": -10,
+    "surface_centers": [
+      2270,
+      4796
+    ],
+    "surface_component_sensor_balance": true
+  },
+  {
+    "case_id": "erp-v6-localization-v5-development-10-eeg+20-meg-10",
+    "case_number": 10,
+    "component_balance_revision": "development_localization_v5_new_positions_paired_snr",
+    "configuration_id": "erp-v6-localization-v5-geometry-00",
+    "configuration_kind": "single_surface",
+    "configuration_number": 0,
+    "correlation": 0.0,
+    "deep_index": null,
+    "deep_local": null,
+    "deep_surface_ratio": null,
+    "eeg_snr_db": 20,
+    "location": null,
+    "meg_snr_db": -10,
+    "pair_index": 2,
+    "panel": "erp_v6_localization_v5_new_position_development",
+    "replica_seed_roots": {
+      "check": 2026092702,
+      "fit": 2026092701
+    },
+    "replicate": 0,
+    "scenario": "surface_only",
+    "scenario_code": 0,
+    "seed": [
+      2026092701,
+      2,
+      0
+    ],
+    "snr_db": 20,
+    "surface_centers": [
+      2733
+    ]
+  }
+]
