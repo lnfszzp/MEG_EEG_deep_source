@@ -18,7 +18,7 @@ from candidates.oaster_predictive import conformal_decision
 
 if not __debug__:
     raise RuntimeError("正式验收禁止使用python -O；否则assert完整性检查会被关闭")
-default_lock = root / "results/erp_whole_head/adaptive_v6/protocol/component_balanced_v3_execution_lock.json"
+default_lock = root / "results/erp_whole_head/adaptive_v6/protocol/component_balanced_v4_execution_lock.json"
 parser = argparse.ArgumentParser(description=__doc__)
 parser.add_argument("--validation-source", type=Path, required=True,
                     help="23号脚本的一次性validation输出目录")
@@ -46,7 +46,7 @@ lock_sidecar = lock_path.with_suffix(lock_path.suffix + ".sha256")
 assert lock_sidecar.read_text(encoding="ascii") == f"{lock_sha256}  {lock_path.name}\n", \
     "execution lock或其SHA256旁车不一致"
 lock = json.loads(lock_bytes)
-assert lock["protocol"] == "erp-v6-component-balanced-formal-v3-execution"
+assert lock["protocol"] == "erp-v6-component-balanced-formal-v4-execution"
 assert lock["status"] == "algorithm_frozen_calibration_allowed"
 
 # %% 2. 固定门限不能由本次验证或七个对比方法改变。
@@ -67,7 +67,7 @@ assert lock["algorithm"]["score_kind"] == "excess"
 assert lock["algorithm"]["excess_loss_denominator_floor_fraction"] == .05
 assert lock["algorithm"]["solver_settings"] == {
     "solver_kind": "admm", "mrf_strength": .8,
-    "outer_iterations": 1, "max_inner_retries": 10}
+    "outer_iterations": 1, "max_inner_retries": 20}
 expected_calibration_decision = {
     "accept_deep": "T > 0 AND p(T) <= 0.05",
     "alpha": .05,
@@ -145,14 +145,14 @@ calibration_manifest_bytes = calibration_manifest_path.read_bytes()
 calibration_manifest_sha256 = hashlib.sha256(calibration_manifest_bytes).hexdigest()
 calibration_manifest_sidecar = calibration_manifest_path.with_suffix(calibration_manifest_path.suffix + ".sha256")
 assert calibration_lock["path"] == \
-    "results/erp_whole_head/adaptive_v6/protocol/calibration_component_balanced_v3_manifest.json"
+    "results/erp_whole_head/adaptive_v6/protocol/calibration_component_balanced_v4_manifest.json"
 assert calibration_manifest_sha256 == calibration_lock["sha256"] == calibration["manifest_sha256"] == \
-    "bb9f1a7d949efa6ba91dc8aceff604edca79752ecfb507134d06e4ccf56421d2"
+    "09dde6a2c14ceeeaa4a3185d218f8017bc6141b37e4172d19f6f85c22cf73ff1"
 assert hashlib.sha256(calibration_manifest_sidecar.read_text(encoding="ascii").encode("ascii")).hexdigest() == \
     calibration_lock["sidecar_text_sha256"]
 assert Path(calibration["manifest"]).resolve() == calibration_manifest_path
-assert calibration_lock["seed_roots"] == {"fit": 2026092501, "check": 2026092502}
-assert calibration["seed_root"] == 2026092501
+assert calibration_lock["seed_roots"] == {"fit": 2026092601, "check": 2026092602}
+assert calibration["seed_root"] == 2026092601
 calibration_cases = json.loads(calibration_manifest_bytes)
 calibration_case_ids = [case["case_id"] for case in calibration_cases]
 assert len(calibration_cases) == calibration_lock["case_count"] == 57

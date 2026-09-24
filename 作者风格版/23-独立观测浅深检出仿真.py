@@ -56,13 +56,13 @@ assert cases
 protocol_dir = root / "results/erp_whole_head/adaptive_v6/protocol"
 execution_lock = None
 execution_lock_sha = None
-formal_solver_settings = {"solver_kind": "admm", "mrf_strength": .8, "outer_iterations": 1, "max_inner_retries": 10}
-formal_manifest_sha = {"calibration": "bb9f1a7d949efa6ba91dc8aceff604edca79752ecfb507134d06e4ccf56421d2",
+formal_solver_settings = {"solver_kind": "admm", "mrf_strength": .8, "outer_iterations": 1, "max_inner_retries": 20}
+formal_manifest_sha = {"calibration": "09dde6a2c14ceeeaa4a3185d218f8017bc6141b37e4172d19f6f85c22cf73ff1",
                        "validation": "68a405ace52d0c04a193c37198304682a0440a0007fed0433fe3a43e686d9aa7"}
-formal_seed_root = {"calibration": 2026092501, "validation": 2026092403}
+formal_seed_root = {"calibration": 2026092601, "validation": 2026092403}
 if formal:
     if manifest_sha != formal_manifest_sha[args.phase]:
-        raise ValueError(f"不是冻结的分量平衡 v3 {args.phase} manifest")
+        raise ValueError(f"不是冻结的分量平衡 v4 {args.phase} manifest")
     if args.seed_root != formal_seed_root[args.phase]:
         raise ValueError(f"正式{args.phase}的 seed root 必须是 {formal_seed_root[args.phase]}")
     if args.covariance != "trial" or args.score_kind != "excess" or args.solver_settings != formal_solver_settings:
@@ -71,7 +71,7 @@ if formal:
         raise ValueError("正式校准只生成零假设分数，不运行对比方法")
     if args.phase == "validation" and (not args.save_sources or not args.comparators):
         raise ValueError("正式验证必须同时指定 --save-sources 和 --comparators")
-    expected_revision = ("formal_component_balanced_v3_independent_calibration"
+    expected_revision = ("formal_component_balanced_v4_independent_calibration"
                          if args.phase == "calibration" else "formal_component_balanced_v2")
     if any(case.get("component_balance_revision") != expected_revision for case in cases):
         raise ValueError(f"正式 {args.phase} manifest 的分量平衡版本不符")
@@ -96,15 +96,15 @@ if formal:
     if not valid:
         raise ValueError(f"冻结的{args.phase} manifest 分层或分量平衡计数不符")
 
-    execution_lock_path = protocol_dir / "component_balanced_v3_execution_lock.json"
+    execution_lock_path = protocol_dir / "component_balanced_v4_execution_lock.json"
     execution_lock_sidecar = Path(str(execution_lock_path) + ".sha256")
     if not execution_lock_path.exists() or not execution_lock_sidecar.exists():
-        raise FileNotFoundError("正式算法尚未冻结：缺少 component_balanced_v3_execution_lock.json 或其 .sha256 旁车")
+        raise FileNotFoundError("正式算法尚未冻结：缺少 component_balanced_v4_execution_lock.json 或其 .sha256 旁车")
     execution_lock_sha = hashlib.sha256(execution_lock_path.read_bytes()).hexdigest()
     if execution_lock_sidecar.read_text(encoding="utf-8").split()[0] != execution_lock_sha:
         raise ValueError("正式执行锁与 .sha256 旁车不一致")
     execution_lock = json.loads(execution_lock_path.read_text(encoding="utf-8"))
-    if execution_lock.get("protocol") != "erp-v6-component-balanced-formal-v3-execution" or \
+    if execution_lock.get("protocol") != "erp-v6-component-balanced-formal-v4-execution" or \
             execution_lock.get("status") != "algorithm_frozen_calibration_allowed" or not execution_lock.get("formal_calibration_allowed"):
         raise ValueError("正式执行锁尚未允许校准")
     locked_algorithm = execution_lock.get("algorithm", {})
@@ -135,7 +135,7 @@ if formal:
     if args.manifest.resolve() != (root / locked_manifest["path"]).resolve():
         raise ValueError("正式阶段必须直接使用执行锁中的 manifest 路径")
 
-consumed_path = protocol_dir / ("calibration_component_balanced_v3_manifest_consumed.json"
+consumed_path = protocol_dir / ("calibration_component_balanced_v4_manifest_consumed.json"
                                 if args.phase == "calibration" else "validation_manifest_consumed.json")
 if formal and consumed_path.exists():
     raise FileExistsError(f"冻结{args.phase}病例已消费，不可换目录重新调参/校准：{consumed_path}")
