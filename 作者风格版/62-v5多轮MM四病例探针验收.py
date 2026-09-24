@@ -18,6 +18,7 @@ import run_strict_oaster as archive
 parser = argparse.ArgumentParser(description=__doc__)
 parser.add_argument("--source", type=Path, required=True)
 parser.add_argument("--output", type=Path, required=True)
+parser.add_argument("--candidate", choices=("floor", "alias"), required=True)
 args = parser.parse_args()
 source, output = args.source.resolve(), args.output.resolve()
 if output.exists():
@@ -31,6 +32,8 @@ expected_settings = {
     "outer_tolerance": .01, "surface_reweight_floor": .5,
     "deep_reweight_floor": .5, "edge_weight_floor": .5,
 }
+if args.candidate == "alias":
+    expected_settings["deep_alias_penalty"] = True
 if metadata["phase"] != "development" or metadata["covariance"] != "trial" or \
         metadata.get("score_kind") != "excess" or metadata["solver_settings"] != expected_settings:
     raise ValueError("探针必须使用预声明的 trial/excess/多轮 MM 设置")
@@ -100,6 +103,7 @@ for row in rows:
 
 summary = {
     "complete": True, "development_only": True, "formal_acceptance_allowed": False,
+    "candidate": args.candidate,
     "predeclared_rule": "max(T00,T10) < min(T02,T04)",
     "all_eight_fits_valid": all_fits_valid,
     "max_h0_score": float(max(h0_scores)), "min_h1_score": float(min(h1_scores)),
@@ -136,11 +140,11 @@ axes[1].set(title="Final adaptive stationarity gaps", ylabel="Relative gap",
 axes[1].tick_params(axis="x", labelrotation=45, labelsize=8)
 for axis in axes:
     axis.grid(axis="y", color="#DDDDDD", linewidth=.7)
-figure.suptitle("v5 bounded-weight multi-round MM probe", fontweight="bold")
+figure.suptitle(f"v5 {args.candidate} bounded-weight multi-round MM probe", fontweight="bold")
 figure.savefig(output / "probe.png", dpi=220, facecolor="white")
 plt.close(figure)
 
-lines = ["# v5 多轮 MM 四病例探针结果", "",
+lines = [f"# v5 多轮 MM 四病例探针结果（{args.candidate}）", "",
     f"预声明分离条件：`max(H0) < min(H1)`；margin = {separation_margin:.6f}。",
     f"八个拟合全部达到多轮固定点：{all_fits_valid}；探针通过：{probe_passed}。", "",
     "| 病例 | 真值组 | excess | 事后方法 | AUC | 表层DLE mm | 深峰距离 mm |",

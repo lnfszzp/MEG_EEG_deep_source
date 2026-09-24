@@ -60,7 +60,7 @@ def fit_predictive_models(training, gain, n_surf, *, adjacency, baseline, active
                   dict(noise_multiplier=1., edge_fraction=.5,
                        mrf_strength=.5, calibration="layer",
                        surface_reweight_floor=0., deep_reweight_floor=0.,
-                       ridge_fraction=0.).items()}
+                       ridge_fraction=0., deep_alias_penalty=False).items()}
     settings = (dict(max_iter=100, tolerance=1e-5, epsilon_fraction=1.0,
                      smoothing_fraction=.1) if solver_kind == "irls" else
                 dict(outer_iterations=20, max_iter=2000, tolerance=.001,

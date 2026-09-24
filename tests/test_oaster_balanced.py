@@ -47,6 +47,29 @@ def test_layer_calibration_and_global_ablation(monkeypatch):
     assert local["calibration"] == "layer" and global_fit["calibration"] == "global"
 
 
+def test_deep_alias_penalty_matches_variance_inflation_without_changing_cortex(monkeypatch):
+    baseline = np.arange(30) < 15
+    active = (np.arange(30) >= 20) & (np.arange(30) < 25)
+    gain = np.array([[1., 0., .8], [0., 1., 0.], [0., 0., .6]])
+    captured = []
+
+    def capture(response, design, incidence, **kwargs):
+        captured.append(kwargs["source_penalty"].copy())
+        return np.zeros((design.shape[1], response.shape[1])), {"converged": True}
+
+    monkeypatch.setattr(inverse, "solve_reweighted_graph_v5", capture)
+    settings = dict(adjacency=sparse.eye(3), baseline=baseline,
+                    active_windows=(active,), mrf_strength=0)
+    data = np.arange(90, dtype=float).reshape(3, 30)
+    inverse.reconstruct_evoked_oaster_v5_from_whitened(data, gain, 2, **settings)
+    _, info = inverse.reconstruct_evoked_oaster_v5_from_whitened(
+        data, gain, 2, deep_alias_penalty=True, **settings)
+    assert np.array_equal(captured[0][:2], captured[1][:2])
+    assert np.isclose(captured[1][2] / captured[0][2], 1 / np.sqrt(1 - .8 ** 2))
+    assert np.allclose(info["windows"][0]["deep_alias_correlation_range"], [.8, .8])
+    assert np.allclose(info["windows"][0]["deep_alias_penalty_factor_range"], [5 / 3, 5 / 3])
+
+
 def test_no_temporal_evidence_returns_exact_zero_without_solver(monkeypatch):
     baseline = np.arange(30) < 15
     active = (np.arange(30) >= 20) & (np.arange(30) < 25)

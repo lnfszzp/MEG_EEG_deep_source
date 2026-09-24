@@ -47,6 +47,7 @@ def reconstruct_evoked_oaster_v5_from_whitened(
         temporal_mode="smooth", solver_kind="admm", surface_reweight_floor=0.,
         deep_reweight_floor=0., ridge_fraction=0., edge_penalty_mode="group",
         surface_penalty_multiplier=None, source_penalty_mode="group",
+        deep_alias_penalty=False,
         **solver_settings):
     """Joint surface/deep solve; no truth, template selection or forced deep source.
 
@@ -64,6 +65,7 @@ def reconstruct_evoked_oaster_v5_from_whitened(
             or require_one or calibration not in {"global", "layer"}
             or temporal_mode not in {"v4", "smooth"}
             or solver_kind not in {"admm", "irls"}
+            or not isinstance(deep_alias_penalty, (bool, np.bool_))
             or edge_penalty_mode not in {"group", "elementwise"}
             or source_penalty_mode not in {"group", "surface_elementwise"}
             or not np.isfinite([
@@ -126,6 +128,7 @@ def reconstruct_evoked_oaster_v5_from_whitened(
                     ridge_fraction=float(ridge_fraction),
                     edge_penalty_mode=edge_penalty_mode,
                     source_penalty_mode=source_penalty_mode,
+                    deep_alias_penalty=bool(deep_alias_penalty),
                     surface_penalty_multiplier_count=int(np.count_nonzero(
                         surface_penalty_multiplier != 1)),
                     surface_penalty_multiplier_range=surface_penalty_range,
@@ -153,6 +156,21 @@ def reconstruct_evoked_oaster_v5_from_whitened(
     design = weighted_gain / gain_scale
     if mrf_factor is not None:
         design = mrf_factor.solve(design.T, trans="T").T
+    deep_alias_correlation = np.zeros(gain.shape[1] - n_surf)
+    deep_alias_factor = np.ones(gain.shape[1] - n_surf)
+    if deep_alias_penalty and n_surf and n_surf < gain.shape[1]:
+        surface_norm = np.linalg.norm(design[:, :n_surf], axis=0)
+        deep_norm = np.linalg.norm(design[:, n_surf:], axis=0)
+        valid_surface = surface_norm > 0
+        valid_deep = deep_norm > 0
+        if np.any(valid_surface) and np.any(valid_deep):
+            surface_unit = design[:, :n_surf][:, valid_surface] / surface_norm[valid_surface]
+            deep_unit = design[:, n_surf:][:, valid_deep] / deep_norm[valid_deep]
+            deep_alias_correlation[valid_deep] = np.max(
+                np.abs(surface_unit.T @ deep_unit), axis=0)
+            deep_alias_correlation = np.clip(deep_alias_correlation, 0., 1.)
+            deep_alias_factor = 1 / np.sqrt(np.maximum(
+                1 - deep_alias_correlation ** 2, np.finfo(float).eps))
     column_energy = np.sum(design ** 2, axis=0)
     ridge_scale = float(np.median(column_energy[column_energy > 0]))
     ridge_penalty = float(ridge_fraction * ridge_scale)
@@ -196,6 +214,7 @@ def reconstruct_evoked_oaster_v5_from_whitened(
     for layer, threshold in zip(layers, layer_lambdas):
         source_penalties[layer] *= threshold
     source_penalties[:n_surf] *= surface_penalty_multiplier
+    source_penalties[n_surf:] *= deep_alias_factor
     mean_degree = 2 * incidence.shape[0] / max(n_surf, 1)
     edge_penalty = float(edge_surface_lambda * edge_fraction / max(mean_degree, 1))
     spatial_solver = solve_reweighted_graph_v5
@@ -224,6 +243,14 @@ def reconstruct_evoked_oaster_v5_from_whitened(
     singular = np.linalg.svd(response, compute_uv=False)
     info.update(source_lambda_surface=float(layer_lambdas[0]),
                 source_lambda_deep=float(layer_lambdas[1]),
+                deep_alias_penalty=bool(deep_alias_penalty),
+                deep_alias_rule="1/sqrt(max(1-rho^2, machine_epsilon))",
+                deep_alias_correlation_range=(
+                    [float(deep_alias_correlation.min()), float(deep_alias_correlation.max())]
+                    if deep_alias_correlation.size else [0., 0.]),
+                deep_alias_penalty_factor_range=(
+                    [float(deep_alias_factor.min()), float(deep_alias_factor.max())]
+                    if deep_alias_factor.size else [1., 1.]),
                 source_lambda_global_reference=global_lambda, edge_lambda=edge_penalty,
                 edge_lambda_surface_reference=edge_surface_lambda,
                 noise_projection_blocks=len(starts),
