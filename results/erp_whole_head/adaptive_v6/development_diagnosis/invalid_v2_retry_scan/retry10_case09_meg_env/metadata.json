@@ -1,0 +1,19 @@
+{
+  "purpose": "pure development diagnostic of consumed formal_component_balanced_v2 calibration convergence",
+  "formal_outputs_modified": false,
+  "validation_run": false,
+  "source_manifest": "D:\\博士\\工作＆汇报\\源定位\\新建文件夹\\results\\erp_whole_head\\adaptive_v6\\protocol\\calibration_component_balanced_v2_manifest.json",
+  "source_manifest_sha256": "4d091c2cbc12d1ec2165ff27e754bf1e3d540c2b4f00c89d3967ac6a3e89eefb",
+  "seed_root": 2026092401,
+  "covariance": "trial",
+  "score_kind": "excess",
+  "solver_settings": {
+    "solver_kind": "admm",
+    "mrf_strength": 0.8,
+    "outer_iterations": 1,
+    "max_inner_retries": 10
+  },
+  "case_ids": [
+    "erp-v6-component-balanced-v2-calibration-09-eeg-10-meg+20"
+  ]
+}

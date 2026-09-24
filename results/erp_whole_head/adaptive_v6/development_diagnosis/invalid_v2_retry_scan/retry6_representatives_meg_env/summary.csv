@@ -1,0 +1,4 @@
+case_id,max_inner_retries,score,elapsed_seconds,null_converged,null_gap,null_iterations,null_retries,null_rho,null_rho_updates,full_converged,full_gap,full_iterations,full_retries,full_rho,full_rho_updates
+erp-v6-component-balanced-v2-calibration-17-eeg-10-meg+20,6,0.047813287014747345,133.01959660000284,True,0.0009901383707961741,2075,1,4.0,4,True,0.0009961111538245601,12125,6,0.5,5
+erp-v6-component-balanced-v2-calibration-08-eeg-10-meg+20,6,-2.538233787750811,144.12252120001358,True,0.0009809815256659764,1750,0,8.0,5,True,0.0009959373701810689,13700,6,2.0,5
+erp-v6-component-balanced-v2-calibration-11-eeg-10-meg+20,6,-0.04750999594213436,141.77164849999826,True,0.0009906511314968515,1650,0,4.0,2,True,0.000845990203434266,13575,6,4.0,4

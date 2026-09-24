@@ -121,6 +121,9 @@ def test_conformal_ties_negative_gain_and_resolution():
     assert tied["p_value"] == 1 and not tied["deep_present"]
     negative = inverse.conformal_decision(-1., np.full(19, -2.))
     assert negative["p_value"] == .05 and not negative["deep_present"]
+    pooled = np.arange(57, dtype=float)
+    assert not inverse.conformal_decision(55., pooled)["deep_present"]
+    assert inverse.conformal_decision(np.nextafter(55., np.inf), pooled)["deep_present"]
     for null in ([], np.zeros(18), [np.nan] * 19, np.zeros((19, 1))):
         with pytest.raises(ValueError):
             inverse.conformal_decision(1., null)

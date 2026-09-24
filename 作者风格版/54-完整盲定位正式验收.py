@@ -14,9 +14,11 @@ import numpy as np
 
 root = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(root))
+from candidates.oaster_predictive import conformal_decision
+
 if not __debug__:
     raise RuntimeError("正式验收禁止使用python -O；否则assert完整性检查会被关闭")
-default_lock = root / "results/erp_whole_head/adaptive_v6/protocol/component_balanced_v2_execution_lock.json"
+default_lock = root / "results/erp_whole_head/adaptive_v6/protocol/component_balanced_v3_execution_lock.json"
 parser = argparse.ArgumentParser(description=__doc__)
 parser.add_argument("--validation-source", type=Path, required=True,
                     help="23号脚本的一次性validation输出目录")
@@ -44,7 +46,7 @@ lock_sidecar = lock_path.with_suffix(lock_path.suffix + ".sha256")
 assert lock_sidecar.read_text(encoding="ascii") == f"{lock_sha256}  {lock_path.name}\n", \
     "execution lock或其SHA256旁车不一致"
 lock = json.loads(lock_bytes)
-assert lock["protocol"] == "erp-v6-component-balanced-formal-v2-execution"
+assert lock["protocol"] == "erp-v6-component-balanced-formal-v3-execution"
 assert lock["status"] == "algorithm_frozen_calibration_allowed"
 
 # %% 2. 固定门限不能由本次验证或七个对比方法改变。
@@ -65,7 +67,24 @@ assert lock["algorithm"]["score_kind"] == "excess"
 assert lock["algorithm"]["excess_loss_denominator_floor_fraction"] == .05
 assert lock["algorithm"]["solver_settings"] == {
     "solver_kind": "admm", "mrf_strength": .8,
-    "outer_iterations": 1, "max_inner_retries": 5}
+    "outer_iterations": 1, "max_inner_retries": 10}
+expected_calibration_decision = {
+    "accept_deep": "T > 0 AND p(T) <= 0.05",
+    "alpha": .05,
+    "calibration_score_count": 57,
+    "claim_scope": "marginal engineering FPR for the equal-weight three-SNR mixture only; no per-SNR or population guarantee",
+    "equivalent_boundary": "T must be strictly greater than the second-largest of all 57 calibration scores",
+    "final_validation_requirement": "retain the predeclared zero false positives among four H0 cases in every SNR cell",
+    "ideal_continuous_exchangeable_tail_bound": 2 / 58,
+    "maximum_calibration_scores_greater_or_equal": 1,
+    "missing_nonfinite_or_unconverged_score_action": "calibration_invalid_do_not_open_validation",
+    "rank_formula": "p(T) = (1 + count(T_cal >= T)) / 58",
+    "required_complete_finite_scores": 57,
+    "strata_count": 1,
+    "test_true_snr_used": False,
+    "ties_count_against_acceptance": True,
+}
+assert lock["algorithm"]["calibration_decision"] == expected_calibration_decision
 expected_localization_rule = {
     "svd_modes": 2, "sensitivity_floor_fraction": .1, "depth_exponent": .6,
     "graph_steps": 2, "support_seed_fraction": .1, "support_radius_m": .015,
@@ -111,6 +130,48 @@ assert location_summary["localization_script_sha256"] == normalized_lock_hashes[
 for name, expected in expected_localization_rule.items():
     assert location_summary["localization_parameters"][name] == expected
 
+calibration_path_value = source_metadata.get("calibration_path")
+assert isinstance(calibration_path_value, str) and calibration_path_value
+calibration_path = Path(calibration_path_value).resolve()
+assert calibration_path.name == "frozen_calibration.json" and calibration_path.is_file(), \
+    f"冻结校准不存在：{calibration_path}"
+calibration_bytes = calibration_path.read_bytes()
+calibration_sha256 = hashlib.sha256(calibration_bytes).hexdigest()
+assert source_metadata.get("calibration_sha256") == calibration_sha256
+calibration = json.loads(calibration_bytes)
+calibration_lock = lock["manifests"]["calibration"]
+calibration_manifest_path = (root / calibration_lock["path"]).resolve()
+calibration_manifest_bytes = calibration_manifest_path.read_bytes()
+calibration_manifest_sha256 = hashlib.sha256(calibration_manifest_bytes).hexdigest()
+calibration_manifest_sidecar = calibration_manifest_path.with_suffix(calibration_manifest_path.suffix + ".sha256")
+assert calibration_lock["path"] == \
+    "results/erp_whole_head/adaptive_v6/protocol/calibration_component_balanced_v3_manifest.json"
+assert calibration_manifest_sha256 == calibration_lock["sha256"] == calibration["manifest_sha256"] == \
+    "bb9f1a7d949efa6ba91dc8aceff604edca79752ecfb507134d06e4ccf56421d2"
+assert hashlib.sha256(calibration_manifest_sidecar.read_text(encoding="ascii").encode("ascii")).hexdigest() == \
+    calibration_lock["sidecar_text_sha256"]
+assert Path(calibration["manifest"]).resolve() == calibration_manifest_path
+assert calibration_lock["seed_roots"] == {"fit": 2026092501, "check": 2026092502}
+assert calibration["seed_root"] == 2026092501
+calibration_cases = json.loads(calibration_manifest_bytes)
+calibration_case_ids = [case["case_id"] for case in calibration_cases]
+assert len(calibration_cases) == calibration_lock["case_count"] == 57
+assert len(set(calibration_case_ids)) == 57 and calibration["case_ids"] == calibration_case_ids
+assert calibration["phase"] == "calibration"
+assert calibration["complete"] is True and calibration["all_converged"] is True
+assert calibration["case_count"] == 57 and calibration["alpha"] == .05
+null_scores = np.asarray(calibration["null_scores"], dtype=float)
+assert null_scores.shape == (57,) and np.isfinite(null_scores).all()
+calibration_hashes = {Path(name).as_posix(): value
+                      for name, value in calibration["code_sha256"].items()}
+assert calibration_hashes == normalized_lock_hashes
+assert calibration["shared_fingerprint"] == lock["shared_fingerprint"]
+assert calibration["environment"] == lock["environment"]
+assert calibration["solver_settings"] == lock["algorithm"]["solver_settings"]
+assert calibration["covariance"] == lock["algorithm"]["covariance"]
+assert calibration["score_kind"] == lock["algorithm"]["score_kind"]
+assert calibration["execution_lock_sha256"] == lock_sha256
+
 manifest_lock = lock["manifests"]["validation"]
 manifest_path = (root / manifest_lock["path"]).resolve()
 manifest_bytes = manifest_path.read_bytes()
@@ -136,6 +197,14 @@ assert [row["case_id"] for row in evidence_rows] == case_ids
 assert [row["case_id"] for row in location_rows] == case_ids
 case_by_id = {case["case_id"]: case for case in cases}
 evidence_by_id = {row["case_id"]: row for row in evidence_rows}
+for evidence in evidence_rows:
+    score = float(evidence["score"])
+    decision = conformal_decision(score, null_scores, alpha=.05)
+    expected_p = float((1 + np.count_nonzero(null_scores >= score)) / 58)
+    assert decision["n_calibration"] == 57 and decision["alpha"] == .05
+    assert decision["p_value"] == expected_p
+    assert np.isclose(float(evidence["p_value"]), expected_p, rtol=0, atol=1e-15)
+    assert int(float(evidence["deep_present_decision"])) == int(decision["deep_present"])
 for row in location_rows:
     case = case_by_id[row["case_id"]]
     evidence = evidence_by_id[row["case_id"]]
@@ -337,6 +406,7 @@ plt.close(figure)
 acceptance = {
     "passed": passed, "phase": "validation", "case_count": 24,
     "execution_lock": str(lock_path), "execution_lock_sha256": lock_sha256,
+    "calibration": str(calibration_path), "calibration_sha256": calibration_sha256,
     "manifest": str(manifest_path), "manifest_sha256": manifest_sha256,
     "validation_source": str(source), "localization": str(localization),
     "truth_used_only_for_final_evaluation": True,
@@ -360,6 +430,7 @@ report = ["# 完整盲定位正式验收", "",
           f"结论：**{'通过' if passed else '未通过'}**。本报告只读取冻结后生成的结果；真值只用于最终评价，七个对比方法不参与调参或通过判定。", "",
           "## 冻结绑定", "",
           f"- execution lock SHA256：`{lock_sha256}`",
+          f"- frozen calibration SHA256：`{calibration_sha256}`",
           f"- validation manifest SHA256：`{manifest_sha256}`",
           "- 决策：train20拟合H0/H1，独立check20门控，决定后combined40定位。", "",
           "## 硬性验收", "",

@@ -56,13 +56,13 @@ assert cases
 protocol_dir = root / "results/erp_whole_head/adaptive_v6/protocol"
 execution_lock = None
 execution_lock_sha = None
-formal_solver_settings = {"solver_kind": "admm", "mrf_strength": .8, "outer_iterations": 1, "max_inner_retries": 5}
-formal_manifest_sha = {"calibration": "4d091c2cbc12d1ec2165ff27e754bf1e3d540c2b4f00c89d3967ac6a3e89eefb",
+formal_solver_settings = {"solver_kind": "admm", "mrf_strength": .8, "outer_iterations": 1, "max_inner_retries": 10}
+formal_manifest_sha = {"calibration": "bb9f1a7d949efa6ba91dc8aceff604edca79752ecfb507134d06e4ccf56421d2",
                        "validation": "68a405ace52d0c04a193c37198304682a0440a0007fed0433fe3a43e686d9aa7"}
-formal_seed_root = {"calibration": 2026092401, "validation": 2026092403}
+formal_seed_root = {"calibration": 2026092501, "validation": 2026092403}
 if formal:
     if manifest_sha != formal_manifest_sha[args.phase]:
-        raise ValueError(f"不是冻结的分量平衡 v2 {args.phase} manifest")
+        raise ValueError(f"不是冻结的分量平衡 v3 {args.phase} manifest")
     if args.seed_root != formal_seed_root[args.phase]:
         raise ValueError(f"正式{args.phase}的 seed root 必须是 {formal_seed_root[args.phase]}")
     if args.covariance != "trial" or args.score_kind != "excess" or args.solver_settings != formal_solver_settings:
@@ -71,8 +71,10 @@ if formal:
         raise ValueError("正式校准只生成零假设分数，不运行对比方法")
     if args.phase == "validation" and (not args.save_sources or not args.comparators):
         raise ValueError("正式验证必须同时指定 --save-sources 和 --comparators")
-    if any(case.get("component_balance_revision") != "formal_component_balanced_v2" for case in cases):
-        raise ValueError("正式 manifest 含有非 v2 分量平衡病例")
+    expected_revision = ("formal_component_balanced_v3_independent_calibration"
+                         if args.phase == "calibration" else "formal_component_balanced_v2")
+    if any(case.get("component_balance_revision") != expected_revision for case in cases):
+        raise ValueError(f"正式 {args.phase} manifest 的分量平衡版本不符")
     if any(case.get("seed", [None])[0] != args.seed_root or
            case.get("replica_seed_roots") != {"fit": args.seed_root, "check": args.seed_root + 1} for case in cases):
         raise ValueError("正式 manifest 的拟合/复核噪声 seed 与冻结协议不符")
@@ -80,7 +82,7 @@ if formal:
     configurations = Counter(case["configuration_id"] for case in cases)
     two_surface = [case for case in cases if len(case["surface_centers"]) == 2]
     if args.phase == "calibration":
-        valid = (len(cases) == 57 and len(configurations) == 19 and set(configurations.values()) == {3} and
+        valid = (len(cases) == 57 and len(configurations) == 57 and set(configurations.values()) == {1} and
                  all(case.get("deep_index") is None for case in cases) and len(two_surface) == 27 and
                  all(case.get("surface_component_sensor_balance") is True for case in two_surface) and
                  Counter((case["eeg_snr_db"], case["meg_snr_db"]) for case in cases) == Counter({pair: 19 for pair in pairs}))
@@ -94,15 +96,15 @@ if formal:
     if not valid:
         raise ValueError(f"冻结的{args.phase} manifest 分层或分量平衡计数不符")
 
-    execution_lock_path = protocol_dir / "component_balanced_v2_execution_lock.json"
+    execution_lock_path = protocol_dir / "component_balanced_v3_execution_lock.json"
     execution_lock_sidecar = Path(str(execution_lock_path) + ".sha256")
     if not execution_lock_path.exists() or not execution_lock_sidecar.exists():
-        raise FileNotFoundError("正式算法尚未冻结：缺少 component_balanced_v2_execution_lock.json 或其 .sha256 旁车")
+        raise FileNotFoundError("正式算法尚未冻结：缺少 component_balanced_v3_execution_lock.json 或其 .sha256 旁车")
     execution_lock_sha = hashlib.sha256(execution_lock_path.read_bytes()).hexdigest()
     if execution_lock_sidecar.read_text(encoding="utf-8").split()[0] != execution_lock_sha:
         raise ValueError("正式执行锁与 .sha256 旁车不一致")
     execution_lock = json.loads(execution_lock_path.read_text(encoding="utf-8"))
-    if execution_lock.get("protocol") != "erp-v6-component-balanced-formal-v2-execution" or \
+    if execution_lock.get("protocol") != "erp-v6-component-balanced-formal-v3-execution" or \
             execution_lock.get("status") != "algorithm_frozen_calibration_allowed" or not execution_lock.get("formal_calibration_allowed"):
         raise ValueError("正式执行锁尚未允许校准")
     locked_algorithm = execution_lock.get("algorithm", {})
@@ -111,8 +113,11 @@ if formal:
         if locked_algorithm.get(key) != value:
             raise ValueError(f"正式执行锁算法设置不一致：{key}")
     locked_decision = locked_algorithm.get("calibration_decision", {})
-    for key, value in (("alpha", .05), ("strata_count", 3), ("required_complete_scores_per_stratum", 19),
-                       ("test_true_snr_used_to_select_calibration_stratum", False), ("ties_count_against_acceptance", True)):
+    for key, value in (("alpha", .05), ("strata_count", 1), ("calibration_score_count", 57),
+                       ("required_complete_finite_scores", 57), ("test_true_snr_used", False),
+                       ("ties_count_against_acceptance", True),
+                       ("accept_deep", "T > 0 AND p(T) <= 0.05"),
+                       ("rank_formula", "p(T) = (1 + count(T_cal >= T)) / 58")):
         if locked_decision.get(key) != value:
             raise ValueError(f"正式执行锁校准决策不一致：{key}")
     locked_manifest = execution_lock.get("manifests", {}).get(args.phase, {})
@@ -130,7 +135,8 @@ if formal:
     if args.manifest.resolve() != (root / locked_manifest["path"]).resolve():
         raise ValueError("正式阶段必须直接使用执行锁中的 manifest 路径")
 
-consumed_path = protocol_dir / f"{args.phase}_manifest_consumed.json"
+consumed_path = protocol_dir / ("calibration_component_balanced_v3_manifest_consumed.json"
+                                if args.phase == "calibration" else "validation_manifest_consumed.json")
 if formal and consumed_path.exists():
     raise FileExistsError(f"冻结{args.phase}病例已消费，不可换目录重新调参/校准：{consumed_path}")
 prepare = prepare_replicated_case
@@ -159,10 +165,15 @@ if formal:
     if changed:
         raise ValueError(f"正式执行锁后代码已变化：{changed}")
 calibration = None
+calibration_path = None
+calibration_sha256 = None
 if args.phase == "validation":
     if args.calibration is None:
         raise ValueError("验证必须指定完成的纯表层校准目录")
-    calibration = json.loads((args.calibration / "frozen_calibration.json").read_text(encoding="utf-8"))
+    calibration_path = (args.calibration / "frozen_calibration.json").resolve()
+    calibration_payload = calibration_path.read_bytes()
+    calibration_sha256 = hashlib.sha256(calibration_payload).hexdigest()
+    calibration = json.loads(calibration_payload)
     if calibration.get("covariance") != args.covariance:
         raise ValueError("校准后不能改变 covariance；缺少该记录的旧校准也不可沿用")
 shared = protocol.load_shared(root / "corrected_v2/generated", original.DEFAULT_SAMPLE_PATH)
@@ -182,11 +193,11 @@ if args.phase == "validation":
     calibration_valid = (calibration.get("complete") and calibration.get("all_converged") and calibration.get("alpha") == .05 and
         calibration.get("phase") == "calibration" and calibration.get("manifest_sha256") == formal_manifest_sha["calibration"] and
         calibration.get("seed_root") == formal_seed_root["calibration"] and calibration.get("case_count") == 57 and
-        set(calibration.get("null_scores_by_snr", {})) == {"-10,-10", "-10,20", "20,-10"} and
-        all(len(values) == 19 and all(np.isfinite(values)) for values in calibration.get("null_scores_by_snr", {}).values()) and
+        len(calibration.get("null_scores", [])) == 57 and
+        all(np.isfinite(values) for values in calibration.get("null_scores", [])) and
         not ({case["case_id"] for case in cases} & set(calibration.get("case_ids", []))))
     if not calibration_valid:
-        raise ValueError("冻结校准不完整、未收敛或与 v2 验证集不独立")
+        raise ValueError("冻结校准不完整、未收敛或与受保护验证集不独立")
 if formal and args.preflight:
     print(json.dumps({"preflight": "passed", "phase": args.phase,
                       "manifest_sha256": manifest_sha,
@@ -208,6 +219,8 @@ metadata = {"phase": args.phase, "manifest": str(args.manifest.resolve()),
     "code_sha256": code_hashes, "shared_fingerprint": shared_hash, "environment": environment,
     "solver_settings": args.solver_settings, "covariance": args.covariance, "alpha": .05,
     "score_kind": args.score_kind,
+    "calibration_path": None if calibration_path is None else str(calibration_path),
+    "calibration_sha256": calibration_sha256,
     "execution_lock_sha256": execution_lock_sha,
     "comparison_data": "v6 H0/H1 fitted to train-20 mean, confirmation-20 used only for prediction score; seven comparators reported separately on train-20 and combined-40 means, not treated as identical data usage",
     "scope": "engineering development/calibration/stress validation; no universal or clinical FPR guarantee",
@@ -233,12 +246,9 @@ for case in cases:
     converged = all(model_convergence.values())
     decision = None
     if calibration is not None:
-        # 同一个保守规则应用于所有病例；绝不把测试的真实 SNR 交给决策器选阈值。
-        stratum_decisions = [conformal_decision(score, values, alpha=.05)
-                            for values in calibration["null_scores_by_snr"].values()]
-        decision = {"p_value": max(item["p_value"] for item in stratum_decisions),
-                    "deep_present": all(item["deep_present"] for item in stratum_decisions),
-                    "rule": "pass every frozen null-calibration stratum; no test-SNR input", "alpha": .05}
+        # 57例一次 pooled 排名；决策器不读取测试病例的真实 SNR。
+        decision = conformal_decision(score, calibration["null_scores"], alpha=.05)
+        decision["rule"] = "single pooled frozen null calibration; no test-SNR input"
     elapsed = time.perf_counter() - tick
     evidence_row = {"case_id": case["case_id"], "configuration_id": case["configuration_id"],
         "scenario": case["scenario"], "eeg_snr_db": case["eeg_snr_db"], "meg_snr_db": case["meg_snr_db"],
@@ -282,12 +292,14 @@ assert code_hashes == {str(path.relative_to(root)): hashlib.sha256(path.read_byt
 completion = {"complete": len(evidence_rows) == len(cases), "case_count": len(cases),
               "all_converged": all(row["all_converged"] for row in evidence_rows), "wall_seconds": time.perf_counter() - started}
 if args.phase == "calibration":
+    pooled_scores = [row["score"] for row in evidence_rows]
     null_scores = {}
     for row in evidence_rows:
         key = f"{int(row['eeg_snr_db'])},{int(row['meg_snr_db'])}"
         null_scores.setdefault(key, []).append(row["score"])
     (args.output / "frozen_calibration.json").write_text(json.dumps(
-        {**metadata, **completion, "null_scores_by_snr": null_scores}, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+        {**metadata, **completion, "null_scores": pooled_scores,
+         "null_scores_by_snr_diagnostic_only": null_scores}, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 if args.phase == "validation":
     from benchmark.deep_acceptance import evaluate_acceptance
     penalty = float(np.linalg.norm(np.ptp(shared["vertices"], axis=0)) * 1000)

@@ -1,0 +1,20 @@
+[
+  {
+    "case_id": "erp-v6-component-balanced-v2-calibration-09-eeg-10-meg+20",
+    "max_inner_retries": 7,
+    "score": -0.40943004026782226,
+    "elapsed_seconds": 183.53958340000827,
+    "null_converged": true,
+    "null_gap": 0.0009552854466703514,
+    "null_iterations": 2025,
+    "null_retries": 1,
+    "null_rho": 4.0,
+    "null_rho_updates": 4,
+    "full_converged": false,
+    "full_gap": 0.002406469652574732,
+    "full_iterations": 16000,
+    "full_retries": 7,
+    "full_rho": 1.0,
+    "full_rho_updates": 8
+  }
+]

@@ -1,0 +1,2 @@
+case_id,max_inner_retries,score,elapsed_seconds,null_converged,null_gap,null_iterations,null_retries,null_rho,null_rho_updates,full_converged,full_gap,full_iterations,full_retries,full_rho,full_rho_updates
+erp-v6-component-balanced-v2-calibration-09-eeg-10-meg+20,7,-0.40943004026782226,183.53958340000827,True,0.0009552854466703514,2025,1,4.0,4,False,0.002406469652574732,16000,7,1.0,8
