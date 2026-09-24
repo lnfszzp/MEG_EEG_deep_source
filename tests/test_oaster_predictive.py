@@ -90,6 +90,12 @@ def test_prediction_sign_basis_rotation_and_baseline_only_scale(monkeypatch):
     opposite, _ = inverse.score_predictive_models(confirmation, gain, full, null, **options)
     tied, _ = inverse.score_predictive_models(confirmation, gain, full, full, **options)
     assert score > 0 and opposite == -score and tied == 0
+    expected_denominator = max(
+        info["null_loss"] - info["expected_response_noise_energy"],
+        .05 * info["expected_response_noise_energy"])
+    assert info["excess_normalization_denominator"] == pytest.approx(expected_denominator)
+    assert info["excess_fraction_score"] == pytest.approx(
+        info["loss_improvement"] / expected_denominator)
     assert np.isclose(info["baseline_mean_mode_correction"], active.sum() / baseline.sum())
     changed = confirmation.copy()
     changed[:, active] *= 8

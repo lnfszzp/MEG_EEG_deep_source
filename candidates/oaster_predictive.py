@@ -114,10 +114,17 @@ def score_predictive_models(confirmation, gain, null_estimate, full_estimate, *,
     if not np.isfinite(expected_noise) or expected_noise <= 0:
         raise ValueError("confirmation baseline must have positive finite weighted noise variance")
     score = (null_loss - full_loss) / expected_noise
-    if not np.isfinite(score):
+    excess_floor = .05 * expected_noise
+    excess_denominator = max(null_loss - expected_noise, excess_floor)
+    excess_fraction = (null_loss - full_loss) / excess_denominator
+    if not np.isfinite(score) or not np.isfinite(excess_fraction):
         raise ValueError("predictive score is nonfinite")
     return float(score), dict(**basis_info, null_loss=null_loss, full_loss=full_loss,
         loss_improvement=null_loss - full_loss, expected_response_noise_energy=expected_noise,
+        null_excess_loss=null_loss - expected_noise,
+        excess_noise_floor_fraction=.05, excess_normalization_denominator=excess_denominator,
+        excess_fraction_score=float(excess_fraction),
+        excess_normalization="(null_loss-full_loss)/max(null_loss-expected_noise, 0.05*expected_noise)",
         baseline_variance_sum=variance_sum, baseline_mean_mode_correction=mean_correction,
         normalization="confirmation baseline sample variance; temporal-white expectation",
         confirmation_refitted=False, score_clipped=False)

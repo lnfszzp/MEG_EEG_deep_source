@@ -29,6 +29,7 @@ parser.add_argument("--seed-root", type=int, required=True)
 parser.add_argument("--calibration", type=Path)
 parser.add_argument("--covariance", choices=("mean", "trial"), default="mean")
 parser.add_argument("--solver-settings", type=json.loads, default={})
+parser.add_argument("--score-kind", choices=("noise", "excess"), default="noise")
 parser.add_argument("--snr-pair", nargs=2, type=int)
 parser.add_argument("--limit", type=int)
 parser.add_argument("--comparators", action="store_true")
@@ -83,7 +84,8 @@ shared_hash = original._shared_fingerprint(shared)
 environment = original._environment_versions()
 if args.phase == "validation":
     for key, value in (("code_sha256", code_hashes), ("shared_fingerprint", shared_hash),
-                       ("environment", environment), ("solver_settings", args.solver_settings), ("covariance", args.covariance)):
+                       ("environment", environment), ("solver_settings", args.solver_settings),
+                       ("covariance", args.covariance), ("score_kind", args.score_kind)):
         assert calibration[key] == value, f"校准后发生改变：{key}"
     assert calibration["complete"] and calibration["all_converged"] and calibration["alpha"] == .05
     assert not ({case["case_id"] for case in cases} & set(calibration["case_ids"]))
@@ -93,6 +95,7 @@ if args.phase != "development":
         json.dump({"phase": args.phase, "manifest_sha256": hashlib.sha256(args.manifest.read_bytes()).hexdigest(),
                    "output": str(args.output.resolve()), "calibration": None if args.calibration is None else str(args.calibration.resolve()),
                    "covariance": args.covariance, "solver_settings": args.solver_settings,
+                   "score_kind": args.score_kind,
                    "code_sha256": code_hashes}, stream, ensure_ascii=False, indent=2)
 args.output.mkdir(parents=True)
 metadata = {"phase": args.phase, "manifest": str(args.manifest.resolve()),
@@ -100,6 +103,7 @@ metadata = {"phase": args.phase, "manifest": str(args.manifest.resolve()),
     "seed_root": args.seed_root, "case_ids": [case["case_id"] for case in cases],
     "code_sha256": code_hashes, "shared_fingerprint": shared_hash, "environment": environment,
     "solver_settings": args.solver_settings, "covariance": args.covariance, "alpha": .05,
+    "score_kind": args.score_kind,
     "comparison_data": "v6 H0/H1 fitted to train-20 mean, confirmation-20 used only for prediction score; seven comparators reported separately on train-20 and combined-40 means, not treated as identical data usage",
     "scope": "engineering development/calibration/stress validation; no universal or clinical FPR guarantee",
     "calibration_use": "one-use empirical null calibration, not a reusable independent test or a parameter-tuning set; raw half-means are independent but share training-derived preprocessing"}
@@ -116,8 +120,9 @@ for case in cases:
     null, full, fitting = fit_predictive_models(observation["training"], observation["gain"], shared["n_surf"],
         adjacency=shared["adjacency"], baseline=observation["baseline"], active=observation["active_windows"][0],
         channel_weights=observation["channel_weights"], solver_settings=args.solver_settings)
-    score, evidence = score_predictive_models(observation["confirmation"], observation["gain"], null, full,
+    noise_score, evidence = score_predictive_models(observation["confirmation"], observation["gain"], null, full,
         baseline=observation["baseline"], active=observation["active_windows"][0], channel_weights=observation["channel_weights"])
+    score = noise_score if args.score_kind == "noise" else evidence["excess_fraction_score"]
     pair_key = f"{int(case['eeg_snr_db'])},{int(case['meg_snr_db'])}"
     model_convergence = {name: bool(fitting[name + "_model"]["windows"][0]["solver"]["converged"]) for name in ("null", "full")}
     converged = all(model_convergence.values())
@@ -165,7 +170,7 @@ for case in cases:
         {"case_id": case["case_id"], "simulation": observation["metadata"], "fitting": fitting, "evidence": evidence,
          "decision": decision}, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     archive._atomic_csv(args.output / "evidence.csv", evidence_rows, evidence_rows[0].keys())
-    print(f"  T={score:.5g} converged={model_convergence} deep={None if decision is None else decision['deep_present']} seconds={elapsed:.1f}", flush=True)
+    print(f"  {args.score_kind}={score:.5g} converged={model_convergence} deep={None if decision is None else decision['deep_present']} seconds={elapsed:.1f}", flush=True)
 
 # %% 校准使用所有纯表层分数（包含拟合残差），不借用验证真值调整阈值。
 assert code_hashes == {str(path.relative_to(root)): hashlib.sha256(path.read_bytes()).hexdigest() for path in paths}
