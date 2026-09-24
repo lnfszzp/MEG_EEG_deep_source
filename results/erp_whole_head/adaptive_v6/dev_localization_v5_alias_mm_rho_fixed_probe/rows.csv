@@ -1,0 +1,5 @@
+﻿case_id,configuration_id,scenario,eeg_snr_db,meg_snr_db,method,status,has_surface_true,auc,auc_tie_corrected,surface_auc_tie_corrected,deep_auc_tie_corrected,rmse,surface_sd_mm,deep_sd_mm,surface_dle_mm,deep_dle_mm,has_deep_true,deep_score,deep_peak_distance_mm,deep_detected,deep_false_positive,active_count,surface_active_count,deep_active_count
+erp-v6-localization-v5-development-00-eeg-10-meg-10,erp-v6-localization-v5-geometry-00,surface_only,-10,-10,v6-surface-only,ok,1,0.5,0.5,0.5,nan,1.0,nan,nan,nan,nan,0,0.0,nan,0,0,0,0,0
+erp-v6-localization-v5-development-00-eeg-10-meg-10,erp-v6-localization-v5-geometry-00,surface_only,-10,-10,v6-full-ungated,ok,1,0.5,0.4999332888592395,0.5,nan,2.0000000000000004,nan,nan,nan,nan,0,1.0,nan,0,1,1,0,1
+erp-v6-localization-v5-development-02-eeg-10-meg-10,erp-v6-localization-v5-geometry-02,deep_only,-10,-10,v6-surface-only,ok,0,0.5,0.5,nan,0.5,1.0,nan,nan,nan,nan,1,0.0,nan,0,0,0,0,0
+erp-v6-localization-v5-development-02-eeg-10-meg-10,erp-v6-localization-v5-geometry-02,deep_only,-10,-10,v6-full-ungated,ok,0,0.5,0.5,nan,0.5,1.0,nan,nan,nan,nan,1,0.0,nan,0,0,0,0,0
