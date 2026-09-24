@@ -1,0 +1,5 @@
+﻿candidate,mean_local_AUC,min_local_AUC,max_surface_DLE_mm,max_surface_SD_mm,surface_DLE_finite_count,surface_case_count,deep_within_10mm_count,deep_case_count,fallback_count,all_local_AUC_at_least_0p9,all_surface_DLE_at_most_15mm,all_surface_SD_at_most_20mm,all_deep_peaks_within_10mm,development_screen_passed
+current,0.9109340356841233,0.5,18.57411047683617,26.60733503752663,9,12,8,9,0,False,False,False,False,False
+baseline_corrected,0.910929726665964,0.5,18.57411047683617,26.606591327301718,9,12,8,9,3,False,False,False,False,False
+residual_deep,0.910929726665964,0.5,18.57411047683617,26.606591327301718,9,12,8,9,3,False,False,False,False,False
+consensus_deep,0.910929726665964,0.5,18.57411047683617,26.606591327301718,9,12,8,9,3,False,False,False,False,False

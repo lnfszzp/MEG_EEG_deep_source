@@ -32,13 +32,17 @@ parser = argparse.ArgumentParser(description=__doc__)
 parser.add_argument("--source", type=Path, required=True)
 parser.add_argument("--output", type=Path, required=True)
 parser.add_argument("--development-threshold", type=float, required=True)
+parser.add_argument("--finalize-existing", action="store_true",
+                    help="逐例结果完整时只恢复汇总，不重复反演")
 args = parser.parse_args()
 source, output = args.source.resolve(), args.output.resolve()
 development_threshold = float(args.development_threshold)
 if not np.isfinite(development_threshold):
     raise ValueError("development threshold must be finite")
-if output.exists():
+if output.exists() and not args.finalize_existing:
     raise FileExistsError(f"不覆盖旧结果：{output}")
+if args.finalize_existing and not output.is_dir():
+    raise FileNotFoundError(f"没有可恢复的输出目录：{output}")
 
 completion = json.loads((source / "completion.json").read_text(encoding="utf-8"))
 metadata = json.loads((source / "metadata.json").read_text(encoding="utf-8"))
@@ -70,7 +74,7 @@ if [case["case_id"] for case in cases] != metadata["case_ids"]:
 shared = protocol.load_shared(root / "corrected_v2/generated", original.DEFAULT_SAMPLE_PATH)
 if metadata["shared_fingerprint"] != original._shared_fingerprint(shared):
     raise ValueError("共享 forward 已变化")
-output.mkdir(parents=True)
+output.mkdir(parents=True, exist_ok=args.finalize_existing)
 n_surf = int(shared["n_surf"])
 positions = np.asarray(shared["vertices"], float)
 graph = sparse.csr_matrix(shared["adjacency"][:n_surf, :n_surf])
@@ -79,11 +83,29 @@ degree = np.asarray(graph.sum(axis=1)).ravel()
 transition = sparse.diags(1 / np.maximum(degree, 1)) @ graph
 candidate_names = ("current", "baseline_corrected", "residual_deep", "consensus_deep")
 rows, details = [], []
+if args.finalize_existing:
+    with (output / "rows.csv").open(encoding="utf-8-sig", newline="") as stream:
+        rows = list(csv.DictReader(stream))
+    if len(rows) != len(cases) * len(candidate_names):
+        raise ValueError("已有 rows.csv 不含完整的 15×4 候选结果")
+    integer_fields = ("eeg_snr_db", "meg_snr_db", "deep_present_decision",
+                      "has_deep_true_posthoc", "family_correct_posthoc",
+                      "active_count", "candidate_fallback")
+    float_fields = ("predictive_score", "development_threshold", "conditional_local_AUC",
+                    "surface_An_auc", "deep_An_auc", "surface_SD_mm",
+                    "surface_DLE_mm", "deep_DLE_mm", "deep_peak_distance_mm")
+    for row in rows:
+        for field in integer_fields:
+            row[field] = int(row[field])
+        for field in float_fields:
+            row[field] = float(row[field])
+    details = [json.loads((output / (case["case_id"] + ".json")).read_text(encoding="utf-8"))
+               for case in cases]
 started = time.perf_counter()
 
 
 # %% 2. 每例上游只重拟合一次；四个结果共享同一个盲门控决定。
-for case in cases:
+for case in ([] if args.finalize_existing else cases):
     tick = time.perf_counter()
     name = case["case_id"]
     observation = prepare_trial_covariance_case(shared, case, seed_root=metadata["seed_root"])
@@ -302,8 +324,9 @@ for case in cases:
 
 # %% 3. 先过共同门控，再按 A、B、C 的最小改动顺序选第一个全达标者。
 common_gate_passed = all(detail["family_correct_posthoc"] for detail in details)
-all_selected_converged = all(
+all_selected_surrogates_converged = all(
     detail["convergence"][detail["selected_family"]] for detail in details)
+adaptive_outer_convergence_verified = False  # outer_iterations=1 只解了首个凸代理问题。
 candidate_summary = []
 for candidate in candidate_names:
     selected_rows = [row for row in rows if row["candidate"] == candidate]
@@ -318,7 +341,8 @@ for candidate in candidate_names:
     deep_distance_pass = all(np.isfinite(row["deep_peak_distance_mm"]) and
                              row["deep_peak_distance_mm"] <= 10 for row in deep_rows)
     fallback_count = sum(row["candidate_fallback"] for row in selected_rows)
-    passed = bool(common_gate_passed and all_selected_converged and local_auc_pass and
+    passed = bool(common_gate_passed and all_selected_surrogates_converged and
+                  adaptive_outer_convergence_verified and local_auc_pass and
                   surface_dle_pass and surface_sd_pass and deep_distance_pass and
                   fallback_count == 0)
     candidate_summary.append({
@@ -329,11 +353,12 @@ for candidate in candidate_names:
                                          if np.isfinite(row["surface_DLE_mm"])), default=np.nan)),
         "max_surface_SD_mm": float(max((row["surface_SD_mm"] for row in surface_rows
                                         if np.isfinite(row["surface_SD_mm"])), default=np.nan)),
-        "surface_DLE_finite_count": sum(np.isfinite(row["surface_DLE_mm"])
-                                        for row in surface_rows),
+        "surface_DLE_finite_count": int(sum(np.isfinite(row["surface_DLE_mm"])
+                                            for row in surface_rows)),
         "surface_case_count": len(surface_rows),
-        "deep_within_10mm_count": sum(np.isfinite(row["deep_peak_distance_mm"]) and
-                                      row["deep_peak_distance_mm"] <= 10 for row in deep_rows),
+        "deep_within_10mm_count": int(sum(np.isfinite(row["deep_peak_distance_mm"]) and
+                                          row["deep_peak_distance_mm"] <= 10
+                                          for row in deep_rows)),
         "deep_case_count": len(deep_rows),
         "fallback_count": fallback_count,
         "all_local_AUC_at_least_0p9": local_auc_pass,
@@ -355,7 +380,9 @@ summary = {
     "presence_gate_changed": False,
     "family_correct_count": sum(detail["family_correct_posthoc"] for detail in details),
     "common_gate_passed": common_gate_passed,
-    "all_selected_families_converged": all_selected_converged,
+    "all_selected_convex_surrogates_converged": all_selected_surrogates_converged,
+    "adaptive_outer_convergence_verified": adaptive_outer_convergence_verified,
+    "convergence_caveat": "outer_iterations=1 does not establish an adaptive MM fixed point",
     "candidate_priority": list(priority),
     "winner": winner,
     "winner_requires_new_blind_confirmation": winner is not None,
@@ -398,6 +425,7 @@ case_labels = [f"{case['configuration_number']}\n{case['eeg_snr_db']:+d}/{case['
                for case in cases]
 for axis in axes:
     axis.set(xticks=x, xticklabels=case_labels, xlabel="geometry / EEG-MEG SNR (dB)")
+    axis.tick_params(axis="x", labelrotation=90, labelsize=7)
     axis.grid(axis="y", color="#DDDDDD", linewidth=.7)
 axes[0].legend(frameon=False, fontsize=8)
 figure.suptitle("v5 paired new-position development: frozen gate, post-processing only",
@@ -408,6 +436,8 @@ plt.close(figure)
 lines = ["# v5 新位置定位后处理开发比较", "",
     f"presence 门控不变，15 例盲选正确 {summary['family_correct_count']}/15；"
     f"定位候选只在所有盲图固定后读取真值。开发胜者：{winner or '无'}。", "",
+    "注意：上游只完成 outer=1 的首个凸代理问题，不代表自适应 MM 已到固定点；"
+    "因此本轮不能宣称完整算法收敛。", "",
     "| 候选 | 平均/最低局部AUC | 表层DLE有限 | 最大表层DLE/SD mm | 深峰≤10 mm | fallback | 全门槛 |",
     "|---|---:|---:|---:|---:|---:|---:|"]
 for item in candidate_summary:

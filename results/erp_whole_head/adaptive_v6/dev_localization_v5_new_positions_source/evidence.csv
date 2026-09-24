@@ -1,0 +1,16 @@
+﻿case_id,configuration_id,scenario,eeg_snr_db,meg_snr_db,score,null_converged,full_converged,all_converged,p_value,deep_present_decision,elapsed_seconds
+erp-v6-localization-v5-development-00-eeg-10-meg-10,erp-v6-localization-v5-geometry-00,surface_only,-10,-10,1.444032368527565,1,1,1,nan,,85.98845609999262
+erp-v6-localization-v5-development-01-eeg-10-meg-10,erp-v6-localization-v5-geometry-01,surface_only,-10,-10,0.040065524590469755,1,1,1,nan,,32.73300050001126
+erp-v6-localization-v5-development-02-eeg-10-meg-10,erp-v6-localization-v5-geometry-02,deep_only,-10,-10,0.27909121721371,1,1,1,nan,,80.86745739998878
+erp-v6-localization-v5-development-03-eeg-10-meg-10,erp-v6-localization-v5-geometry-03,deep_plus_surface,-10,-10,0.22037987054609937,1,1,1,nan,,29.421982900006697
+erp-v6-localization-v5-development-04-eeg-10-meg-10,erp-v6-localization-v5-geometry-04,deep_plus_two_surface,-10,-10,0.12806816861975504,1,1,1,nan,,91.9007644999947
+erp-v6-localization-v5-development-05-eeg-10-meg+20,erp-v6-localization-v5-geometry-00,surface_only,-10,20,-0.3350086123326986,1,1,1,nan,,129.13043060002383
+erp-v6-localization-v5-development-06-eeg-10-meg+20,erp-v6-localization-v5-geometry-01,surface_only,-10,20,-0.051576313259273074,1,1,1,nan,,124.55759050001507
+erp-v6-localization-v5-development-07-eeg-10-meg+20,erp-v6-localization-v5-geometry-02,deep_only,-10,20,0.9817244968781881,1,1,1,nan,,89.15788070001872
+erp-v6-localization-v5-development-08-eeg-10-meg+20,erp-v6-localization-v5-geometry-03,deep_plus_surface,-10,20,0.7509442565188077,1,1,1,nan,,110.38394130000961
+erp-v6-localization-v5-development-09-eeg-10-meg+20,erp-v6-localization-v5-geometry-04,deep_plus_two_surface,-10,20,0.38433348038419823,1,1,1,nan,,115.30863639997551
+erp-v6-localization-v5-development-10-eeg+20-meg-10,erp-v6-localization-v5-geometry-00,surface_only,20,-10,0.2636922055064069,1,1,1,nan,,52.253724100010004
+erp-v6-localization-v5-development-11-eeg+20-meg-10,erp-v6-localization-v5-geometry-01,surface_only,20,-10,0.05507263560956853,1,1,1,nan,,107.42769380001118
+erp-v6-localization-v5-development-12-eeg+20-meg-10,erp-v6-localization-v5-geometry-02,deep_only,20,-10,1.0199962158932148,1,1,1,nan,,74.1979365000152
+erp-v6-localization-v5-development-13-eeg+20-meg-10,erp-v6-localization-v5-geometry-03,deep_plus_surface,20,-10,0.6936362716961121,1,1,1,nan,,100.87970449999557
+erp-v6-localization-v5-development-14-eeg+20-meg-10,erp-v6-localization-v5-geometry-04,deep_plus_two_surface,20,-10,0.3138670706660297,1,1,1,nan,,96.04110880001099
