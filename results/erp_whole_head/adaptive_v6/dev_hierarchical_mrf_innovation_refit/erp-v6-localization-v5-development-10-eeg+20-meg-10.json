@@ -1,0 +1,41 @@
+{
+  "case_id": "erp-v6-localization-v5-development-10-eeg+20-meg-10",
+  "complete": true,
+  "development_only": true,
+  "truth_used_by_decisions": false,
+  "truth_used_only_for_posthoc_metrics": true,
+  "gate_score": 0.0041837389157144385,
+  "gate_score_kind": "fixed_3_to_1_linear_fusion",
+  "gate_modality_weights_EEG_MEG": [
+    0.75,
+    0.25
+  ],
+  "gate_modality_scores": [
+    0.005539814176042684,
+    0.00011551313472970408
+  ],
+  "development_gate_threshold": 0.00956546707231876,
+  "deep_present_decision": false,
+  "selected_family": "H0 combined40 MRF-innovation dipole",
+  "selected_deep_index": null,
+  "amplitude_deep_index": null,
+  "deep_loo_candidate_indices": null,
+  "deep_loo_modality_scores": null,
+  "deep_loo_sum_scores": null,
+  "secondary_surface_score": null,
+  "secondary_modality_scores": null,
+  "h0_innovation_indices": [
+    2733,
+    2888,
+    4185
+  ],
+  "surface_component_dle_mm": [
+    0.9181481173712868
+  ],
+  "surface_patch_support_hits": [
+    1
+  ],
+  "surface_selection_solver": null,
+  "surface_final_solver": null,
+  "elapsed_seconds": 0.7103965999849606
+}

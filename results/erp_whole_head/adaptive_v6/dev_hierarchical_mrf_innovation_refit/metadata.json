@@ -1,0 +1,17 @@
+{
+  "phase": "development",
+  "formal_acceptance_allowed": false,
+  "source": "D:\\博士\\工作＆汇报\\源定位\\新建文件夹\\results\\erp_whole_head\\adaptive_v6\\dev_hierarchical_outer40_source",
+  "source_metadata_sha256": "908257336a3a166f0752ec48aa1f73d39b12bdb244fa195733a8b4851e534dcd",
+  "manifest": "D:\\博士\\工作＆汇报\\源定位\\新建文件夹\\results\\erp_whole_head\\adaptive_v6\\protocol\\development_localization_v5_new_positions.json",
+  "manifest_sha256": "54fd2126c34b251939f854e73f11901329e7efb24e3c5669ecc28260a100190b",
+  "seed_root": 2026092701,
+  "development_gate_threshold": 0.00956546707231876,
+  "gate_score_kind": "fixed_3_to_1_linear_fusion",
+  "gate_modality_weights_EEG_MEG": [
+    0.75,
+    0.25
+  ],
+  "script_sha256": "eb45a6ae2ff6952c5449e128ad16894a4b4a4a7b3dd8412e5a6432b1509633ec",
+  "scope": "candidate selection after inspecting development failures; fresh calibration and validation required"
+}

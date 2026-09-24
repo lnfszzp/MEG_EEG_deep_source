@@ -155,6 +155,31 @@ def test_conformal_ties_negative_gain_and_resolution():
         inverse.conformal_decision(1., np.zeros(19), alpha=0.)
 
 
+def test_post_gate_location_sums_leave_one_out_modality_evidence():
+    n_times = 30
+    baseline = np.arange(n_times) < 12
+    active = (np.arange(n_times) >= 15) & (np.arange(n_times) < 20)
+    basis = inverse._smooth_temporal_basis(np.zeros((2, n_times)), baseline, active)[0]
+    gain = np.array([[.1, .4, 1.], [2., .4, 1.]])
+    full = np.zeros((3, n_times))
+    full[:2] = basis[0]
+    confirmation = np.zeros((2, n_times))
+    confirmation[:, baseline] = np.array([[1., -1.] * 6, [1., -1.] * 6])
+    confirmation += (gain[:, 0] + .75 * gain[:, 1])[:, None] * basis[0]
+    modality_scores = []
+    for source in range(3):
+        without = full.copy()
+        without[source] = 0
+        _, info = inverse.score_predictive_models(
+            confirmation, gain, without, full, baseline=baseline, active=active,
+            channel_weights=np.ones(2), modality_sizes=(1, 1))
+        modality_scores.append(info["modality_noise_scores"])
+    modality_scores = np.asarray(modality_scores)
+    assert np.argmax(modality_scores.min(axis=1)) == 1
+    assert np.argmax(modality_scores.sum(axis=1)) == 0
+    assert not np.linalg.norm(full[2] @ basis.T) and not modality_scores[2].any()
+
+
 def test_small_real_inverse_accepts_surface_only_adjacency_and_returns_diagnostics():
     rng = np.random.default_rng(18)
     data = rng.normal(size=(4, 80))
