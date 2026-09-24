@@ -1,0 +1,43 @@
+{
+  "complete": true,
+  "phase": "validation",
+  "case_count": 24,
+  "solver_settings": {
+    "solver_kind": "admm",
+    "mrf_strength": 0.8,
+    "outer_iterations": 1,
+    "max_inner_retries": 20
+  },
+  "covariance": "trial",
+  "decision_statistic": "independent confirmation excess-loss fraction",
+  "score_kind": "excess",
+  "development_threshold": null,
+  "threshold_status": "frozen null-calibration decisions loaded from untouched validation output",
+  "runtime_family_choice_used_truth": false,
+  "parameters_selected_during_development": true,
+  "all_selected_families_converged": true,
+  "localization_script_sha256": "34b52df4f5db2d1771371377f13d68889906a4903bbc9588066fac5192f9bd02",
+  "localization_parameters": {
+    "svd_modes": 2,
+    "sensitivity_floor_fraction": 0.1,
+    "depth_exponent": 0.6,
+    "graph_steps": 2,
+    "support_seed_fraction": 0.1,
+    "support_radius_m": 0.015,
+    "amplitude_evidence_mix_rule": "0.5 * training_MEG / max(training_EEG, training_MEG)",
+    "amplitude_evidence_mix_range": [
+      0.01085730654369884,
+      0.5
+    ]
+  },
+  "family_correct_posthoc_count": 24,
+  "pure_surface_false_positive_count": 0,
+  "deep_true_detected_count": 12,
+  "all_conditional_local_AUC_at_least_0p9": false,
+  "all_surface_DLE_finite_when_surface_true": false,
+  "all_deep_DLE_zero_when_deep_true": false,
+  "calibration_consumed": true,
+  "validation_consumed": true,
+  "accepted": false,
+  "wall_seconds": 1997.4891814999864
+}

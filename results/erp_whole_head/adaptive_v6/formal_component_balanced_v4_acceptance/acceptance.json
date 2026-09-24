@@ -1,0 +1,180 @@
+{
+  "passed": false,
+  "phase": "validation",
+  "case_count": 24,
+  "execution_lock": "D:\\博士\\工作＆汇报\\源定位\\新建文件夹\\results\\erp_whole_head\\adaptive_v6\\protocol\\component_balanced_v4_execution_lock.json",
+  "execution_lock_sha256": "05c8edd1130ef22f0af8938d94cdc8c25fb133385adcdb5c440f5cb7b594df83",
+  "calibration": "D:\\博士\\工作＆汇报\\源定位\\新建文件夹\\results\\erp_whole_head\\adaptive_v6\\formal_component_balanced_v4_calibration\\frozen_calibration.json",
+  "calibration_sha256": "7dc2b57e97acaab71de4ea684ca9ae48ff731a15a7e6e6b67203fff044d8caf4",
+  "manifest": "D:\\博士\\工作＆汇报\\源定位\\新建文件夹\\results\\erp_whole_head\\adaptive_v6\\protocol\\validation_component_balanced_v2_manifest.json",
+  "manifest_sha256": "68a405ace52d0c04a193c37198304682a0440a0007fed0433fe3a43e686d9aa7",
+  "validation_source": "D:\\博士\\工作＆汇报\\源定位\\新建文件夹\\results\\erp_whole_head\\adaptive_v6\\formal_component_balanced_v4_validation",
+  "localization": "D:\\博士\\工作＆汇报\\源定位\\新建文件夹\\results\\erp_whole_head\\adaptive_v6\\formal_component_balanced_v4_validation_localization",
+  "truth_used_only_for_final_evaluation": true,
+  "comparison_methods_used_for_acceptance": false,
+  "thresholds": {
+    "required_false_positives_each_snr": 0,
+    "required_localized_deep_detections_of_12": 10,
+    "all_selected_families_converged": true,
+    "minimum_local_AUC": 0.9,
+    "maximum_surface_DLE_mm": 15.0,
+    "maximum_surface_SD_mm": 20.0,
+    "maximum_deep_DLE_mm": 10.0,
+    "existing_deep_acceptance_passed_required": true
+  },
+  "gates": {
+    "source_acceptance_passed": false,
+    "h0_false_positives_each_snr_equal_zero": true,
+    "localized_deep_detections_at_least_10_of_12": true,
+    "all_selected_families_converged": true,
+    "all_local_AUC_at_least_0p90": false,
+    "maximum_surface_DLE_at_most_15mm": false,
+    "maximum_surface_SD_at_most_20mm": true,
+    "maximum_deep_DLE_at_most_10mm": false
+  },
+  "by_snr": {
+    "-10/-10": {
+      "case_count": 8,
+      "h0_count": 4,
+      "h1_count": 4,
+      "h0_false_positives": 0,
+      "localized_deep_detections": 3,
+      "minimum_local_AUC": 0.7250524300419131,
+      "maximum_surface_DLE_mm": 14.389517719963798,
+      "maximum_surface_SD_mm": 16.106711649257427,
+      "maximum_deep_DLE_mm": 14.142136031724073
+    },
+    "-10/+20": {
+      "case_count": 8,
+      "h0_count": 4,
+      "h1_count": 4,
+      "h0_false_positives": 0,
+      "localized_deep_detections": 4,
+      "minimum_local_AUC": 0.901712754842853,
+      "maximum_surface_DLE_mm": 11.895118572456564,
+      "maximum_surface_SD_mm": 14.51352278534336,
+      "maximum_deep_DLE_mm": 0.0
+    },
+    "+20/-10": {
+      "case_count": 8,
+      "h0_count": 4,
+      "h1_count": 4,
+      "h0_false_positives": 0,
+      "localized_deep_detections": 4,
+      "minimum_local_AUC": 0.7895638317246403,
+      "maximum_surface_DLE_mm": 6.931562909632091,
+      "maximum_surface_SD_mm": 3.0269819269413065,
+      "maximum_deep_DLE_mm": 0.0
+    }
+  },
+  "metrics": {
+    "localized_deep_detections_of_12": 11,
+    "minimum_local_AUC": 0.7250524300419131,
+    "maximum_surface_DLE_mm": 14.389517719963798,
+    "maximum_surface_SD_mm": 16.106711649257427,
+    "maximum_deep_DLE_mm": 14.142136031724073
+  },
+  "source_acceptance": {
+    "passed": false,
+    "gates": {
+      "false_positive_rate_each_snr_at_most_05": true,
+      "deep_detection_at_least_80": false,
+      "detected_deep_dle_at_most_10mm": true,
+      "deep_miss_penalized_dle_at_most_60mm": true,
+      "all_models_converged": true
+    },
+    "summary": {
+      "case_count": 24,
+      "scenario_count": 4,
+      "auc": 0.9187070857159098,
+      "auc_tie_corrected": 0.9866475935420868,
+      "surface_auc_tie_corrected": 0.9838731605199759,
+      "deep_auc_tie_corrected": 0.9388888888888888,
+      "rmse": 0.7949472805717477,
+      "surface_sd_mm": 4.336176449056106,
+      "surface_dle_mm": 8.22136678765417,
+      "deep_sd_mm": 4.8009335114239375,
+      "deep_dle_mm": 4.992254020288764,
+      "deep_score": 0.5,
+      "deep_peak_distance_mm": 4.992254020288764,
+      "active_count": 8.0,
+      "surface_active_count": 7.25,
+      "deep_active_count": 0.75,
+      "surface_sd_mm_penalized": 4.336176449056106,
+      "surface_dle_mm_penalized": 20.766241513688794,
+      "deep_sd_mm_penalized": 58.9670514903201,
+      "deep_dle_mm_penalized": 58.50727796406934,
+      "deep_sensitivity": 0.75,
+      "deep_specificity": 1.0,
+      "deep_balanced_accuracy": 0.875
+    },
+    "legacy_metric_summary": {
+      "case_count": 24,
+      "scenario_count": 4,
+      "auc": 0.9187070857159098,
+      "auc_tie_corrected": 0.9866475935420868,
+      "surface_auc_tie_corrected": 0.9838731605199759,
+      "deep_auc_tie_corrected": 0.9388888888888888,
+      "rmse": 0.7949472805717477,
+      "surface_sd_mm": 4.336176449056106,
+      "surface_dle_mm": 8.22136678765417,
+      "deep_sd_mm": 4.8009335114239375,
+      "deep_dle_mm": 4.992254020288764,
+      "deep_score": 0.5,
+      "deep_peak_distance_mm": 4.992254020288764,
+      "active_count": 8.0,
+      "surface_active_count": 7.25,
+      "deep_active_count": 0.75,
+      "surface_sd_mm_penalized": 4.336176449056106,
+      "surface_dle_mm_penalized": 20.766241513688794,
+      "deep_sd_mm_penalized": 58.9670514903201,
+      "deep_dle_mm_penalized": 58.50727796406934,
+      "deep_sensitivity": 0.75,
+      "deep_specificity": 1.0,
+      "deep_balanced_accuracy": 0.875
+    },
+    "by_snr": {
+      "-10,-10": {
+        "negative_count": 4,
+        "positive_count": 4,
+        "false_positives": 0,
+        "legacy_metric_false_positives": 0,
+        "localized_true_positives": 1,
+        "false_positive_rate": 0.0,
+        "legacy_metric_false_positive_rate": 0.0,
+        "localized_deep_sensitivity": 0.25
+      },
+      "-10,20": {
+        "negative_count": 4,
+        "positive_count": 4,
+        "false_positives": 0,
+        "legacy_metric_false_positives": 0,
+        "localized_true_positives": 4,
+        "false_positive_rate": 0.0,
+        "legacy_metric_false_positive_rate": 0.0,
+        "localized_deep_sensitivity": 1.0
+      },
+      "20,-10": {
+        "negative_count": 4,
+        "positive_count": 4,
+        "false_positives": 0,
+        "legacy_metric_false_positives": 0,
+        "localized_true_positives": 4,
+        "false_positive_rate": 0.0,
+        "legacy_metric_false_positive_rate": 0.0,
+        "localized_deep_sensitivity": 1.0
+      }
+    },
+    "detected_deep_dle_mean_mm": 0.0,
+    "penalty_mm": 234.02911185627735,
+    "distance_tolerance_mm": 1e-06,
+    "false_positive_definition": "deep_present_decision on a true cortex-only case; legacy 0.14 threshold cannot mask a presence-gate false positive",
+    "localized_true_positive_definition": "deep_present_decision AND original deep_detected",
+    "warning": "24-case engineering pilot; repeated SNRs are not independent locations and passing does not prove population FPR <= 5%"
+  },
+  "artifacts": {
+    "method_table": "method_table.csv",
+    "figure": "comparison.png",
+    "report": "REPORT.md"
+  }
+}
