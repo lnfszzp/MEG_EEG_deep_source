@@ -38,6 +38,7 @@ parser.add_argument(
     required=True,
 )
 parser.add_argument("--output", type=Path, required=True)
+parser.add_argument("--resume", action="store_true", help="只续跑已严格核验的完整病例前缀")
 parser.add_argument(
     "--lock",
     type=Path,
@@ -51,8 +52,10 @@ stage = args.stage
 output = args.output.resolve()
 lock_path = args.lock if args.lock.is_absolute() else root / args.lock
 lock_path = lock_path.resolve()
-if output.exists():
+if output.exists() and not args.resume:
     raise FileExistsError(f"不覆盖已有正式输出：{output}")
+if args.resume and not output.is_dir():
+    raise FileNotFoundError(f"--resume 要求已有正式输出目录：{output}")
 if not lock_path.is_file():
     raise FileNotFoundError(f"执行锁不存在：{lock_path}")
 lock_sidecar = Path(str(lock_path) + ".sha256")
@@ -63,11 +66,17 @@ lock_sha256 = hashlib.sha256(lock_bytes).hexdigest()
 if lock_sidecar.read_text(encoding="ascii").split()[0] != lock_sha256:
     raise ValueError("执行锁与 SHA256 旁车不一致")
 execution_lock = json.loads(lock_bytes)
+recovery = execution_lock.get("interrupted_prefix_recovery")
 if execution_lock.get("schema_version") != 1 or \
         execution_lock.get("protocol") != "erp-v6-hierarchical-v1-execution" or \
-        execution_lock.get("status") != "algorithm_frozen_calibration_allowed" or \
+        execution_lock.get("status") not in {
+            "algorithm_frozen_calibration_allowed",
+            "interrupted_prefix_recovery_allowed",
+        } or \
         execution_lock.get("formal_cases_run_by_generator") is not False:
     raise ValueError("不是允许一次性正式运行的 hierarchical-v1 执行锁")
+if args.resume and execution_lock.get("status") != "interrupted_prefix_recovery_allowed":
+    raise ValueError("--resume 只能使用显式绑定中断前缀的恢复执行锁")
 
 manifests = execution_lock.get("manifests", {})
 if set(manifests) != {"gate-calibration", "surface-calibration", "validation"}:
@@ -391,7 +400,12 @@ for prior_stage in prior_stages:
     expected_prior_output = Path(prior_lock.get("output_dir", ""))
     expected_prior_output = (expected_prior_output if expected_prior_output.is_absolute()
                              else root / expected_prior_output).resolve()
-    if marker.get("stage") != prior_stage or marker.get("execution_lock_sha256") != lock_sha256 or \
+    expected_marker_lock_sha256 = (
+        recovery.get("predecessor_execution_lock_sha256")
+        if isinstance(recovery, dict) and prior_stage == recovery.get("stage")
+        else lock_sha256)
+    if marker.get("stage") != prior_stage or \
+            marker.get("execution_lock_sha256") != expected_marker_lock_sha256 or \
             marker.get("manifest_sha256") != prior_lock.get("manifest", {}).get("sha256") or \
             Path(marker.get("output", "")).resolve() != expected_prior_output:
         raise ValueError(f"前序 {prior_stage} marker 未绑定当前执行锁/manifest/output")
@@ -514,31 +528,142 @@ if prior_case_ids & {case["case_id"] for case in cases}:
 
 marker_path = Path(stage_lock.get("consumed_marker", ""))
 marker_path = marker_path if marker_path.is_absolute() else root / marker_path
-if marker_path.exists():
-    raise FileExistsError(f"该正式 stage 已消费，禁止换目录重跑：{marker_path}")
 if not marker_path.parent.is_dir():
     raise FileNotFoundError(f"consumed marker 目录不存在：{marker_path.parent}")
-marker_payload = {
-    "schema_version": 1,
-    "protocol": "erp-v6-hierarchical-v1-consumed-marker",
-    "stage": stage,
-    "execution_lock": str(lock_path),
-    "execution_lock_sha256": lock_sha256,
-    "manifest": str(manifest),
-    "manifest_sha256": manifest_lock["sha256"],
-    "seed_roots": seed_roots,
-    "output": str(output),
-    "prior_calibration_sha256": {
-        name: value["sha256"] for name, value in calibrations.items()},
-}
-marker_serialized = (json.dumps(
-    marker_payload, ensure_ascii=False, sort_keys=True,
-    separators=(",", ":")) + "\n").encode("utf-8")
-with marker_path.open("xb") as stream:
-    stream.write(marker_serialized)
-marker_bytes = marker_path.read_bytes()
-marker_sha256 = hashlib.sha256(marker_bytes).hexdigest()
-output.mkdir(parents=True)
+resumed_evidence_rows = []
+if args.resume:
+    if stage == "validation":
+        raise ValueError("当前恢复锁只允许校准阶段严格前缀续跑")
+    if not marker_path.is_file():
+        raise FileNotFoundError(f"--resume 缺少原 consumed marker：{marker_path}")
+    forbidden_final = [
+        output / "completion.json", output / "calibration_seal.json",
+        output / "invalid_calibration.json",
+        output / frozen_names[stage],
+    ]
+    if any(path.exists() for path in forbidden_final):
+        raise FileExistsError("已有 completion/frozen/seal 的 stage 禁止续跑")
+    marker_bytes = marker_path.read_bytes()
+    marker_sha256 = hashlib.sha256(marker_bytes).hexdigest()
+    marker_payload = json.loads(marker_bytes)
+    recovery_stage = isinstance(recovery, dict) and stage == recovery.get("stage")
+    expected_marker_lock = (
+        recovery.get("predecessor_execution_lock_sha256")
+        if recovery_stage else lock_sha256)
+    if marker_payload.get("stage") != stage or \
+            marker_payload.get("execution_lock_sha256") != expected_marker_lock or \
+            marker_payload.get("manifest_sha256") != manifest_lock["sha256"] or \
+            Path(marker_payload.get("output", "")).resolve() != output or \
+            marker_payload.get("prior_calibration_sha256") != {
+                name: value["sha256"] for name, value in calibrations.items()}:
+        raise ValueError("原 consumed marker 未绑定当前 stage/manifest/output/前序校准")
+    evidence_path = output / "evidence.csv"
+    if not evidence_path.is_file():
+        raise FileNotFoundError("--resume 缺少 evidence.csv")
+    with evidence_path.open("r", encoding="utf-8-sig", newline="") as stream:
+        reader = csv.DictReader(stream)
+        raw_evidence_rows = list(reader)
+        evidence_columns = reader.fieldnames
+    expected_evidence_columns = [
+        "case_id", "scenario", "eeg_snr_db", "meg_snr_db", "gate_score",
+        "gate_eeg_score", "gate_meg_score", "gate_threshold",
+        "deep_present_decision", "selected_deep_index", "secondary_surface_score",
+        "surface_threshold", "surface_present_decision", "null_converged",
+        "full_converged", "selection_surface_converged", "final_surface_converged",
+        "all_converged", "status", "error", "elapsed_seconds",
+    ]
+    prefix_count = len(raw_evidence_rows)
+    if evidence_columns != expected_evidence_columns or not 0 < prefix_count < len(cases) or \
+            [row.get("case_id") for row in raw_evidence_rows] != [
+                case["case_id"] for case in cases[:prefix_count]]:
+        raise ValueError("evidence 必须是 manifest 的非空严格完整前缀")
+    if recovery_stage:
+        if prefix_count < int(recovery.get("completed_prefix_count", -1)) or \
+                marker_sha256 != recovery.get("consumed_marker_sha256"):
+            raise ValueError("当前前缀短于恢复锁或 marker 已变化")
+        for snapshot_name in ("metadata", "evidence"):
+            snapshot = recovery.get("snapshots", {}).get(snapshot_name, {})
+            snapshot_path = Path(snapshot.get("path", ""))
+            snapshot_path = snapshot_path if snapshot_path.is_absolute() else root / snapshot_path
+            if not snapshot_path.is_file() or hashlib.sha256(
+                    snapshot_path.read_bytes()).hexdigest() != snapshot.get("sha256"):
+                raise ValueError(f"中断快照已变化：{snapshot_name}")
+        snapshot_path = Path(recovery["snapshots"]["evidence"]["path"])
+        snapshot_path = snapshot_path if snapshot_path.is_absolute() else root / snapshot_path
+        with snapshot_path.open("r", encoding="utf-8-sig", newline="") as stream:
+            frozen_prefix = list(csv.DictReader(stream))
+        frozen_count = int(recovery["completed_prefix_count"])
+        if raw_evidence_rows[:frozen_count] != frozen_prefix:
+            raise ValueError("当前 evidence 不再包含恢复锁冻结的原始前缀")
+        for case_id, specification in recovery.get("case_details", {}).items():
+            detail_path = Path(specification.get("path", ""))
+            detail_path = detail_path if detail_path.is_absolute() else root / detail_path
+            if not detail_path.is_file() or hashlib.sha256(
+                    detail_path.read_bytes()).hexdigest() != specification.get("sha256"):
+                raise ValueError(f"中断前病例详情已变化：{case_id}")
+    existing_metadata_path = output / "metadata.json"
+    existing_metadata_bytes = existing_metadata_path.read_bytes()
+    existing_metadata_sha256 = hashlib.sha256(existing_metadata_bytes).hexdigest()
+    frozen_metadata_sha256 = (
+        recovery.get("snapshots", {}).get("metadata", {}).get("sha256")
+        if recovery_stage else None)
+    if existing_metadata_sha256 != frozen_metadata_sha256:
+        existing_metadata = json.loads(existing_metadata_bytes)
+        if existing_metadata.get("execution_lock_sha256") != lock_sha256 or \
+                existing_metadata.get("stage") != stage or \
+                (recovery_stage and existing_metadata.get("resumed") is not True):
+            raise ValueError("已有 metadata 既不是冻结中断快照，也不是当前恢复锁续跑记录")
+    integer_fields = {
+        "eeg_snr_db", "meg_snr_db", "deep_present_decision", "selected_deep_index",
+        "surface_present_decision", "null_converged", "full_converged",
+        "selection_surface_converged", "final_surface_converged", "all_converged",
+    }
+    float_fields = {
+        "gate_score", "gate_eeg_score", "gate_meg_score", "gate_threshold",
+        "secondary_surface_score", "surface_threshold", "elapsed_seconds",
+    }
+    for raw_row, case in zip(raw_evidence_rows, cases):
+        row = dict(raw_row)
+        for key in integer_fields:
+            row[key] = None if row[key] == "" else int(row[key])
+        for key in float_fields:
+            row[key] = None if row[key] == "" else float(row[key])
+        row["error"] = None if row["error"] == "" else row["error"]
+        detail_path = output / (case["case_id"] + ".json")
+        detail = json.loads(detail_path.read_text(encoding="utf-8"))
+        score_key = "gate_score" if stage == "gate-calibration" else "secondary_surface_score"
+        if row["status"] != "ok" or row["all_converged"] != 1 or row["error"] is not None or \
+                detail.get("case_id") != case["case_id"] or detail.get("stage") != stage or \
+                detail.get("complete") is not True or \
+                detail.get("truth_used_by_decisions") is not False or \
+                not np.isclose(float(detail.get(score_key, np.nan)), float(row[score_key]),
+                               rtol=0., atol=0., equal_nan=False):
+            raise ValueError(f"已有完整前缀不可复核：{case['case_id']}")
+        resumed_evidence_rows.append(row)
+else:
+    if marker_path.exists():
+        raise FileExistsError(f"该正式 stage 已消费，禁止换目录重跑：{marker_path}")
+    marker_payload = {
+        "schema_version": 1,
+        "protocol": "erp-v6-hierarchical-v1-consumed-marker",
+        "stage": stage,
+        "execution_lock": str(lock_path),
+        "execution_lock_sha256": lock_sha256,
+        "manifest": str(manifest),
+        "manifest_sha256": manifest_lock["sha256"],
+        "seed_roots": seed_roots,
+        "output": str(output),
+        "prior_calibration_sha256": {
+            name: value["sha256"] for name, value in calibrations.items()},
+    }
+    marker_serialized = (json.dumps(
+        marker_payload, ensure_ascii=False, sort_keys=True,
+        separators=(",", ":")) + "\n").encode("utf-8")
+    with marker_path.open("xb") as stream:
+        stream.write(marker_serialized)
+    marker_bytes = marker_path.read_bytes()
+    marker_sha256 = hashlib.sha256(marker_bytes).hexdigest()
+    output.mkdir(parents=True)
 
 gate_threshold = (None if stage == "gate-calibration"
                   else calibrations["gate-calibration"]["threshold"])
@@ -567,6 +692,9 @@ metadata = {
     "gate_threshold": gate_threshold,
     "surface_threshold": surface_threshold,
     "truth_access": "metrics only after the blind final estimate is frozen",
+    "resumed": bool(args.resume),
+    "resumed_prefix_case_count": len(resumed_evidence_rows),
+    "interrupted_prefix_recovery": recovery if args.resume else None,
 }
 (output / "metadata.json").write_text(
     json.dumps(metadata, ensure_ascii=False, indent=2, allow_nan=False) + "\n",
@@ -583,11 +711,11 @@ surface_mrf_factor = splu(surface_mrf.tocsc())
 
 
 # %% 3. 每例先完成盲决策；validation 到最终图冻结后才读取真值与指标。
-evidence_rows = []
+evidence_rows = resumed_evidence_rows
 rows = []
 failures = []
 started = time.perf_counter()
-for case in cases:
+for case in cases[len(evidence_rows):]:
     tick = time.perf_counter()
     name = case["case_id"]
     evidence_row = {
