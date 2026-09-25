@@ -4,3 +4,4 @@
 *.pdf binary
 *.tiff binary
 *.pptx binary
+results/erp_whole_head/adaptive_v6/formal_hierarchical_v1_*/* -text
