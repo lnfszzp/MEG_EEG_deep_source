@@ -1,0 +1,213 @@
+{
+  "algorithm_path": "作者风格版\\63-层级浅深盲定位开发.py",
+  "algorithm_sha256": "eb45a6ae2ff6952c5449e128ad16894a4b4a4a7b3dd8412e5a6432b1509633ec",
+  "deep_grid_limit": "The repository's older pre-v6 experiments had already used all 16 deep grid points. The selected deep points are untouched only relative to the listed current development, calibration and consumed-validation manifests; global historical novelty is impossible without rebuilding the deep source space and forward model.",
+  "eligible_one_ring_buffered_surface_centers_before_selection": 167,
+  "formal_results_present": false,
+  "gate_calibration": {
+    "calibration_claim": "pooled fixed-design engineering calibration across 19 geometries and three SNRs; not an iid population conformal guarantee",
+    "case_count": 57,
+    "configuration_count": 19,
+    "configuration_repeated_across_snr": true,
+    "double_per_snr": 9,
+    "scores_per_configuration": 3,
+    "single_per_snr": 10,
+    "surface_center_count": 28
+  },
+  "geometry_domains": {
+    "gate": "ERP-v6-hierarchical-v1-gate-calibration-geometry-v1",
+    "surface": "ERP-v6-hierarchical-v1-surface-calibration-deep-assignment-v1",
+    "validation": "ERP-v6-hierarchical-v1-untouched-validation-geometry-v1"
+  },
+  "geometry_seed_sha256": {
+    "gate": "cff9fcba97b73ce1fba072c285bd24a19cfb67cdc4e0e35ab2e83e7a023e44d1",
+    "surface": "da993109f4f28260a101ac9d043325e8c8cfe1a6c37ca16b7ac1559352370c9b",
+    "validation": "ec1980f0603ed07a695d6a53c744069432f65930dd786dc819cb82c74e376af5"
+  },
+  "geometry_seed_uint64": {
+    "gate": 16230049019441510863,
+    "surface": 6954387904553654746,
+    "validation": 8849641853855734252
+  },
+  "historical_surface_center_count": 483,
+  "historical_surface_one_ring_guard_vertex_count": 7331,
+  "historical_surface_support_vertex_count": 5828,
+  "history_manifest_sha256": {
+    "calibration_component_balanced_v2_manifest.json": "4d091c2cbc12d1ec2165ff27e754bf1e3d540c2b4f00c89d3967ac6a3e89eefb",
+    "calibration_component_balanced_v3_manifest.json": "bb9f1a7d949efa6ba91dc8aceff604edca79752ecfb507134d06e4ccf56421d2",
+    "calibration_component_balanced_v4_manifest.json": "09dde6a2c14ceeeaa4a3185d218f8017bc6141b37e4172d19f6f85c22cf73ff1",
+    "calibration_manifest.json": "459b7b983b9ad4bbbc8b84e3d0a494e8466dbe093a32af02b78e7d871119a313",
+    "development_component_balanced_all_snr.json": "c64d02429fd5e9e9c2a7831a36b7f86c2a0fe614ecb2c837fa0284fe96fb5425",
+    "development_component_balanced_all_snr_mixed_only.json": "42d1001f3f617b0094dea459a70ea6cb50fefabac0b9daaf88958bb62cee1b56",
+    "development_component_balanced_m10_m10.json": "cab84749b2c6b4ac0c555fe34b2035fe1b88af705181b632be94eee460ee9981",
+    "development_component_balanced_m10_m10_case00.json": "7ee2301fb88987206c544b3a88a6a3058347b0f11f268a8260dc357b59089f10",
+    "development_component_balanced_m10_m10_case01.json": "9b52b8d695150e7db3db7bfd171361e1aa5e0453fcab562e3983decda4a0b1a9",
+    "development_component_balanced_m10_m10_case02.json": "151c6c3e8a80bfc30fc078b9cc41e515b25d607ec59e151daf73d9bf0c1f2231",
+    "development_component_balanced_m10_m10_case03.json": "d97a4cb40cdcc67ae8f0ca5cbc8b7cc1fa111e9843fb0284a68d0eedfcf9f09a",
+    "development_component_balanced_m10_m10_case04.json": "2209d3f5a580bb626ad1fe30d95562e344e2505c0517d1a2e3359f6b09d794f3",
+    "development_component_balanced_m10_m10_cases00_02_03.json": "d24c3f3483755c6ee05c00602525f67a8d721a7d614265d69863d27c8a6ea2df",
+    "development_component_balanced_m10_m10_cases01_04.json": "426aeca7ce9121bae124084f392b880bf0e970795f4fd5d5b8b6bf72f067c356",
+    "development_component_balanced_new_snr_mixed_only.json": "2a1eb5a354a4e10bbd4bd92abf65ca55b69b8d210b2f25c5b49e6a23c5f44647",
+    "development_localization_v5_mm_floor_probe.json": "ba1abe7a2dea848a1a3617df0276c124d81ff19488a302749ce6256bf05228af",
+    "development_localization_v5_new_positions.json": "54fd2126c34b251939f854e73f11901329e7efb24e3c5669ecc28260a100190b",
+    "development_manifest.json": "70f376c2c753e5f9d2adc22b067fdb2f0aba797f80bca7eb1d7951f884f3260e",
+    "development_sensor_balanced_m10_m10.json": "3432879db311544eb1eea7ae08a417e08bcb4842ae9f3a77cef0def5d87b00ad",
+    "development_sensor_balanced_m10_m10_case01.json": "3eca5db9ad2f00c53b552575ba19c839b2f65808f48eb8a7aac82dacf61cb026",
+    "development_sensor_balanced_m10_m10_case04.json": "ab27ff0034c958d2595b5e792d2ac587ad2eda14a4b9bc9410274d46a14bb8c7",
+    "development_sensor_balanced_m10_m10_cases00_01.json": "a8c752227fc448c6883d00d65be000d56279a696ee029c877908aecc5f1fe086",
+    "development_sensor_balanced_m10_m10_cases02_04.json": "dcd34ea081bddd70da7443e120bce290eec34e3a03eeb9f28234245d8f5834a0",
+    "lock.json": "eb1625ef1be95553ebf5094bf3c08a4df24bcb007038fb18fab31b4f3a685bc3",
+    "validation_component_balanced_v2_manifest.json": "68a405ace52d0c04a193c37198304682a0440a0007fed0433fe3a43e686d9aa7",
+    "validation_manifest.json": "2da4682fbd23b591a20e56fd9612f5324ecb9cf68ed744f85c51400d11759fb7"
+  },
+  "legacy_lock_sha256": "eb1625ef1be95553ebf5094bf3c08a4df24bcb007038fb18fab31b4f3a685bc3",
+  "legacy_lock_surface_center_count": 272,
+  "minimum_two_surface_distance_mm": 80.39872407718116,
+  "new_core_vs_history_patch_overlap_count": 0,
+  "new_surface_center_count": 55,
+  "new_surface_core_vertex_count": 326,
+  "new_surface_lh_rh": [
+    30,
+    25
+  ],
+  "new_surface_patch_vertex_count": 853,
+  "new_vs_history_patch_overlap_count": 282,
+  "protocol": "erp-v6-hierarchical-v1-formal-manifests",
+  "purpose": "freeze manifests only; no simulation, inverse, score, metric, calibration or validation run",
+  "replica_seed_roots": {
+    "gate": {
+      "check": 2026093002,
+      "fit": 2026093001
+    },
+    "surface": {
+      "check": 2026093004,
+      "fit": 2026093003
+    },
+    "validation": {
+      "check": 2026100102,
+      "fit": 2026100101
+    }
+  },
+  "sampling_limit": "The 21 validation cases contain 21 independent geometries, seven at each of three SNRs; they are a one-use engineering panel, not proof of a population error rate.",
+  "shared_fingerprint": "a97e6991fde1cedfac66857d5c07683c43af62f16ad19bfa31ea7199a9083556",
+  "snr_pairs_eeg_meg_db": [
+    [
+      -10,
+      -10
+    ],
+    [
+      -10,
+      20
+    ],
+    [
+      20,
+      -10
+    ]
+  ],
+  "surface_calibration": {
+    "case_and_noise_identity_unique": true,
+    "case_count": 57,
+    "configuration_count": 57,
+    "deep_geometry_count": 7,
+    "deep_geometry_new_relative_to_listed_history": [
+      13
+    ],
+    "deep_geometry_seen_in_listed_history": [
+      0,
+      1,
+      5,
+      7,
+      9,
+      10
+    ],
+    "deep_global": [
+      7498,
+      7499,
+      7503,
+      7505,
+      7507,
+      7508,
+      7511
+    ],
+    "deep_local": [
+      0,
+      1,
+      5,
+      7,
+      9,
+      10,
+      13
+    ],
+    "truth_use": "predeclared deep-only null for surface-presence calibration; true deep index must never enter inverse, localization candidate choice or score"
+  },
+  "truth_firewall": {
+    "generator_reads_result_metrics": false,
+    "generator_runs_simulation_or_inverse": false,
+    "truth_allowed_use": "posthoc metrics and predeclared null-label calibration only",
+    "validation_truth_may_be_read_by_algorithm": false
+  },
+  "validation": {
+    "case_count": 21,
+    "configuration_count": 21,
+    "configuration_repeats_across_snr": 0,
+    "deep_global": [
+      7512,
+      7501,
+      7500,
+      7513,
+      7509,
+      7506,
+      7510,
+      7502,
+      7504
+    ],
+    "deep_local": [
+      14,
+      3,
+      2,
+      15,
+      11,
+      8,
+      12,
+      4,
+      6
+    ],
+    "deep_new_relative_to_listed_history": true,
+    "h0_h1_per_snr": [
+      4,
+      3
+    ],
+    "surface_center_count": 27,
+    "surface_centers": [
+      21,
+      6046,
+      594,
+      6554,
+      3372,
+      6322,
+      839,
+      1944,
+      3980,
+      1929,
+      6686,
+      219,
+      5504,
+      1240,
+      6096,
+      558,
+      439,
+      6093,
+      1300,
+      7094,
+      564,
+      6809,
+      3396,
+      5256,
+      929,
+      115,
+      5194
+    ]
+  },
+  "validation_consumed_marker_sha256": "e748e5bc3348a028a1a4a6f3fe70173aadb5201ef9cb9bda3dfaa7fdcf3c3d65",
+  "within_new_panels_patch_overlap_count": 0
+}

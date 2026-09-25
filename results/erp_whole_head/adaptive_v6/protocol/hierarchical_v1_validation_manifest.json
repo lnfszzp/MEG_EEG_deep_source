@@ -1,0 +1,713 @@
+[
+  {
+    "case_id": "erp-v6-hierarchical-v1-validation-00-eeg-10-meg-10",
+    "case_number": 0,
+    "component_balance_revision": "formal_hierarchical_v1_untouched_validation",
+    "configuration_id": "erp-v6-hierarchical-v1-validation-geometry-00",
+    "configuration_kind": "single_surface",
+    "configuration_number": 0,
+    "correlation": 0.0,
+    "deep_index": null,
+    "deep_local": null,
+    "deep_surface_ratio": null,
+    "eeg_snr_db": -10,
+    "location": null,
+    "meg_snr_db": -10,
+    "pair_index": 0,
+    "panel": "erp_v6_hierarchical_v1_untouched_validation",
+    "replica_seed_roots": {
+      "check": 2026100102,
+      "fit": 2026100101
+    },
+    "replicate": 0,
+    "scenario": "surface_only",
+    "scenario_code": 0,
+    "seed": [
+      2026100101,
+      0,
+      0
+    ],
+    "snr_db": -10,
+    "surface_centers": [
+      21
+    ]
+  },
+  {
+    "case_id": "erp-v6-hierarchical-v1-validation-01-eeg-10-meg-10",
+    "case_number": 1,
+    "component_balance_revision": "formal_hierarchical_v1_untouched_validation",
+    "configuration_id": "erp-v6-hierarchical-v1-validation-geometry-01",
+    "configuration_kind": "single_surface",
+    "configuration_number": 1,
+    "correlation": 0.0,
+    "deep_index": null,
+    "deep_local": null,
+    "deep_surface_ratio": null,
+    "eeg_snr_db": -10,
+    "location": null,
+    "meg_snr_db": -10,
+    "pair_index": 0,
+    "panel": "erp_v6_hierarchical_v1_untouched_validation",
+    "replica_seed_roots": {
+      "check": 2026100102,
+      "fit": 2026100101
+    },
+    "replicate": 0,
+    "scenario": "surface_only",
+    "scenario_code": 0,
+    "seed": [
+      2026100101,
+      0,
+      1
+    ],
+    "snr_db": -10,
+    "surface_centers": [
+      6046
+    ]
+  },
+  {
+    "case_id": "erp-v6-hierarchical-v1-validation-02-eeg-10-meg-10",
+    "case_number": 2,
+    "component_balance_revision": "formal_hierarchical_v1_untouched_validation",
+    "configuration_id": "erp-v6-hierarchical-v1-validation-geometry-02",
+    "configuration_kind": "two_surface_only",
+    "configuration_number": 2,
+    "correlation": 0.0,
+    "deep_index": null,
+    "deep_local": null,
+    "deep_surface_ratio": null,
+    "eeg_snr_db": -10,
+    "location": null,
+    "meg_snr_db": -10,
+    "pair_index": 0,
+    "panel": "erp_v6_hierarchical_v1_untouched_validation",
+    "replica_seed_roots": {
+      "check": 2026100102,
+      "fit": 2026100101
+    },
+    "replicate": 0,
+    "scenario": "surface_only",
+    "scenario_code": 0,
+    "seed": [
+      2026100101,
+      0,
+      2
+    ],
+    "snr_db": -10,
+    "surface_centers": [
+      594,
+      6554
+    ],
+    "surface_component_sensor_balance": true
+  },
+  {
+    "case_id": "erp-v6-hierarchical-v1-validation-03-eeg-10-meg-10",
+    "case_number": 3,
+    "component_balance_revision": "formal_hierarchical_v1_untouched_validation",
+    "configuration_id": "erp-v6-hierarchical-v1-validation-geometry-03",
+    "configuration_kind": "two_surface_only",
+    "configuration_number": 3,
+    "correlation": 0.5,
+    "deep_index": null,
+    "deep_local": null,
+    "deep_surface_ratio": null,
+    "eeg_snr_db": -10,
+    "location": null,
+    "meg_snr_db": -10,
+    "pair_index": 0,
+    "panel": "erp_v6_hierarchical_v1_untouched_validation",
+    "replica_seed_roots": {
+      "check": 2026100102,
+      "fit": 2026100101
+    },
+    "replicate": 0,
+    "scenario": "surface_only",
+    "scenario_code": 0,
+    "seed": [
+      2026100101,
+      0,
+      3
+    ],
+    "snr_db": -10,
+    "surface_centers": [
+      3372,
+      6322
+    ],
+    "surface_component_sensor_balance": true
+  },
+  {
+    "case_id": "erp-v6-hierarchical-v1-validation-04-eeg-10-meg-10",
+    "case_number": 4,
+    "component_balance_revision": "formal_hierarchical_v1_untouched_validation",
+    "configuration_id": "erp-v6-hierarchical-v1-validation-geometry-04",
+    "configuration_kind": "deep_only",
+    "configuration_number": 4,
+    "correlation": 0.0,
+    "deep_index": 7512,
+    "deep_local": 14,
+    "deep_surface_ratio": null,
+    "eeg_snr_db": -10,
+    "location": null,
+    "meg_snr_db": -10,
+    "pair_index": 0,
+    "panel": "erp_v6_hierarchical_v1_untouched_validation",
+    "replica_seed_roots": {
+      "check": 2026100102,
+      "fit": 2026100101
+    },
+    "replicate": 0,
+    "scenario": "deep_only",
+    "scenario_code": 1,
+    "seed": [
+      2026100101,
+      0,
+      4
+    ],
+    "snr_db": -10,
+    "surface_centers": []
+  },
+  {
+    "case_id": "erp-v6-hierarchical-v1-validation-05-eeg-10-meg-10",
+    "case_number": 5,
+    "component_balance_revision": "formal_hierarchical_v1_untouched_validation",
+    "configuration_id": "erp-v6-hierarchical-v1-validation-geometry-05",
+    "configuration_kind": "deep_plus_surface",
+    "configuration_number": 5,
+    "correlation": 0.0,
+    "deep_index": 7501,
+    "deep_local": 3,
+    "deep_surface_ratio": 0.5,
+    "deep_surface_sensor_amplitude_ratio": 0.5,
+    "eeg_snr_db": -10,
+    "location": null,
+    "meg_snr_db": -10,
+    "pair_index": 0,
+    "panel": "erp_v6_hierarchical_v1_untouched_validation",
+    "replica_seed_roots": {
+      "check": 2026100102,
+      "fit": 2026100101
+    },
+    "replicate": 0,
+    "scenario": "deep_plus_surface",
+    "scenario_code": 2,
+    "seed": [
+      2026100101,
+      0,
+      5
+    ],
+    "snr_db": -10,
+    "surface_centers": [
+      839
+    ]
+  },
+  {
+    "case_id": "erp-v6-hierarchical-v1-validation-06-eeg-10-meg-10",
+    "case_number": 6,
+    "component_balance_revision": "formal_hierarchical_v1_untouched_validation",
+    "configuration_id": "erp-v6-hierarchical-v1-validation-geometry-06",
+    "configuration_kind": "deep_plus_two_surface",
+    "configuration_number": 6,
+    "correlation": 0.5,
+    "deep_index": 7500,
+    "deep_local": 2,
+    "deep_surface_ratio": 0.5,
+    "deep_surface_sensor_amplitude_ratio": 0.5,
+    "eeg_snr_db": -10,
+    "location": null,
+    "meg_snr_db": -10,
+    "pair_index": 0,
+    "panel": "erp_v6_hierarchical_v1_untouched_validation",
+    "replica_seed_roots": {
+      "check": 2026100102,
+      "fit": 2026100101
+    },
+    "replicate": 0,
+    "scenario": "deep_plus_two_surface",
+    "scenario_code": 3,
+    "seed": [
+      2026100101,
+      0,
+      6
+    ],
+    "snr_db": -10,
+    "surface_centers": [
+      1944,
+      3980
+    ],
+    "surface_component_sensor_balance": true
+  },
+  {
+    "case_id": "erp-v6-hierarchical-v1-validation-07-eeg-10-meg+20",
+    "case_number": 7,
+    "component_balance_revision": "formal_hierarchical_v1_untouched_validation",
+    "configuration_id": "erp-v6-hierarchical-v1-validation-geometry-07",
+    "configuration_kind": "single_surface",
+    "configuration_number": 7,
+    "correlation": 0.0,
+    "deep_index": null,
+    "deep_local": null,
+    "deep_surface_ratio": null,
+    "eeg_snr_db": -10,
+    "location": null,
+    "meg_snr_db": 20,
+    "pair_index": 1,
+    "panel": "erp_v6_hierarchical_v1_untouched_validation",
+    "replica_seed_roots": {
+      "check": 2026100102,
+      "fit": 2026100101
+    },
+    "replicate": 0,
+    "scenario": "surface_only",
+    "scenario_code": 0,
+    "seed": [
+      2026100101,
+      1,
+      7
+    ],
+    "snr_db": -10,
+    "surface_centers": [
+      1929
+    ]
+  },
+  {
+    "case_id": "erp-v6-hierarchical-v1-validation-08-eeg-10-meg+20",
+    "case_number": 8,
+    "component_balance_revision": "formal_hierarchical_v1_untouched_validation",
+    "configuration_id": "erp-v6-hierarchical-v1-validation-geometry-08",
+    "configuration_kind": "single_surface",
+    "configuration_number": 8,
+    "correlation": 0.0,
+    "deep_index": null,
+    "deep_local": null,
+    "deep_surface_ratio": null,
+    "eeg_snr_db": -10,
+    "location": null,
+    "meg_snr_db": 20,
+    "pair_index": 1,
+    "panel": "erp_v6_hierarchical_v1_untouched_validation",
+    "replica_seed_roots": {
+      "check": 2026100102,
+      "fit": 2026100101
+    },
+    "replicate": 0,
+    "scenario": "surface_only",
+    "scenario_code": 0,
+    "seed": [
+      2026100101,
+      1,
+      8
+    ],
+    "snr_db": -10,
+    "surface_centers": [
+      6686
+    ]
+  },
+  {
+    "case_id": "erp-v6-hierarchical-v1-validation-09-eeg-10-meg+20",
+    "case_number": 9,
+    "component_balance_revision": "formal_hierarchical_v1_untouched_validation",
+    "configuration_id": "erp-v6-hierarchical-v1-validation-geometry-09",
+    "configuration_kind": "two_surface_only",
+    "configuration_number": 9,
+    "correlation": 0.0,
+    "deep_index": null,
+    "deep_local": null,
+    "deep_surface_ratio": null,
+    "eeg_snr_db": -10,
+    "location": null,
+    "meg_snr_db": 20,
+    "pair_index": 1,
+    "panel": "erp_v6_hierarchical_v1_untouched_validation",
+    "replica_seed_roots": {
+      "check": 2026100102,
+      "fit": 2026100101
+    },
+    "replicate": 0,
+    "scenario": "surface_only",
+    "scenario_code": 0,
+    "seed": [
+      2026100101,
+      1,
+      9
+    ],
+    "snr_db": -10,
+    "surface_centers": [
+      219,
+      5504
+    ],
+    "surface_component_sensor_balance": true
+  },
+  {
+    "case_id": "erp-v6-hierarchical-v1-validation-10-eeg-10-meg+20",
+    "case_number": 10,
+    "component_balance_revision": "formal_hierarchical_v1_untouched_validation",
+    "configuration_id": "erp-v6-hierarchical-v1-validation-geometry-10",
+    "configuration_kind": "two_surface_only",
+    "configuration_number": 10,
+    "correlation": 0.5,
+    "deep_index": null,
+    "deep_local": null,
+    "deep_surface_ratio": null,
+    "eeg_snr_db": -10,
+    "location": null,
+    "meg_snr_db": 20,
+    "pair_index": 1,
+    "panel": "erp_v6_hierarchical_v1_untouched_validation",
+    "replica_seed_roots": {
+      "check": 2026100102,
+      "fit": 2026100101
+    },
+    "replicate": 0,
+    "scenario": "surface_only",
+    "scenario_code": 0,
+    "seed": [
+      2026100101,
+      1,
+      10
+    ],
+    "snr_db": -10,
+    "surface_centers": [
+      1240,
+      6096
+    ],
+    "surface_component_sensor_balance": true
+  },
+  {
+    "case_id": "erp-v6-hierarchical-v1-validation-11-eeg-10-meg+20",
+    "case_number": 11,
+    "component_balance_revision": "formal_hierarchical_v1_untouched_validation",
+    "configuration_id": "erp-v6-hierarchical-v1-validation-geometry-11",
+    "configuration_kind": "deep_only",
+    "configuration_number": 11,
+    "correlation": 0.0,
+    "deep_index": 7513,
+    "deep_local": 15,
+    "deep_surface_ratio": null,
+    "eeg_snr_db": -10,
+    "location": null,
+    "meg_snr_db": 20,
+    "pair_index": 1,
+    "panel": "erp_v6_hierarchical_v1_untouched_validation",
+    "replica_seed_roots": {
+      "check": 2026100102,
+      "fit": 2026100101
+    },
+    "replicate": 0,
+    "scenario": "deep_only",
+    "scenario_code": 1,
+    "seed": [
+      2026100101,
+      1,
+      11
+    ],
+    "snr_db": -10,
+    "surface_centers": []
+  },
+  {
+    "case_id": "erp-v6-hierarchical-v1-validation-12-eeg-10-meg+20",
+    "case_number": 12,
+    "component_balance_revision": "formal_hierarchical_v1_untouched_validation",
+    "configuration_id": "erp-v6-hierarchical-v1-validation-geometry-12",
+    "configuration_kind": "deep_plus_surface",
+    "configuration_number": 12,
+    "correlation": 0.0,
+    "deep_index": 7509,
+    "deep_local": 11,
+    "deep_surface_ratio": 0.5,
+    "deep_surface_sensor_amplitude_ratio": 0.5,
+    "eeg_snr_db": -10,
+    "location": null,
+    "meg_snr_db": 20,
+    "pair_index": 1,
+    "panel": "erp_v6_hierarchical_v1_untouched_validation",
+    "replica_seed_roots": {
+      "check": 2026100102,
+      "fit": 2026100101
+    },
+    "replicate": 0,
+    "scenario": "deep_plus_surface",
+    "scenario_code": 2,
+    "seed": [
+      2026100101,
+      1,
+      12
+    ],
+    "snr_db": -10,
+    "surface_centers": [
+      558
+    ]
+  },
+  {
+    "case_id": "erp-v6-hierarchical-v1-validation-13-eeg-10-meg+20",
+    "case_number": 13,
+    "component_balance_revision": "formal_hierarchical_v1_untouched_validation",
+    "configuration_id": "erp-v6-hierarchical-v1-validation-geometry-13",
+    "configuration_kind": "deep_plus_two_surface",
+    "configuration_number": 13,
+    "correlation": 0.5,
+    "deep_index": 7506,
+    "deep_local": 8,
+    "deep_surface_ratio": 0.5,
+    "deep_surface_sensor_amplitude_ratio": 0.5,
+    "eeg_snr_db": -10,
+    "location": null,
+    "meg_snr_db": 20,
+    "pair_index": 1,
+    "panel": "erp_v6_hierarchical_v1_untouched_validation",
+    "replica_seed_roots": {
+      "check": 2026100102,
+      "fit": 2026100101
+    },
+    "replicate": 0,
+    "scenario": "deep_plus_two_surface",
+    "scenario_code": 3,
+    "seed": [
+      2026100101,
+      1,
+      13
+    ],
+    "snr_db": -10,
+    "surface_centers": [
+      439,
+      6093
+    ],
+    "surface_component_sensor_balance": true
+  },
+  {
+    "case_id": "erp-v6-hierarchical-v1-validation-14-eeg+20-meg-10",
+    "case_number": 14,
+    "component_balance_revision": "formal_hierarchical_v1_untouched_validation",
+    "configuration_id": "erp-v6-hierarchical-v1-validation-geometry-14",
+    "configuration_kind": "single_surface",
+    "configuration_number": 14,
+    "correlation": 0.0,
+    "deep_index": null,
+    "deep_local": null,
+    "deep_surface_ratio": null,
+    "eeg_snr_db": 20,
+    "location": null,
+    "meg_snr_db": -10,
+    "pair_index": 2,
+    "panel": "erp_v6_hierarchical_v1_untouched_validation",
+    "replica_seed_roots": {
+      "check": 2026100102,
+      "fit": 2026100101
+    },
+    "replicate": 0,
+    "scenario": "surface_only",
+    "scenario_code": 0,
+    "seed": [
+      2026100101,
+      2,
+      14
+    ],
+    "snr_db": 20,
+    "surface_centers": [
+      1300
+    ]
+  },
+  {
+    "case_id": "erp-v6-hierarchical-v1-validation-15-eeg+20-meg-10",
+    "case_number": 15,
+    "component_balance_revision": "formal_hierarchical_v1_untouched_validation",
+    "configuration_id": "erp-v6-hierarchical-v1-validation-geometry-15",
+    "configuration_kind": "single_surface",
+    "configuration_number": 15,
+    "correlation": 0.0,
+    "deep_index": null,
+    "deep_local": null,
+    "deep_surface_ratio": null,
+    "eeg_snr_db": 20,
+    "location": null,
+    "meg_snr_db": -10,
+    "pair_index": 2,
+    "panel": "erp_v6_hierarchical_v1_untouched_validation",
+    "replica_seed_roots": {
+      "check": 2026100102,
+      "fit": 2026100101
+    },
+    "replicate": 0,
+    "scenario": "surface_only",
+    "scenario_code": 0,
+    "seed": [
+      2026100101,
+      2,
+      15
+    ],
+    "snr_db": 20,
+    "surface_centers": [
+      7094
+    ]
+  },
+  {
+    "case_id": "erp-v6-hierarchical-v1-validation-16-eeg+20-meg-10",
+    "case_number": 16,
+    "component_balance_revision": "formal_hierarchical_v1_untouched_validation",
+    "configuration_id": "erp-v6-hierarchical-v1-validation-geometry-16",
+    "configuration_kind": "two_surface_only",
+    "configuration_number": 16,
+    "correlation": 0.0,
+    "deep_index": null,
+    "deep_local": null,
+    "deep_surface_ratio": null,
+    "eeg_snr_db": 20,
+    "location": null,
+    "meg_snr_db": -10,
+    "pair_index": 2,
+    "panel": "erp_v6_hierarchical_v1_untouched_validation",
+    "replica_seed_roots": {
+      "check": 2026100102,
+      "fit": 2026100101
+    },
+    "replicate": 0,
+    "scenario": "surface_only",
+    "scenario_code": 0,
+    "seed": [
+      2026100101,
+      2,
+      16
+    ],
+    "snr_db": 20,
+    "surface_centers": [
+      564,
+      6809
+    ],
+    "surface_component_sensor_balance": true
+  },
+  {
+    "case_id": "erp-v6-hierarchical-v1-validation-17-eeg+20-meg-10",
+    "case_number": 17,
+    "component_balance_revision": "formal_hierarchical_v1_untouched_validation",
+    "configuration_id": "erp-v6-hierarchical-v1-validation-geometry-17",
+    "configuration_kind": "two_surface_only",
+    "configuration_number": 17,
+    "correlation": 0.5,
+    "deep_index": null,
+    "deep_local": null,
+    "deep_surface_ratio": null,
+    "eeg_snr_db": 20,
+    "location": null,
+    "meg_snr_db": -10,
+    "pair_index": 2,
+    "panel": "erp_v6_hierarchical_v1_untouched_validation",
+    "replica_seed_roots": {
+      "check": 2026100102,
+      "fit": 2026100101
+    },
+    "replicate": 0,
+    "scenario": "surface_only",
+    "scenario_code": 0,
+    "seed": [
+      2026100101,
+      2,
+      17
+    ],
+    "snr_db": 20,
+    "surface_centers": [
+      3396,
+      5256
+    ],
+    "surface_component_sensor_balance": true
+  },
+  {
+    "case_id": "erp-v6-hierarchical-v1-validation-18-eeg+20-meg-10",
+    "case_number": 18,
+    "component_balance_revision": "formal_hierarchical_v1_untouched_validation",
+    "configuration_id": "erp-v6-hierarchical-v1-validation-geometry-18",
+    "configuration_kind": "deep_only",
+    "configuration_number": 18,
+    "correlation": 0.0,
+    "deep_index": 7510,
+    "deep_local": 12,
+    "deep_surface_ratio": null,
+    "eeg_snr_db": 20,
+    "location": null,
+    "meg_snr_db": -10,
+    "pair_index": 2,
+    "panel": "erp_v6_hierarchical_v1_untouched_validation",
+    "replica_seed_roots": {
+      "check": 2026100102,
+      "fit": 2026100101
+    },
+    "replicate": 0,
+    "scenario": "deep_only",
+    "scenario_code": 1,
+    "seed": [
+      2026100101,
+      2,
+      18
+    ],
+    "snr_db": 20,
+    "surface_centers": []
+  },
+  {
+    "case_id": "erp-v6-hierarchical-v1-validation-19-eeg+20-meg-10",
+    "case_number": 19,
+    "component_balance_revision": "formal_hierarchical_v1_untouched_validation",
+    "configuration_id": "erp-v6-hierarchical-v1-validation-geometry-19",
+    "configuration_kind": "deep_plus_surface",
+    "configuration_number": 19,
+    "correlation": 0.0,
+    "deep_index": 7502,
+    "deep_local": 4,
+    "deep_surface_ratio": 0.5,
+    "deep_surface_sensor_amplitude_ratio": 0.5,
+    "eeg_snr_db": 20,
+    "location": null,
+    "meg_snr_db": -10,
+    "pair_index": 2,
+    "panel": "erp_v6_hierarchical_v1_untouched_validation",
+    "replica_seed_roots": {
+      "check": 2026100102,
+      "fit": 2026100101
+    },
+    "replicate": 0,
+    "scenario": "deep_plus_surface",
+    "scenario_code": 2,
+    "seed": [
+      2026100101,
+      2,
+      19
+    ],
+    "snr_db": 20,
+    "surface_centers": [
+      929
+    ]
+  },
+  {
+    "case_id": "erp-v6-hierarchical-v1-validation-20-eeg+20-meg-10",
+    "case_number": 20,
+    "component_balance_revision": "formal_hierarchical_v1_untouched_validation",
+    "configuration_id": "erp-v6-hierarchical-v1-validation-geometry-20",
+    "configuration_kind": "deep_plus_two_surface",
+    "configuration_number": 20,
+    "correlation": 0.5,
+    "deep_index": 7504,
+    "deep_local": 6,
+    "deep_surface_ratio": 0.5,
+    "deep_surface_sensor_amplitude_ratio": 0.5,
+    "eeg_snr_db": 20,
+    "location": null,
+    "meg_snr_db": -10,
+    "pair_index": 2,
+    "panel": "erp_v6_hierarchical_v1_untouched_validation",
+    "replica_seed_roots": {
+      "check": 2026100102,
+      "fit": 2026100101
+    },
+    "replicate": 0,
+    "scenario": "deep_plus_two_surface",
+    "scenario_code": 3,
+    "seed": [
+      2026100101,
+      2,
+      20
+    ],
+    "snr_db": 20,
+    "surface_centers": [
+      115,
+      5194
+    ],
+    "surface_component_sensor_balance": true
+  }
+]
