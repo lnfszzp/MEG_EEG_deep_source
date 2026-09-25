@@ -308,7 +308,7 @@ cases = json.loads(manifest.read_text(encoding="utf-8"))
 if not isinstance(cases, list) or len(cases) != expected_case_count or \
         len({case.get("case_id") for case in cases}) != len(cases):
     raise ValueError("manifest 病例数或 case_id 唯一性错误")
-seed_roots = manifest_lock.get("seed_roots")
+seed_roots = stage_lock.get("seed_roots")
 if not isinstance(seed_roots, dict) or set(seed_roots) != {"fit", "check"} or \
         seed_roots["check"] != seed_roots["fit"] + 1:
     raise ValueError("manifest 必须锁定相邻的 fit/check roots")
@@ -319,7 +319,7 @@ if any(case.get("seed", [None])[0] != seed_roots["fit"] or
 snr_pairs = [tuple(pair) for pair in execution_lock.get("snr_pairs_eeg_meg_db", [])]
 if len(snr_pairs) != 3 or len(set(snr_pairs)) != 3:
     raise ValueError("执行锁必须登记三个 EEG/MEG SNR 组合")
-cases_per_snr = manifest_lock.get("cases_per_snr")
+cases_per_snr = stage_lock.get("cases_per_snr")
 expected_manifest_shape = {
     "gate-calibration": {
         "cases_per_snr": 19, "configuration_count": 19,
@@ -334,15 +334,15 @@ expected_manifest_shape = {
         "configuration_repetition": 1,
     },
 }[stage]
-if any(manifest_lock.get(key) != value
+if any(stage_lock.get(key) != value
        for key, value in expected_manifest_shape.items()):
     raise ValueError("manifest 的病例/SNR/固定几何重复结构与正式协议不一致")
 if Counter((case.get("eeg_snr_db"), case.get("meg_snr_db")) for case in cases) != \
         Counter({pair: cases_per_snr for pair in snr_pairs}):
     raise ValueError("manifest 的 SNR 分层与执行锁不一致")
 configurations = Counter(case.get("configuration_id") for case in cases)
-if len(configurations) != manifest_lock.get("configuration_count") or \
-        any(value != manifest_lock.get("configuration_repetition")
+if len(configurations) != stage_lock.get("configuration_count") or \
+        any(value != stage_lock.get("configuration_repetition")
             for value in configurations.values()):
     raise ValueError("manifest 的配置独立性/重复结构与执行锁不一致")
 if stage == "gate-calibration" and not all(
@@ -359,7 +359,7 @@ if stage == "surface-calibration" and not all(
         and not case.get("surface_centers") for case in cases):
     raise ValueError("二级表层门校准必须是 57 个纯深层病例")
 if stage == "validation" and Counter(case.get("scenario") for case in cases) != \
-        Counter(manifest_lock.get("scenario_counts", {})):
+        Counter(stage_lock.get("scenario_counts", {})):
     raise ValueError("validation 场景组成与执行锁不一致")
 if stage == "validation" and any(
         Counter(case.get("scenario") for case in cases
@@ -467,7 +467,7 @@ for prior_stage in prior_stages:
             scores.shape != (57,) or not np.isfinite(scores).all() or \
             frozen.get("execution_lock_sha256") != lock_sha256 or \
             frozen.get("manifest_sha256") != prior_lock.get("manifest", {}).get("sha256") or \
-            frozen.get("seed_roots") != prior_lock.get("manifest", {}).get("seed_roots") or \
+            frozen.get("seed_roots") != prior_lock.get("seed_roots") or \
             frozen.get("case_ids") != prior_case_ids or len(set(prior_case_ids)) != 57 or \
             [row.get("case_id") for row in prior_evidence] != prior_case_ids or \
             any(row.get("status") != "ok" or row.get("all_converged") != "1"
