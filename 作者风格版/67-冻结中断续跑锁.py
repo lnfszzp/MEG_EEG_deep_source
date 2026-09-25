@@ -37,12 +37,20 @@ evidence_path = gate_output / "evidence.csv"
 metadata_snapshot = gate_output / "metadata.interrupted_prefix.json"
 evidence_snapshot = gate_output / "evidence.interrupted_prefix.csv"
 snapshot_paths = {"metadata": metadata_snapshot, "evidence": evidence_snapshot}
+expected_interruption_sha256 = {
+    "old_lock": "0daadb5a914f2d66f22574b468b22f0c77dc2f30b7f97f85efe3d1da70fd4f4d",
+    "marker": "165a3af287d20e5734d3dedcce4684d84b064e457d1527df4672de2dc431d74e",
+    "metadata": "228cf775d03d25d3a8e55e69fb8b76739e47f7bd4e50cfe866376cfd85f932a1",
+    "evidence": "ab000207af08467ac165aa85e182383955fb729b71ef3c21c20f13fcb6179860",
+    "recovery_runner": "fb8e2d7fe673847a363724da89cab69b88e4e7f2cd57260adbb08d752e481b9e",
+}
 
 
 # %% 2. 旧执行锁、marker、28例完整前缀和“尚无阈值/封存”必须逐项成立。
 old_lock_bytes = old_lock_path.read_bytes()
 old_lock_sha256 = hashlib.sha256(old_lock_bytes).hexdigest()
-if not old_lock_sidecar.is_file() or old_lock_sidecar.read_bytes() != \
+if old_lock_sha256 != expected_interruption_sha256["old_lock"] or \
+        not old_lock_sidecar.is_file() or old_lock_sidecar.read_bytes() != \
         f"{old_lock_sha256}  {old_lock_path.name}\n".encode("ascii"):
     raise ValueError("旧执行锁或旁车已变化")
 old_lock = json.loads(old_lock_bytes)
@@ -83,7 +91,8 @@ for later_stage in ("surface-calibration", "validation"):
 marker_bytes = marker_path.read_bytes()
 marker_sha256 = hashlib.sha256(marker_bytes).hexdigest()
 marker = json.loads(marker_bytes)
-if marker.get("stage") != "gate-calibration" or \
+if marker_sha256 != expected_interruption_sha256["marker"] or \
+        marker.get("stage") != "gate-calibration" or \
         marker.get("execution_lock_sha256") != old_lock_sha256 or \
         marker.get("manifest_sha256") != manifest_lock.get("sha256") or \
         Path(marker.get("output", "")).resolve() != gate_output.resolve() or \
@@ -93,7 +102,8 @@ if marker.get("stage") != "gate-calibration" or \
 metadata_bytes = metadata_path.read_bytes()
 metadata_sha256 = hashlib.sha256(metadata_bytes).hexdigest()
 metadata = json.loads(metadata_bytes)
-if metadata.get("stage") != "gate-calibration" or \
+if metadata_sha256 != expected_interruption_sha256["metadata"] or \
+        metadata.get("stage") != "gate-calibration" or \
         metadata.get("execution_lock_sha256") != old_lock_sha256 or \
         metadata.get("manifest_sha256") != manifest_lock.get("sha256") or \
         metadata.get("consumed_marker_sha256") != marker_sha256 or \
@@ -102,6 +112,8 @@ if metadata.get("stage") != "gate-calibration" or \
 
 evidence_bytes = evidence_path.read_bytes()
 evidence_sha256 = hashlib.sha256(evidence_bytes).hexdigest()
+if evidence_sha256 != expected_interruption_sha256["evidence"]:
+    raise ValueError("evidence 不是中断瞬间记录的原始字节")
 with evidence_path.open("r", encoding="utf-8-sig", newline="") as stream:
     evidence_reader = csv.DictReader(stream)
     evidence = list(evidence_reader)
@@ -164,6 +176,8 @@ for relative, expected in code_sha256.items():
         raise ValueError(f"除续跑runner外的冻结代码发生变化：{relative}")
 code_sha256[runner_relative] = hashlib.sha256(
     (root / runner_relative).read_bytes()).hexdigest()
+if code_sha256[runner_relative] != expected_interruption_sha256["recovery_runner"]:
+    raise ValueError("续跑 runner 不是完成安全审计后的冻结版本")
 code_sha256[generator_relative] = hashlib.sha256(
     (root / generator_relative).read_bytes()).hexdigest()
 tracked = subprocess.run(

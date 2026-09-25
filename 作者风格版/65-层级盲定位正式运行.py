@@ -77,6 +77,8 @@ if execution_lock.get("schema_version") != 1 or \
     raise ValueError("不是允许一次性正式运行的 hierarchical-v1 执行锁")
 if args.resume and execution_lock.get("status") != "interrupted_prefix_recovery_allowed":
     raise ValueError("--resume 只能使用显式绑定中断前缀的恢复执行锁")
+if args.resume and (not isinstance(recovery, dict) or recovery.get("stage") != stage):
+    raise ValueError("--resume 的 stage 必须与恢复锁冻结的中断 stage 完全一致")
 
 manifests = execution_lock.get("manifests", {})
 if set(manifests) != {"gate-calibration", "surface-calibration", "validation"}:
@@ -532,8 +534,6 @@ if not marker_path.parent.is_dir():
     raise FileNotFoundError(f"consumed marker 目录不存在：{marker_path.parent}")
 resumed_evidence_rows = []
 if args.resume:
-    if stage == "validation":
-        raise ValueError("当前恢复锁只允许校准阶段严格前缀续跑")
     if not marker_path.is_file():
         raise FileNotFoundError(f"--resume 缺少原 consumed marker：{marker_path}")
     forbidden_final = [
@@ -578,27 +578,41 @@ if args.resume:
                 case["case_id"] for case in cases[:prefix_count]]:
         raise ValueError("evidence 必须是 manifest 的非空严格完整前缀")
     if recovery_stage:
-        if prefix_count < int(recovery.get("completed_prefix_count", -1)) or \
+        frozen_count = int(recovery.get("completed_prefix_count", -1))
+        if prefix_count != frozen_count or \
+                int(recovery.get("remaining_case_count", -1)) != len(cases) - frozen_count or \
                 marker_sha256 != recovery.get("consumed_marker_sha256"):
-            raise ValueError("当前前缀短于恢复锁或 marker 已变化")
+            raise ValueError("当前前缀长度/剩余病例数或 marker 与恢复锁不一致")
+        expected_snapshot_paths = {
+            "metadata": output / "metadata.interrupted_prefix.json",
+            "evidence": output / "evidence.interrupted_prefix.csv",
+        }
+        if set(recovery.get("snapshots", {})) != set(expected_snapshot_paths):
+            raise ValueError("恢复锁必须且只能登记 metadata/evidence 两份中断快照")
         for snapshot_name in ("metadata", "evidence"):
             snapshot = recovery.get("snapshots", {}).get(snapshot_name, {})
             snapshot_path = Path(snapshot.get("path", ""))
             snapshot_path = snapshot_path if snapshot_path.is_absolute() else root / snapshot_path
-            if not snapshot_path.is_file() or hashlib.sha256(
+            if snapshot_path.resolve() != expected_snapshot_paths[snapshot_name].resolve() or \
+                    not snapshot_path.is_file() or hashlib.sha256(
                     snapshot_path.read_bytes()).hexdigest() != snapshot.get("sha256"):
                 raise ValueError(f"中断快照已变化：{snapshot_name}")
         snapshot_path = Path(recovery["snapshots"]["evidence"]["path"])
         snapshot_path = snapshot_path if snapshot_path.is_absolute() else root / snapshot_path
         with snapshot_path.open("r", encoding="utf-8-sig", newline="") as stream:
             frozen_prefix = list(csv.DictReader(stream))
-        frozen_count = int(recovery["completed_prefix_count"])
-        if raw_evidence_rows[:frozen_count] != frozen_prefix:
+        if len(frozen_prefix) != frozen_count or raw_evidence_rows != frozen_prefix:
             raise ValueError("当前 evidence 不再包含恢复锁冻结的原始前缀")
-        for case_id, specification in recovery.get("case_details", {}).items():
+        expected_detail_ids = {case["case_id"] for case in cases[:frozen_count]}
+        case_details = recovery.get("case_details", {})
+        if set(case_details) != expected_detail_ids:
+            raise ValueError("恢复锁必须逐例登记完整中断前缀的详情哈希")
+        for case_id, specification in case_details.items():
             detail_path = Path(specification.get("path", ""))
             detail_path = detail_path if detail_path.is_absolute() else root / detail_path
-            if not detail_path.is_file() or hashlib.sha256(
+            expected_detail_path = output / f"{case_id}.json"
+            if detail_path.resolve() != expected_detail_path.resolve() or \
+                    not detail_path.is_file() or hashlib.sha256(
                     detail_path.read_bytes()).hexdigest() != specification.get("sha256"):
                 raise ValueError(f"中断前病例详情已变化：{case_id}")
     existing_metadata_path = output / "metadata.json"
