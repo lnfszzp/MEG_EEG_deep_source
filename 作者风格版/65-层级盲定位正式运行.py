@@ -2,10 +2,12 @@
 
 # %% 1. 命令行、执行锁和不可变输入。正式运行没有病例筛选参数。
 import argparse
+import atexit
 from collections import Counter
 import csv
 import hashlib
 import json
+import msvcrt
 import os
 from pathlib import Path
 import sys
@@ -107,6 +109,22 @@ locked_output = Path(stage_lock.get("output_dir", ""))
 locked_output = locked_output if locked_output.is_absolute() else root / locked_output
 if output != locked_output.resolve():
     raise ValueError(f"--output 必须与执行锁一致：{locked_output.resolve()}")
+
+run_lock_path = output.with_name(output.name + ".run.lock")
+run_lock_stream = run_lock_path.open("a+b")
+run_lock_stream.seek(0, os.SEEK_END)
+if run_lock_stream.tell() == 0:
+    run_lock_stream.write(b"\0")
+    run_lock_stream.flush()
+run_lock_stream.seek(0)
+try:
+    msvcrt.locking(run_lock_stream.fileno(), msvcrt.LK_NBLCK, 1)
+except OSError as error:
+    run_lock_stream.close()
+    raise RuntimeError(f"同一正式 stage 已有进程运行：{run_lock_path}") from error
+atexit.register(run_lock_path.unlink, missing_ok=True)
+atexit.register(run_lock_stream.close)
+atexit.register(msvcrt.locking, run_lock_stream.fileno(), msvcrt.LK_UNLCK, 1)
 
 for locked_stage_name, locked_stage in manifests.items():
     locked_manifest = locked_stage.get("manifest", {})

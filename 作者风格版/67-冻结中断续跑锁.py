@@ -42,7 +42,7 @@ expected_interruption_sha256 = {
     "marker": "165a3af287d20e5734d3dedcce4684d84b064e457d1527df4672de2dc431d74e",
     "metadata": "228cf775d03d25d3a8e55e69fb8b76739e47f7bd4e50cfe866376cfd85f932a1",
     "evidence": "ab000207af08467ac165aa85e182383955fb729b71ef3c21c20f13fcb6179860",
-    "recovery_runner": "fb8e2d7fe673847a363724da89cab69b88e4e7f2cd57260adbb08d752e481b9e",
+    "recovery_runner": "a916a752d9c61f48bb2b79b908c7530f1fe5dc894e0b2f367afa96480690c3a0",
 }
 
 
@@ -165,6 +165,16 @@ git_head_result = subprocess.run(
 if git_head_result.returncode:
     raise RuntimeError("无法解析当前Git HEAD")
 git_head = git_head_result.stdout.strip()
+if args.check:
+    if not output_path.is_file():
+        raise FileNotFoundError(f"缺少待核验的恢复锁：{output_path}")
+    checked_lock = json.loads(output_path.read_bytes())
+    git_head = checked_lock.get("repository", {}).get("git_head", "")
+    ancestor = subprocess.run(
+        ["git", "merge-base", "--is-ancestor", git_head, "HEAD"], cwd=root,
+        capture_output=True)
+    if not git_head or ancestor.returncode:
+        raise ValueError("恢复锁记录的生成提交不存在或不是当前HEAD的祖先")
 
 runner_relative = "作者风格版/65-层级盲定位正式运行.py"
 generator_relative = "作者风格版/67-冻结中断续跑锁.py"
