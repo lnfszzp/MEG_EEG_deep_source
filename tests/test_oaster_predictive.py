@@ -110,6 +110,14 @@ def test_prediction_sign_basis_rotation_and_baseline_only_scale(monkeypatch):
                  + np.sqrt(positive_scores[0] * positive_scores[1]))
     assert modality_info["snr_blind_consensus_score"] == pytest.approx(
         consensus / (1 + max(modality_info["modality_response_excess_ratios"])) ** .25)
+    response_scale = 1 + np.asarray(modality_info["modality_response_excess_ratios"])
+    balance = response_scale.min() / response_scale.max()
+    eeg_weight = .5 + .25 * balance
+    normalized = np.asarray(modality_info["modality_noise_scores"]) / np.sqrt(response_scale)
+    assert modality_info["snr_blind_reliability_score"] == pytest.approx(
+        eeg_weight * normalized[0] + (1 - eeg_weight) * normalized[1])
+    assert modality_info["snr_blind_reliability_eeg_weight"] == pytest.approx(eeg_weight)
+    assert modality_info["snr_blind_reliability_balance"] == pytest.approx(balance)
     assert modality_info["modality_scoring_weights"] == "none_after_whitening"
     assert np.allclose(modality_info["modality_noise_scores"],
                        reweighted_modality_info["modality_noise_scores"])
@@ -233,3 +241,7 @@ def test_malformed_observations_are_rejected_before_inverse():
                 finite_confirmation, np.eye(3), np.zeros((3, 30)), np.zeros((3, 30)),
                 baseline=baseline, active=active, channel_weights=np.ones(3),
                 modality_sizes=sizes)
+    for scores, excess in (([1.], [0.]), ([1., np.nan], [0., 0.]),
+                           ([1., 2.], [0., -1.])):
+        with pytest.raises(ValueError):
+            inverse.snr_blind_reliability_score(scores, excess)

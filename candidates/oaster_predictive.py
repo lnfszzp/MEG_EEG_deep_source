@@ -32,6 +32,24 @@ def snr_blind_consensus_score(modality_scores, modality_response_excess_ratios):
     return float(score)
 
 
+def snr_blind_reliability_score(modality_scores, modality_response_excess_ratios):
+    """Fuse energy-normalized EEG/MEG gains with blind reliability balance."""
+    scores = np.asarray(modality_scores, float)
+    response_excess = np.asarray(modality_response_excess_ratios, float)
+    if (scores.shape != (2,) or response_excess.shape != (2,)
+            or not np.isfinite(scores).all() or not np.isfinite(response_excess).all()
+            or np.any(response_excess < 0)):
+        raise ValueError("SNR-blind reliability requires two finite EEG/MEG scores and nonnegative excess ratios")
+    response_scale = 1. + response_excess
+    normalized = scores / np.sqrt(response_scale)
+    balance = float(response_scale.min() / response_scale.max())
+    eeg_weight = .5 + .25 * balance
+    score = float(eeg_weight * normalized[0] + (1. - eeg_weight) * normalized[1])
+    if not np.isfinite(score):
+        raise ValueError("SNR-blind reliability score is nonfinite")
+    return score, float(eeg_weight), balance
+
+
 def _validate_observations(data, gain, baseline, active, channel_weights):
     data, gain = np.asarray(data, float), np.asarray(gain, float)
     baseline, active = np.asarray(baseline), np.asarray(active)
@@ -167,6 +185,9 @@ def score_predictive_models(confirmation, gain, null_estimate, full_estimate, *,
     conjunctive_score = float(min(modality_scores))
     snr_blind_score = (snr_blind_consensus_score(modality_scores, modality_response_excess)
                        if len(modality_scores) == 2 else None)
+    reliability_score, reliability_eeg_weight, reliability_balance = (
+        snr_blind_reliability_score(modality_scores, modality_response_excess)
+        if len(modality_scores) == 2 else (None, None, None))
     return float(score), dict(**basis_info, null_loss=null_loss, full_loss=full_loss,
         loss_improvement=null_loss - full_loss, expected_response_noise_energy=expected_noise,
         null_excess_loss=null_loss - expected_noise,
@@ -187,6 +208,13 @@ def score_predictive_models(confirmation, gain, null_estimate, full_estimate, *,
             "[min(g_EEG,g_MEG)+sqrt(max(g_EEG,0)*max(g_MEG,0))] / "
             "[1+max(active_response_energy/noise_expectation-1,0)]^0.25"
             if snr_blind_score is not None else None),
+        snr_blind_reliability_score=reliability_score,
+        snr_blind_reliability_eeg_weight=reliability_eeg_weight,
+        snr_blind_reliability_balance=reliability_balance,
+        snr_blind_reliability_rule=(
+            "h_m=g_m/sqrt(1+q_m); b=min(1+q_m)/max(1+q_m); "
+            "w_EEG=0.5+0.25*b; score=w_EEG*h_EEG+(1-w_EEG)*h_MEG"
+            if reliability_score is not None else None),
         modality_scoring_weights="none_after_whitening",
         confirmation_refitted=False, score_clipped=False)
 
