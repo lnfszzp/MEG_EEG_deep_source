@@ -105,6 +105,11 @@ def test_prediction_sign_basis_rotation_and_baseline_only_scale(monkeypatch):
     assert len(modality_info["modality_noise_scores"]) == 2
     assert modality_info["conjunctive_modality_score"] == min(
         modality_info["modality_noise_scores"])
+    positive_scores = np.maximum(modality_info["modality_noise_scores"], 0)
+    consensus = (min(modality_info["modality_noise_scores"])
+                 + np.sqrt(positive_scores[0] * positive_scores[1]))
+    assert modality_info["snr_blind_consensus_score"] == pytest.approx(
+        consensus / (1 + max(modality_info["modality_response_excess_ratios"])) ** .25)
     assert modality_info["modality_scoring_weights"] == "none_after_whitening"
     assert np.allclose(modality_info["modality_noise_scores"],
                        reweighted_modality_info["modality_noise_scores"])
@@ -119,6 +124,11 @@ def test_prediction_sign_basis_rotation_and_baseline_only_scale(monkeypatch):
         assert modality_info["modality_null_losses"][index] == pytest.approx(manual_null)
         assert modality_info["modality_full_losses"][index] == pytest.approx(manual_full)
         assert modality_info["modality_expected_response_noise_energy"][index] == pytest.approx(manual_noise)
+        manual_response_energy = np.sum(response ** 2)
+        assert modality_info["modality_response_energy"][index] == pytest.approx(
+            manual_response_energy)
+        assert modality_info["modality_response_excess_ratios"][index] == pytest.approx(
+            max(manual_response_energy / manual_noise - 1, 0))
         assert modality_info["modality_noise_scores"][index] == pytest.approx(
             (manual_null - manual_full) / manual_noise)
     changed = confirmation.copy()

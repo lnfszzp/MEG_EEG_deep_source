@@ -16,6 +16,22 @@ from candidates.oaster_balanced import (
 )
 
 
+def snr_blind_consensus_score(modality_scores, modality_response_excess_ratios):
+    """Fuse EEG/MEG gains after blind active-to-baseline energy normalization."""
+    scores = np.asarray(modality_scores, float)
+    response_excess = np.asarray(modality_response_excess_ratios, float)
+    if (scores.shape != (2,) or response_excess.shape != (2,)
+            or not np.isfinite(scores).all() or not np.isfinite(response_excess).all()
+            or np.any(response_excess < 0)):
+        raise ValueError("SNR-blind consensus requires two finite EEG/MEG scores and nonnegative excess ratios")
+    positive = np.maximum(scores, 0.)
+    consensus = float(scores.min() + np.sqrt(positive[0]) * np.sqrt(positive[1]))
+    score = consensus / (1. + float(response_excess.max())) ** .25
+    if not np.isfinite(score):
+        raise ValueError("SNR-blind consensus score is nonfinite")
+    return float(score)
+
+
 def _validate_observations(data, gain, baseline, active, channel_weights):
     data, gain = np.asarray(data, float), np.asarray(gain, float)
     baseline, active = np.asarray(baseline), np.asarray(active)
@@ -128,6 +144,7 @@ def score_predictive_models(confirmation, gain, null_estimate, full_estimate, *,
         raise ValueError("modality_sizes must be positive integer blocks covering all channels")
     source_modes = null_estimate @ basis.T, full_estimate @ basis.T
     modality_scores, modality_null_losses, modality_full_losses, modality_noise = [], [], [], []
+    modality_response_energy, modality_response_excess = [], []
     start = 0
     for size in raw_sizes:
         block = slice(start, start + int(size))
@@ -143,8 +160,13 @@ def score_predictive_models(confirmation, gain, null_estimate, full_estimate, *,
         modality_full_losses.append(block_full)
         modality_noise.append(block_noise)
         modality_scores.append((block_null - block_full) / block_noise)
+        response_energy = float(np.sum(raw_response ** 2))
+        modality_response_energy.append(response_energy)
+        modality_response_excess.append(max(response_energy / block_noise - 1., 0.))
         start += int(size)
     conjunctive_score = float(min(modality_scores))
+    snr_blind_score = (snr_blind_consensus_score(modality_scores, modality_response_excess)
+                       if len(modality_scores) == 2 else None)
     return float(score), dict(**basis_info, null_loss=null_loss, full_loss=full_loss,
         loss_improvement=null_loss - full_loss, expected_response_noise_energy=expected_noise,
         null_excess_loss=null_loss - expected_noise,
@@ -156,8 +178,15 @@ def score_predictive_models(confirmation, gain, null_estimate, full_estimate, *,
         modality_sizes=raw_sizes.astype(int).tolist(),
         modality_null_losses=modality_null_losses, modality_full_losses=modality_full_losses,
         modality_expected_response_noise_energy=modality_noise,
+        modality_response_energy=modality_response_energy,
+        modality_response_excess_ratios=modality_response_excess,
         modality_noise_scores=modality_scores, conjunctive_modality_score=conjunctive_score,
         conjunctive_rule="min modality held-out improvement / modality baseline-noise expectation",
+        snr_blind_consensus_score=snr_blind_score,
+        snr_blind_consensus_rule=(
+            "[min(g_EEG,g_MEG)+sqrt(max(g_EEG,0)*max(g_MEG,0))] / "
+            "[1+max(active_response_energy/noise_expectation-1,0)]^0.25"
+            if snr_blind_score is not None else None),
         modality_scoring_weights="none_after_whitening",
         confirmation_refitted=False, score_clipped=False)
 

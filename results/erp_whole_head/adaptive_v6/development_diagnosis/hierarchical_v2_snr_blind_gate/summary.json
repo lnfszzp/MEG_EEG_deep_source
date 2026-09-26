@@ -1,0 +1,61 @@
+{
+  "complete": true,
+  "phase": "development",
+  "formal_claim_allowed": false,
+  "retired_v1_gate_case_count": 57,
+  "retired_v1_deep_case_count_valid": 56,
+  "failed_input_cases": [
+    "erp-v6-hierarchical-v1-surface-calibration-055-eeg+20-meg-10"
+  ],
+  "validation_results_read": false,
+  "true_snr_used_by_score": false,
+  "old_fixed_3_to_1_An_auc": 0.9649122807017545,
+  "cross_modal_consensus_An_auc": 0.9849624060150376,
+  "snr_blind_consensus_An_auc": 0.9890350877192982,
+  "development_threshold_second_largest_H0": 0.017744873824928526,
+  "H0_above_development_threshold": 1,
+  "H1_above_development_threshold": 54,
+  "H1_valid_count": 56,
+  "snr_summary_posthoc": [
+    {
+      "eeg_snr_db_posthoc": -10,
+      "meg_snr_db_posthoc": -10,
+      "h0_above_threshold": 1,
+      "h0_count": 19,
+      "h1_detected": 18,
+      "h1_count": 19
+    },
+    {
+      "eeg_snr_db_posthoc": -10,
+      "meg_snr_db_posthoc": 20,
+      "h0_above_threshold": 0,
+      "h0_count": 19,
+      "h1_detected": 18,
+      "h1_count": 19
+    },
+    {
+      "eeg_snr_db_posthoc": 20,
+      "meg_snr_db_posthoc": -10,
+      "h0_above_threshold": 0,
+      "h0_count": 19,
+      "h1_detected": 18,
+      "h1_count": 18
+    }
+  ],
+  "selected_formula": "[min(g_EEG,g_MEG)+sqrt(max(g_EEG,0)*max(g_MEG,0))] / [1+max(active_response_energy/noise_expectation-1,0)]^0.25",
+  "selection_status": "chosen on retired v1 calibration data; fresh calibration required",
+  "solver_fix_for_v2": {
+    "outer_iterations": 80,
+    "old_outer_iterations": 40,
+    "tolerance_unchanged": 0.001,
+    "early_stopping_preserved": true,
+    "case055_replayed_converged_outer_iteration": 42
+  },
+  "wall_seconds": 654.2744502000278,
+  "input_sha256": {
+    "results\\erp_whole_head\\adaptive_v6\\protocol\\hierarchical_v1_gate_calibration_manifest.json": "46b7b83998792690087241bed802396418e2cb0b192b62c93d8ceb114c7fbde3",
+    "results\\erp_whole_head\\adaptive_v6\\formal_hierarchical_v1_gate_calibration\\evidence.csv": "d3479cd877c1a528199002ca7bdcec261a3b7d521184c3b80e81eda5de6742d4",
+    "results\\erp_whole_head\\adaptive_v6\\protocol\\hierarchical_v1_surface_calibration_manifest.json": "2aa6154471c019e55968995a98cd89602c60ba24ef9d9bcb3b3ce45f5fcc28a0",
+    "results\\erp_whole_head\\adaptive_v6\\formal_hierarchical_v1_surface_calibration\\evidence.csv": "94c48087922d1f2b12252df1173cc6d0248eb79f3dbd7094ef98981b85f8e3e6"
+  }
+}
