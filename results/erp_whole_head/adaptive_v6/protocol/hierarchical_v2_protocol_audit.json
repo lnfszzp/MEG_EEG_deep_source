@@ -1,0 +1,281 @@
+{
+  "auxiliary_input_sha256": {
+    "results/erp_whole_head/adaptive_v6/protocol/hierarchical_v1_protocol_audit.json": "b0220a612e5b5d8b905dfcb91085075cb6850bd2fddc5c45146f70d765ffdecd",
+    "results/erp_whole_head/adaptive_v6/protocol/hierarchical_v1_validation_manifest.json.sha256": "0e2292abde1b6be5c347c28ff63b44c7cac26a1bff7833b6cab5f161efde646a",
+    "results/erp_whole_head/adaptive_v6/protocol/lock.json": "eb1625ef1be95553ebf5094bf3c08a4df24bcb007038fb18fab31b4f3a685bc3"
+  },
+  "development_selection_summary_read": true,
+  "formal_results_present": false,
+  "gate_calibration": {
+    "calibration_claim": "pooled fixed-design engineering calibration across 19 geometries and three SNRs; not an iid population conformal guarantee",
+    "case_count": 57,
+    "centers_inside_any_historical_patch_support": 0,
+    "configuration_count": 19,
+    "configuration_repetition_across_snr": 3,
+    "double_per_snr": 9,
+    "eligible_centers_lh_rh_before_selection": [
+      475,
+      520
+    ],
+    "full_all_history_patch_novelty_claim": false,
+    "gate_patch_vs_old_nonvalidation_patch_overlap_vertex_count": 354,
+    "gate_patch_vs_protected_validation_patch_overlap_count": 0,
+    "minimum_two_surface_distance_mm": 77.39449772083444,
+    "old_nonvalidation_patch_fringe_overlap_allowed": true,
+    "single_per_snr": 10,
+    "surface_center_count": 28,
+    "surface_centers": [
+      5159,
+      108,
+      3511,
+      2554,
+      3032,
+      5003,
+      981,
+      681,
+      3449,
+      3074,
+      4527,
+      5806,
+      2849,
+      2380,
+      2456,
+      5027,
+      5736,
+      5145,
+      548,
+      3507,
+      3974,
+      6438,
+      3773,
+      6083,
+      2951,
+      642,
+      3739,
+      7193
+    ],
+    "surface_lh_rh": [
+      15,
+      13
+    ],
+    "within_v2_gate_patch_overlap_count": 0
+  },
+  "geometry_domains": {
+    "gate": "ERP-v6-hierarchical-v2-fresh-gate-calibration-geometry-v1",
+    "surface": "ERP-v6-hierarchical-v2-fresh-surface-calibration-assignment-v1"
+  },
+  "geometry_seed_sha256": {
+    "gate": "ab8cd913e59fca8a44f1d24d71be0cec43a8f7555a6a11c784d0c533cdbf48e6",
+    "surface": "01cd8a94583eb71924292850a9f629fb15062d833a22f19447092e23914a28e1"
+  },
+  "geometry_seed_uint64": {
+    "gate": 10000981728758959275,
+    "surface": 1853018321856417025
+  },
+  "history_manifest_sha256": {
+    "calibration_component_balanced_v2_manifest.json": "4d091c2cbc12d1ec2165ff27e754bf1e3d540c2b4f00c89d3967ac6a3e89eefb",
+    "calibration_component_balanced_v3_manifest.json": "bb9f1a7d949efa6ba91dc8aceff604edca79752ecfb507134d06e4ccf56421d2",
+    "calibration_component_balanced_v4_manifest.json": "09dde6a2c14ceeeaa4a3185d218f8017bc6141b37e4172d19f6f85c22cf73ff1",
+    "calibration_manifest.json": "459b7b983b9ad4bbbc8b84e3d0a494e8466dbe093a32af02b78e7d871119a313",
+    "development_component_balanced_all_snr.json": "c64d02429fd5e9e9c2a7831a36b7f86c2a0fe614ecb2c837fa0284fe96fb5425",
+    "development_component_balanced_all_snr_mixed_only.json": "42d1001f3f617b0094dea459a70ea6cb50fefabac0b9daaf88958bb62cee1b56",
+    "development_component_balanced_m10_m10.json": "cab84749b2c6b4ac0c555fe34b2035fe1b88af705181b632be94eee460ee9981",
+    "development_component_balanced_m10_m10_case00.json": "7ee2301fb88987206c544b3a88a6a3058347b0f11f268a8260dc357b59089f10",
+    "development_component_balanced_m10_m10_case01.json": "9b52b8d695150e7db3db7bfd171361e1aa5e0453fcab562e3983decda4a0b1a9",
+    "development_component_balanced_m10_m10_case02.json": "151c6c3e8a80bfc30fc078b9cc41e515b25d607ec59e151daf73d9bf0c1f2231",
+    "development_component_balanced_m10_m10_case03.json": "d97a4cb40cdcc67ae8f0ca5cbc8b7cc1fa111e9843fb0284a68d0eedfcf9f09a",
+    "development_component_balanced_m10_m10_case04.json": "2209d3f5a580bb626ad1fe30d95562e344e2505c0517d1a2e3359f6b09d794f3",
+    "development_component_balanced_m10_m10_cases00_02_03.json": "d24c3f3483755c6ee05c00602525f67a8d721a7d614265d69863d27c8a6ea2df",
+    "development_component_balanced_m10_m10_cases01_04.json": "426aeca7ce9121bae124084f392b880bf0e970795f4fd5d5b8b6bf72f067c356",
+    "development_component_balanced_new_snr_mixed_only.json": "2a1eb5a354a4e10bbd4bd92abf65ca55b69b8d210b2f25c5b49e6a23c5f44647",
+    "development_localization_v5_mm_floor_probe.json": "ba1abe7a2dea848a1a3617df0276c124d81ff19488a302749ce6256bf05228af",
+    "development_localization_v5_new_positions.json": "54fd2126c34b251939f854e73f11901329e7efb24e3c5669ecc28260a100190b",
+    "development_manifest.json": "70f376c2c753e5f9d2adc22b067fdb2f0aba797f80bca7eb1d7951f884f3260e",
+    "development_sensor_balanced_m10_m10.json": "3432879db311544eb1eea7ae08a417e08bcb4842ae9f3a77cef0def5d87b00ad",
+    "development_sensor_balanced_m10_m10_case01.json": "3eca5db9ad2f00c53b552575ba19c839b2f65808f48eb8a7aac82dacf61cb026",
+    "development_sensor_balanced_m10_m10_case04.json": "ab27ff0034c958d2595b5e792d2ac587ad2eda14a4b9bc9410274d46a14bb8c7",
+    "development_sensor_balanced_m10_m10_cases00_01.json": "a8c752227fc448c6883d00d65be000d56279a696ee029c877908aecc5f1fe086",
+    "development_sensor_balanced_m10_m10_cases02_04.json": "dcd34ea081bddd70da7443e120bce290eec34e3a03eeb9f28234245d8f5834a0",
+    "hierarchical_v1_gate_calibration_manifest.json": "46b7b83998792690087241bed802396418e2cb0b192b62c93d8ceb114c7fbde3",
+    "hierarchical_v1_surface_calibration_manifest.json": "2aa6154471c019e55968995a98cd89602c60ba24ef9d9bcb3b3ce45f5fcc28a0",
+    "hierarchical_v1_validation_manifest.json": "6ef97341434bca99bc7c75d205c8dc6d3815b3260ca3c62c10c615ce2efb0eff",
+    "validation_component_balanced_v2_manifest.json": "68a405ace52d0c04a193c37198304682a0440a0007fed0433fe3a43e686d9aa7",
+    "validation_manifest.json": "2da4682fbd23b591a20e56fd9612f5324ecb9cf68ed744f85c51400d11759fb7"
+  },
+  "input_sha256": {
+    "blind_reliability_selection": {
+      "path": "results/erp_whole_head/adaptive_v6/development_diagnosis/hierarchical_v2_blind_reliability_fusion/summary.json",
+      "sha256": "5c2a7e535a50e882d130cddf0afccebe3c873fc0b7f8c2f6651482eb3195bba8"
+    },
+    "manifest_generator_71": {
+      "path": "作者风格版/71-层级盲定位v2正式清单.py",
+      "sha256": "4fda4363198f3d7bf67e142ec99dcb2967b0b94b7a4cff309121f5caa259e3f4"
+    },
+    "planned_formal_runner_72": {
+      "path": "作者风格版/72-层级盲定位v2正式运行.py",
+      "sha256": "5dbaad7ce3534e08599346326c9cd7984e4f784141deaced4648b74bc44e5e62"
+    },
+    "predictive_score_helper": {
+      "path": "candidates/oaster_predictive.py",
+      "sha256": "575a660382fa0330720d9e1d3bcd253f08a3727c4358b7d919a67e33812f1775"
+    },
+    "protocol_geometry_helper": {
+      "path": "benchmark/protocol.py",
+      "sha256": "26f816e0530cf6f36445b7222fc5db3d0ce216f4ec089f0a2779c65e1c4c8d4a"
+    },
+    "shared_forward_loader": {
+      "path": "run_erp_whole_head_matrix.py",
+      "sha256": "bb4ac256f7b48aeb7a948c2bf175df282f9839d149211944c4d9c2b8b5077d17"
+    }
+  },
+  "limits": {
+    "deep_history": "the current 16-point deep grid is historically exhausted; surface calibration uses the seven points excluded from protected validation and makes no all-history novelty claim",
+    "statistics": "both calibration panels are repeated fixed designs across SNR and support engineering thresholds only, not iid/conformal or clinical population error guarantees",
+    "surface_history": "gate centers avoid every listed historical patch support and complete gate patches avoid protected validation patches, but gate patch fringe may overlap old nonvalidation patches"
+  },
+  "manifest_sha256": {
+    "gate_calibration": "bafbd6453a98f42f1fca9a3b853cec998e3dae8756a1b8863e92d4df30550c85",
+    "protected_v1_validation_reference": "6ef97341434bca99bc7c75d205c8dc6d3815b3260ca3c62c10c615ce2efb0eff",
+    "surface_calibration": "3fd0ed0e94e12bbfa20d5bcd4b2e49791d1583f6bd2b6b06757ce8d26fcd6568"
+  },
+  "numpy_version_for_deterministic_geometry": "2.5.2",
+  "protected_validation": {
+    "case_count": 21,
+    "deep_local": [
+      14,
+      3,
+      2,
+      15,
+      11,
+      8,
+      12,
+      4,
+      6
+    ],
+    "firewall_paths_required_absent": [
+      "results/erp_whole_head/adaptive_v6/protocol/hierarchical_v1_validation_manifest_consumed.json",
+      "results/erp_whole_head/adaptive_v6/formal_hierarchical_v1_validation",
+      "results/erp_whole_head/adaptive_v6/formal_hierarchical_v1_validation.run.lock",
+      "results/erp_whole_head/adaptive_v6/formal_hierarchical_v2_validation",
+      "results/erp_whole_head/adaptive_v6/formal_hierarchical_v2_validation.run.lock"
+    ],
+    "manifest_bytes_written_by_v2_generator": false,
+    "manifest_created_by_v2_generator": false,
+    "path": "results/erp_whole_head/adaptive_v6/protocol/hierarchical_v1_validation_manifest.json",
+    "seed_roots": {
+      "check": 2026100102,
+      "fit": 2026100101
+    },
+    "sha256": "6ef97341434bca99bc7c75d205c8dc6d3815b3260ca3c62c10c615ce2efb0eff",
+    "shared_consumed_marker": "results/erp_whole_head/adaptive_v6/protocol/hierarchical_v1_validation_manifest_consumed.json",
+    "sidecar_path": "results/erp_whole_head/adaptive_v6/protocol/hierarchical_v1_validation_manifest.json.sha256",
+    "surface_center_count": 27
+  },
+  "protected_validation_copied_or_modified": false,
+  "protocol": "erp-v6-hierarchical-v2-formal-manifests",
+  "purpose": "freeze two fresh calibration manifests; reference but never copy or run untouched v1 validation",
+  "replica_seed_roots": {
+    "gate": {
+      "check": 2026100202,
+      "fit": 2026100201
+    },
+    "surface": {
+      "check": 2026100204,
+      "fit": 2026100203
+    }
+  },
+  "selected_gate_score": {
+    "candidate": "adaptive_balance_p1",
+    "family": "adaptive_balance",
+    "formal_performance_claim_from_development": false,
+    "formula": "wE*hE+(1-wE)*hM; b=min(1+q)/max(1+q); wE=0.5+0.25*b^1",
+    "operational_formula": "h_m=g_m/sqrt(1+q_m); b=min(1+q_EEG,1+q_MEG)/max(1+q_EEG,1+q_MEG); w_EEG=0.5+0.25*b; score=w_EEG*h_EEG+(1-w_EEG)*h_MEG",
+    "primary_fit_channel_weights": "all ones after per-channel whitening",
+    "scope": "primary H0/H1 fits and gate score use all-one weights after per-channel whitening; deep LOO selection and deep-amplitude estimation use original training-derived observation weights; conditional-surface train20 and combined40 fits use frozen W=1",
+    "selection_summary_sha256": "5c2a7e535a50e882d130cddf0afccebe3c873fc0b7f8c2f6651482eb3195bba8",
+    "test_true_snr_used": false
+  },
+  "shared_fingerprint": "a97e6991fde1cedfac66857d5c07683c43af62f16ad19bfa31ea7199a9083556",
+  "simulation_or_inverse_run_by_generator": false,
+  "snr_pairs_eeg_meg_db": [
+    [
+      -10,
+      -10
+    ],
+    [
+      -10,
+      20
+    ],
+    [
+      20,
+      -10
+    ]
+  ],
+  "surface_calibration": {
+    "case_count": 57,
+    "configuration_count": 19,
+    "configuration_deep_assignment": [
+      1,
+      7,
+      10,
+      13,
+      9,
+      0,
+      5,
+      1,
+      5,
+      9,
+      13,
+      10,
+      7,
+      0,
+      0,
+      9,
+      7,
+      1,
+      13
+    ],
+    "configuration_repetition_across_snr": 3,
+    "deep_geometry_seen_in_any_listed_history": [
+      0,
+      1,
+      5,
+      7,
+      9,
+      10,
+      13
+    ],
+    "deep_global": [
+      7498,
+      7499,
+      7503,
+      7505,
+      7507,
+      7508,
+      7511
+    ],
+    "deep_local": [
+      0,
+      1,
+      5,
+      7,
+      9,
+      10,
+      13
+    ],
+    "fresh_case_and_noise_identity": true,
+    "globally_new_deep_geometry_claim": false,
+    "overlap_with_protected_validation_deep_local": 0,
+    "truth_use": "predeclared deep-only null for surface-presence calibration; true deep index must never enter inverse, localization candidate choice or score",
+    "unique_deep_geometry_count": 7,
+    "uses_only_validation_unoccupied_deep_local": true
+  },
+  "truth_firewall": {
+    "generator_reads_development_selection_summary": true,
+    "generator_reads_validation_result_metrics": false,
+    "generator_runs_simulation_or_inverse": false,
+    "validation_manifest_use": "geometry exclusion, seed/schema audit and immutable SHA reference only",
+    "validation_truth_used_for_algorithm_or_score": false
+  },
+  "validation_results_read": false
+}
