@@ -7,7 +7,6 @@ import numpy as np
 from scipy.spatial import cKDTree
 
 from protected_multilayer import (
-    DATA_ROOT,
     NOISE_SAMPLES,
     OUT_ROOT,
     load_mat,
@@ -17,6 +16,7 @@ from pipelines.run_whole_brain_fusion import whitening_matrix
 
 
 CACHE = OUT_ROOT / "refined_forward_oct7_5mm.npz"
+SIMULATION_DATA_ROOT = Path(__file__).resolve().parent / "corrected_v2" / "generated"
 
 
 def build_refined_forward(path: Path = CACHE) -> Path:
@@ -125,8 +125,8 @@ def build_refined_forward(path: Path = CACHE) -> Path:
         gm[:, index] = gm3[:, index] @ orientation
         ge[:, index] = ge3[:, index] @ orientation
 
-    coarse_eeg = load_mat(DATA_ROOT / "deep_plus_two_surface" / "sub_EEG.mat")
-    coarse_meg = load_mat(DATA_ROOT / "deep_plus_two_surface" / "sub_MEG.mat")
+    coarse_eeg = load_mat(SIMULATION_DATA_ROOT / "deep_plus_two_surface" / "sub_EEG.mat")
+    coarse_meg = load_mat(SIMULATION_DATA_ROOT / "deep_plus_two_surface" / "sub_MEG.mat")
     if surf_eeg["sol"]["data"].shape[0] != coarse_eeg["F"].shape[0] or surf_meg["sol"]["data"].shape[0] != coarse_meg["F"].shape[0]:
         raise ValueError("refined forward channels do not match the simulation data")
     surface_spacing = np.median(np.linalg.norm(surf_xyz[surf_edges[:, 0]] - surf_xyz[surf_edges[:, 1]], axis=1))
