@@ -145,7 +145,8 @@ def build_refined_forward(path: Path = CACHE) -> Path:
         raise ValueError("refined forward channels do not match the simulation data")
     surface_spacing = np.median(np.linalg.norm(surf_xyz_head[surf_edges[:, 0]] - surf_xyz_head[surf_edges[:, 1]], axis=1))
     deep_spacing = np.median(cKDTree(deep_xyz_head).query(deep_xyz_head, k=2)[0][:, 1])
-    mri_head_t = np.asarray(mne.read_trans(trans_file)["trans"], dtype=float)
+    head_mri_t = np.asarray(mne.read_trans(trans_file)["trans"], dtype=float)
+    mri_head_t = np.linalg.inv(head_mri_t)
     path.parent.mkdir(parents=True, exist_ok=True)
     np.savez(
         path,
@@ -162,6 +163,7 @@ def build_refined_forward(path: Path = CACHE) -> Path:
         eeg_ch_names=np.asarray(surf_eeg["info"]["ch_names"]),
         meg_ch_names=np.asarray(surf_meg["info"]["ch_names"]),
         mri_head_t=mri_head_t,
+        head_mri_t=head_mri_t,
         coordinate_frame=np.asarray(["HEAD"]),
         surface_edges=surf_edges.astype(np.int32),
         n_surf=np.array([surf_xyz_head.shape[0]], dtype=np.int64),
