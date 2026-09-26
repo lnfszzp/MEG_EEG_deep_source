@@ -1,0 +1,195 @@
+{
+  "case_id": "erp-v6-hierarchical-v1-surface-calibration-053-eeg+20-meg-10",
+  "stage": "surface-calibration",
+  "complete": true,
+  "truth_used_by_decisions": false,
+  "truth_used_only_for_posthoc_metrics": false,
+  "gate_score": 0.5506535138599312,
+  "gate_modality_scores": [
+    0.7183321229262742,
+    0.04761768666090236
+  ],
+  "gate_model_convergence": {
+    "null": true,
+    "full": true
+  },
+  "deep_present_decision": true,
+  "selected_deep_index": 7499,
+  "amplitude_deep_index": 7499,
+  "deep_loo_candidate_indices": [
+    7499
+  ],
+  "deep_loo_modality_scores": [
+    [
+      25.451881826441184
+    ],
+    [
+      0.06372704515431094
+    ]
+  ],
+  "deep_loo_sum_scores": [
+    25.515608871595497
+  ],
+  "secondary_surface_score": -0.014319436300176014,
+  "secondary_modality_scores": [
+    -0.014319436300176014,
+    0.0001692809868186409
+  ],
+  "surface_selection_solver": {
+    "history": [
+      {
+        "outer": 0,
+        "iterations": 1025,
+        "retries": 0,
+        "converged": true,
+        "primal_relative": 1.0053313971440785,
+        "dual_relative": 0.20848529224131387,
+        "surrogate_reference": 925.7362791177021,
+        "surrogate_objective": 925.7318171951547,
+        "surrogate_roundoff": 2.631100753426671e-11,
+        "primal_dual_gap": 0.8570976355747462,
+        "primal_dual_gap_relative": 0.0009258595412347811,
+        "dual_scale": 0.9999788697292165,
+        "dual_candidate": "admm_linear_residual",
+        "source_dual_violation": 0.0,
+        "log_objective": 925.6424138453781,
+        "local_stationarity_gap_relative": 0.26922688516288523,
+        "relative_change": 1.0,
+        "accepted_step": 1.0,
+        "rho": 32.0,
+        "rho_updates": 5,
+        "active_rows": 2
+      },
+      {
+        "outer": 1,
+        "iterations": 100,
+        "retries": 0,
+        "converged": true,
+        "primal_relative": 0.03418792379512918,
+        "dual_relative": 0.1963214251780918,
+        "surrogate_reference": 925.6306501682748,
+        "surrogate_objective": 921.915443476415,
+        "surrogate_roundoff": 2.6308005378958648e-11,
+        "primal_dual_gap": 0.6878941759543977,
+        "primal_dual_gap_relative": 0.0007461575579648003,
+        "dual_scale": 1.0,
+        "dual_candidate": "admm_linear_residual",
+        "source_dual_violation": 0.0,
+        "log_objective": 921.517924287011,
+        "local_stationarity_gap_relative": 0.0002950793971711537,
+        "relative_change": 0.9872678000898838,
+        "accepted_step": 1.0,
+        "rho": 32.0,
+        "rho_updates": 0,
+        "active_rows": 2
+      },
+      {
+        "outer": 2,
+        "iterations": 25,
+        "retries": 0,
+        "converged": true,
+        "primal_relative": 0.0414285388388858,
+        "dual_relative": 1.0843153858401469,
+        "surrogate_reference": 921.480958232236,
+        "surrogate_objective": 921.4777353013262,
+        "surrogate_roundoff": 2.6190064040526865e-11,
+        "primal_dual_gap": 0.17350124508175213,
+        "primal_dual_gap_relative": 0.00018828587868703812,
+        "dual_scale": 1.0,
+        "dual_candidate": "primal_residual",
+        "source_dual_violation": 0.0,
+        "log_objective": 921.5147005293887,
+        "local_stationarity_gap_relative": 0.0001883390176019249,
+        "relative_change": 0.014018012839443792,
+        "accepted_step": 1.0,
+        "rho": 32.0,
+        "rho_updates": 0,
+        "active_rows": 2
+      },
+      {
+        "outer": 3,
+        "iterations": 150,
+        "retries": 0,
+        "converged": true,
+        "primal_relative": 0.018249553935877696,
+        "dual_relative": 0.014301727262365473,
+        "surrogate_reference": 921.4777842768772,
+        "surrogate_objective": 921.477372180903,
+        "surrogate_roundoff": 2.618997383128991e-11,
+        "primal_dual_gap": 0.2044148856002721,
+        "primal_dual_gap_relative": 0.00022183386350168747,
+        "dual_scale": 1.0,
+        "dual_candidate": "primal_residual",
+        "source_dual_violation": 0.0,
+        "log_objective": 921.514287754566,
+        "local_stationarity_gap_relative": 0.0002218061113824287,
+        "relative_change": 0.01157722529313101,
+        "accepted_step": 1.0,
+        "rho": 32.0,
+        "rho_updates": 0,
+        "active_rows": 2
+      },
+      {
+        "outer": 4,
+        "iterations": 25,
+        "retries": 0,
+        "converged": true,
+        "primal_relative": 0.01720100425169324,
+        "dual_relative": 0.013446040632066872,
+        "surrogate_reference": 921.4773466022796,
+        "surrogate_objective": 921.4765928369007,
+        "surrogate_roundoff": 2.618996139182967e-11,
+        "primal_dual_gap": 0.17339694927693472,
+        "primal_dual_gap_relative": 0.00018817292878065063,
+        "dual_scale": 1.0,
+        "dual_candidate": "primal_residual",
+        "source_dual_violation": 0.0,
+        "log_objective": 921.5135339366109,
+        "local_stationarity_gap_relative": 0.00018819386049682,
+        "relative_change": 0.0038589509405966564,
+        "accepted_step": 1.0,
+        "rho": 32.0,
+        "rho_updates": 0,
+        "active_rows": 2
+      }
+    ],
+    "converged": true,
+    "inner_converged": true,
+    "final_inner_converged": true,
+    "outer_converged": true,
+    "adaptive_objective": true,
+    "final_stationarity_gap_relative": 0.00018819386049682,
+    "numerical_stall": false,
+    "descent_guard_triggered": false,
+    "amplitude_epsilon": 8.704489777529237e-05,
+    "edge_epsilon": 8.704489777529237e-05,
+    "amplitude_weight_range": [
+      0.5003315381914517,
+      1.0
+    ],
+    "amplitude_weight_floor_range": [
+      0.5,
+      0.5
+    ],
+    "amplitude_penalty_model": "per-source linear/log-sum mixture",
+    "edge_weight_floor": 0.5,
+    "edge_penalty_model": "linear/log-sum mixture",
+    "source_penalty_mode": "group",
+    "elementwise_source_count": 0,
+    "ridge_penalty": 0.0,
+    "edge_penalty_mode": "group",
+    "edge_weight_range": [
+      0.5003315381914517,
+      1.0
+    ],
+    "rho_initial": 1.0,
+    "rho_final": 32.0,
+    "rho_updates": 5,
+    "outer_tolerance": 0.01,
+    "adaptive_rho": true,
+    "rho_adaptation_policy": "first_convex_surrogate_only",
+    "convergence_note": "Feasible primal-dual bound for the current convex MM surrogate; no global-optimality claim for log-sum."
+  },
+  "surface_final_solver": null,
+  "elapsed_seconds": 202.6938085000147
+}

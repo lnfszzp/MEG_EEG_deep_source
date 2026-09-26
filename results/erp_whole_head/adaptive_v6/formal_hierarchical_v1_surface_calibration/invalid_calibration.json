@@ -1,0 +1,500 @@
+{
+  "schema_version": 1,
+  "protocol": "erp-v6-hierarchical-v1-formal-run",
+  "stage": "surface-calibration",
+  "execution_lock": "D:\\博士\\工作＆汇报\\源定位\\新建文件夹\\results\\erp_whole_head\\adaptive_v6\\protocol\\hierarchical_v1_recovery_execution_lock.json",
+  "execution_lock_sha256": "fbfd4780bd9685edf6086b4adff33832518f54fb7795d6757d1e99bd49dec4ea",
+  "manifest": "D:\\博士\\工作＆汇报\\源定位\\新建文件夹\\results\\erp_whole_head\\adaptive_v6\\protocol\\hierarchical_v1_surface_calibration_manifest.json",
+  "manifest_sha256": "2aa6154471c019e55968995a98cd89602c60ba24ef9d9bcb3b3ce45f5fcc28a0",
+  "seed_roots": {
+    "check": 2026093004,
+    "fit": 2026093003
+  },
+  "case_ids": [
+    "erp-v6-hierarchical-v1-surface-calibration-000-eeg-10-meg-10",
+    "erp-v6-hierarchical-v1-surface-calibration-001-eeg-10-meg-10",
+    "erp-v6-hierarchical-v1-surface-calibration-002-eeg-10-meg-10",
+    "erp-v6-hierarchical-v1-surface-calibration-003-eeg-10-meg-10",
+    "erp-v6-hierarchical-v1-surface-calibration-004-eeg-10-meg-10",
+    "erp-v6-hierarchical-v1-surface-calibration-005-eeg-10-meg-10",
+    "erp-v6-hierarchical-v1-surface-calibration-006-eeg-10-meg-10",
+    "erp-v6-hierarchical-v1-surface-calibration-007-eeg-10-meg-10",
+    "erp-v6-hierarchical-v1-surface-calibration-008-eeg-10-meg-10",
+    "erp-v6-hierarchical-v1-surface-calibration-009-eeg-10-meg-10",
+    "erp-v6-hierarchical-v1-surface-calibration-010-eeg-10-meg-10",
+    "erp-v6-hierarchical-v1-surface-calibration-011-eeg-10-meg-10",
+    "erp-v6-hierarchical-v1-surface-calibration-012-eeg-10-meg-10",
+    "erp-v6-hierarchical-v1-surface-calibration-013-eeg-10-meg-10",
+    "erp-v6-hierarchical-v1-surface-calibration-014-eeg-10-meg-10",
+    "erp-v6-hierarchical-v1-surface-calibration-015-eeg-10-meg-10",
+    "erp-v6-hierarchical-v1-surface-calibration-016-eeg-10-meg-10",
+    "erp-v6-hierarchical-v1-surface-calibration-017-eeg-10-meg-10",
+    "erp-v6-hierarchical-v1-surface-calibration-018-eeg-10-meg-10",
+    "erp-v6-hierarchical-v1-surface-calibration-019-eeg-10-meg+20",
+    "erp-v6-hierarchical-v1-surface-calibration-020-eeg-10-meg+20",
+    "erp-v6-hierarchical-v1-surface-calibration-021-eeg-10-meg+20",
+    "erp-v6-hierarchical-v1-surface-calibration-022-eeg-10-meg+20",
+    "erp-v6-hierarchical-v1-surface-calibration-023-eeg-10-meg+20",
+    "erp-v6-hierarchical-v1-surface-calibration-024-eeg-10-meg+20",
+    "erp-v6-hierarchical-v1-surface-calibration-025-eeg-10-meg+20",
+    "erp-v6-hierarchical-v1-surface-calibration-026-eeg-10-meg+20",
+    "erp-v6-hierarchical-v1-surface-calibration-027-eeg-10-meg+20",
+    "erp-v6-hierarchical-v1-surface-calibration-028-eeg-10-meg+20",
+    "erp-v6-hierarchical-v1-surface-calibration-029-eeg-10-meg+20",
+    "erp-v6-hierarchical-v1-surface-calibration-030-eeg-10-meg+20",
+    "erp-v6-hierarchical-v1-surface-calibration-031-eeg-10-meg+20",
+    "erp-v6-hierarchical-v1-surface-calibration-032-eeg-10-meg+20",
+    "erp-v6-hierarchical-v1-surface-calibration-033-eeg-10-meg+20",
+    "erp-v6-hierarchical-v1-surface-calibration-034-eeg-10-meg+20",
+    "erp-v6-hierarchical-v1-surface-calibration-035-eeg-10-meg+20",
+    "erp-v6-hierarchical-v1-surface-calibration-036-eeg-10-meg+20",
+    "erp-v6-hierarchical-v1-surface-calibration-037-eeg-10-meg+20",
+    "erp-v6-hierarchical-v1-surface-calibration-038-eeg+20-meg-10",
+    "erp-v6-hierarchical-v1-surface-calibration-039-eeg+20-meg-10",
+    "erp-v6-hierarchical-v1-surface-calibration-040-eeg+20-meg-10",
+    "erp-v6-hierarchical-v1-surface-calibration-041-eeg+20-meg-10",
+    "erp-v6-hierarchical-v1-surface-calibration-042-eeg+20-meg-10",
+    "erp-v6-hierarchical-v1-surface-calibration-043-eeg+20-meg-10",
+    "erp-v6-hierarchical-v1-surface-calibration-044-eeg+20-meg-10",
+    "erp-v6-hierarchical-v1-surface-calibration-045-eeg+20-meg-10",
+    "erp-v6-hierarchical-v1-surface-calibration-046-eeg+20-meg-10",
+    "erp-v6-hierarchical-v1-surface-calibration-047-eeg+20-meg-10",
+    "erp-v6-hierarchical-v1-surface-calibration-048-eeg+20-meg-10",
+    "erp-v6-hierarchical-v1-surface-calibration-049-eeg+20-meg-10",
+    "erp-v6-hierarchical-v1-surface-calibration-050-eeg+20-meg-10",
+    "erp-v6-hierarchical-v1-surface-calibration-051-eeg+20-meg-10",
+    "erp-v6-hierarchical-v1-surface-calibration-052-eeg+20-meg-10",
+    "erp-v6-hierarchical-v1-surface-calibration-053-eeg+20-meg-10",
+    "erp-v6-hierarchical-v1-surface-calibration-054-eeg+20-meg-10",
+    "erp-v6-hierarchical-v1-surface-calibration-055-eeg+20-meg-10",
+    "erp-v6-hierarchical-v1-surface-calibration-056-eeg+20-meg-10"
+  ],
+  "consumed_marker": "D:\\博士\\工作＆汇报\\源定位\\新建文件夹\\results\\erp_whole_head\\adaptive_v6\\protocol\\hierarchical_v1_surface_calibration_manifest_consumed.json",
+  "consumed_marker_sha256": "19fff9d623578cc8617fb34b0c89cf367ef20f1f33f9ed1a216b0c32aed1e32e",
+  "code_sha256": {
+    "algorithms/spatial_fused_fusion.py": "68c65de7c6c41628f36f72cb8b9f913ea569aec8ff675109461acdad6353197d",
+    "benchmark/deep_acceptance.py": "6f520b42e241179639f2c9f4ab8d66c67180ed35756ed2197cb27c867d0efcc7",
+    "benchmark/erp_protocol.py": "f74f9b1dd33036105d50d4ccd6242c1a068cb090fe4a234eb7736f8071e16647",
+    "benchmark/erp_replicates.py": "ef5f3c8869dc71800c537940c71f4e67e53cd04906535a5672e3460f8e0b7a39",
+    "benchmark/erp_trial_covariance.py": "818e41cd1e3c75921db386b9858f78e3722551cc9e32ddbd2e88e819b22e7d89",
+    "benchmark/methods.py": "1625c67d91d20112d711a3d77de175ed0509c1acfa45c1561845f6761c307dcf",
+    "benchmark/metrics.py": "f07a42e26dc2118c418744e3a4971c5fcd3037b7b93e26a7e2e4e899400986d8",
+    "benchmark/protocol.py": "26f816e0530cf6f36445b7222fc5db3d0ce216f4ec089f0a2779c65e1c4c8d4a",
+    "candidates/graph_irls.py": "9e6fec79d97e1c331e824fc165b71732e0ed90a1573d0183ea167d5c0cccd760",
+    "candidates/graph_reweight_solver.py": "48042de304322ff6715293d485da09af39d203c799b6ee637918a1f6a5381257",
+    "candidates/oaster_balanced.py": "74a9de1efc6d1e83f522024c9a3440d799fc054be348d91884171a62ddd99e92",
+    "candidates/oaster_predictive.py": "fcc738d783ff3306a125569c2b3e3f8aec14ab6867fe6c12b13a3dc35dd17c01",
+    "metrics/user_metrics/An_auc.py": "7a4f59da932648851e3a0bc1f28101c79d616ac0d99bf37925b57473bd767194",
+    "metrics/user_metrics/DLE_an.py": "c63752183cb8ffd144ea1a12d786cb049ecde3baf11116193a7f4f5eacefa669",
+    "metrics/user_metrics/SD.py": "dacd584ed3fd74a0af9b3b123489448853c2ecb190de28cc8b9bfd1e4714ff93",
+    "metrics/user_metrics/_common.py": "e50de172818c087108a2f06303e5f0302ac4d9d4167eff153a84b0a6142b9379",
+    "protected_multilayer.py": "bf35006d1945dc96ac7fc13edf4149e0d4f8520dbe6825730c40ab38697521c8",
+    "run_erp_whole_head_matrix.py": "bb4ac256f7b48aeb7a948c2bf175df282f9839d149211944c4d9c2b8b5077d17",
+    "run_strict_oaster.py": "9a63e37a0b32265732e03f24751191e8734df4be2585fb8dec7e30a1d0195e47",
+    "作者风格版/63-层级浅深盲定位开发.py": "eb45a6ae2ff6952c5449e128ad16894a4b4a4a7b3dd8412e5a6432b1509633ec",
+    "作者风格版/64-层级盲定位正式清单.py": "3ec05d7cd20f037f138e75ff212827d2e92932b9a7ac63019b7951109c2da279",
+    "作者风格版/65-层级盲定位正式运行.py": "a916a752d9c61f48bb2b79b908c7530f1fe5dc894e0b2f367afa96480690c3a0",
+    "作者风格版/66-冻结层级盲定位执行锁.py": "aee23e50d417d5b6aaffab7287ad5fc09a3db2885d68b20855542727bb8d1650",
+    "作者风格版/67-冻结中断续跑锁.py": "48224c9bdedbf105b018b9b07d6c2f34b28f08145fb99bfa0f0482bde0b7918f"
+  },
+  "shared_fingerprint": "a97e6991fde1cedfac66857d5c07683c43af62f16ad19bfa31ea7199a9083556",
+  "environment": {
+    "python": "3.13.15",
+    "numpy": "2.5.2",
+    "scipy": "1.18.1",
+    "mne": "1.12.1",
+    "OMP_NUM_THREADS": "1",
+    "MKL_NUM_THREADS": "1",
+    "OPENBLAS_NUM_THREADS": "1",
+    "python_debug": true
+  },
+  "covariance": "trial",
+  "solver_settings": {
+    "deep_reweight_floor": 0.5,
+    "edge_weight_floor": 0.5,
+    "epsilon_fraction": 0.05,
+    "max_inner_retries": 20,
+    "mrf_strength": 0.8,
+    "outer_iterations": 40,
+    "outer_tolerance": 0.01,
+    "solver_kind": "admm",
+    "surface_reweight_floor": 0.5,
+    "tolerance": 0.001
+  },
+  "gate_weights_EEG_MEG": [
+    0.75,
+    0.25
+  ],
+  "gate_calibration": {
+    "payload": {
+      "all_converged": true,
+      "case_count": 57,
+      "case_ids": [
+        "erp-v6-hierarchical-v1-gate-calibration-000-eeg-10-meg-10",
+        "erp-v6-hierarchical-v1-gate-calibration-001-eeg-10-meg-10",
+        "erp-v6-hierarchical-v1-gate-calibration-002-eeg-10-meg-10",
+        "erp-v6-hierarchical-v1-gate-calibration-003-eeg-10-meg-10",
+        "erp-v6-hierarchical-v1-gate-calibration-004-eeg-10-meg-10",
+        "erp-v6-hierarchical-v1-gate-calibration-005-eeg-10-meg-10",
+        "erp-v6-hierarchical-v1-gate-calibration-006-eeg-10-meg-10",
+        "erp-v6-hierarchical-v1-gate-calibration-007-eeg-10-meg-10",
+        "erp-v6-hierarchical-v1-gate-calibration-008-eeg-10-meg-10",
+        "erp-v6-hierarchical-v1-gate-calibration-009-eeg-10-meg-10",
+        "erp-v6-hierarchical-v1-gate-calibration-010-eeg-10-meg-10",
+        "erp-v6-hierarchical-v1-gate-calibration-011-eeg-10-meg-10",
+        "erp-v6-hierarchical-v1-gate-calibration-012-eeg-10-meg-10",
+        "erp-v6-hierarchical-v1-gate-calibration-013-eeg-10-meg-10",
+        "erp-v6-hierarchical-v1-gate-calibration-014-eeg-10-meg-10",
+        "erp-v6-hierarchical-v1-gate-calibration-015-eeg-10-meg-10",
+        "erp-v6-hierarchical-v1-gate-calibration-016-eeg-10-meg-10",
+        "erp-v6-hierarchical-v1-gate-calibration-017-eeg-10-meg-10",
+        "erp-v6-hierarchical-v1-gate-calibration-018-eeg-10-meg-10",
+        "erp-v6-hierarchical-v1-gate-calibration-019-eeg-10-meg+20",
+        "erp-v6-hierarchical-v1-gate-calibration-020-eeg-10-meg+20",
+        "erp-v6-hierarchical-v1-gate-calibration-021-eeg-10-meg+20",
+        "erp-v6-hierarchical-v1-gate-calibration-022-eeg-10-meg+20",
+        "erp-v6-hierarchical-v1-gate-calibration-023-eeg-10-meg+20",
+        "erp-v6-hierarchical-v1-gate-calibration-024-eeg-10-meg+20",
+        "erp-v6-hierarchical-v1-gate-calibration-025-eeg-10-meg+20",
+        "erp-v6-hierarchical-v1-gate-calibration-026-eeg-10-meg+20",
+        "erp-v6-hierarchical-v1-gate-calibration-027-eeg-10-meg+20",
+        "erp-v6-hierarchical-v1-gate-calibration-028-eeg-10-meg+20",
+        "erp-v6-hierarchical-v1-gate-calibration-029-eeg-10-meg+20",
+        "erp-v6-hierarchical-v1-gate-calibration-030-eeg-10-meg+20",
+        "erp-v6-hierarchical-v1-gate-calibration-031-eeg-10-meg+20",
+        "erp-v6-hierarchical-v1-gate-calibration-032-eeg-10-meg+20",
+        "erp-v6-hierarchical-v1-gate-calibration-033-eeg-10-meg+20",
+        "erp-v6-hierarchical-v1-gate-calibration-034-eeg-10-meg+20",
+        "erp-v6-hierarchical-v1-gate-calibration-035-eeg-10-meg+20",
+        "erp-v6-hierarchical-v1-gate-calibration-036-eeg-10-meg+20",
+        "erp-v6-hierarchical-v1-gate-calibration-037-eeg-10-meg+20",
+        "erp-v6-hierarchical-v1-gate-calibration-038-eeg+20-meg-10",
+        "erp-v6-hierarchical-v1-gate-calibration-039-eeg+20-meg-10",
+        "erp-v6-hierarchical-v1-gate-calibration-040-eeg+20-meg-10",
+        "erp-v6-hierarchical-v1-gate-calibration-041-eeg+20-meg-10",
+        "erp-v6-hierarchical-v1-gate-calibration-042-eeg+20-meg-10",
+        "erp-v6-hierarchical-v1-gate-calibration-043-eeg+20-meg-10",
+        "erp-v6-hierarchical-v1-gate-calibration-044-eeg+20-meg-10",
+        "erp-v6-hierarchical-v1-gate-calibration-045-eeg+20-meg-10",
+        "erp-v6-hierarchical-v1-gate-calibration-046-eeg+20-meg-10",
+        "erp-v6-hierarchical-v1-gate-calibration-047-eeg+20-meg-10",
+        "erp-v6-hierarchical-v1-gate-calibration-048-eeg+20-meg-10",
+        "erp-v6-hierarchical-v1-gate-calibration-049-eeg+20-meg-10",
+        "erp-v6-hierarchical-v1-gate-calibration-050-eeg+20-meg-10",
+        "erp-v6-hierarchical-v1-gate-calibration-051-eeg+20-meg-10",
+        "erp-v6-hierarchical-v1-gate-calibration-052-eeg+20-meg-10",
+        "erp-v6-hierarchical-v1-gate-calibration-053-eeg+20-meg-10",
+        "erp-v6-hierarchical-v1-gate-calibration-054-eeg+20-meg-10",
+        "erp-v6-hierarchical-v1-gate-calibration-055-eeg+20-meg-10",
+        "erp-v6-hierarchical-v1-gate-calibration-056-eeg+20-meg-10"
+      ],
+      "code_sha256": {
+        "algorithms/spatial_fused_fusion.py": "68c65de7c6c41628f36f72cb8b9f913ea569aec8ff675109461acdad6353197d",
+        "benchmark/deep_acceptance.py": "6f520b42e241179639f2c9f4ab8d66c67180ed35756ed2197cb27c867d0efcc7",
+        "benchmark/erp_protocol.py": "f74f9b1dd33036105d50d4ccd6242c1a068cb090fe4a234eb7736f8071e16647",
+        "benchmark/erp_replicates.py": "ef5f3c8869dc71800c537940c71f4e67e53cd04906535a5672e3460f8e0b7a39",
+        "benchmark/erp_trial_covariance.py": "818e41cd1e3c75921db386b9858f78e3722551cc9e32ddbd2e88e819b22e7d89",
+        "benchmark/methods.py": "1625c67d91d20112d711a3d77de175ed0509c1acfa45c1561845f6761c307dcf",
+        "benchmark/metrics.py": "f07a42e26dc2118c418744e3a4971c5fcd3037b7b93e26a7e2e4e899400986d8",
+        "benchmark/protocol.py": "26f816e0530cf6f36445b7222fc5db3d0ce216f4ec089f0a2779c65e1c4c8d4a",
+        "candidates/graph_irls.py": "9e6fec79d97e1c331e824fc165b71732e0ed90a1573d0183ea167d5c0cccd760",
+        "candidates/graph_reweight_solver.py": "48042de304322ff6715293d485da09af39d203c799b6ee637918a1f6a5381257",
+        "candidates/oaster_balanced.py": "74a9de1efc6d1e83f522024c9a3440d799fc054be348d91884171a62ddd99e92",
+        "candidates/oaster_predictive.py": "fcc738d783ff3306a125569c2b3e3f8aec14ab6867fe6c12b13a3dc35dd17c01",
+        "metrics/user_metrics/An_auc.py": "7a4f59da932648851e3a0bc1f28101c79d616ac0d99bf37925b57473bd767194",
+        "metrics/user_metrics/DLE_an.py": "c63752183cb8ffd144ea1a12d786cb049ecde3baf11116193a7f4f5eacefa669",
+        "metrics/user_metrics/SD.py": "dacd584ed3fd74a0af9b3b123489448853c2ecb190de28cc8b9bfd1e4714ff93",
+        "metrics/user_metrics/_common.py": "e50de172818c087108a2f06303e5f0302ac4d9d4167eff153a84b0a6142b9379",
+        "protected_multilayer.py": "bf35006d1945dc96ac7fc13edf4149e0d4f8520dbe6825730c40ab38697521c8",
+        "run_erp_whole_head_matrix.py": "bb4ac256f7b48aeb7a948c2bf175df282f9839d149211944c4d9c2b8b5077d17",
+        "run_strict_oaster.py": "9a63e37a0b32265732e03f24751191e8734df4be2585fb8dec7e30a1d0195e47",
+        "作者风格版/63-层级浅深盲定位开发.py": "eb45a6ae2ff6952c5449e128ad16894a4b4a4a7b3dd8412e5a6432b1509633ec",
+        "作者风格版/64-层级盲定位正式清单.py": "3ec05d7cd20f037f138e75ff212827d2e92932b9a7ac63019b7951109c2da279",
+        "作者风格版/65-层级盲定位正式运行.py": "a916a752d9c61f48bb2b79b908c7530f1fe5dc894e0b2f367afa96480690c3a0",
+        "作者风格版/66-冻结层级盲定位执行锁.py": "aee23e50d417d5b6aaffab7287ad5fc09a3db2885d68b20855542727bb8d1650",
+        "作者风格版/67-冻结中断续跑锁.py": "48224c9bdedbf105b018b9b07d6c2f34b28f08145fb99bfa0f0482bde0b7918f"
+      },
+      "comparison": "strict_greater",
+      "complete": true,
+      "consumed_marker": "D:\\博士\\工作＆汇报\\源定位\\新建文件夹\\results\\erp_whole_head\\adaptive_v6\\protocol\\hierarchical_v1_gate_calibration_manifest_consumed.json",
+      "consumed_marker_sha256": "165a3af287d20e5734d3dedcce4684d84b064e457d1527df4672de2dc431d74e",
+      "covariance": "trial",
+      "environment": {
+        "MKL_NUM_THREADS": "1",
+        "OMP_NUM_THREADS": "1",
+        "OPENBLAS_NUM_THREADS": "1",
+        "mne": "1.12.1",
+        "numpy": "2.5.2",
+        "python": "3.13.15",
+        "python_debug": true,
+        "scipy": "1.18.1"
+      },
+      "execution_lock": "D:\\博士\\工作＆汇报\\源定位\\新建文件夹\\results\\erp_whole_head\\adaptive_v6\\protocol\\hierarchical_v1_recovery_execution_lock.json",
+      "execution_lock_sha256": "fbfd4780bd9685edf6086b4adff33832518f54fb7795d6757d1e99bd49dec4ea",
+      "failure_count": 0,
+      "failures": [],
+      "finite_score_count": 57,
+      "gate_calibration": null,
+      "gate_threshold": null,
+      "gate_weights_EEG_MEG": [
+        0.75,
+        0.25
+      ],
+      "interrupted_prefix_recovery": {
+        "algorithm_or_manifest_changed": false,
+        "case_details": {
+          "erp-v6-hierarchical-v1-gate-calibration-000-eeg-10-meg-10": {
+            "path": "results/erp_whole_head/adaptive_v6/formal_hierarchical_v1_gate_calibration/erp-v6-hierarchical-v1-gate-calibration-000-eeg-10-meg-10.json",
+            "sha256": "817e13e6543da18e8794d8f37b52bb98ad39f27bca6608477d6147f6309bf835"
+          },
+          "erp-v6-hierarchical-v1-gate-calibration-001-eeg-10-meg-10": {
+            "path": "results/erp_whole_head/adaptive_v6/formal_hierarchical_v1_gate_calibration/erp-v6-hierarchical-v1-gate-calibration-001-eeg-10-meg-10.json",
+            "sha256": "f48d32dd431a1dd134335bb31a5b2967d8f2926ada1d55f51c1f636a15ebfcb7"
+          },
+          "erp-v6-hierarchical-v1-gate-calibration-002-eeg-10-meg-10": {
+            "path": "results/erp_whole_head/adaptive_v6/formal_hierarchical_v1_gate_calibration/erp-v6-hierarchical-v1-gate-calibration-002-eeg-10-meg-10.json",
+            "sha256": "02e1f715f366ab1fc4d120939908aa42b15ecfec46aa0a03a0002c2c208b2b39"
+          },
+          "erp-v6-hierarchical-v1-gate-calibration-003-eeg-10-meg-10": {
+            "path": "results/erp_whole_head/adaptive_v6/formal_hierarchical_v1_gate_calibration/erp-v6-hierarchical-v1-gate-calibration-003-eeg-10-meg-10.json",
+            "sha256": "9fee9509ae0d96e7a1443dcd43463b7bf204b630e9bc3f6d191e5ed2cdcc29c2"
+          },
+          "erp-v6-hierarchical-v1-gate-calibration-004-eeg-10-meg-10": {
+            "path": "results/erp_whole_head/adaptive_v6/formal_hierarchical_v1_gate_calibration/erp-v6-hierarchical-v1-gate-calibration-004-eeg-10-meg-10.json",
+            "sha256": "4b2d0d76f204949b9034a4bbe466e63880de624284fef2735cffc6dbd8d5d087"
+          },
+          "erp-v6-hierarchical-v1-gate-calibration-005-eeg-10-meg-10": {
+            "path": "results/erp_whole_head/adaptive_v6/formal_hierarchical_v1_gate_calibration/erp-v6-hierarchical-v1-gate-calibration-005-eeg-10-meg-10.json",
+            "sha256": "dac8c15ea1fc8df72a0c0c4e96cdd3bb730cad048b690d9c6cee944465195510"
+          },
+          "erp-v6-hierarchical-v1-gate-calibration-006-eeg-10-meg-10": {
+            "path": "results/erp_whole_head/adaptive_v6/formal_hierarchical_v1_gate_calibration/erp-v6-hierarchical-v1-gate-calibration-006-eeg-10-meg-10.json",
+            "sha256": "ccb4aea60c293e99d1e081131a7e21d1bc81d76a44585d8e11afc3ceeafaf0de"
+          },
+          "erp-v6-hierarchical-v1-gate-calibration-007-eeg-10-meg-10": {
+            "path": "results/erp_whole_head/adaptive_v6/formal_hierarchical_v1_gate_calibration/erp-v6-hierarchical-v1-gate-calibration-007-eeg-10-meg-10.json",
+            "sha256": "a3094978a8ed2ca438665172a3379ae510d429a3d90d9947780e6cfa9cdbad25"
+          },
+          "erp-v6-hierarchical-v1-gate-calibration-008-eeg-10-meg-10": {
+            "path": "results/erp_whole_head/adaptive_v6/formal_hierarchical_v1_gate_calibration/erp-v6-hierarchical-v1-gate-calibration-008-eeg-10-meg-10.json",
+            "sha256": "0582b9b1171280a88136e3a8b01e7c54c5c148868aa6da97fc865fef78c6639d"
+          },
+          "erp-v6-hierarchical-v1-gate-calibration-009-eeg-10-meg-10": {
+            "path": "results/erp_whole_head/adaptive_v6/formal_hierarchical_v1_gate_calibration/erp-v6-hierarchical-v1-gate-calibration-009-eeg-10-meg-10.json",
+            "sha256": "480ffa100512e90b8dfa6f159db1cb82dba7907e1b21e5b0459b37bfec14271d"
+          },
+          "erp-v6-hierarchical-v1-gate-calibration-010-eeg-10-meg-10": {
+            "path": "results/erp_whole_head/adaptive_v6/formal_hierarchical_v1_gate_calibration/erp-v6-hierarchical-v1-gate-calibration-010-eeg-10-meg-10.json",
+            "sha256": "17247208bc7f8d88519be3474c3ebef2e9dfcea0953623099e66e11b254b3602"
+          },
+          "erp-v6-hierarchical-v1-gate-calibration-011-eeg-10-meg-10": {
+            "path": "results/erp_whole_head/adaptive_v6/formal_hierarchical_v1_gate_calibration/erp-v6-hierarchical-v1-gate-calibration-011-eeg-10-meg-10.json",
+            "sha256": "afa51b170233848e8619cd4160080c3f4fccbac7ee0b6ae9f3ff7359eb35152c"
+          },
+          "erp-v6-hierarchical-v1-gate-calibration-012-eeg-10-meg-10": {
+            "path": "results/erp_whole_head/adaptive_v6/formal_hierarchical_v1_gate_calibration/erp-v6-hierarchical-v1-gate-calibration-012-eeg-10-meg-10.json",
+            "sha256": "fad5b7019b617db9a195eccac6cdb36dc8ffb018624b52d383d8fd3eab5555e5"
+          },
+          "erp-v6-hierarchical-v1-gate-calibration-013-eeg-10-meg-10": {
+            "path": "results/erp_whole_head/adaptive_v6/formal_hierarchical_v1_gate_calibration/erp-v6-hierarchical-v1-gate-calibration-013-eeg-10-meg-10.json",
+            "sha256": "cf755866d644e682267281979136ec2b975453b3a8d224f3eaffb047d9c409c3"
+          },
+          "erp-v6-hierarchical-v1-gate-calibration-014-eeg-10-meg-10": {
+            "path": "results/erp_whole_head/adaptive_v6/formal_hierarchical_v1_gate_calibration/erp-v6-hierarchical-v1-gate-calibration-014-eeg-10-meg-10.json",
+            "sha256": "db4610836f4aff0146b7a9a7db866406e028d06b1ac8627a23a78556b166e750"
+          },
+          "erp-v6-hierarchical-v1-gate-calibration-015-eeg-10-meg-10": {
+            "path": "results/erp_whole_head/adaptive_v6/formal_hierarchical_v1_gate_calibration/erp-v6-hierarchical-v1-gate-calibration-015-eeg-10-meg-10.json",
+            "sha256": "6f610d2c1b47e7eb86d089e2942e2e58450e743e5500f244472762929e945400"
+          },
+          "erp-v6-hierarchical-v1-gate-calibration-016-eeg-10-meg-10": {
+            "path": "results/erp_whole_head/adaptive_v6/formal_hierarchical_v1_gate_calibration/erp-v6-hierarchical-v1-gate-calibration-016-eeg-10-meg-10.json",
+            "sha256": "c9bbbe3d7358c45025c45b3f93e553083a6d0440df40683387e890f86c1e2e12"
+          },
+          "erp-v6-hierarchical-v1-gate-calibration-017-eeg-10-meg-10": {
+            "path": "results/erp_whole_head/adaptive_v6/formal_hierarchical_v1_gate_calibration/erp-v6-hierarchical-v1-gate-calibration-017-eeg-10-meg-10.json",
+            "sha256": "1f043df2056dc2be42b9e79f11f1ee4c5072cf93f2b1adb7be4cee5e523d0386"
+          },
+          "erp-v6-hierarchical-v1-gate-calibration-018-eeg-10-meg-10": {
+            "path": "results/erp_whole_head/adaptive_v6/formal_hierarchical_v1_gate_calibration/erp-v6-hierarchical-v1-gate-calibration-018-eeg-10-meg-10.json",
+            "sha256": "923aca6ff914dd6df67035c913cccdcb2a20d72d03d3ec1af790d222ed27cd60"
+          },
+          "erp-v6-hierarchical-v1-gate-calibration-019-eeg-10-meg+20": {
+            "path": "results/erp_whole_head/adaptive_v6/formal_hierarchical_v1_gate_calibration/erp-v6-hierarchical-v1-gate-calibration-019-eeg-10-meg+20.json",
+            "sha256": "fceb02b14f5e1fbb09ee5df6181bebbeccc316e03fe949e73118c6003ddf15aa"
+          },
+          "erp-v6-hierarchical-v1-gate-calibration-020-eeg-10-meg+20": {
+            "path": "results/erp_whole_head/adaptive_v6/formal_hierarchical_v1_gate_calibration/erp-v6-hierarchical-v1-gate-calibration-020-eeg-10-meg+20.json",
+            "sha256": "de1ff1188b3b0d3df1da3c5b5513815c64019b4fc13e51d700134b001708baf0"
+          },
+          "erp-v6-hierarchical-v1-gate-calibration-021-eeg-10-meg+20": {
+            "path": "results/erp_whole_head/adaptive_v6/formal_hierarchical_v1_gate_calibration/erp-v6-hierarchical-v1-gate-calibration-021-eeg-10-meg+20.json",
+            "sha256": "6833c35d733050721d52178617bd36fdc35399198797c17f2e6ae8143a169965"
+          },
+          "erp-v6-hierarchical-v1-gate-calibration-022-eeg-10-meg+20": {
+            "path": "results/erp_whole_head/adaptive_v6/formal_hierarchical_v1_gate_calibration/erp-v6-hierarchical-v1-gate-calibration-022-eeg-10-meg+20.json",
+            "sha256": "8802be3132a5b2f5bd26e66410dc25fc6af30a6647b83ae0ef3532741c1de516"
+          },
+          "erp-v6-hierarchical-v1-gate-calibration-023-eeg-10-meg+20": {
+            "path": "results/erp_whole_head/adaptive_v6/formal_hierarchical_v1_gate_calibration/erp-v6-hierarchical-v1-gate-calibration-023-eeg-10-meg+20.json",
+            "sha256": "b542d196a2af28154f0afb8104682d0a5cbd4f2b31bddd3eda79711e38c54cdd"
+          },
+          "erp-v6-hierarchical-v1-gate-calibration-024-eeg-10-meg+20": {
+            "path": "results/erp_whole_head/adaptive_v6/formal_hierarchical_v1_gate_calibration/erp-v6-hierarchical-v1-gate-calibration-024-eeg-10-meg+20.json",
+            "sha256": "ff97539a5e58341a9a71b1418be902247f2476f99fb711df8497f9bee0d24e14"
+          },
+          "erp-v6-hierarchical-v1-gate-calibration-025-eeg-10-meg+20": {
+            "path": "results/erp_whole_head/adaptive_v6/formal_hierarchical_v1_gate_calibration/erp-v6-hierarchical-v1-gate-calibration-025-eeg-10-meg+20.json",
+            "sha256": "aace4621a1b179a84144d04d58d74c868f4b9af42c54e9ad185ffe12ae2f4142"
+          },
+          "erp-v6-hierarchical-v1-gate-calibration-026-eeg-10-meg+20": {
+            "path": "results/erp_whole_head/adaptive_v6/formal_hierarchical_v1_gate_calibration/erp-v6-hierarchical-v1-gate-calibration-026-eeg-10-meg+20.json",
+            "sha256": "a8b5b96d7f05e9f2b141c5f9bb128ae0c73dca2141e2b2f95fecb149050a951e"
+          },
+          "erp-v6-hierarchical-v1-gate-calibration-027-eeg-10-meg+20": {
+            "path": "results/erp_whole_head/adaptive_v6/formal_hierarchical_v1_gate_calibration/erp-v6-hierarchical-v1-gate-calibration-027-eeg-10-meg+20.json",
+            "sha256": "408b28063184563fec71bcafa1f6515cebcb199e51246b3f3f9dea41df7cbcc2"
+          }
+        },
+        "completed_prefix_count": 28,
+        "consumed_marker": "results/erp_whole_head/adaptive_v6/protocol/hierarchical_v1_gate_calibration_manifest_consumed.json",
+        "consumed_marker_sha256": "165a3af287d20e5734d3dedcce4684d84b064e457d1527df4672de2dc431d74e",
+        "output_dir": "results/erp_whole_head/adaptive_v6/formal_hierarchical_v1_gate_calibration",
+        "partial_scores_used_to_change_algorithm": false,
+        "predecessor_execution_lock": "results/erp_whole_head/adaptive_v6/protocol/hierarchical_v1_execution_lock.json",
+        "predecessor_execution_lock_sha256": "0daadb5a914f2d66f22574b468b22f0c77dc2f30b7f97f85efe3d1da70fd4f4d",
+        "remaining_case_count": 29,
+        "rule": "preserve the verified 28-case prefix byte-for-byte and append only manifest cases 28..56 with unchanged seeds and algorithm",
+        "snapshots": {
+          "evidence": {
+            "path": "results/erp_whole_head/adaptive_v6/formal_hierarchical_v1_gate_calibration/evidence.interrupted_prefix.csv",
+            "sha256": "ab000207af08467ac165aa85e182383955fb729b71ef3c21c20f13fcb6179860",
+            "source_path": "results/erp_whole_head/adaptive_v6/formal_hierarchical_v1_gate_calibration/evidence.csv"
+          },
+          "metadata": {
+            "path": "results/erp_whole_head/adaptive_v6/formal_hierarchical_v1_gate_calibration/metadata.interrupted_prefix.json",
+            "sha256": "228cf775d03d25d3a8e55e69fb8b76739e47f7bd4e50cfe866376cfd85f932a1",
+            "source_path": "results/erp_whole_head/adaptive_v6/formal_hierarchical_v1_gate_calibration/metadata.json"
+          }
+        },
+        "stage": "gate-calibration",
+        "terminal_outputs_present": false
+      },
+      "manifest": "D:\\博士\\工作＆汇报\\源定位\\新建文件夹\\results\\erp_whole_head\\adaptive_v6\\protocol\\hierarchical_v1_gate_calibration_manifest.json",
+      "manifest_sha256": "46b7b83998792690087241bed802396418e2cb0b192b62c93d8ceb114c7fbde3",
+      "protocol": "erp-v6-hierarchical-v1-formal-run",
+      "resumed": true,
+      "resumed_prefix_case_count": 28,
+      "schema_version": 1,
+      "scores": [
+        -0.013234145813510368,
+        0.015880585508640195,
+        -0.01751034275070327,
+        -0.004275552180711514,
+        5.735876246042383e-06,
+        0.010184381126564938,
+        -0.014533403105760739,
+        3.8089099364430932e-06,
+        -0.16738433874625228,
+        -0.0020726273710240505,
+        2.5400010311504987e-05,
+        2.332535493873023e-05,
+        -0.0003815002056443025,
+        -0.011110094854284948,
+        -0.005878771932786492,
+        -3.4561312237480734e-05,
+        -0.014445214636113951,
+        4.473990943580079e-06,
+        -0.01864017362664824,
+        0.0047964732040367206,
+        -0.4086457084086942,
+        0.006939478483241061,
+        -0.014645391314795324,
+        -0.15364703723888226,
+        -0.027153301392069003,
+        -0.016740701545624605,
+        0.007678314099872271,
+        -0.005487478928979087,
+        0.01727485502992474,
+        -0.1437659119187792,
+        -0.033662928791147996,
+        0.0018030459715500271,
+        -0.040124696116127546,
+        0.030863550707272647,
+        0.01203434658101795,
+        -0.0014166235899928307,
+        -0.3032650514677238,
+        -0.04315957186454443,
+        -0.0003768235687435575,
+        -0.10037383193761241,
+        -0.05577284977675441,
+        0.028293763979516037,
+        -0.018899778902376145,
+        0.09002687749433512,
+        -0.00010738447014046774,
+        8.28076317464339e-05,
+        0.02049236537407715,
+        -0.2732933499453174,
+        0.0015149447311504228,
+        -0.2903085149400497,
+        -0.09266134022532069,
+        -0.1427246300009369,
+        -0.13255965944369438,
+        0.08142583561061215,
+        0.09300710261172988,
+        -0.015833169882567947,
+        -0.244602623973294
+      ],
+      "seed_roots": {
+        "check": 2026093002,
+        "fit": 2026093001
+      },
+      "shared_fingerprint": "a97e6991fde1cedfac66857d5c07683c43af62f16ad19bfa31ea7199a9083556",
+      "solver_settings": {
+        "deep_reweight_floor": 0.5,
+        "edge_weight_floor": 0.5,
+        "epsilon_fraction": 0.05,
+        "max_inner_retries": 20,
+        "mrf_strength": 0.8,
+        "outer_iterations": 40,
+        "outer_tolerance": 0.01,
+        "solver_kind": "admm",
+        "surface_reweight_floor": 0.5,
+        "tolerance": 0.001
+      },
+      "stage": "gate-calibration",
+      "surface_calibration": null,
+      "surface_threshold": null,
+      "threshold": 0.09002687749433512,
+      "threshold_construction": "max(0, second-largest of 57 pure-surface scores)",
+      "truth_access": "metrics only after the blind final estimate is frozen",
+      "valid": true,
+      "wall_seconds": 6351.874826600018
+    },
+    "path": "D:\\博士\\工作＆汇报\\源定位\\新建文件夹\\results\\erp_whole_head\\adaptive_v6\\formal_hierarchical_v1_gate_calibration\\frozen_gate_calibration.json",
+    "sha256": "7e178191d3d030d68fa03818f5f1ee7b6c6f797d74306c0efb251056be1b8850",
+    "seal_path": "D:\\博士\\工作＆汇报\\源定位\\新建文件夹\\results\\erp_whole_head\\adaptive_v6\\formal_hierarchical_v1_gate_calibration\\calibration_seal.json",
+    "seal_sha256": "e6d01f93c32234d43761e7048e42b37f3370aa7bfe6cfed80fdaeabfbdb92b53",
+    "threshold": 0.09002687749433512
+  },
+  "surface_calibration": null,
+  "gate_threshold": 0.09002687749433512,
+  "surface_threshold": null,
+  "truth_access": "metrics only after the blind final estimate is frozen",
+  "resumed": false,
+  "resumed_prefix_case_count": 0,
+  "interrupted_prefix_recovery": null,
+  "complete": true,
+  "valid": false,
+  "case_count": 57,
+  "finite_score_count": 56,
+  "all_converged": false,
+  "failure_count": 1,
+  "failures": [
+    {
+      "case_id": "erp-v6-hierarchical-v1-surface-calibration-055-eeg+20-meg-10",
+      "error": "RuntimeError: 一级 H0/H1 模型没有全部到达固定点"
+    }
+  ],
+  "wall_seconds": 7868.523438000004
+}

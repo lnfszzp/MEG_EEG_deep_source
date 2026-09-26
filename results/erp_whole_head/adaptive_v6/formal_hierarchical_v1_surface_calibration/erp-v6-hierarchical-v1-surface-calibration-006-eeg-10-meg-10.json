@@ -1,0 +1,20 @@
+{
+  "case_id": "erp-v6-hierarchical-v1-surface-calibration-006-eeg-10-meg-10",
+  "stage": "surface-calibration",
+  "complete": true,
+  "truth_used_by_decisions": false,
+  "truth_used_only_for_posthoc_metrics": false,
+  "gate_score": 0.027719269826722844,
+  "gate_modality_scores": [
+    0.008681126854722818,
+    0.08483369874272292
+  ],
+  "gate_model_convergence": {
+    "null": true,
+    "full": true
+  },
+  "deep_present_decision": false,
+  "secondary_surface_score": 0.0,
+  "secondary_rule": "primary gate closed: end-to-end null score is zero",
+  "elapsed_seconds": 127.50419730000431
+}

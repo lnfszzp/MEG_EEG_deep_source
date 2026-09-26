@@ -1,0 +1,16 @@
+{
+  "stage": "surface-calibration",
+  "complete": true,
+  "valid": false,
+  "case_count": 57,
+  "finite_score_count": 56,
+  "all_converged": false,
+  "failure_count": 1,
+  "failures": [
+    {
+      "case_id": "erp-v6-hierarchical-v1-surface-calibration-055-eeg+20-meg-10",
+      "error": "RuntimeError: 一级 H0/H1 模型没有全部到达固定点"
+    }
+  ],
+  "wall_seconds": 7868.523438000004
+}
