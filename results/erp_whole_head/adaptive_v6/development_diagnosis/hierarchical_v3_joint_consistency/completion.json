@@ -1,0 +1,8 @@
+{
+  "complete": true,
+  "development_diagnosis_only": true,
+  "case_count": 5,
+  "inverse_call_count": 5,
+  "all_selected_joint_solvers_converged": true,
+  "wall_seconds": 389.27715239999816
+}

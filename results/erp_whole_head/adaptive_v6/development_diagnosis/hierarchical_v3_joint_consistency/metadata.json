@@ -1,0 +1,75 @@
+{
+  "schema_version": 1,
+  "protocol": "erp-v6-hierarchical-v3-joint-map-consistency-development-diagnosis",
+  "development_diagnosis_only": true,
+  "formal_acceptance_allowed": false,
+  "blind_validation_claim_allowed": false,
+  "old_21_cases_already_unblinded": true,
+  "threshold_fitting_performed": false,
+  "gate_recomputed": false,
+  "family_decision_source": "copied verbatim from frozen v2 rows.csv before observation reconstruction",
+  "localization_change_only": "replace v2 MRF-innovation/sequential residual final map by the same adaptive graph objective for H0 or H1",
+  "map_semantics": "combined40 selected-family joint map; H0 surface-only, H1 surface+deep",
+  "channel_weights": "all whitened channels exactly one, matching the v2 primary H0/H1 objective",
+  "localization_target_cases": [
+    6,
+    14,
+    17
+  ],
+  "known_family_error_cases_not_fixed_here": [
+    13,
+    15
+  ],
+  "inverse_call_budget": 5,
+  "alias_penalty_status": "archived_rejected_not_rerun",
+  "alias_rejection_records_sha256": {
+    "results/erp_whole_head/adaptive_v6/dev_localization_v5_alias_mm_probe/EARLY_STOPPED.md": "dd470165819a7517c9e72e2dac7ee446d67f523230bdfbf392f8b83de8be2fb0",
+    "results/erp_whole_head/adaptive_v6/dev_localization_v5_alias_mm_rho_fixed_probe/EARLY_STOPPED.md": "f209ec7d4e479f644e032cd0bf2da9f8a64a95ea9cbc6b81d594b9223614d308"
+  },
+  "manifest": "D:\\博士\\工作＆汇报\\源定位\\新建文件夹\\results\\erp_whole_head\\adaptive_v6\\protocol\\hierarchical_v1_validation_manifest.json",
+  "manifest_sha256": "6ef97341434bca99bc7c75d205c8dc6d3815b3260ca3c62c10c615ce2efb0eff",
+  "source_metadata": "D:\\博士\\工作＆汇报\\源定位\\新建文件夹\\results\\erp_whole_head\\adaptive_v6\\formal_hierarchical_v2_validation\\metadata.json",
+  "source_metadata_sha256": "95883b0bc1886ea879528d8583b9c2ce2516b6f4852796c3c3fab073821ea6ce",
+  "source_rows": "D:\\博士\\工作＆汇报\\源定位\\新建文件夹\\results\\erp_whole_head\\adaptive_v6\\formal_hierarchical_v2_validation\\rows.csv",
+  "source_rows_sha256": "b0a90ac2ada28aa90f574cab7cc99b3aa7f27b0d633df21765167785830af32d",
+  "seed_roots": {
+    "check": 2026100102,
+    "fit": 2026100101
+  },
+  "shared_fingerprint": "a97e6991fde1cedfac66857d5c07683c43af62f16ad19bfa31ea7199a9083556",
+  "code_sha256": {
+    "algorithms/spatial_fused_fusion.py": "68c65de7c6c41628f36f72cb8b9f913ea569aec8ff675109461acdad6353197d",
+    "benchmark/erp_trial_covariance.py": "818e41cd1e3c75921db386b9858f78e3722551cc9e32ddbd2e88e819b22e7d89",
+    "benchmark/metrics.py": "f07a42e26dc2118c418744e3a4971c5fcd3037b7b93e26a7e2e4e899400986d8",
+    "benchmark/protocol.py": "26f816e0530cf6f36445b7222fc5db3d0ce216f4ec089f0a2779c65e1c4c8d4a",
+    "candidates/graph_reweight_solver.py": "48042de304322ff6715293d485da09af39d203c799b6ee637918a1f6a5381257",
+    "candidates/oaster_balanced.py": "74a9de1efc6d1e83f522024c9a3440d799fc054be348d91884171a62ddd99e92",
+    "candidates/oaster_rebuilt.py": "4032f015ed06df64df3ad10d128b67605c49fb76a2e5bef302ed5160519e00f0",
+    "run_erp_whole_head_matrix.py": "bb4ac256f7b48aeb7a948c2bf175df282f9839d149211944c4d9c2b8b5077d17",
+    "作者风格版/74-v3联合一致性诊断.py": "a6fd629cb636d85b4056764190d7955fb7fe30c6acb1f01984bd6ad365eaa83a"
+  },
+  "solver_settings": {
+    "solver_kind": "admm",
+    "mrf_strength": 0.8,
+    "outer_iterations": 80,
+    "max_inner_retries": 20,
+    "epsilon_fraction": 0.05,
+    "tolerance": 0.001,
+    "outer_tolerance": 0.01,
+    "surface_reweight_floor": 0.5,
+    "deep_reweight_floor": 0.5,
+    "edge_weight_floor": 0.5,
+    "max_iter": 2000,
+    "rho": 1.0,
+    "adaptive_rho": true,
+    "noise_multiplier": 1.0,
+    "edge_fraction": 0.5,
+    "calibration": "layer",
+    "temporal_mode": "smooth",
+    "ridge_fraction": 0.0,
+    "edge_penalty_mode": "group",
+    "source_penalty_mode": "group",
+    "deep_alias_penalty": false
+  },
+  "publication_mode": "atomic directory promotion from a same-volume staging directory"
+}

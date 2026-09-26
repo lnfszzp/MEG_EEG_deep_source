@@ -1,0 +1,29 @@
+{
+  "complete": true,
+  "development_diagnosis_only": true,
+  "formal_or_blind_validation": false,
+  "threshold_tuning_performed": false,
+  "gate_recomputed": false,
+  "case_count": 5,
+  "inverse_call_count": 5,
+  "all_selected_joint_solvers_converged": true,
+  "localization_target_cases": [
+    6,
+    14,
+    17
+  ],
+  "known_family_error_cases_not_fixed_here": [
+    13,
+    15
+  ],
+  "diagnostic_checks": {
+    "case06_surface_recovered": false,
+    "case14_surface_DLE_improved": false,
+    "case17_all_surface_patches_recovered": true,
+    "case13_family_error_intentionally_unchanged": true,
+    "case15_family_error_intentionally_unchanged": true
+  },
+  "localization_target_checks_passed": false,
+  "wall_seconds": 389.27715239999816,
+  "next_required_step": "develop a separate conditional-residual family gate on new data; then fresh calibration and untouched validation"
+}
