@@ -1,0 +1,39 @@
+{
+  "case_id": "erp-v6-hierarchical-v2-gate-calibration-024-eeg-10-meg+20",
+  "stage": "gate-calibration",
+  "complete": true,
+  "truth_used_by_decisions": false,
+  "truth_used_only_for_posthoc_metrics": false,
+  "gate_score": -0.0038821746178836145,
+  "gate_modality_scores": [
+    0.0012871961058068242,
+    -0.08116771382589638
+  ],
+  "gate_modality_response_excess": [
+    0.04460017705018404,
+    78.70515172087427
+  ],
+  "gate_reliability_balance": 0.013105805013813303,
+  "gate_reliability_eeg_weight": 0.5032764512534533,
+  "gate_formula": "h_m=g_m/sqrt(1+q_m); b=min(1+q_E,1+q_M)/max(1+q_E,1+q_M); w_E=0.5+0.25*b; score=w_E*h_E+(1-w_E)*h_M",
+  "primary_channel_weights": {
+    "minimum": 1.0,
+    "maximum": 1.0,
+    "semantics": "all whitened EEG/MEG channels equal one only for primary H0/H1 fit and primary held-out gate score"
+  },
+  "deep_channel_weights": {
+    "minimum": 0.04526982012461148,
+    "maximum": 1.0,
+    "semantics": "original training-derived modality evidence weights retained only for deep LOO selection and deep amplitude/refit"
+  },
+  "conditional_surface_channel_weights": {
+    "minimum": 1.0,
+    "maximum": 1.0,
+    "semantics": "frozen W=1 on every whitened channel for conditional-surface train20 and combined40 fits"
+  },
+  "gate_model_convergence": {
+    "null": true,
+    "full": true
+  },
+  "elapsed_seconds": 188.47977439995157
+}

@@ -1,0 +1,12 @@
+{
+  "stage": "gate-calibration",
+  "complete": true,
+  "valid": true,
+  "case_count": 57,
+  "finite_score_count": 57,
+  "all_converged": true,
+  "failure_count": 0,
+  "failures": [],
+  "gate_power": null,
+  "wall_seconds": 10102.15565749997
+}
