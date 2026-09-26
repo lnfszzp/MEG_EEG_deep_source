@@ -152,3 +152,23 @@ def test_confirmation_cannot_change_whitening_or_weights(monkeypatch):
     assert not np.array_equal(prepared["confirmation"], changed["confirmation"])
     assert prepared["training"].shape == prepared["confirmation"].shape
     assert prepared["gain"].shape[0] == len(prepared["channel_weights"])
+
+
+def test_off_grid_truth_forward_keeps_inverse_gain_on_coarse_grid():
+    shared, case = _toy()
+    truth_shared = dict(shared)
+    truth_shared.update(
+        n_surf=3,
+        n_deep=1,
+        gain_eeg=np.column_stack([shared["gain_eeg"], [1.0, -0.5, 0.25]]),
+        gain_meg=np.column_stack([shared["gain_meg"], [0.5, -0.25, 1.0, -0.75]]),
+    )
+    case.update(deep_index=3, truth_grid="refined_oct7_5mm")
+    result = erp_replicates.prepare_replicated_case(
+        shared, case, 9, truth_shared=truth_shared)
+    assert result["truth"].shape == (4, 601)
+    np.testing.assert_array_equal(result["groups"][0], [3])
+    assert result["gain"].shape[1] == 3
+    assert result["metadata"]["truth_grid"] == "refined_oct7_5mm"
+    assert result["metadata"]["truth_source_count"] == 4
+    assert result["metadata"]["inverse_source_count"] == 3

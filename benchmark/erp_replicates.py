@@ -27,7 +27,8 @@ def _joint_sensor_energy(shared: dict, source: np.ndarray, active: np.ndarray) -
     return float(energy)
 
 
-def simulate_replicated_case(shared: dict, case: dict, seed_root=erp_protocol.ERP_SEED_ROOT) -> dict:
+def simulate_replicated_case(shared: dict, case: dict, seed_root=erp_protocol.ERP_SEED_ROOT,
+                             *, truth_shared: dict | None = None) -> dict:
     """Keep old truth; generate independent training/confirmation observations.
 
     Explicit case replica_seed_roots['fit'/'check'] take precedence over seed_root.
@@ -42,14 +43,18 @@ def simulate_replicated_case(shared: dict, case: dict, seed_root=erp_protocol.ER
             or any(int(roots[key]) != roots[key] or roots[key] < 0 for key in ("fit", "check"))):
         raise ValueError("replica_seed_roots must provide nonnegative integer fit/check roots")
     roots = {key: int(roots[key]) for key in ("fit", "check")}
+    simulation = shared if truth_shared is None else truth_shared
     for modality in ("eeg", "meg"):
         gain = np.asarray(shared["gain_" + modality], dtype=float)
+        truth_gain = np.asarray(simulation["gain_" + modality], dtype=float)
         factor = np.asarray(shared["noise_factor_" + modality], dtype=float)
         if (gain.ndim != 2 or factor.shape != (gain.shape[0], gain.shape[0])
-                or not np.isfinite(gain).all() or not np.isfinite(factor).all()):
+                or truth_gain.ndim != 2 or truth_gain.shape[0] != gain.shape[0]
+                or not np.isfinite(gain).all() or not np.isfinite(truth_gain).all()
+                or not np.isfinite(factor).all()):
             raise ValueError("finite gain and square channel noise factor required")
     _, _, truth, groups, baseline, windows, active, old_metadata = erp_protocol.simulate_case(
-        shared, case, seed_root=seed_root)
+        simulation, case, seed_root=seed_root)
     if case.get("surface_component_sensor_balance", False):
         surface_groups = groups[:len(case.get("surface_centers", []))]
         if len(surface_groups) < 2:
@@ -61,7 +66,7 @@ def simulate_replicated_case(shared: dict, case: dict, seed_root=erp_protocol.ER
             component = np.zeros_like(truth)
             component[group] = truth[group]
             components.append(component)
-        before = np.array([_joint_sensor_energy(shared, component, active)
+        before = np.array([_joint_sensor_energy(simulation, component, active)
                            for component in components])
         if np.any(before <= 0) or not np.isfinite(before).all():
             raise ValueError("surface components need positive finite sensor energy")
@@ -71,7 +76,7 @@ def simulate_replicated_case(shared: dict, case: dict, seed_root=erp_protocol.ER
         truth[surface_indices] = 0.
         truth += sum((scale * component for scale, component in zip(scales, components)),
                      start=np.zeros_like(truth))
-        after = [_joint_sensor_energy(shared, scale * component, active)
+        after = [_joint_sensor_energy(simulation, scale * component, active)
                  for scale, component in zip(scales, components)]
         old_metadata.update(
             surface_component_sensor_balance=True,
@@ -88,7 +93,7 @@ def simulate_replicated_case(shared: dict, case: dict, seed_root=erp_protocol.ER
         deep = np.zeros_like(truth)
         deep[int(deep_index)] = truth[int(deep_index)]
         surface = truth - deep
-        energies = {layer: _joint_sensor_energy(shared, source, active)
+        energies = {layer: _joint_sensor_energy(simulation, source, active)
                     for layer, source in (("surface", surface), ("deep", deep))}
         if min(energies.values()) <= 0 or not np.isfinite(list(energies.values())).all():
             raise ValueError("mixed components need positive finite noise-normalized sensor energy")
@@ -110,7 +115,7 @@ def simulate_replicated_case(shared: dict, case: dict, seed_root=erp_protocol.ER
                   active_windows=windows, active=active)
     actual_snr, expected_snr, noise_scales, seed_spawns = {}, {}, {}, {}
     for modality_index, modality in enumerate(("eeg", "meg")):
-        clean = np.asarray(shared["gain_" + modality], dtype=float) @ truth
+        clean = np.asarray(simulation["gain_" + modality], dtype=float) @ truth
         factor = np.asarray(shared["noise_factor_" + modality], dtype=float)
         target = float(case.get(modality + "_snr_db", case.get("snr_db")))
         signal_energy = float(np.sum(clean[:, active] ** 2))
@@ -148,19 +153,24 @@ def simulate_replicated_case(shared: dict, case: dict, seed_root=erp_protocol.ER
                     baseline_centering="each half independently; analytic scale includes active variance from baseline centering",
                     noise_scale_rule="analytic expected baseline-centered noise energy; never normalize a noise realization",
                     replica_seed_roots=roots, seed_case_key=case_key,
+                    truth_grid=str(case.get("truth_grid", "inverse_grid")),
+                    truth_source_count=int(truth.shape[0]),
+                    inverse_source_count=int(np.asarray(shared["gain_eeg"]).shape[1]),
                     seed_entropy=entropy, seed_spawn_keys=seed_spawns,
                     seed_rule="explicit replica_seed_roots fit/check (fallback seed_root) + SHA256(case_id)[:8] little endian + domain 6001 + half index; modality spawn")
     result["metadata"] = metadata
     return result
 
 
-def prepare_replicated_case(shared: dict, case: dict, seed_root=erp_protocol.ERP_SEED_ROOT) -> dict:
+def prepare_replicated_case(shared: dict, case: dict, seed_root=erp_protocol.ERP_SEED_ROOT,
+                            *, truth_shared: dict | None = None) -> dict:
     """Apply one training-derived whitener and evidence weights to both halves.
 
     Returned training/confirmation/gain are whitened but not evidence-weighted;
     pass the separate channel_weights to the inverse for both observations.
     """
-    result = simulate_replicated_case(shared, case, seed_root)
+    result = simulate_replicated_case(
+        shared, case, seed_root, truth_shared=truth_shared)
     baseline, active = result["baseline"], result["active_windows"][0]
     training_blocks, confirmation_blocks, gains = [], [], []
     for modality in ("eeg", "meg"):

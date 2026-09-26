@@ -12,14 +12,16 @@ from . import erp_protocol, erp_replicates
 
 
 def prepare_trial_covariance_case(shared: dict, case: dict,
-                                  seed_root=erp_protocol.ERP_SEED_ROOT) -> dict:
+                                  seed_root=erp_protocol.ERP_SEED_ROOT,
+                                  *, truth_shared: dict | None = None) -> dict:
     """Return the existing replicate API, changing only the training whitener.
 
     The simulator uses F to generate contrast samples; the inverse only receives
     their empirical whitener, not the known generating covariance. Confirmation
     data and its seed cannot change the training covariance or modality weights.
     """
-    result = erp_replicates.simulate_replicated_case(shared, case, seed_root)
+    result = erp_replicates.simulate_replicated_case(
+        shared, case, seed_root, truth_shared=truth_shared)
     metadata = result["metadata"]
     baseline, active = result["baseline"], result["active_windows"][0]
     n_trials = int(metadata["n_trials_per_half"])

@@ -52,3 +52,20 @@ def test_empirical_contrast_covariance_has_twenty_trial_mean_expectation():
                 * result["metadata"]["noise_scale"]["eeg"] ** 2 / 20)
     relative_error = np.linalg.norm(np.mean(estimates, axis=0) - expected) / np.linalg.norm(expected)
     assert relative_error < .035
+
+
+def test_trial_covariance_accepts_separate_truth_forward():
+    shared, case = _toy()
+    truth_shared = dict(shared)
+    truth_shared.update(
+        n_surf=3,
+        n_deep=1,
+        gain_eeg=np.column_stack([shared["gain_eeg"], [1.0, -0.5, 0.25]]),
+        gain_meg=np.column_stack([shared["gain_meg"], [0.5, -0.25, 1.0]]),
+    )
+    case.update(deep_index=3, truth_grid="refined_oct7_5mm")
+    result = erp_trial_covariance.prepare_trial_covariance_case(
+        shared, case, 9, truth_shared=truth_shared)
+    assert result["truth"].shape[0] == 4
+    assert result["gain"].shape[1] == 3
+    assert result["metadata"]["trial_baseline_covariance"]["generator_covariance_passed_to_inverse"] is False
