@@ -1,0 +1,24 @@
+{
+  "complete": true,
+  "development_diagnosis_only": true,
+  "formal_or_blind_validation": false,
+  "old_21_cases_already_unblinded": true,
+  "final_parameter_selection_allowed": false,
+  "case_count": 3,
+  "inverse_call_count": 6,
+  "all_training_solvers_converged": true,
+  "selected_strengths": {
+    "6": 0.5,
+    "14": 0.5,
+    "17": 0.5
+  },
+  "posthoc_expected_strengths": {
+    "6": 0.5,
+    "14": 0.5,
+    "17": 0.8
+  },
+  "posthoc_expected_match_count": 2,
+  "all_posthoc_expected_strengths_selected": false,
+  "interpretation_boundary": "selection mechanism diagnosis on revealed cases only; this cannot freeze MRF strength or support a blind-validation claim",
+  "wall_seconds": 413.3974493999849
+}

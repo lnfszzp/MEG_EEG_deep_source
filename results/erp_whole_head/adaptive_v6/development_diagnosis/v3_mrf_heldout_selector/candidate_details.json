@@ -1,0 +1,224 @@
+[
+  {
+    "case_number": 6,
+    "case_id": "erp-v6-hierarchical-v1-validation-06-eeg-10-meg-10",
+    "selected_family": "H1",
+    "mrf_strength": 0.5,
+    "fit_half": "training20",
+    "held_out_half": "confirmation20",
+    "solver_converged": 1,
+    "total_heldout_squared_loss": 1805.1389967537746,
+    "total_noise_normalized_loss": 1.0233702955918926,
+    "eeg_heldout_squared_loss": 681.482610643514,
+    "meg_heldout_squared_loss": 1123.6563861102604,
+    "eeg_noise_normalized_loss": 1.0509040122500484,
+    "meg_noise_normalized_loss": 1.0073633238657673,
+    "response_energy": 1822.4865442909183,
+    "prediction_energy": 29.2456450921882,
+    "truth_or_old_metric_used_for_selection": false,
+    "all_whitened_channel_weights_one": true,
+    "temporal_basis": {
+      "active_samples": 61,
+      "temporal_rank": 10,
+      "temporal_selection": "amplitude_independent_smooth_subspace",
+      "smoothing_fraction": 0.1,
+      "attenuation_floor": 0.01
+    },
+    "modality_order": [
+      "EEG",
+      "MEG"
+    ],
+    "modality_sizes": [
+      58,
+      99
+    ],
+    "solver_outer_iterations": 5,
+    "solver_final_stationarity_gap_relative": 0.0007714698613236592,
+    "elapsed_seconds": 18.50082289997954
+  },
+  {
+    "case_number": 6,
+    "case_id": "erp-v6-hierarchical-v1-validation-06-eeg-10-meg-10",
+    "selected_family": "H1",
+    "mrf_strength": 0.8,
+    "fit_half": "training20",
+    "held_out_half": "confirmation20",
+    "solver_converged": 1,
+    "total_heldout_squared_loss": 1818.4989327587105,
+    "total_noise_normalized_loss": 1.0309443171398438,
+    "eeg_heldout_squared_loss": 680.9848562022703,
+    "meg_heldout_squared_loss": 1137.5140765564402,
+    "eeg_noise_normalized_loss": 1.0501364326651133,
+    "meg_noise_normalized_loss": 1.0197868096230909,
+    "response_energy": 1822.4865442909183,
+    "prediction_energy": 25.973249010772378,
+    "truth_or_old_metric_used_for_selection": false,
+    "all_whitened_channel_weights_one": true,
+    "temporal_basis": {
+      "active_samples": 61,
+      "temporal_rank": 10,
+      "temporal_selection": "amplitude_independent_smooth_subspace",
+      "smoothing_fraction": 0.1,
+      "attenuation_floor": 0.01
+    },
+    "modality_order": [
+      "EEG",
+      "MEG"
+    ],
+    "modality_sizes": [
+      58,
+      99
+    ],
+    "solver_outer_iterations": 7,
+    "solver_final_stationarity_gap_relative": 0.0009959647022685259,
+    "elapsed_seconds": 37.002413199981675
+  },
+  {
+    "case_number": 14,
+    "case_id": "erp-v6-hierarchical-v1-validation-14-eeg+20-meg-10",
+    "selected_family": "H0",
+    "mrf_strength": 0.5,
+    "fit_half": "training20",
+    "held_out_half": "confirmation20",
+    "solver_converged": 1,
+    "total_heldout_squared_loss": 2546.4162723967934,
+    "total_noise_normalized_loss": 1.4252307878525656,
+    "eeg_heldout_squared_loss": 1318.4873454804883,
+    "meg_heldout_squared_loss": 1227.9289269163046,
+    "eeg_noise_normalized_loss": 2.0346931560071457,
+    "meg_noise_normalized_loss": 1.0783921790175068,
+    "response_energy": 362666.04440168483,
+    "prediction_energy": 351274.7837296126,
+    "truth_or_old_metric_used_for_selection": false,
+    "all_whitened_channel_weights_one": true,
+    "temporal_basis": {
+      "active_samples": 61,
+      "temporal_rank": 10,
+      "temporal_selection": "amplitude_independent_smooth_subspace",
+      "smoothing_fraction": 0.1,
+      "attenuation_floor": 0.01
+    },
+    "modality_order": [
+      "EEG",
+      "MEG"
+    ],
+    "modality_sizes": [
+      58,
+      99
+    ],
+    "solver_outer_iterations": 11,
+    "solver_final_stationarity_gap_relative": 0.0008042366861105367,
+    "elapsed_seconds": 54.09788039996056
+  },
+  {
+    "case_number": 14,
+    "case_id": "erp-v6-hierarchical-v1-validation-14-eeg+20-meg-10",
+    "selected_family": "H0",
+    "mrf_strength": 0.8,
+    "fit_half": "training20",
+    "held_out_half": "confirmation20",
+    "solver_converged": 1,
+    "total_heldout_squared_loss": 2983.238503151454,
+    "total_noise_normalized_loss": 1.6697204649091726,
+    "eeg_heldout_squared_loss": 1679.010243226018,
+    "meg_heldout_squared_loss": 1304.228259925436,
+    "eeg_noise_normalized_loss": 2.5910530445879263,
+    "meg_noise_normalized_loss": 1.145399806395364,
+    "response_energy": 362666.04440168483,
+    "prediction_energy": 349238.63222756324,
+    "truth_or_old_metric_used_for_selection": false,
+    "all_whitened_channel_weights_one": true,
+    "temporal_basis": {
+      "active_samples": 61,
+      "temporal_rank": 10,
+      "temporal_selection": "amplitude_independent_smooth_subspace",
+      "smoothing_fraction": 0.1,
+      "attenuation_floor": 0.01
+    },
+    "modality_order": [
+      "EEG",
+      "MEG"
+    ],
+    "modality_sizes": [
+      58,
+      99
+    ],
+    "solver_outer_iterations": 14,
+    "solver_final_stationarity_gap_relative": 0.0008462667894156298,
+    "elapsed_seconds": 102.299187000026
+  },
+  {
+    "case_number": 17,
+    "case_id": "erp-v6-hierarchical-v1-validation-17-eeg+20-meg-10",
+    "selected_family": "H0",
+    "mrf_strength": 0.5,
+    "fit_half": "training20",
+    "held_out_half": "confirmation20",
+    "solver_converged": 1,
+    "total_heldout_squared_loss": 2038.9728332265297,
+    "total_noise_normalized_loss": 1.1716878258344128,
+    "eeg_heldout_squared_loss": 858.0831110729273,
+    "meg_heldout_squared_loss": 1180.8897221536024,
+    "eeg_noise_normalized_loss": 1.3612901380415445,
+    "meg_noise_normalized_loss": 1.0640027106696257,
+    "response_energy": 30284.375523735576,
+    "prediction_energy": 25701.30780850518,
+    "truth_or_old_metric_used_for_selection": false,
+    "all_whitened_channel_weights_one": true,
+    "temporal_basis": {
+      "active_samples": 61,
+      "temporal_rank": 10,
+      "temporal_selection": "amplitude_independent_smooth_subspace",
+      "smoothing_fraction": 0.1,
+      "attenuation_floor": 0.01
+    },
+    "modality_order": [
+      "EEG",
+      "MEG"
+    ],
+    "modality_sizes": [
+      58,
+      99
+    ],
+    "solver_outer_iterations": 20,
+    "solver_final_stationarity_gap_relative": 0.0009031811950020085,
+    "elapsed_seconds": 166.37529120000545
+  },
+  {
+    "case_number": 17,
+    "case_id": "erp-v6-hierarchical-v1-validation-17-eeg+20-meg-10",
+    "selected_family": "H0",
+    "mrf_strength": 0.8,
+    "fit_half": "training20",
+    "held_out_half": "confirmation20",
+    "solver_converged": 1,
+    "total_heldout_squared_loss": 2099.907847049027,
+    "total_noise_normalized_loss": 1.2067038950528983,
+    "eeg_heldout_squared_loss": 914.984250952907,
+    "meg_heldout_squared_loss": 1184.92359609612,
+    "eeg_noise_normalized_loss": 1.4515599027792352,
+    "meg_noise_normalized_loss": 1.0676373030695925,
+    "response_energy": 30284.375523735576,
+    "prediction_energy": 25513.69337799746,
+    "truth_or_old_metric_used_for_selection": false,
+    "all_whitened_channel_weights_one": true,
+    "temporal_basis": {
+      "active_samples": 61,
+      "temporal_rank": 10,
+      "temporal_selection": "amplitude_independent_smooth_subspace",
+      "smoothing_fraction": 0.1,
+      "attenuation_floor": 0.01
+    },
+    "modality_order": [
+      "EEG",
+      "MEG"
+    ],
+    "modality_sizes": [
+      58,
+      99
+    ],
+    "solver_outer_iterations": 6,
+    "solver_final_stationarity_gap_relative": 0.0005044019344937897,
+    "elapsed_seconds": 33.817056700005196
+  }
+]

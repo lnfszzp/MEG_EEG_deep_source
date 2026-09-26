@@ -1,0 +1,148 @@
+{
+  "schema_version": 1,
+  "protocol": "erp-v6-v3-mrf-heldout-selector-development-diagnosis",
+  "development_diagnosis_only": true,
+  "formal_acceptance_allowed": false,
+  "blind_validation_claim_allowed": false,
+  "final_parameter_selection_allowed": false,
+  "old_21_cases_already_unblinded": true,
+  "case_numbers": [
+    6,
+    14,
+    17
+  ],
+  "frozen_family": {
+    "6": "H1",
+    "14": "H0",
+    "17": "H0"
+  },
+  "fit_half": "training20",
+  "held_out_half": "confirmation20",
+  "candidate_strengths": [
+    0.5,
+    0.8
+  ],
+  "inverse_call_budget": 6,
+  "selection_rule": "minimum confirmation20 all-whitened-channel raw squared loss in the fixed smooth-DCT subspace; exact tie selects MRF 0.8",
+  "modality_loss_role": "recorded only; EEG/MEG normalized losses do not select MRF",
+  "truth_and_old_localization_metric_role": "read only after all three MRF selections were fixed; posthoc reporting only",
+  "combined40_map_role": "no refit after selection; directly reference hash-verified maps saved by 76 or its hash-bound MRF=0.8 source",
+  "solver_settings_by_strength": {
+    "0.5": {
+      "solver_kind": "admm",
+      "mrf_strength": 0.5,
+      "outer_iterations": 80,
+      "max_inner_retries": 20,
+      "epsilon_fraction": 0.05,
+      "tolerance": 0.001,
+      "outer_tolerance": 0.01,
+      "surface_reweight_floor": 0.5,
+      "deep_reweight_floor": 0.5,
+      "edge_weight_floor": 0.5,
+      "max_iter": 2000,
+      "rho": 1.0,
+      "adaptive_rho": true,
+      "noise_multiplier": 1.0,
+      "edge_fraction": 0.5,
+      "calibration": "layer",
+      "temporal_mode": "smooth",
+      "ridge_fraction": 0.0,
+      "edge_penalty_mode": "group",
+      "source_penalty_mode": "group",
+      "deep_alias_penalty": false
+    },
+    "0.8": {
+      "solver_kind": "admm",
+      "mrf_strength": 0.8,
+      "outer_iterations": 80,
+      "max_inner_retries": 20,
+      "epsilon_fraction": 0.05,
+      "tolerance": 0.001,
+      "outer_tolerance": 0.01,
+      "surface_reweight_floor": 0.5,
+      "deep_reweight_floor": 0.5,
+      "edge_weight_floor": 0.5,
+      "max_iter": 2000,
+      "rho": 1.0,
+      "adaptive_rho": true,
+      "noise_multiplier": 1.0,
+      "edge_fraction": 0.5,
+      "calibration": "layer",
+      "temporal_mode": "smooth",
+      "ridge_fraction": 0.0,
+      "edge_penalty_mode": "group",
+      "source_penalty_mode": "group",
+      "deep_alias_penalty": false
+    }
+  },
+  "manifest": "D:\\博士\\工作＆汇报\\源定位\\新建文件夹\\results\\erp_whole_head\\adaptive_v6\\protocol\\hierarchical_v1_validation_manifest.json",
+  "manifest_sha256": "6ef97341434bca99bc7c75d205c8dc6d3815b3260ca3c62c10c615ce2efb0eff",
+  "seed_roots": {
+    "check": 2026100102,
+    "fit": 2026100101
+  },
+  "shared_fingerprint": "a97e6991fde1cedfac66857d5c07683c43af62f16ad19bfa31ea7199a9083556",
+  "source_result": "D:\\博士\\工作＆汇报\\源定位\\新建文件夹\\results\\erp_whole_head\\adaptive_v6\\development_diagnosis\\v3_mrf_strength_05_00",
+  "source_sha256": {
+    "metadata.json": "3fbc2d000048fe49ddd785e676ff82d4f7760954618b93feca58756e217a010c",
+    "details.json": "af23caf093a6a1bf1e4a477779b895294dee948cc3a66658fc708c1ef9aa7337",
+    "rows.csv": "f81d13bfa280ad7836e9f7f679679453c75abb8aaa71e35467ae821e2b7add64",
+    "summary.json": "561d860c08e877325b9acc8517c9e7b8a882ba957bc931c3d0e788f064c4bc73",
+    "completion.json": "cdf36aeceef228c3577f05552cd014d67e7821523ed966dd9be76b8d337e2bd6",
+    "REPORT.md": "23bb90182ad66c9dcb58d595256cb93552b2565da4340e92a294e89a5309284f",
+    "case_06_mrf_05.npz": "f98421ec4a4d730e5ebd077bb77bc16888d319817e6c361a104ab3e76ca75682",
+    "case_14_mrf_05.npz": "8f7d3b6b0de9647e205c2c77c7c225bd240427920af62cebcfdc6e8b97feaaa3",
+    "case_17_mrf_05.npz": "5758776aa0b0b18b0099dec51f79b33917b0565e684a2215dc5f17c1cdccf4a0"
+  },
+  "combined40_map_references": {
+    "6": {
+      "0.5": {
+        "path": "D:\\博士\\工作＆汇报\\源定位\\新建文件夹\\results\\erp_whole_head\\adaptive_v6\\development_diagnosis\\v3_mrf_strength_05_00\\case_06_mrf_05.npz",
+        "sha256": "f98421ec4a4d730e5ebd077bb77bc16888d319817e6c361a104ab3e76ca75682",
+        "copied_to_output": false
+      },
+      "0.8": {
+        "path": "D:\\博士\\工作＆汇报\\源定位\\新建文件夹\\results\\erp_whole_head\\adaptive_v6\\development_diagnosis\\hierarchical_v3_joint_consistency\\case_06_combined40_joint.npz",
+        "sha256": "ad09e8add649782b2d0813cf61eb4c1cbc5c186045a9310222adc7ec2c929ab0",
+        "copied_to_output": false
+      }
+    },
+    "14": {
+      "0.5": {
+        "path": "D:\\博士\\工作＆汇报\\源定位\\新建文件夹\\results\\erp_whole_head\\adaptive_v6\\development_diagnosis\\v3_mrf_strength_05_00\\case_14_mrf_05.npz",
+        "sha256": "8f7d3b6b0de9647e205c2c77c7c225bd240427920af62cebcfdc6e8b97feaaa3",
+        "copied_to_output": false
+      },
+      "0.8": {
+        "path": "D:\\博士\\工作＆汇报\\源定位\\新建文件夹\\results\\erp_whole_head\\adaptive_v6\\development_diagnosis\\hierarchical_v3_joint_consistency\\case_14_combined40_joint.npz",
+        "sha256": "e66886207cad56bd405a5bee784c8aaa43986fe17f1e8a62570b11b656eaa5d1",
+        "copied_to_output": false
+      }
+    },
+    "17": {
+      "0.5": {
+        "path": "D:\\博士\\工作＆汇报\\源定位\\新建文件夹\\results\\erp_whole_head\\adaptive_v6\\development_diagnosis\\v3_mrf_strength_05_00\\case_17_mrf_05.npz",
+        "sha256": "5758776aa0b0b18b0099dec51f79b33917b0565e684a2215dc5f17c1cdccf4a0",
+        "copied_to_output": false
+      },
+      "0.8": {
+        "path": "D:\\博士\\工作＆汇报\\源定位\\新建文件夹\\results\\erp_whole_head\\adaptive_v6\\development_diagnosis\\hierarchical_v3_joint_consistency\\case_17_combined40_joint.npz",
+        "sha256": "74c949d32e428e63fd1dfa063b232f4d071eca2c8293a969f5b46f431ea35402",
+        "copied_to_output": false
+      }
+    }
+  },
+  "core_code_sha256": {
+    "algorithms/spatial_fused_fusion.py": "68c65de7c6c41628f36f72cb8b9f913ea569aec8ff675109461acdad6353197d",
+    "benchmark/erp_trial_covariance.py": "818e41cd1e3c75921db386b9858f78e3722551cc9e32ddbd2e88e819b22e7d89",
+    "benchmark/metrics.py": "f07a42e26dc2118c418744e3a4971c5fcd3037b7b93e26a7e2e4e899400986d8",
+    "benchmark/protocol.py": "26f816e0530cf6f36445b7222fc5db3d0ce216f4ec089f0a2779c65e1c4c8d4a",
+    "candidates/graph_reweight_solver.py": "48042de304322ff6715293d485da09af39d203c799b6ee637918a1f6a5381257",
+    "candidates/oaster_balanced.py": "74a9de1efc6d1e83f522024c9a3440d799fc054be348d91884171a62ddd99e92",
+    "candidates/oaster_rebuilt.py": "4032f015ed06df64df3ad10d128b67605c49fb76a2e5bef302ed5160519e00f0",
+    "run_erp_whole_head_matrix.py": "bb4ac256f7b48aeb7a948c2bf175df282f9839d149211944c4d9c2b8b5077d17"
+  },
+  "core_code_bundle_sha256": "7e484917a80c234aef953b37821fda615cd648385e897d03488c05558ba9ba2b",
+  "script_sha256": "25dd33eed8402aadce1aa8e79a1c4f5b26d69f0c77a74c481971c132e63f1917",
+  "publication_mode": "atomic directory promotion from same-volume staging"
+}

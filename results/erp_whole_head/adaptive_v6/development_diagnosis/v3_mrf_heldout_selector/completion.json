@@ -1,0 +1,11 @@
+{
+  "complete": true,
+  "development_diagnosis_only": true,
+  "inverse_call_count": 6,
+  "candidate_row_count": 6,
+  "selected_row_count": 3,
+  "all_training_solvers_converged": true,
+  "all_posthoc_expected_strengths_selected": false,
+  "final_parameter_selection_allowed": false,
+  "wall_seconds": 413.3974493999849
+}
