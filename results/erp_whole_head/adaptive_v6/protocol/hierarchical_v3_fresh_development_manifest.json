@@ -1,0 +1,7724 @@
+[
+  {
+    "alias_tier": null,
+    "case_id": "erp-v3-fresh-dev-00-surface_only-eeg-10-meg-10",
+    "case_number": 0,
+    "channel_order_sha256": "3ad3abb129987b8216a6e99c973d3bff8dac18423bfd19b10dfb8df72a2d535a",
+    "check_seed": [
+      2026100302,
+      0,
+      0
+    ],
+    "component_balance_revision": "v3_refined_truth_fresh_development",
+    "configuration_id": "erp-v3-fresh-dev-geometry-00",
+    "configuration_kind": "single_surface_h0",
+    "configuration_number": 0,
+    "correlation": 0.0,
+    "deep_alias_rho": null,
+    "deep_index": null,
+    "deep_local": null,
+    "deep_nearest_inverse_distance_mm": null,
+    "deep_nearest_inverse_global": null,
+    "deep_nearest_inverse_local": null,
+    "deep_surface_ratio": null,
+    "deep_surface_sensor_amplitude_ratio": null,
+    "deep_truth_local": null,
+    "eeg_snr_db": -10,
+    "evaluation_deep_index": null,
+    "evaluation_surface_projection": {
+      "inverse_indices_by_patch": [
+        [
+          6182,
+          6183,
+          6217,
+          6182,
+          6262,
+          6295,
+          6182,
+          6295,
+          6295,
+          6361,
+          6432,
+          6361,
+          6411,
+          6433
+        ]
+      ],
+      "rule": "nearest coarse surface vertex in HEAD coordinates"
+    },
+    "h0_role": "gate_calibration",
+    "inverse_forward_fingerprint": "a97e6991fde1cedfac66857d5c07683c43af62f16ad19bfa31ea7199a9083556",
+    "location": 0,
+    "meg_snr_db": -10,
+    "pair_index": 0,
+    "panel": "erp_v3_fresh_development",
+    "replica_seed_roots": {
+      "check": 2026100302,
+      "fit": 2026100301
+    },
+    "replicate": 0,
+    "scenario": "surface_only",
+    "scenario_code": 0,
+    "seed": [
+      2026100301,
+      0,
+      0
+    ],
+    "snr_db": -10,
+    "surface_centers": [
+      25073
+    ],
+    "truth_coordinate_frame": "HEAD",
+    "truth_deep_aseg_label": null,
+    "truth_deep_fine_index": null,
+    "truth_deep_xyz_head_m": null,
+    "truth_deep_xyz_mri_m": null,
+    "truth_forward": "refined_grid_oct7_surface_5mm_thalamus",
+    "truth_forward_array_bundle_sha256": "044f4e699ab98fbf3881ce3b8448f5a5a4f304a17065ab98218ae31b4c6d2f21",
+    "truth_forward_sha256": "f7417a1bbabd6ac863da8811470c5c273be3f950b028fff5efae9ac9a899b266",
+    "truth_grid": "refined_oct7_5mm",
+    "truth_surface_center_xyz_head_m": [
+      [
+        0.042788240788756565,
+        0.051203479782252134,
+        0.0915455455810157
+      ]
+    ],
+    "truth_surface_center_xyz_mri_m": [
+      [
+        0.04867633819580078,
+        -4.4508639723062516e-05,
+        0.07507182312011719
+      ]
+    ],
+    "truth_surface_centers_refined": [
+      25073
+    ],
+    "truth_surface_nearest_inverse": [
+      6182
+    ],
+    "truth_surface_nearest_inverse_distance_mm": [
+      2.4622404721890856
+    ],
+    "truth_surface_patch_indices_refined": [
+      [
+        24733,
+        24734,
+        24852,
+        24853,
+        24961,
+        25069,
+        25073,
+        25194,
+        25195,
+        25200,
+        25442,
+        25449,
+        25539,
+        25648
+      ]
+    ],
+    "truth_surface_patch_nearest_inverse": [
+      [
+        6182,
+        6183,
+        6217,
+        6182,
+        6262,
+        6295,
+        6182,
+        6295,
+        6295,
+        6361,
+        6432,
+        6361,
+        6411,
+        6433
+      ]
+    ],
+    "truth_surface_patch_nearest_inverse_distance_mm": [
+      [
+        2.967950741166012e-05,
+        2.898467041147382,
+        1.9350011286498194,
+        3.344311288539493,
+        3.003213923257171,
+        2.966184704155574,
+        2.4622404721890856,
+        1.955230389501938,
+        2.4646183869505058e-05,
+        1.8175956136789655,
+        3.162650323496977,
+        3.0089100793768357e-05,
+        2.496349182614365,
+        2.097594671219851
+      ]
+    ],
+    "truth_surface_patch_weights": [
+      [
+        0.27955657190646926,
+        0.26551234554119957,
+        0.2761930192346992,
+        0.27070378556875463,
+        0.2652769054120262,
+        0.28227571537472795,
+        0.28816045437507437,
+        0.26743230140190005,
+        0.27568033689652444,
+        0.2710045780953877,
+        0.24760498749300114,
+        0.2604295168408197,
+        0.24426788973656285,
+        0.24277273366272606
+      ]
+    ]
+  },
+  {
+    "alias_tier": null,
+    "case_id": "erp-v3-fresh-dev-01-surface_only-eeg-10-meg-10",
+    "case_number": 1,
+    "channel_order_sha256": "3ad3abb129987b8216a6e99c973d3bff8dac18423bfd19b10dfb8df72a2d535a",
+    "check_seed": [
+      2026100302,
+      0,
+      1
+    ],
+    "component_balance_revision": "v3_refined_truth_fresh_development",
+    "configuration_id": "erp-v3-fresh-dev-geometry-01",
+    "configuration_kind": "single_surface_h0",
+    "configuration_number": 1,
+    "correlation": 0.0,
+    "deep_alias_rho": null,
+    "deep_index": null,
+    "deep_local": null,
+    "deep_nearest_inverse_distance_mm": null,
+    "deep_nearest_inverse_global": null,
+    "deep_nearest_inverse_local": null,
+    "deep_surface_ratio": null,
+    "deep_surface_sensor_amplitude_ratio": null,
+    "deep_truth_local": null,
+    "eeg_snr_db": -10,
+    "evaluation_deep_index": null,
+    "evaluation_surface_projection": {
+      "inverse_indices_by_patch": [
+        [
+          2254,
+          2151,
+          2293,
+          2254,
+          2254,
+          2293,
+          2289,
+          6199,
+          2254,
+          2254,
+          2293,
+          2293,
+          2444,
+          2442,
+          2444,
+          2484,
+          2442,
+          2590,
+          2444
+        ]
+      ],
+      "rule": "nearest coarse surface vertex in HEAD coordinates"
+    },
+    "h0_role": "gate_audit",
+    "inverse_forward_fingerprint": "a97e6991fde1cedfac66857d5c07683c43af62f16ad19bfa31ea7199a9083556",
+    "location": 1,
+    "meg_snr_db": -10,
+    "pair_index": 0,
+    "panel": "erp_v3_fresh_development",
+    "replica_seed_roots": {
+      "check": 2026100302,
+      "fit": 2026100301
+    },
+    "replicate": 0,
+    "scenario": "surface_only",
+    "scenario_code": 0,
+    "seed": [
+      2026100301,
+      0,
+      1
+    ],
+    "snr_db": -10,
+    "surface_centers": [
+      9397
+    ],
+    "truth_coordinate_frame": "HEAD",
+    "truth_deep_aseg_label": null,
+    "truth_deep_fine_index": null,
+    "truth_deep_xyz_head_m": null,
+    "truth_deep_xyz_mri_m": null,
+    "truth_forward": "refined_grid_oct7_surface_5mm_thalamus",
+    "truth_forward_array_bundle_sha256": "044f4e699ab98fbf3881ce3b8448f5a5a4f304a17065ab98218ae31b4c6d2f21",
+    "truth_forward_sha256": "f7417a1bbabd6ac863da8811470c5c273be3f950b028fff5efae9ac9a899b266",
+    "truth_grid": "refined_oct7_5mm",
+    "truth_surface_center_xyz_head_m": [
+      [
+        -0.007109804511939332,
+        0.01494772320799468,
+        0.044442522374147184
+      ]
+    ],
+    "truth_surface_center_xyz_mri_m": [
+      [
+        -0.0032934763431549073,
+        -0.002535614728927612,
+        0.017487781524658203
+      ]
+    ],
+    "truth_surface_centers_refined": [
+      9397
+    ],
+    "truth_surface_nearest_inverse": [
+      2254
+    ],
+    "truth_surface_nearest_inverse_distance_mm": [
+      2.5305063169954645
+    ],
+    "truth_surface_patch_indices_refined": [
+      [
+        8729,
+        8868,
+        8873,
+        9001,
+        9139,
+        9140,
+        9267,
+        9386,
+        9391,
+        9397,
+        9401,
+        9406,
+        9636,
+        9759,
+        9766,
+        9896,
+        10000,
+        10003,
+        10006
+      ]
+    ],
+    "truth_surface_patch_nearest_inverse": [
+      [
+        2254,
+        2151,
+        2293,
+        2254,
+        2254,
+        2293,
+        2289,
+        6199,
+        2254,
+        2254,
+        2293,
+        2293,
+        2444,
+        2442,
+        2444,
+        2484,
+        2442,
+        2590,
+        2444
+      ]
+    ],
+    "truth_surface_patch_nearest_inverse_distance_mm": [
+      [
+        3.0283581180360337,
+        2.188257602999869,
+        2.4110815461708137,
+        1.374141226081304e-05,
+        3.017815387790615,
+        1.3917441906914811e-05,
+        3.3092007679882354,
+        2.3172662225646206,
+        3.7627622895515738,
+        2.5305063169954645,
+        3.8816112012466393,
+        2.304878695292592,
+        3.0885516027238458,
+        1.5538098630697213e-05,
+        1.2799817564918928e-05,
+        3.0596262149673876,
+        2.2994289641446315,
+        3.279568899669889,
+        2.543514364425327
+      ]
+    ],
+    "truth_surface_patch_weights": [
+      [
+        0.2304919899991249,
+        0.22916510335803303,
+        0.2089871539967621,
+        0.25208785263767675,
+        0.24668032987644664,
+        0.2167236768643212,
+        0.2340364791842147,
+        0.20896335807899333,
+        0.2476330389829562,
+        0.2602895653180294,
+        0.24970443171509812,
+        0.22073921223583742,
+        0.23349067273860147,
+        0.19561726525140277,
+        0.24969031972742503,
+        0.23854624510206143,
+        0.18909910523073012,
+        0.20543683890018782,
+        0.22522557877653127
+      ]
+    ]
+  },
+  {
+    "alias_tier": null,
+    "case_id": "erp-v3-fresh-dev-02-surface_only-eeg-10-meg-10",
+    "case_number": 2,
+    "channel_order_sha256": "3ad3abb129987b8216a6e99c973d3bff8dac18423bfd19b10dfb8df72a2d535a",
+    "check_seed": [
+      2026100302,
+      0,
+      2
+    ],
+    "component_balance_revision": "v3_refined_truth_fresh_development",
+    "configuration_id": "erp-v3-fresh-dev-geometry-02",
+    "configuration_kind": "two_surface_h0",
+    "configuration_number": 2,
+    "correlation": 0.0,
+    "deep_alias_rho": null,
+    "deep_index": null,
+    "deep_local": null,
+    "deep_nearest_inverse_distance_mm": null,
+    "deep_nearest_inverse_global": null,
+    "deep_nearest_inverse_local": null,
+    "deep_surface_ratio": null,
+    "deep_surface_sensor_amplitude_ratio": null,
+    "deep_truth_local": null,
+    "eeg_snr_db": -10,
+    "evaluation_deep_index": null,
+    "evaluation_surface_projection": {
+      "inverse_indices_by_patch": [
+        [
+          3517,
+          3517,
+          3517,
+          3545,
+          3541,
+          3545,
+          3594,
+          3545,
+          3557,
+          3557,
+          3568,
+          3594,
+          3594,
+          3568,
+          3594,
+          3594,
+          3607,
+          3607
+        ],
+        [
+          3829,
+          3888,
+          3888,
+          3888
+        ]
+      ],
+      "rule": "nearest coarse surface vertex in HEAD coordinates"
+    },
+    "h0_role": "gate_calibration",
+    "inverse_forward_fingerprint": "a97e6991fde1cedfac66857d5c07683c43af62f16ad19bfa31ea7199a9083556",
+    "location": 2,
+    "meg_snr_db": -10,
+    "pair_index": 0,
+    "panel": "erp_v3_fresh_development",
+    "replica_seed_roots": {
+      "check": 2026100302,
+      "fit": 2026100301
+    },
+    "replicate": 0,
+    "scenario": "surface_only",
+    "scenario_code": 0,
+    "seed": [
+      2026100301,
+      0,
+      2
+    ],
+    "snr_db": -10,
+    "surface_centers": [
+      14269,
+      15326
+    ],
+    "surface_component_sensor_balance": true,
+    "truth_coordinate_frame": "HEAD",
+    "truth_deep_aseg_label": null,
+    "truth_deep_fine_index": null,
+    "truth_deep_xyz_head_m": null,
+    "truth_deep_xyz_mri_m": null,
+    "truth_forward": "refined_grid_oct7_surface_5mm_thalamus",
+    "truth_forward_array_bundle_sha256": "044f4e699ab98fbf3881ce3b8448f5a5a4f304a17065ab98218ae31b4c6d2f21",
+    "truth_forward_sha256": "f7417a1bbabd6ac863da8811470c5c273be3f950b028fff5efae9ac9a899b266",
+    "truth_grid": "refined_oct7_5mm",
+    "truth_surface_center_xyz_head_m": [
+      [
+        -0.04789662619260987,
+        0.08378542316682279,
+        0.04037464797284583
+      ],
+      [
+        0.026752313854012274,
+        -0.0553526763117254,
+        0.0702976447158587
+      ]
+    ],
+    "truth_surface_center_xyz_mri_m": [
+      [
+        -0.043315757751464845,
+        0.05535281753540039,
+        0.05577469253540039
+      ],
+      [
+        0.03055046844482422,
+        -0.0743836441040039,
+        -0.003718935966491699
+      ]
+    ],
+    "truth_surface_centers_refined": [
+      14269,
+      15326
+    ],
+    "truth_surface_nearest_inverse": [
+      3594,
+      3829
+    ],
+    "truth_surface_nearest_inverse_distance_mm": [
+      2.225857617222934,
+      2.8453335473382055
+    ],
+    "truth_surface_patch_indices_refined": [
+      [
+        14112,
+        14113,
+        14116,
+        14159,
+        14161,
+        14165,
+        14169,
+        14218,
+        14220,
+        14221,
+        14268,
+        14269,
+        14274,
+        14352,
+        14356,
+        14361,
+        14364,
+        14450
+      ],
+      [
+        15326,
+        15407,
+        15579,
+        15673
+      ]
+    ],
+    "truth_surface_patch_nearest_inverse": [
+      [
+        3517,
+        3517,
+        3517,
+        3545,
+        3541,
+        3545,
+        3594,
+        3545,
+        3557,
+        3557,
+        3568,
+        3594,
+        3594,
+        3568,
+        3594,
+        3594,
+        3607,
+        3607
+      ],
+      [
+        3829,
+        3888,
+        3888,
+        3888
+      ]
+    ],
+    "truth_surface_patch_nearest_inverse_distance_mm": [
+      [
+        2.514046681150313,
+        2.231059488500093,
+        2.100040641067043,
+        2.1661371757890064,
+        2.4540588447651865,
+        2.6662176453776432e-05,
+        3.2236748576675973,
+        2.236558065782662,
+        2.6489984868272314e-05,
+        2.0128010085192223,
+        2.2977913430319525e-05,
+        2.225857617222934,
+        2.2320608236368886,
+        2.6858323843954013,
+        2.4218179602859466,
+        2.0623636638236106e-05,
+        1.9696115674586387,
+        1.7918151012850343
+      ],
+      [
+        2.8453335473382055,
+        2.6049583215212984,
+        2.1525738950026557e-05,
+        3.1017976776968443
+      ]
+    ],
+    "truth_surface_patch_weights": [
+      [
+        0.23641682325730992,
+        0.21810870505718064,
+        0.2345009942287857,
+        0.2291367130436823,
+        0.23158304540140046,
+        0.24558551880490723,
+        0.24991946218550434,
+        0.2468812484099793,
+        0.22466148358456317,
+        0.21599530048489557,
+        0.23419560899972777,
+        0.2554546231878269,
+        0.24654978249097767,
+        0.22937336638862085,
+        0.24532102364473818,
+        0.2492042343861603,
+        0.22313804176724678,
+        0.22131924792807214
+      ],
+      [
+        0.5476251409830531,
+        0.4983234652473483,
+        0.4944052118531349,
+        0.45535032166412576
+      ]
+    ]
+  },
+  {
+    "alias_tier": null,
+    "case_id": "erp-v3-fresh-dev-03-surface_only-eeg-10-meg-10",
+    "case_number": 3,
+    "channel_order_sha256": "3ad3abb129987b8216a6e99c973d3bff8dac18423bfd19b10dfb8df72a2d535a",
+    "check_seed": [
+      2026100302,
+      0,
+      3
+    ],
+    "component_balance_revision": "v3_refined_truth_fresh_development",
+    "configuration_id": "erp-v3-fresh-dev-geometry-03",
+    "configuration_kind": "two_surface_h0",
+    "configuration_number": 3,
+    "correlation": 0.5,
+    "deep_alias_rho": null,
+    "deep_index": null,
+    "deep_local": null,
+    "deep_nearest_inverse_distance_mm": null,
+    "deep_nearest_inverse_global": null,
+    "deep_nearest_inverse_local": null,
+    "deep_surface_ratio": null,
+    "deep_surface_sensor_amplitude_ratio": null,
+    "deep_truth_local": null,
+    "eeg_snr_db": -10,
+    "evaluation_deep_index": null,
+    "evaluation_surface_projection": {
+      "inverse_indices_by_patch": [
+        [
+          14,
+          3,
+          14,
+          0,
+          3,
+          24,
+          7,
+          24,
+          14,
+          7,
+          51,
+          51,
+          51
+        ],
+        [
+          7439,
+          7413,
+          7428,
+          7442,
+          7439,
+          7439,
+          7420,
+          7444,
+          7439,
+          7444,
+          7444,
+          7469,
+          7469
+        ]
+      ],
+      "rule": "nearest coarse surface vertex in HEAD coordinates"
+    },
+    "h0_role": "gate_audit",
+    "inverse_forward_fingerprint": "a97e6991fde1cedfac66857d5c07683c43af62f16ad19bfa31ea7199a9083556",
+    "location": 3,
+    "meg_snr_db": -10,
+    "pair_index": 0,
+    "panel": "erp_v3_fresh_development",
+    "replica_seed_roots": {
+      "check": 2026100302,
+      "fit": 2026100301
+    },
+    "replicate": 0,
+    "scenario": "surface_only",
+    "scenario_code": 0,
+    "seed": [
+      2026100301,
+      0,
+      3
+    ],
+    "snr_db": -10,
+    "surface_centers": [
+      3,
+      29864
+    ],
+    "surface_component_sensor_balance": true,
+    "truth_coordinate_frame": "HEAD",
+    "truth_deep_aseg_label": null,
+    "truth_deep_fine_index": null,
+    "truth_deep_xyz_head_m": null,
+    "truth_deep_xyz_mri_m": null,
+    "truth_forward": "refined_grid_oct7_surface_5mm_thalamus",
+    "truth_forward_array_bundle_sha256": "044f4e699ab98fbf3881ce3b8448f5a5a4f304a17065ab98218ae31b4c6d2f21",
+    "truth_forward_sha256": "f7417a1bbabd6ac863da8811470c5c273be3f950b028fff5efae9ac9a899b266",
+    "truth_grid": "refined_oct7_5mm",
+    "truth_surface_center_xyz_head_m": [
+      [
+        -0.012550674881063612,
+        -0.043956426392923006,
+        0.09905958218590744
+      ],
+      [
+        0.02606726633637515,
+        0.08918049844558794,
+        0.03071578677841105
+      ]
+    ],
+    "truth_surface_center_xyz_mri_m": [
+      [
+        -0.00757634973526001,
+        -0.08228616333007813,
+        0.027677629470825197
+      ],
+      [
+        0.03032886505126953,
+        0.06610551452636719,
+        0.048432571411132816
+      ]
+    ],
+    "truth_surface_centers_refined": [
+      3,
+      29864
+    ],
+    "truth_surface_nearest_inverse": [
+      14,
+      7444
+    ],
+    "truth_surface_nearest_inverse_distance_mm": [
+      3.5288157567281213,
+      3.2000358764431653
+    ],
+    "truth_surface_patch_indices_refined": [
+      [
+        3,
+        13,
+        14,
+        15,
+        22,
+        26,
+        34,
+        62,
+        63,
+        64,
+        69,
+        129,
+        164
+      ],
+      [
+        29708,
+        29711,
+        29778,
+        29780,
+        29783,
+        29784,
+        29805,
+        29809,
+        29862,
+        29864,
+        29865,
+        29888,
+        29927
+      ]
+    ],
+    "truth_surface_patch_nearest_inverse": [
+      [
+        14,
+        3,
+        14,
+        0,
+        3,
+        24,
+        7,
+        24,
+        14,
+        7,
+        51,
+        51,
+        51
+      ],
+      [
+        7439,
+        7413,
+        7428,
+        7442,
+        7439,
+        7439,
+        7420,
+        7444,
+        7439,
+        7444,
+        7444,
+        7469,
+        7469
+      ]
+    ],
+    "truth_surface_patch_nearest_inverse_distance_mm": [
+      [
+        3.5288157567281213,
+        4.015067506338758e-05,
+        2.365218188344176,
+        1.7066478389255162,
+        3.2530784748799393,
+        2.261934818609761,
+        2.3170358021651906e-05,
+        3.2861482137068583,
+        3.0158126330672457e-05,
+        1.9398071033079884,
+        3.44782621244024,
+        2.4289898826383696,
+        3.468782472099971
+      ],
+      [
+        2.3185032310596454,
+        2.942565820071865,
+        3.067779562496668,
+        2.4561428907490237,
+        2.4148521427846545e-05,
+        2.3983019830124257,
+        2.971180103352544,
+        1.9633967930137035e-05,
+        2.894990461766568,
+        3.2000358764431653,
+        2.6639238823196365,
+        2.846459490103337,
+        2.5210381946641642
+      ]
+    ],
+    "truth_surface_patch_weights": [
+      [
+        0.31550502740507175,
+        0.29419454667031175,
+        0.30485018660028157,
+        0.27489960940191466,
+        0.24883472918477742,
+        0.27193900631674667,
+        0.28842165121950514,
+        0.2756052375563253,
+        0.29645958863808314,
+        0.29969487069901046,
+        0.22939484287640818,
+        0.24233009776946143,
+        0.24766247185302576
+      ],
+      [
+        0.2643058749557191,
+        0.2807485423574235,
+        0.25184985256817066,
+        0.25971375023709203,
+        0.2879847326292054,
+        0.2982709039854316,
+        0.2659006659319531,
+        0.2916983510265025,
+        0.29684389964418934,
+        0.30702254834743453,
+        0.2947080354494094,
+        0.25589767098887817,
+        0.2409059141555204
+      ]
+    ]
+  },
+  {
+    "alias_tier": "low",
+    "case_id": "erp-v3-fresh-dev-04-deep_only-eeg-10-meg-10",
+    "case_number": 4,
+    "channel_order_sha256": "3ad3abb129987b8216a6e99c973d3bff8dac18423bfd19b10dfb8df72a2d535a",
+    "check_seed": [
+      2026100302,
+      0,
+      4
+    ],
+    "component_balance_revision": "v3_refined_truth_fresh_development",
+    "configuration_id": "erp-v3-fresh-dev-geometry-04",
+    "configuration_kind": "deep_only_h1",
+    "configuration_number": 4,
+    "correlation": 0.0,
+    "deep_alias_rho": 0.9987041674197309,
+    "deep_index": 30084,
+    "deep_local": 52,
+    "deep_nearest_inverse_distance_mm": 5.000000274274239,
+    "deep_nearest_inverse_global": 7507,
+    "deep_nearest_inverse_local": 9,
+    "deep_surface_ratio": null,
+    "deep_surface_sensor_amplitude_ratio": null,
+    "deep_truth_local": 52,
+    "eeg_snr_db": -10,
+    "evaluation_deep_index": 7507,
+    "evaluation_surface_projection": {
+      "inverse_indices_by_patch": [],
+      "rule": "nearest coarse surface vertex in HEAD coordinates"
+    },
+    "h0_role": null,
+    "inverse_forward_fingerprint": "a97e6991fde1cedfac66857d5c07683c43af62f16ad19bfa31ea7199a9083556",
+    "location": 4,
+    "meg_snr_db": -10,
+    "pair_index": 0,
+    "panel": "erp_v3_fresh_development",
+    "replica_seed_roots": {
+      "check": 2026100302,
+      "fit": 2026100301
+    },
+    "replicate": 0,
+    "scenario": "deep_only",
+    "scenario_code": 1,
+    "seed": [
+      2026100301,
+      0,
+      4
+    ],
+    "snr_db": -10,
+    "surface_centers": [],
+    "truth_coordinate_frame": "HEAD",
+    "truth_deep_aseg_label": 10,
+    "truth_deep_fine_index": 52,
+    "truth_deep_xyz_head_m": [
+      -0.024605881296707256,
+      0.010755235601379644,
+      0.06825640012550281
+    ],
+    "truth_deep_xyz_mri_m": [
+      -0.02,
+      -0.02,
+      0.035
+    ],
+    "truth_forward": "refined_grid_oct7_surface_5mm_thalamus",
+    "truth_forward_array_bundle_sha256": "044f4e699ab98fbf3881ce3b8448f5a5a4f304a17065ab98218ae31b4c6d2f21",
+    "truth_forward_sha256": "f7417a1bbabd6ac863da8811470c5c273be3f950b028fff5efae9ac9a899b266",
+    "truth_grid": "refined_oct7_5mm",
+    "truth_surface_center_xyz_head_m": [],
+    "truth_surface_center_xyz_mri_m": [],
+    "truth_surface_centers_refined": [],
+    "truth_surface_nearest_inverse": [],
+    "truth_surface_nearest_inverse_distance_mm": [],
+    "truth_surface_patch_indices_refined": [],
+    "truth_surface_patch_nearest_inverse": [],
+    "truth_surface_patch_nearest_inverse_distance_mm": [],
+    "truth_surface_patch_weights": []
+  },
+  {
+    "alias_tier": "mid",
+    "case_id": "erp-v3-fresh-dev-05-deep_only-eeg-10-meg-10",
+    "case_number": 5,
+    "channel_order_sha256": "3ad3abb129987b8216a6e99c973d3bff8dac18423bfd19b10dfb8df72a2d535a",
+    "check_seed": [
+      2026100302,
+      0,
+      5
+    ],
+    "component_balance_revision": "v3_refined_truth_fresh_development",
+    "configuration_id": "erp-v3-fresh-dev-geometry-05",
+    "configuration_kind": "deep_only_h1",
+    "configuration_number": 5,
+    "correlation": 0.0,
+    "deep_alias_rho": 0.9993713135304675,
+    "deep_index": 30071,
+    "deep_local": 39,
+    "deep_nearest_inverse_distance_mm": 5.000000094449668,
+    "deep_nearest_inverse_global": 7505,
+    "deep_nearest_inverse_local": 7,
+    "deep_surface_ratio": null,
+    "deep_surface_sensor_amplitude_ratio": null,
+    "deep_truth_local": 39,
+    "eeg_snr_db": -10,
+    "evaluation_deep_index": 7505,
+    "evaluation_surface_projection": {
+      "inverse_indices_by_patch": [],
+      "rule": "nearest coarse surface vertex in HEAD coordinates"
+    },
+    "h0_role": null,
+    "inverse_forward_fingerprint": "a97e6991fde1cedfac66857d5c07683c43af62f16ad19bfa31ea7199a9083556",
+    "location": 5,
+    "meg_snr_db": -10,
+    "pair_index": 0,
+    "panel": "erp_v3_fresh_development",
+    "replica_seed_roots": {
+      "check": 2026100302,
+      "fit": 2026100301
+    },
+    "replicate": 0,
+    "scenario": "deep_only",
+    "scenario_code": 1,
+    "seed": [
+      2026100301,
+      0,
+      5
+    ],
+    "snr_db": -10,
+    "surface_centers": [],
+    "truth_coordinate_frame": "HEAD",
+    "truth_deep_aseg_label": 49,
+    "truth_deep_fine_index": 39,
+    "truth_deep_xyz_head_m": [
+      0.010648736540289333,
+      0.016411086851410406,
+      0.0595890317094775
+    ],
+    "truth_deep_xyz_mri_m": [
+      0.015,
+      -0.01,
+      0.03
+    ],
+    "truth_forward": "refined_grid_oct7_surface_5mm_thalamus",
+    "truth_forward_array_bundle_sha256": "044f4e699ab98fbf3881ce3b8448f5a5a4f304a17065ab98218ae31b4c6d2f21",
+    "truth_forward_sha256": "f7417a1bbabd6ac863da8811470c5c273be3f950b028fff5efae9ac9a899b266",
+    "truth_grid": "refined_oct7_5mm",
+    "truth_surface_center_xyz_head_m": [],
+    "truth_surface_center_xyz_mri_m": [],
+    "truth_surface_centers_refined": [],
+    "truth_surface_nearest_inverse": [],
+    "truth_surface_nearest_inverse_distance_mm": [],
+    "truth_surface_patch_indices_refined": [],
+    "truth_surface_patch_nearest_inverse": [],
+    "truth_surface_patch_nearest_inverse_distance_mm": [],
+    "truth_surface_patch_weights": []
+  },
+  {
+    "alias_tier": "high",
+    "case_id": "erp-v3-fresh-dev-06-deep_only-eeg-10-meg-10",
+    "case_number": 6,
+    "channel_order_sha256": "3ad3abb129987b8216a6e99c973d3bff8dac18423bfd19b10dfb8df72a2d535a",
+    "check_seed": [
+      2026100302,
+      0,
+      6
+    ],
+    "component_balance_revision": "v3_refined_truth_fresh_development",
+    "configuration_id": "erp-v3-fresh-dev-geometry-06",
+    "configuration_kind": "deep_only_h1",
+    "configuration_number": 6,
+    "correlation": 0.0,
+    "deep_alias_rho": 0.9997116472241104,
+    "deep_index": 30068,
+    "deep_local": 36,
+    "deep_nearest_inverse_distance_mm": 5.0000000944496685,
+    "deep_nearest_inverse_global": 7504,
+    "deep_nearest_inverse_local": 6,
+    "deep_surface_ratio": null,
+    "deep_surface_sensor_amplitude_ratio": null,
+    "deep_truth_local": 36,
+    "eeg_snr_db": -10,
+    "evaluation_deep_index": 7504,
+    "evaluation_surface_projection": {
+      "inverse_indices_by_patch": [],
+      "rule": "nearest coarse surface vertex in HEAD coordinates"
+    },
+    "h0_role": null,
+    "inverse_forward_fingerprint": "a97e6991fde1cedfac66857d5c07683c43af62f16ad19bfa31ea7199a9083556",
+    "location": 6,
+    "meg_snr_db": -10,
+    "pair_index": 0,
+    "panel": "erp_v3_fresh_development",
+    "replica_seed_roots": {
+      "check": 2026100302,
+      "fit": 2026100301
+    },
+    "replicate": 0,
+    "scenario": "deep_only",
+    "scenario_code": 1,
+    "seed": [
+      2026100301,
+      0,
+      6
+    ],
+    "snr_db": -10,
+    "surface_centers": [],
+    "truth_coordinate_frame": "HEAD",
+    "truth_deep_aseg_label": 10,
+    "truth_deep_fine_index": 36,
+    "truth_deep_xyz_head_m": [
+      -0.009337454998903191,
+      0.016155900360746274,
+      0.05889114724508619
+    ],
+    "truth_deep_xyz_mri_m": [
+      -0.005,
+      -0.01,
+      0.03
+    ],
+    "truth_forward": "refined_grid_oct7_surface_5mm_thalamus",
+    "truth_forward_array_bundle_sha256": "044f4e699ab98fbf3881ce3b8448f5a5a4f304a17065ab98218ae31b4c6d2f21",
+    "truth_forward_sha256": "f7417a1bbabd6ac863da8811470c5c273be3f950b028fff5efae9ac9a899b266",
+    "truth_grid": "refined_oct7_5mm",
+    "truth_surface_center_xyz_head_m": [],
+    "truth_surface_center_xyz_mri_m": [],
+    "truth_surface_centers_refined": [],
+    "truth_surface_nearest_inverse": [],
+    "truth_surface_nearest_inverse_distance_mm": [],
+    "truth_surface_patch_indices_refined": [],
+    "truth_surface_patch_nearest_inverse": [],
+    "truth_surface_patch_nearest_inverse_distance_mm": [],
+    "truth_surface_patch_weights": []
+  },
+  {
+    "alias_tier": "low",
+    "case_id": "erp-v3-fresh-dev-07-deep_plus_surface-eeg-10-meg-10",
+    "case_number": 7,
+    "channel_order_sha256": "3ad3abb129987b8216a6e99c973d3bff8dac18423bfd19b10dfb8df72a2d535a",
+    "check_seed": [
+      2026100302,
+      0,
+      7
+    ],
+    "component_balance_revision": "v3_refined_truth_fresh_development",
+    "configuration_id": "erp-v3-fresh-dev-geometry-07",
+    "configuration_kind": "deep_plus_single_surface_h1",
+    "configuration_number": 7,
+    "correlation": 0.0,
+    "deep_alias_rho": 0.9987017784620469,
+    "deep_index": 30042,
+    "deep_local": 10,
+    "deep_nearest_inverse_distance_mm": 5.000000274274239,
+    "deep_nearest_inverse_global": 7502,
+    "deep_nearest_inverse_local": 4,
+    "deep_surface_ratio": 0.5,
+    "deep_surface_sensor_amplitude_ratio": 0.5,
+    "deep_truth_local": 10,
+    "eeg_snr_db": -10,
+    "evaluation_deep_index": 7502,
+    "evaluation_surface_projection": {
+      "inverse_indices_by_patch": [
+        [
+          2333,
+          2262,
+          2333,
+          2334,
+          2390,
+          2334,
+          2390,
+          2390,
+          2333,
+          2422,
+          2422,
+          2390,
+          2422,
+          2453,
+          2490,
+          2490,
+          2422,
+          2573
+        ]
+      ],
+      "rule": "nearest coarse surface vertex in HEAD coordinates"
+    },
+    "h0_role": null,
+    "inverse_forward_fingerprint": "a97e6991fde1cedfac66857d5c07683c43af62f16ad19bfa31ea7199a9083556",
+    "location": 7,
+    "meg_snr_db": -10,
+    "pair_index": 0,
+    "panel": "erp_v3_fresh_development",
+    "replica_seed_roots": {
+      "check": 2026100302,
+      "fit": 2026100301
+    },
+    "replicate": 0,
+    "scenario": "deep_plus_surface",
+    "scenario_code": 2,
+    "seed": [
+      2026100301,
+      0,
+      7
+    ],
+    "snr_db": -10,
+    "surface_centers": [
+      9546
+    ],
+    "truth_coordinate_frame": "HEAD",
+    "truth_deep_aseg_label": 49,
+    "truth_deep_fine_index": 10,
+    "truth_deep_xyz_head_m": [
+      0.015724371967225648,
+      0.005436064555721262,
+      0.06153500475025102
+    ],
+    "truth_deep_xyz_mri_m": [
+      0.02,
+      -0.02,
+      0.025
+    ],
+    "truth_forward": "refined_grid_oct7_surface_5mm_thalamus",
+    "truth_forward_array_bundle_sha256": "044f4e699ab98fbf3881ce3b8448f5a5a4f304a17065ab98218ae31b4c6d2f21",
+    "truth_forward_sha256": "f7417a1bbabd6ac863da8811470c5c273be3f950b028fff5efae9ac9a899b266",
+    "truth_grid": "refined_oct7_5mm",
+    "truth_surface_center_xyz_head_m": [
+      [
+        -0.02565392763480552,
+        0.0617172253304448,
+        0.10513572880354341
+      ]
+    ],
+    "truth_surface_center_xyz_mri_m": [
+      [
+        -0.019110206604003907,
+        -0.00010966502130031586,
+        0.09468157196044921
+      ]
+    ],
+    "truth_surface_centers_refined": [
+      9546
+    ],
+    "truth_surface_nearest_inverse": [
+      2390
+    ],
+    "truth_surface_nearest_inverse_distance_mm": [
+      2.49242267981091
+    ],
+    "truth_surface_patch_indices_refined": [
+      [
+        9164,
+        9167,
+        9300,
+        9302,
+        9422,
+        9426,
+        9545,
+        9546,
+        9670,
+        9676,
+        9678,
+        9794,
+        9796,
+        9917,
+        9919,
+        9922,
+        9923,
+        9924
+      ]
+    ],
+    "truth_surface_patch_nearest_inverse": [
+      [
+        2333,
+        2262,
+        2333,
+        2334,
+        2390,
+        2334,
+        2390,
+        2390,
+        2333,
+        2422,
+        2422,
+        2390,
+        2422,
+        2453,
+        2490,
+        2490,
+        2422,
+        2573
+      ]
+    ],
+    "truth_surface_patch_nearest_inverse_distance_mm": [
+      [
+        1.5849101710211404,
+        2.950184868970456,
+        3.673374409387516e-05,
+        3.3057846559964905,
+        1.394351289378289,
+        2.8628465542771604,
+        3.25219241670372e-05,
+        2.49242267981091,
+        2.936740056775467,
+        1.4883300589756203,
+        3.5912885703432015e-05,
+        1.9330265717900956,
+        1.6985333735775994,
+        2.6606248642275503,
+        2.5267862076651557e-05,
+        2.660818956007893,
+        2.610190869525386,
+        2.895636235988821
+      ]
+    ],
+    "truth_surface_patch_weights": [
+      [
+        0.24020061494041667,
+        0.23337717395481744,
+        0.2480952951875693,
+        0.23641271386687257,
+        0.2504915586864074,
+        0.23106898217468153,
+        0.24817033495246052,
+        0.25599968136869655,
+        0.251618239538807,
+        0.2394971103441173,
+        0.2316494151005279,
+        0.25287381032627415,
+        0.22526357962603177,
+        0.24194882335016468,
+        0.2327937585357342,
+        0.2129174056770485,
+        0.20695324108726657,
+        0.19291638630702257
+      ]
+    ]
+  },
+  {
+    "alias_tier": "mid",
+    "case_id": "erp-v3-fresh-dev-08-deep_plus_surface-eeg-10-meg-10",
+    "case_number": 8,
+    "channel_order_sha256": "3ad3abb129987b8216a6e99c973d3bff8dac18423bfd19b10dfb8df72a2d535a",
+    "check_seed": [
+      2026100302,
+      0,
+      8
+    ],
+    "component_balance_revision": "v3_refined_truth_fresh_development",
+    "configuration_id": "erp-v3-fresh-dev-geometry-08",
+    "configuration_kind": "deep_plus_single_surface_h1",
+    "configuration_number": 8,
+    "correlation": 0.5,
+    "deep_alias_rho": 0.9994050508224828,
+    "deep_index": 30122,
+    "deep_local": 90,
+    "deep_nearest_inverse_distance_mm": 4.999999699676775,
+    "deep_nearest_inverse_global": 7509,
+    "deep_nearest_inverse_local": 11,
+    "deep_surface_ratio": 1.0,
+    "deep_surface_sensor_amplitude_ratio": 1.0,
+    "deep_truth_local": 90,
+    "eeg_snr_db": -10,
+    "evaluation_deep_index": 7509,
+    "evaluation_surface_projection": {
+      "inverse_indices_by_patch": [
+        [
+          5236,
+          5280,
+          5481,
+          5366,
+          5480,
+          5480,
+          5479,
+          5588,
+          5480,
+          5480,
+          5588,
+          5588,
+          5630
+        ]
+      ],
+      "rule": "nearest coarse surface vertex in HEAD coordinates"
+    },
+    "h0_role": null,
+    "inverse_forward_fingerprint": "a97e6991fde1cedfac66857d5c07683c43af62f16ad19bfa31ea7199a9083556",
+    "location": 8,
+    "meg_snr_db": -10,
+    "pair_index": 0,
+    "panel": "erp_v3_fresh_development",
+    "replica_seed_roots": {
+      "check": 2026100302,
+      "fit": 2026100301
+    },
+    "replicate": 0,
+    "scenario": "deep_plus_surface",
+    "scenario_code": 2,
+    "seed": [
+      2026100301,
+      0,
+      8
+    ],
+    "snr_db": -10,
+    "surface_centers": [
+      21761
+    ],
+    "truth_coordinate_frame": "HEAD",
+    "truth_deep_aseg_label": 10,
+    "truth_deep_fine_index": 90,
+    "truth_deep_xyz_head_m": [
+      -0.02473489261416331,
+      0.017732031067303897,
+      0.06939994023917356
+    ],
+    "truth_deep_xyz_mri_m": [
+      -0.02,
+      -0.015,
+      0.04
+    ],
+    "truth_forward": "refined_grid_oct7_surface_5mm_thalamus",
+    "truth_forward_array_bundle_sha256": "044f4e699ab98fbf3881ce3b8448f5a5a4f304a17065ab98218ae31b4c6d2f21",
+    "truth_forward_sha256": "f7417a1bbabd6ac863da8811470c5c273be3f950b028fff5efae9ac9a899b266",
+    "truth_grid": "refined_oct7_5mm",
+    "truth_surface_center_xyz_head_m": [
+      [
+        0.0577132893692215,
+        -0.005963809749402016,
+        0.05249981440253161
+      ]
+    ],
+    "truth_surface_center_xyz_mri_m": [
+      [
+        0.061499195098876955,
+        -0.023574468612670898,
+        0.00951772403717041
+      ]
+    ],
+    "truth_surface_centers_refined": [
+      21761
+    ],
+    "truth_surface_nearest_inverse": [
+      5480
+    ],
+    "truth_surface_nearest_inverse_distance_mm": [
+      3.4785914730490224
+    ],
+    "truth_surface_patch_indices_refined": [
+      [
+        20950,
+        21129,
+        21615,
+        21617,
+        21761,
+        21913,
+        21914,
+        22062,
+        22063,
+        22064,
+        22375,
+        22376,
+        22540
+      ]
+    ],
+    "truth_surface_patch_nearest_inverse": [
+      [
+        5236,
+        5280,
+        5481,
+        5366,
+        5480,
+        5480,
+        5479,
+        5588,
+        5480,
+        5480,
+        5588,
+        5588,
+        5630
+      ]
+    ],
+    "truth_surface_patch_nearest_inverse_distance_mm": [
+      [
+        1.4478981790758614e-05,
+        2.901446151417153,
+        3.1054001198465446,
+        2.823062025484972,
+        3.4785914730490224,
+        1.4574466354715993e-05,
+        3.197079077300806,
+        4.0833788808018525,
+        2.4032746324828294,
+        2.754131541647157,
+        3.224907189443305,
+        1.4539609307963971e-05,
+        2.858702983984455
+      ]
+    ],
+    "truth_surface_patch_weights": [
+      [
+        0.27195628327705157,
+        0.2733356442677805,
+        0.27637583611377564,
+        0.30525956979062757,
+        0.3149336782381605,
+        0.2964442466022301,
+        0.2513615110367418,
+        0.3005677499179281,
+        0.29621318295380356,
+        0.2645492361063044,
+        0.24721956877272797,
+        0.2552603924606358,
+        0.2391034756032132
+      ]
+    ]
+  },
+  {
+    "alias_tier": "high",
+    "case_id": "erp-v3-fresh-dev-09-deep_plus_surface-eeg-10-meg-10",
+    "case_number": 9,
+    "channel_order_sha256": "3ad3abb129987b8216a6e99c973d3bff8dac18423bfd19b10dfb8df72a2d535a",
+    "check_seed": [
+      2026100302,
+      0,
+      9
+    ],
+    "component_balance_revision": "v3_refined_truth_fresh_development",
+    "configuration_id": "erp-v3-fresh-dev-geometry-09",
+    "configuration_kind": "deep_plus_single_surface_h1",
+    "configuration_number": 9,
+    "correlation": 0.9,
+    "deep_alias_rho": 0.9997316277158932,
+    "deep_index": 30133,
+    "deep_local": 101,
+    "deep_nearest_inverse_distance_mm": 5.000000094449668,
+    "deep_nearest_inverse_global": 7511,
+    "deep_nearest_inverse_local": 13,
+    "deep_surface_ratio": 0.5,
+    "deep_surface_sensor_amplitude_ratio": 0.5,
+    "deep_truth_local": 101,
+    "eeg_snr_db": -10,
+    "evaluation_deep_index": 7511,
+    "evaluation_surface_projection": {
+      "inverse_indices_by_patch": [
+        [
+          2174,
+          2351,
+          2381,
+          2351,
+          2351,
+          2381,
+          2351,
+          2351,
+          2351
+        ]
+      ],
+      "rule": "nearest coarse surface vertex in HEAD coordinates"
+    },
+    "h0_role": null,
+    "inverse_forward_fingerprint": "a97e6991fde1cedfac66857d5c07683c43af62f16ad19bfa31ea7199a9083556",
+    "location": 9,
+    "meg_snr_db": -10,
+    "pair_index": 0,
+    "panel": "erp_v3_fresh_development",
+    "replica_seed_roots": {
+      "check": 2026100302,
+      "fit": 2026100301
+    },
+    "replicate": 0,
+    "scenario": "deep_plus_surface",
+    "scenario_code": 2,
+    "seed": [
+      2026100301,
+      0,
+      9
+    ],
+    "snr_db": -10,
+    "surface_centers": [
+      9624
+    ],
+    "truth_coordinate_frame": "HEAD",
+    "truth_deep_aseg_label": 49,
+    "truth_deep_fine_index": 101,
+    "truth_deep_xyz_head_m": [
+      0.00029777058514521716,
+      0.02211303763306499,
+      0.06735725378131625
+    ],
+    "truth_deep_xyz_mri_m": [
+      0.005,
+      -0.01,
+      0.04
+    ],
+    "truth_forward": "refined_grid_oct7_surface_5mm_thalamus",
+    "truth_forward_array_bundle_sha256": "044f4e699ab98fbf3881ce3b8448f5a5a4f304a17065ab98218ae31b4c6d2f21",
+    "truth_forward_sha256": "f7417a1bbabd6ac863da8811470c5c273be3f950b028fff5efae9ac9a899b266",
+    "truth_grid": "refined_oct7_5mm",
+    "truth_surface_center_xyz_head_m": [
+      [
+        -0.06337650895914419,
+        0.025944360362205765,
+        0.05509881668281465
+      ]
+    ],
+    "truth_surface_center_xyz_mri_m": [
+      [
+        -0.059009178161621094,
+        -0.00037641599774360655,
+        0.03456182479858398
+      ]
+    ],
+    "truth_surface_centers_refined": [
+      9624
+    ],
+    "truth_surface_nearest_inverse": [
+      2351
+    ],
+    "truth_surface_nearest_inverse_distance_mm": [
+      3.9196458595830337
+    ],
+    "truth_surface_patch_indices_refined": [
+      [
+        8984,
+        9111,
+        9252,
+        9253,
+        9376,
+        9513,
+        9624,
+        9625,
+        9749
+      ]
+    ],
+    "truth_surface_patch_nearest_inverse": [
+      [
+        2174,
+        2351,
+        2381,
+        2351,
+        2351,
+        2381,
+        2351,
+        2351,
+        2351
+      ]
+    ],
+    "truth_surface_patch_nearest_inverse_distance_mm": [
+      [
+        2.205627023519687,
+        2.42052555803599,
+        2.4450718876807045,
+        1.8739403746916081,
+        1.7835831090855096e-05,
+        1.7545182023053523,
+        3.9196458595830337,
+        2.2701292288976043,
+        2.7843957202178227
+      ]
+    ],
+    "truth_surface_patch_weights": [
+      [
+        0.31222640266489976,
+        0.305729847595481,
+        0.2872164602538432,
+        0.35262755878115604,
+        0.3438432126951699,
+        0.3152773816355911,
+        0.371297474020505,
+        0.3598276458478321,
+        0.34240139061858993
+      ]
+    ]
+  },
+  {
+    "alias_tier": "low",
+    "case_id": "erp-v3-fresh-dev-10-deep_plus_two_surface-eeg-10-meg-10",
+    "case_number": 10,
+    "channel_order_sha256": "3ad3abb129987b8216a6e99c973d3bff8dac18423bfd19b10dfb8df72a2d535a",
+    "check_seed": [
+      2026100302,
+      0,
+      10
+    ],
+    "component_balance_revision": "v3_refined_truth_fresh_development",
+    "configuration_id": "erp-v3-fresh-dev-geometry-10",
+    "configuration_kind": "deep_plus_two_surface_h1",
+    "configuration_number": 10,
+    "correlation": 0.9,
+    "deep_alias_rho": 0.9988099210527339,
+    "deep_index": 30111,
+    "deep_local": 79,
+    "deep_nearest_inverse_distance_mm": 5.00000027427424,
+    "deep_nearest_inverse_global": 7512,
+    "deep_nearest_inverse_local": 14,
+    "deep_surface_ratio": 1.0,
+    "deep_surface_sensor_amplitude_ratio": 1.0,
+    "deep_truth_local": 79,
+    "eeg_snr_db": -10,
+    "evaluation_deep_index": 7512,
+    "evaluation_surface_projection": {
+      "inverse_indices_by_patch": [
+        [
+          410,
+          546,
+          465,
+          493,
+          517,
+          465,
+          517,
+          517,
+          465,
+          546,
+          517,
+          546,
+          546,
+          546,
+          577,
+          577,
+          577,
+          516
+        ],
+        [
+          7040,
+          7076,
+          7097,
+          7076,
+          7097,
+          7149,
+          7194,
+          7148,
+          7178,
+          7178,
+          7178,
+          7148,
+          7149,
+          7194,
+          7194,
+          7194,
+          7194,
+          7233,
+          7233
+        ]
+      ],
+      "rule": "nearest coarse surface vertex in HEAD coordinates"
+    },
+    "h0_role": null,
+    "inverse_forward_fingerprint": "a97e6991fde1cedfac66857d5c07683c43af62f16ad19bfa31ea7199a9083556",
+    "location": 10,
+    "meg_snr_db": -10,
+    "pair_index": 0,
+    "panel": "erp_v3_fresh_development",
+    "replica_seed_roots": {
+      "check": 2026100302,
+      "fit": 2026100301
+    },
+    "replicate": 0,
+    "scenario": "deep_plus_two_surface",
+    "scenario_code": 3,
+    "seed": [
+      2026100301,
+      0,
+      10
+    ],
+    "snr_db": -10,
+    "surface_centers": [
+      2072,
+      28723
+    ],
+    "surface_component_sensor_balance": true,
+    "truth_coordinate_frame": "HEAD",
+    "truth_deep_aseg_label": 10,
+    "truth_deep_fine_index": 79,
+    "truth_deep_xyz_head_m": [
+      -0.014413090425839506,
+      0.02713092265643542,
+      0.05694517420431268
+    ],
+    "truth_deep_xyz_mri_m": [
+      -0.01,
+      0.0,
+      0.035
+    ],
+    "truth_forward": "refined_grid_oct7_surface_5mm_thalamus",
+    "truth_forward_array_bundle_sha256": "044f4e699ab98fbf3881ce3b8448f5a5a4f304a17065ab98218ae31b4c6d2f21",
+    "truth_forward_sha256": "f7417a1bbabd6ac863da8811470c5c273be3f950b028fff5efae9ac9a899b266",
+    "truth_grid": "refined_oct7_5mm",
+    "truth_surface_center_xyz_head_m": [
+      [
+        -0.04272261698578356,
+        -0.04024682004963565,
+        0.057488785689597005
+      ],
+      [
+        0.0060316502702863406,
+        0.09294189335178768,
+        0.07632089100565233
+      ]
+    ],
+    "truth_surface_center_xyz_mri_m": [
+      [
+        -0.03913070678710937,
+        -0.05533759307861328,
+        -0.0028237719535827636
+      ],
+      [
+        0.011946429252624511,
+        0.04237307357788086,
+        0.0883607177734375
+      ]
+    ],
+    "truth_surface_centers_refined": [
+      2072,
+      28723
+    ],
+    "truth_surface_nearest_inverse": [
+      465,
+      7178
+    ],
+    "truth_surface_nearest_inverse_distance_mm": [
+      2.095970798427277,
+      3.192604715707371
+    ],
+    "truth_surface_patch_indices_refined": [
+      [
+        1755,
+        1848,
+        1851,
+        1852,
+        1853,
+        1854,
+        2070,
+        2071,
+        2072,
+        2073,
+        2074,
+        2188,
+        2189,
+        2192,
+        2193,
+        2305,
+        2306,
+        2416
+      ],
+      [
+        28330,
+        28413,
+        28414,
+        28554,
+        28556,
+        28616,
+        28617,
+        28680,
+        28723,
+        28724,
+        28727,
+        28728,
+        28729,
+        28785,
+        28848,
+        28850,
+        28953,
+        28955,
+        28956
+      ]
+    ],
+    "truth_surface_patch_nearest_inverse": [
+      [
+        410,
+        546,
+        465,
+        493,
+        517,
+        465,
+        517,
+        517,
+        465,
+        546,
+        517,
+        546,
+        546,
+        546,
+        577,
+        577,
+        577,
+        516
+      ],
+      [
+        7040,
+        7076,
+        7097,
+        7076,
+        7097,
+        7149,
+        7194,
+        7148,
+        7178,
+        7178,
+        7178,
+        7148,
+        7149,
+        7194,
+        7194,
+        7194,
+        7194,
+        7233,
+        7233
+      ]
+    ],
+    "truth_surface_patch_nearest_inverse_distance_mm": [
+      [
+        3.157284085322882,
+        2.601051980005262,
+        2.2880882398721716e-05,
+        1.986889479897547,
+        2.334702216125355,
+        2.751875550111636,
+        2.5331170657786704,
+        2.8701399198344335,
+        2.095970798427277,
+        2.725797433843104,
+        0.5191842859035658,
+        1.9352156201989466,
+        3.261695806542876,
+        2.6692352447652553e-05,
+        2.232684571941374,
+        2.4242094173587137e-05,
+        2.7534118799904976,
+        2.866356667703536
+      ],
+      [
+        3.3529303887362243,
+        2.3454467187551704,
+        3.370593002294984e-05,
+        2.8552844957201033,
+        3.178697420648604,
+        3.3895653324827246,
+        3.194569500799989,
+        3.0799718226437727,
+        3.192604715707371,
+        3.215667956359859e-05,
+        2.9148192070927568,
+        2.8387871213185703,
+        3.336021250266247,
+        2.2157326900446594e-05,
+        3.4280449291854054,
+        3.800302845917688,
+        2.938734333199235,
+        2.9613125315915593e-05,
+        2.662743483873684
+      ]
+    ],
+    "truth_surface_patch_weights": [
+      [
+        0.23251105664024282,
+        0.2244285256164269,
+        0.2674846003047189,
+        0.15414794373428337,
+        0.2045373912614021,
+        0.2611146494124439,
+        0.21952381889861944,
+        0.1900929412295884,
+        0.273424897650932,
+        0.2585759225586135,
+        0.23217313294242461,
+        0.2271086474282991,
+        0.19535597018847847,
+        0.24086807416364903,
+        0.2561486835384042,
+        0.2616787864438722,
+        0.2665622961349117,
+        0.23976706706315515
+      ],
+      [
+        0.19646604950127472,
+        0.2267047220203868,
+        0.2043130617081603,
+        0.22529682767191608,
+        0.1938435655817347,
+        0.2440868423535373,
+        0.24104344372774547,
+        0.226073262051196,
+        0.2681475077436358,
+        0.2548241088404043,
+        0.2499284707152883,
+        0.20220294847455278,
+        0.23109629564892534,
+        0.249849244176422,
+        0.25945829679774207,
+        0.20742746910633442,
+        0.2431459522198652,
+        0.22181217369321574,
+        0.19093090761139558
+      ]
+    ]
+  },
+  {
+    "alias_tier": "mid",
+    "case_id": "erp-v3-fresh-dev-11-deep_plus_two_surface-eeg-10-meg-10",
+    "case_number": 11,
+    "channel_order_sha256": "3ad3abb129987b8216a6e99c973d3bff8dac18423bfd19b10dfb8df72a2d535a",
+    "check_seed": [
+      2026100302,
+      0,
+      11
+    ],
+    "component_balance_revision": "v3_refined_truth_fresh_development",
+    "configuration_id": "erp-v3-fresh-dev-geometry-11",
+    "configuration_kind": "deep_plus_two_surface_h1",
+    "configuration_number": 11,
+    "correlation": 0.0,
+    "deep_alias_rho": 0.9994103689773518,
+    "deep_index": 30114,
+    "deep_local": 82,
+    "deep_nearest_inverse_distance_mm": 5.000000274274245,
+    "deep_nearest_inverse_global": 7513,
+    "deep_nearest_inverse_local": 15,
+    "deep_surface_ratio": 0.5,
+    "deep_surface_sensor_amplitude_ratio": 0.5,
+    "deep_truth_local": 82,
+    "eeg_snr_db": -10,
+    "evaluation_deep_index": 7513,
+    "evaluation_surface_projection": {
+      "inverse_indices_by_patch": [
+        [
+          3182,
+          3274,
+          3274,
+          3241,
+          3255,
+          3256,
+          3256,
+          3241,
+          3274,
+          3256,
+          3256,
+          3274,
+          3274,
+          3315,
+          3315,
+          3353,
+          3255,
+          3274,
+          3315
+        ],
+        [
+          3891,
+          3939,
+          3891,
+          3892,
+          3990,
+          3891,
+          3941,
+          3939,
+          3962,
+          3939,
+          3962,
+          3891,
+          3891,
+          3941,
+          3962,
+          3964,
+          3962,
+          3962,
+          3962
+        ]
+      ],
+      "rule": "nearest coarse surface vertex in HEAD coordinates"
+    },
+    "h0_role": null,
+    "inverse_forward_fingerprint": "a97e6991fde1cedfac66857d5c07683c43af62f16ad19bfa31ea7199a9083556",
+    "location": 11,
+    "meg_snr_db": -10,
+    "pair_index": 0,
+    "panel": "erp_v3_fresh_development",
+    "replica_seed_roots": {
+      "check": 2026100302,
+      "fit": 2026100301
+    },
+    "replicate": 0,
+    "scenario": "deep_plus_two_surface",
+    "scenario_code": 3,
+    "seed": [
+      2026100301,
+      0,
+      11
+    ],
+    "snr_db": -10,
+    "surface_centers": [
+      13167,
+      15679
+    ],
+    "surface_component_sensor_balance": true,
+    "truth_coordinate_frame": "HEAD",
+    "truth_deep_aseg_label": 49,
+    "truth_deep_fine_index": 82,
+    "truth_deep_xyz_head_m": [
+      0.005573101113353019,
+      0.027386109147099554,
+      0.057643058668703985
+    ],
+    "truth_deep_xyz_mri_m": [
+      0.01,
+      0.0,
+      0.035
+    ],
+    "truth_forward": "refined_grid_oct7_surface_5mm_thalamus",
+    "truth_forward_array_bundle_sha256": "044f4e699ab98fbf3881ce3b8448f5a5a4f304a17065ab98218ae31b4c6d2f21",
+    "truth_forward_sha256": "f7417a1bbabd6ac863da8811470c5c273be3f950b028fff5efae9ac9a899b266",
+    "truth_grid": "refined_oct7_5mm",
+    "truth_surface_center_xyz_head_m": [
+      [
+        -0.03754307024883479,
+        0.04132417641696993,
+        0.012669347175257792
+      ],
+      [
+        0.013587076183980883,
+        -0.010058708734127082,
+        0.12339985153280135
+      ]
+    ],
+    "truth_surface_center_xyz_mri_m": [
+      [
+        -0.034477882385253907,
+        0.0371129035949707,
+        0.008162357330322266
+      ],
+      [
+        0.019825201034545898,
+        -0.06867710113525391,
+        0.06626045227050781
+      ]
+    ],
+    "truth_surface_centers_refined": [
+      13167,
+      15679
+    ],
+    "truth_surface_nearest_inverse": [
+      3274,
+      3891
+    ],
+    "truth_surface_nearest_inverse_distance_mm": [
+      2.5034923348767517,
+      2.0890912922447282
+    ],
+    "truth_surface_patch_indices_refined": [
+      [
+        12859,
+        12944,
+        12945,
+        13000,
+        13001,
+        13002,
+        13003,
+        13085,
+        13086,
+        13087,
+        13088,
+        13167,
+        13251,
+        13252,
+        13253,
+        13394,
+        14899,
+        14901,
+        14902
+      ],
+      [
+        15503,
+        15583,
+        15587,
+        15588,
+        15677,
+        15679,
+        15681,
+        15771,
+        15773,
+        15774,
+        15779,
+        15780,
+        15781,
+        15786,
+        15883,
+        15891,
+        15990,
+        15991,
+        16115
+      ]
+    ],
+    "truth_surface_patch_nearest_inverse": [
+      [
+        3182,
+        3274,
+        3274,
+        3241,
+        3255,
+        3256,
+        3256,
+        3241,
+        3274,
+        3256,
+        3256,
+        3274,
+        3274,
+        3315,
+        3315,
+        3353,
+        3255,
+        3274,
+        3315
+      ],
+      [
+        3891,
+        3939,
+        3891,
+        3892,
+        3990,
+        3891,
+        3941,
+        3939,
+        3962,
+        3939,
+        3962,
+        3891,
+        3891,
+        3941,
+        3962,
+        3964,
+        3962,
+        3962,
+        3962
+      ]
+    ],
+    "truth_surface_patch_nearest_inverse_distance_mm": [
+      [
+        2.465868341607993,
+        1.9328091612204934,
+        2.765734730633085,
+        2.3857379281163014,
+        9.665015208426102e-06,
+        2.1818749897531364,
+        9.969739018319834e-06,
+        2.113880744914595,
+        1.0767194807947138e-05,
+        2.420113632763791,
+        3.0509314106243424,
+        2.5034923348767517,
+        1.9991543264294729,
+        2.12543796837383,
+        9.971198104811294e-06,
+        3.4437278761713412,
+        1.3536588414196926,
+        2.4210176859746975,
+        3.584168913812913
+      ],
+      [
+        1.6808699992279856,
+        2.146829471375245,
+        3.2773726380910444e-05,
+        2.511914333326547,
+        2.0259954694951032,
+        2.0890912922447282,
+        2.01168495549671,
+        4.121914583369614e-05,
+        1.7760863987781428,
+        1.722786457489459,
+        2.5983344981894505,
+        1.340178984179692,
+        1.8809819902866745,
+        3.25384500513604e-05,
+        3.411395344965405e-05,
+        2.1703556787146074,
+        2.161874726296663,
+        1.941064741901834,
+        2.7446943753194524
+      ]
+    ],
+    "truth_surface_patch_weights": [
+      [
+        0.2212108610841564,
+        0.23700655358581857,
+        0.24438983870991904,
+        0.2138924004596886,
+        0.22854256310952364,
+        0.20733972681558557,
+        0.22045867214135936,
+        0.21443243678772125,
+        0.24566758096159821,
+        0.2386860437132268,
+        0.246510330407874,
+        0.2534880386867226,
+        0.23749623328758898,
+        0.2466583548838519,
+        0.2374596433352721,
+        0.19875761971897793,
+        0.2185215248823416,
+        0.22677356472089985,
+        0.21201658709354046
+      ],
+      [
+        0.22779280685011827,
+        0.23666194877502073,
+        0.23549765207964043,
+        0.21647673878878085,
+        0.2266178001352001,
+        0.24069296193659317,
+        0.23645959412393602,
+        0.23018846091574766,
+        0.2265530374644964,
+        0.23621424603699964,
+        0.22720483589804877,
+        0.23520614586427063,
+        0.22496073989278217,
+        0.23370136799391122,
+        0.23186368246186081,
+        0.22415419734202532,
+        0.2195167379012346,
+        0.22385268981309275,
+        0.22360022924238304
+      ]
+    ]
+  },
+  {
+    "alias_tier": "high",
+    "case_id": "erp-v3-fresh-dev-12-deep_plus_two_surface-eeg-10-meg-10",
+    "case_number": 12,
+    "channel_order_sha256": "3ad3abb129987b8216a6e99c973d3bff8dac18423bfd19b10dfb8df72a2d535a",
+    "check_seed": [
+      2026100302,
+      0,
+      12
+    ],
+    "component_balance_revision": "v3_refined_truth_fresh_development",
+    "configuration_id": "erp-v3-fresh-dev-geometry-12",
+    "configuration_kind": "deep_plus_two_surface_h1",
+    "configuration_number": 12,
+    "correlation": 0.5,
+    "deep_alias_rho": 0.9998009772105401,
+    "deep_index": 30086,
+    "deep_local": 54,
+    "deep_nearest_inverse_distance_mm": 5.0000002742742415,
+    "deep_nearest_inverse_global": 7500,
+    "deep_nearest_inverse_local": 2,
+    "deep_surface_ratio": 1.0,
+    "deep_surface_sensor_amplitude_ratio": 1.0,
+    "deep_truth_local": 54,
+    "eeg_snr_db": -10,
+    "evaluation_deep_index": 7500,
+    "evaluation_surface_projection": {
+      "inverse_indices_by_patch": [
+        [
+          730,
+          676,
+          676,
+          730,
+          676,
+          731,
+          676,
+          730,
+          730,
+          786,
+          814,
+          851,
+          817
+        ],
+        [
+          6891,
+          6820,
+          6843,
+          6891,
+          6909,
+          6909,
+          6891,
+          6938,
+          6961,
+          6938,
+          6937,
+          6938,
+          7002,
+          6938,
+          6937,
+          7002,
+          7003
+        ]
+      ],
+      "rule": "nearest coarse surface vertex in HEAD coordinates"
+    },
+    "h0_role": null,
+    "inverse_forward_fingerprint": "a97e6991fde1cedfac66857d5c07683c43af62f16ad19bfa31ea7199a9083556",
+    "location": 12,
+    "meg_snr_db": -10,
+    "pair_index": 0,
+    "panel": "erp_v3_fresh_development",
+    "replica_seed_roots": {
+      "check": 2026100302,
+      "fit": 2026100301
+    },
+    "replicate": 0,
+    "scenario": "deep_plus_two_surface",
+    "scenario_code": 3,
+    "seed": [
+      2026100301,
+      0,
+      12
+    ],
+    "snr_db": -10,
+    "surface_centers": [
+      2576,
+      27784
+    ],
+    "surface_component_sensor_balance": true,
+    "truth_coordinate_frame": "HEAD",
+    "truth_deep_aseg_label": 10,
+    "truth_deep_fine_index": 54,
+    "truth_deep_xyz_head_m": [
+      -0.014612785527110993,
+      0.010882828846711712,
+      0.06860534235769845
+    ],
+    "truth_deep_xyz_mri_m": [
+      -0.01,
+      -0.02,
+      0.035
+    ],
+    "truth_forward": "refined_grid_oct7_surface_5mm_thalamus",
+    "truth_forward_array_bundle_sha256": "044f4e699ab98fbf3881ce3b8448f5a5a4f304a17065ab98218ae31b4c6d2f21",
+    "truth_forward_sha256": "f7417a1bbabd6ac863da8811470c5c273be3f950b028fff5efae9ac9a899b266",
+    "truth_grid": "refined_oct7_5mm",
+    "truth_surface_center_xyz_head_m": [
+      [
+        -0.055059807373004706,
+        0.002220672054975414,
+        0.10763314885044702
+      ],
+      [
+        0.0399812086950592,
+        0.03859771268915035,
+        0.026633105330281383
+      ]
+    ],
+    "truth_surface_center_xyz_mri_m": [
+      [
+        -0.049167774200439454,
+        -0.050194576263427736,
+        0.06307734680175782
+      ],
+      [
+        0.04344533538818359,
+        0.02753098487854004,
+        0.015133201599121094
+      ]
+    ],
+    "truth_surface_centers_refined": [
+      2576,
+      27784
+    ],
+    "truth_surface_nearest_inverse": [
+      730,
+      6938
+    ],
+    "truth_surface_nearest_inverse_distance_mm": [
+      2.9562565567140555,
+      2.1756099244613627
+    ],
+    "truth_surface_patch_indices_refined": [
+      [
+        2576,
+        2583,
+        2590,
+        2695,
+        2703,
+        2808,
+        2810,
+        2920,
+        3018,
+        3154,
+        3270,
+        3273,
+        3274
+      ],
+      [
+        27463,
+        27464,
+        27562,
+        27567,
+        27569,
+        27639,
+        27641,
+        27708,
+        27710,
+        27782,
+        27783,
+        27784,
+        27938,
+        27939,
+        27940,
+        28017,
+        28018
+      ]
+    ],
+    "truth_surface_patch_nearest_inverse": [
+      [
+        730,
+        676,
+        676,
+        730,
+        676,
+        731,
+        676,
+        730,
+        730,
+        786,
+        814,
+        851,
+        817
+      ],
+      [
+        6891,
+        6820,
+        6843,
+        6891,
+        6909,
+        6909,
+        6891,
+        6938,
+        6961,
+        6938,
+        6937,
+        6938,
+        7002,
+        6938,
+        6937,
+        7002,
+        7003
+      ]
+    ],
+    "truth_surface_patch_nearest_inverse_distance_mm": [
+      [
+        2.9562565567140555,
+        3.223781917891685,
+        1.8616201461206487,
+        2.269607254995697,
+        3.496997814396592e-05,
+        2.1106042077150406,
+        2.0494240917156925,
+        3.3051826389029946e-05,
+        2.1830044762917784,
+        1.962161551823223,
+        2.767988693492237e-05,
+        2.744544176969686,
+        3.211513207608677
+      ],
+      [
+        2.2209668444282706,
+        1.933266467589223,
+        2.735273041111537,
+        1.0751370016829235e-05,
+        2.5634552400196617,
+        9.033524606968031e-06,
+        2.2715938862418725,
+        2.691052225311552,
+        2.280029381825602,
+        1.3784507990400986e-05,
+        2.839183532230197,
+        2.1756099244613627,
+        2.6639681400957214,
+        2.634313696879356,
+        3.0555582440745526,
+        2.7383928934946615,
+        1.2925216579879201e-05
+      ]
+    ],
+    "truth_surface_patch_weights": [
+      [
+        0.31275766376032704,
+        0.296475592033974,
+        0.2548792016265245,
+        0.29815719935635565,
+        0.26424223648164574,
+        0.28006486009325376,
+        0.2748573832919863,
+        0.29938505471917876,
+        0.2928390694628439,
+        0.2529754515418582,
+        0.26681533828981036,
+        0.25501151743090683,
+        0.24700783012385777
+      ],
+      [
+        0.23193840531945908,
+        0.23689431839048009,
+        0.2548320977685473,
+        0.23402631277185595,
+        0.23828493283784927,
+        0.2592287787740628,
+        0.2537381636179935,
+        0.23815838789435906,
+        0.249535444272169,
+        0.2608284582961213,
+        0.2517274055238897,
+        0.2670750163734419,
+        0.23448782046546124,
+        0.24682068830613027,
+        0.23112968523020783,
+        0.21129635773604954,
+        0.21524162373707373
+      ]
+    ]
+  },
+  {
+    "alias_tier": null,
+    "case_id": "erp-v3-fresh-dev-00-surface_only-eeg-10-meg+20",
+    "case_number": 13,
+    "channel_order_sha256": "3ad3abb129987b8216a6e99c973d3bff8dac18423bfd19b10dfb8df72a2d535a",
+    "check_seed": [
+      2026100302,
+      1,
+      0
+    ],
+    "component_balance_revision": "v3_refined_truth_fresh_development",
+    "configuration_id": "erp-v3-fresh-dev-geometry-00",
+    "configuration_kind": "single_surface_h0",
+    "configuration_number": 0,
+    "correlation": 0.0,
+    "deep_alias_rho": null,
+    "deep_index": null,
+    "deep_local": null,
+    "deep_nearest_inverse_distance_mm": null,
+    "deep_nearest_inverse_global": null,
+    "deep_nearest_inverse_local": null,
+    "deep_surface_ratio": null,
+    "deep_surface_sensor_amplitude_ratio": null,
+    "deep_truth_local": null,
+    "eeg_snr_db": -10,
+    "evaluation_deep_index": null,
+    "evaluation_surface_projection": {
+      "inverse_indices_by_patch": [
+        [
+          6182,
+          6183,
+          6217,
+          6182,
+          6262,
+          6295,
+          6182,
+          6295,
+          6295,
+          6361,
+          6432,
+          6361,
+          6411,
+          6433
+        ]
+      ],
+      "rule": "nearest coarse surface vertex in HEAD coordinates"
+    },
+    "h0_role": "gate_calibration",
+    "inverse_forward_fingerprint": "a97e6991fde1cedfac66857d5c07683c43af62f16ad19bfa31ea7199a9083556",
+    "location": 0,
+    "meg_snr_db": 20,
+    "pair_index": 1,
+    "panel": "erp_v3_fresh_development",
+    "replica_seed_roots": {
+      "check": 2026100302,
+      "fit": 2026100301
+    },
+    "replicate": 0,
+    "scenario": "surface_only",
+    "scenario_code": 0,
+    "seed": [
+      2026100301,
+      1,
+      0
+    ],
+    "snr_db": -10,
+    "surface_centers": [
+      25073
+    ],
+    "truth_coordinate_frame": "HEAD",
+    "truth_deep_aseg_label": null,
+    "truth_deep_fine_index": null,
+    "truth_deep_xyz_head_m": null,
+    "truth_deep_xyz_mri_m": null,
+    "truth_forward": "refined_grid_oct7_surface_5mm_thalamus",
+    "truth_forward_array_bundle_sha256": "044f4e699ab98fbf3881ce3b8448f5a5a4f304a17065ab98218ae31b4c6d2f21",
+    "truth_forward_sha256": "f7417a1bbabd6ac863da8811470c5c273be3f950b028fff5efae9ac9a899b266",
+    "truth_grid": "refined_oct7_5mm",
+    "truth_surface_center_xyz_head_m": [
+      [
+        0.042788240788756565,
+        0.051203479782252134,
+        0.0915455455810157
+      ]
+    ],
+    "truth_surface_center_xyz_mri_m": [
+      [
+        0.04867633819580078,
+        -4.4508639723062516e-05,
+        0.07507182312011719
+      ]
+    ],
+    "truth_surface_centers_refined": [
+      25073
+    ],
+    "truth_surface_nearest_inverse": [
+      6182
+    ],
+    "truth_surface_nearest_inverse_distance_mm": [
+      2.4622404721890856
+    ],
+    "truth_surface_patch_indices_refined": [
+      [
+        24733,
+        24734,
+        24852,
+        24853,
+        24961,
+        25069,
+        25073,
+        25194,
+        25195,
+        25200,
+        25442,
+        25449,
+        25539,
+        25648
+      ]
+    ],
+    "truth_surface_patch_nearest_inverse": [
+      [
+        6182,
+        6183,
+        6217,
+        6182,
+        6262,
+        6295,
+        6182,
+        6295,
+        6295,
+        6361,
+        6432,
+        6361,
+        6411,
+        6433
+      ]
+    ],
+    "truth_surface_patch_nearest_inverse_distance_mm": [
+      [
+        2.967950741166012e-05,
+        2.898467041147382,
+        1.9350011286498194,
+        3.344311288539493,
+        3.003213923257171,
+        2.966184704155574,
+        2.4622404721890856,
+        1.955230389501938,
+        2.4646183869505058e-05,
+        1.8175956136789655,
+        3.162650323496977,
+        3.0089100793768357e-05,
+        2.496349182614365,
+        2.097594671219851
+      ]
+    ],
+    "truth_surface_patch_weights": [
+      [
+        0.27955657190646926,
+        0.26551234554119957,
+        0.2761930192346992,
+        0.27070378556875463,
+        0.2652769054120262,
+        0.28227571537472795,
+        0.28816045437507437,
+        0.26743230140190005,
+        0.27568033689652444,
+        0.2710045780953877,
+        0.24760498749300114,
+        0.2604295168408197,
+        0.24426788973656285,
+        0.24277273366272606
+      ]
+    ]
+  },
+  {
+    "alias_tier": null,
+    "case_id": "erp-v3-fresh-dev-01-surface_only-eeg-10-meg+20",
+    "case_number": 14,
+    "channel_order_sha256": "3ad3abb129987b8216a6e99c973d3bff8dac18423bfd19b10dfb8df72a2d535a",
+    "check_seed": [
+      2026100302,
+      1,
+      1
+    ],
+    "component_balance_revision": "v3_refined_truth_fresh_development",
+    "configuration_id": "erp-v3-fresh-dev-geometry-01",
+    "configuration_kind": "single_surface_h0",
+    "configuration_number": 1,
+    "correlation": 0.0,
+    "deep_alias_rho": null,
+    "deep_index": null,
+    "deep_local": null,
+    "deep_nearest_inverse_distance_mm": null,
+    "deep_nearest_inverse_global": null,
+    "deep_nearest_inverse_local": null,
+    "deep_surface_ratio": null,
+    "deep_surface_sensor_amplitude_ratio": null,
+    "deep_truth_local": null,
+    "eeg_snr_db": -10,
+    "evaluation_deep_index": null,
+    "evaluation_surface_projection": {
+      "inverse_indices_by_patch": [
+        [
+          2254,
+          2151,
+          2293,
+          2254,
+          2254,
+          2293,
+          2289,
+          6199,
+          2254,
+          2254,
+          2293,
+          2293,
+          2444,
+          2442,
+          2444,
+          2484,
+          2442,
+          2590,
+          2444
+        ]
+      ],
+      "rule": "nearest coarse surface vertex in HEAD coordinates"
+    },
+    "h0_role": "gate_audit",
+    "inverse_forward_fingerprint": "a97e6991fde1cedfac66857d5c07683c43af62f16ad19bfa31ea7199a9083556",
+    "location": 1,
+    "meg_snr_db": 20,
+    "pair_index": 1,
+    "panel": "erp_v3_fresh_development",
+    "replica_seed_roots": {
+      "check": 2026100302,
+      "fit": 2026100301
+    },
+    "replicate": 0,
+    "scenario": "surface_only",
+    "scenario_code": 0,
+    "seed": [
+      2026100301,
+      1,
+      1
+    ],
+    "snr_db": -10,
+    "surface_centers": [
+      9397
+    ],
+    "truth_coordinate_frame": "HEAD",
+    "truth_deep_aseg_label": null,
+    "truth_deep_fine_index": null,
+    "truth_deep_xyz_head_m": null,
+    "truth_deep_xyz_mri_m": null,
+    "truth_forward": "refined_grid_oct7_surface_5mm_thalamus",
+    "truth_forward_array_bundle_sha256": "044f4e699ab98fbf3881ce3b8448f5a5a4f304a17065ab98218ae31b4c6d2f21",
+    "truth_forward_sha256": "f7417a1bbabd6ac863da8811470c5c273be3f950b028fff5efae9ac9a899b266",
+    "truth_grid": "refined_oct7_5mm",
+    "truth_surface_center_xyz_head_m": [
+      [
+        -0.007109804511939332,
+        0.01494772320799468,
+        0.044442522374147184
+      ]
+    ],
+    "truth_surface_center_xyz_mri_m": [
+      [
+        -0.0032934763431549073,
+        -0.002535614728927612,
+        0.017487781524658203
+      ]
+    ],
+    "truth_surface_centers_refined": [
+      9397
+    ],
+    "truth_surface_nearest_inverse": [
+      2254
+    ],
+    "truth_surface_nearest_inverse_distance_mm": [
+      2.5305063169954645
+    ],
+    "truth_surface_patch_indices_refined": [
+      [
+        8729,
+        8868,
+        8873,
+        9001,
+        9139,
+        9140,
+        9267,
+        9386,
+        9391,
+        9397,
+        9401,
+        9406,
+        9636,
+        9759,
+        9766,
+        9896,
+        10000,
+        10003,
+        10006
+      ]
+    ],
+    "truth_surface_patch_nearest_inverse": [
+      [
+        2254,
+        2151,
+        2293,
+        2254,
+        2254,
+        2293,
+        2289,
+        6199,
+        2254,
+        2254,
+        2293,
+        2293,
+        2444,
+        2442,
+        2444,
+        2484,
+        2442,
+        2590,
+        2444
+      ]
+    ],
+    "truth_surface_patch_nearest_inverse_distance_mm": [
+      [
+        3.0283581180360337,
+        2.188257602999869,
+        2.4110815461708137,
+        1.374141226081304e-05,
+        3.017815387790615,
+        1.3917441906914811e-05,
+        3.3092007679882354,
+        2.3172662225646206,
+        3.7627622895515738,
+        2.5305063169954645,
+        3.8816112012466393,
+        2.304878695292592,
+        3.0885516027238458,
+        1.5538098630697213e-05,
+        1.2799817564918928e-05,
+        3.0596262149673876,
+        2.2994289641446315,
+        3.279568899669889,
+        2.543514364425327
+      ]
+    ],
+    "truth_surface_patch_weights": [
+      [
+        0.2304919899991249,
+        0.22916510335803303,
+        0.2089871539967621,
+        0.25208785263767675,
+        0.24668032987644664,
+        0.2167236768643212,
+        0.2340364791842147,
+        0.20896335807899333,
+        0.2476330389829562,
+        0.2602895653180294,
+        0.24970443171509812,
+        0.22073921223583742,
+        0.23349067273860147,
+        0.19561726525140277,
+        0.24969031972742503,
+        0.23854624510206143,
+        0.18909910523073012,
+        0.20543683890018782,
+        0.22522557877653127
+      ]
+    ]
+  },
+  {
+    "alias_tier": null,
+    "case_id": "erp-v3-fresh-dev-02-surface_only-eeg-10-meg+20",
+    "case_number": 15,
+    "channel_order_sha256": "3ad3abb129987b8216a6e99c973d3bff8dac18423bfd19b10dfb8df72a2d535a",
+    "check_seed": [
+      2026100302,
+      1,
+      2
+    ],
+    "component_balance_revision": "v3_refined_truth_fresh_development",
+    "configuration_id": "erp-v3-fresh-dev-geometry-02",
+    "configuration_kind": "two_surface_h0",
+    "configuration_number": 2,
+    "correlation": 0.0,
+    "deep_alias_rho": null,
+    "deep_index": null,
+    "deep_local": null,
+    "deep_nearest_inverse_distance_mm": null,
+    "deep_nearest_inverse_global": null,
+    "deep_nearest_inverse_local": null,
+    "deep_surface_ratio": null,
+    "deep_surface_sensor_amplitude_ratio": null,
+    "deep_truth_local": null,
+    "eeg_snr_db": -10,
+    "evaluation_deep_index": null,
+    "evaluation_surface_projection": {
+      "inverse_indices_by_patch": [
+        [
+          3517,
+          3517,
+          3517,
+          3545,
+          3541,
+          3545,
+          3594,
+          3545,
+          3557,
+          3557,
+          3568,
+          3594,
+          3594,
+          3568,
+          3594,
+          3594,
+          3607,
+          3607
+        ],
+        [
+          3829,
+          3888,
+          3888,
+          3888
+        ]
+      ],
+      "rule": "nearest coarse surface vertex in HEAD coordinates"
+    },
+    "h0_role": "gate_calibration",
+    "inverse_forward_fingerprint": "a97e6991fde1cedfac66857d5c07683c43af62f16ad19bfa31ea7199a9083556",
+    "location": 2,
+    "meg_snr_db": 20,
+    "pair_index": 1,
+    "panel": "erp_v3_fresh_development",
+    "replica_seed_roots": {
+      "check": 2026100302,
+      "fit": 2026100301
+    },
+    "replicate": 0,
+    "scenario": "surface_only",
+    "scenario_code": 0,
+    "seed": [
+      2026100301,
+      1,
+      2
+    ],
+    "snr_db": -10,
+    "surface_centers": [
+      14269,
+      15326
+    ],
+    "surface_component_sensor_balance": true,
+    "truth_coordinate_frame": "HEAD",
+    "truth_deep_aseg_label": null,
+    "truth_deep_fine_index": null,
+    "truth_deep_xyz_head_m": null,
+    "truth_deep_xyz_mri_m": null,
+    "truth_forward": "refined_grid_oct7_surface_5mm_thalamus",
+    "truth_forward_array_bundle_sha256": "044f4e699ab98fbf3881ce3b8448f5a5a4f304a17065ab98218ae31b4c6d2f21",
+    "truth_forward_sha256": "f7417a1bbabd6ac863da8811470c5c273be3f950b028fff5efae9ac9a899b266",
+    "truth_grid": "refined_oct7_5mm",
+    "truth_surface_center_xyz_head_m": [
+      [
+        -0.04789662619260987,
+        0.08378542316682279,
+        0.04037464797284583
+      ],
+      [
+        0.026752313854012274,
+        -0.0553526763117254,
+        0.0702976447158587
+      ]
+    ],
+    "truth_surface_center_xyz_mri_m": [
+      [
+        -0.043315757751464845,
+        0.05535281753540039,
+        0.05577469253540039
+      ],
+      [
+        0.03055046844482422,
+        -0.0743836441040039,
+        -0.003718935966491699
+      ]
+    ],
+    "truth_surface_centers_refined": [
+      14269,
+      15326
+    ],
+    "truth_surface_nearest_inverse": [
+      3594,
+      3829
+    ],
+    "truth_surface_nearest_inverse_distance_mm": [
+      2.225857617222934,
+      2.8453335473382055
+    ],
+    "truth_surface_patch_indices_refined": [
+      [
+        14112,
+        14113,
+        14116,
+        14159,
+        14161,
+        14165,
+        14169,
+        14218,
+        14220,
+        14221,
+        14268,
+        14269,
+        14274,
+        14352,
+        14356,
+        14361,
+        14364,
+        14450
+      ],
+      [
+        15326,
+        15407,
+        15579,
+        15673
+      ]
+    ],
+    "truth_surface_patch_nearest_inverse": [
+      [
+        3517,
+        3517,
+        3517,
+        3545,
+        3541,
+        3545,
+        3594,
+        3545,
+        3557,
+        3557,
+        3568,
+        3594,
+        3594,
+        3568,
+        3594,
+        3594,
+        3607,
+        3607
+      ],
+      [
+        3829,
+        3888,
+        3888,
+        3888
+      ]
+    ],
+    "truth_surface_patch_nearest_inverse_distance_mm": [
+      [
+        2.514046681150313,
+        2.231059488500093,
+        2.100040641067043,
+        2.1661371757890064,
+        2.4540588447651865,
+        2.6662176453776432e-05,
+        3.2236748576675973,
+        2.236558065782662,
+        2.6489984868272314e-05,
+        2.0128010085192223,
+        2.2977913430319525e-05,
+        2.225857617222934,
+        2.2320608236368886,
+        2.6858323843954013,
+        2.4218179602859466,
+        2.0623636638236106e-05,
+        1.9696115674586387,
+        1.7918151012850343
+      ],
+      [
+        2.8453335473382055,
+        2.6049583215212984,
+        2.1525738950026557e-05,
+        3.1017976776968443
+      ]
+    ],
+    "truth_surface_patch_weights": [
+      [
+        0.23641682325730992,
+        0.21810870505718064,
+        0.2345009942287857,
+        0.2291367130436823,
+        0.23158304540140046,
+        0.24558551880490723,
+        0.24991946218550434,
+        0.2468812484099793,
+        0.22466148358456317,
+        0.21599530048489557,
+        0.23419560899972777,
+        0.2554546231878269,
+        0.24654978249097767,
+        0.22937336638862085,
+        0.24532102364473818,
+        0.2492042343861603,
+        0.22313804176724678,
+        0.22131924792807214
+      ],
+      [
+        0.5476251409830531,
+        0.4983234652473483,
+        0.4944052118531349,
+        0.45535032166412576
+      ]
+    ]
+  },
+  {
+    "alias_tier": null,
+    "case_id": "erp-v3-fresh-dev-03-surface_only-eeg-10-meg+20",
+    "case_number": 16,
+    "channel_order_sha256": "3ad3abb129987b8216a6e99c973d3bff8dac18423bfd19b10dfb8df72a2d535a",
+    "check_seed": [
+      2026100302,
+      1,
+      3
+    ],
+    "component_balance_revision": "v3_refined_truth_fresh_development",
+    "configuration_id": "erp-v3-fresh-dev-geometry-03",
+    "configuration_kind": "two_surface_h0",
+    "configuration_number": 3,
+    "correlation": 0.5,
+    "deep_alias_rho": null,
+    "deep_index": null,
+    "deep_local": null,
+    "deep_nearest_inverse_distance_mm": null,
+    "deep_nearest_inverse_global": null,
+    "deep_nearest_inverse_local": null,
+    "deep_surface_ratio": null,
+    "deep_surface_sensor_amplitude_ratio": null,
+    "deep_truth_local": null,
+    "eeg_snr_db": -10,
+    "evaluation_deep_index": null,
+    "evaluation_surface_projection": {
+      "inverse_indices_by_patch": [
+        [
+          14,
+          3,
+          14,
+          0,
+          3,
+          24,
+          7,
+          24,
+          14,
+          7,
+          51,
+          51,
+          51
+        ],
+        [
+          7439,
+          7413,
+          7428,
+          7442,
+          7439,
+          7439,
+          7420,
+          7444,
+          7439,
+          7444,
+          7444,
+          7469,
+          7469
+        ]
+      ],
+      "rule": "nearest coarse surface vertex in HEAD coordinates"
+    },
+    "h0_role": "gate_audit",
+    "inverse_forward_fingerprint": "a97e6991fde1cedfac66857d5c07683c43af62f16ad19bfa31ea7199a9083556",
+    "location": 3,
+    "meg_snr_db": 20,
+    "pair_index": 1,
+    "panel": "erp_v3_fresh_development",
+    "replica_seed_roots": {
+      "check": 2026100302,
+      "fit": 2026100301
+    },
+    "replicate": 0,
+    "scenario": "surface_only",
+    "scenario_code": 0,
+    "seed": [
+      2026100301,
+      1,
+      3
+    ],
+    "snr_db": -10,
+    "surface_centers": [
+      3,
+      29864
+    ],
+    "surface_component_sensor_balance": true,
+    "truth_coordinate_frame": "HEAD",
+    "truth_deep_aseg_label": null,
+    "truth_deep_fine_index": null,
+    "truth_deep_xyz_head_m": null,
+    "truth_deep_xyz_mri_m": null,
+    "truth_forward": "refined_grid_oct7_surface_5mm_thalamus",
+    "truth_forward_array_bundle_sha256": "044f4e699ab98fbf3881ce3b8448f5a5a4f304a17065ab98218ae31b4c6d2f21",
+    "truth_forward_sha256": "f7417a1bbabd6ac863da8811470c5c273be3f950b028fff5efae9ac9a899b266",
+    "truth_grid": "refined_oct7_5mm",
+    "truth_surface_center_xyz_head_m": [
+      [
+        -0.012550674881063612,
+        -0.043956426392923006,
+        0.09905958218590744
+      ],
+      [
+        0.02606726633637515,
+        0.08918049844558794,
+        0.03071578677841105
+      ]
+    ],
+    "truth_surface_center_xyz_mri_m": [
+      [
+        -0.00757634973526001,
+        -0.08228616333007813,
+        0.027677629470825197
+      ],
+      [
+        0.03032886505126953,
+        0.06610551452636719,
+        0.048432571411132816
+      ]
+    ],
+    "truth_surface_centers_refined": [
+      3,
+      29864
+    ],
+    "truth_surface_nearest_inverse": [
+      14,
+      7444
+    ],
+    "truth_surface_nearest_inverse_distance_mm": [
+      3.5288157567281213,
+      3.2000358764431653
+    ],
+    "truth_surface_patch_indices_refined": [
+      [
+        3,
+        13,
+        14,
+        15,
+        22,
+        26,
+        34,
+        62,
+        63,
+        64,
+        69,
+        129,
+        164
+      ],
+      [
+        29708,
+        29711,
+        29778,
+        29780,
+        29783,
+        29784,
+        29805,
+        29809,
+        29862,
+        29864,
+        29865,
+        29888,
+        29927
+      ]
+    ],
+    "truth_surface_patch_nearest_inverse": [
+      [
+        14,
+        3,
+        14,
+        0,
+        3,
+        24,
+        7,
+        24,
+        14,
+        7,
+        51,
+        51,
+        51
+      ],
+      [
+        7439,
+        7413,
+        7428,
+        7442,
+        7439,
+        7439,
+        7420,
+        7444,
+        7439,
+        7444,
+        7444,
+        7469,
+        7469
+      ]
+    ],
+    "truth_surface_patch_nearest_inverse_distance_mm": [
+      [
+        3.5288157567281213,
+        4.015067506338758e-05,
+        2.365218188344176,
+        1.7066478389255162,
+        3.2530784748799393,
+        2.261934818609761,
+        2.3170358021651906e-05,
+        3.2861482137068583,
+        3.0158126330672457e-05,
+        1.9398071033079884,
+        3.44782621244024,
+        2.4289898826383696,
+        3.468782472099971
+      ],
+      [
+        2.3185032310596454,
+        2.942565820071865,
+        3.067779562496668,
+        2.4561428907490237,
+        2.4148521427846545e-05,
+        2.3983019830124257,
+        2.971180103352544,
+        1.9633967930137035e-05,
+        2.894990461766568,
+        3.2000358764431653,
+        2.6639238823196365,
+        2.846459490103337,
+        2.5210381946641642
+      ]
+    ],
+    "truth_surface_patch_weights": [
+      [
+        0.31550502740507175,
+        0.29419454667031175,
+        0.30485018660028157,
+        0.27489960940191466,
+        0.24883472918477742,
+        0.27193900631674667,
+        0.28842165121950514,
+        0.2756052375563253,
+        0.29645958863808314,
+        0.29969487069901046,
+        0.22939484287640818,
+        0.24233009776946143,
+        0.24766247185302576
+      ],
+      [
+        0.2643058749557191,
+        0.2807485423574235,
+        0.25184985256817066,
+        0.25971375023709203,
+        0.2879847326292054,
+        0.2982709039854316,
+        0.2659006659319531,
+        0.2916983510265025,
+        0.29684389964418934,
+        0.30702254834743453,
+        0.2947080354494094,
+        0.25589767098887817,
+        0.2409059141555204
+      ]
+    ]
+  },
+  {
+    "alias_tier": "low",
+    "case_id": "erp-v3-fresh-dev-04-deep_only-eeg-10-meg+20",
+    "case_number": 17,
+    "channel_order_sha256": "3ad3abb129987b8216a6e99c973d3bff8dac18423bfd19b10dfb8df72a2d535a",
+    "check_seed": [
+      2026100302,
+      1,
+      4
+    ],
+    "component_balance_revision": "v3_refined_truth_fresh_development",
+    "configuration_id": "erp-v3-fresh-dev-geometry-04",
+    "configuration_kind": "deep_only_h1",
+    "configuration_number": 4,
+    "correlation": 0.0,
+    "deep_alias_rho": 0.9987041674197309,
+    "deep_index": 30084,
+    "deep_local": 52,
+    "deep_nearest_inverse_distance_mm": 5.000000274274239,
+    "deep_nearest_inverse_global": 7507,
+    "deep_nearest_inverse_local": 9,
+    "deep_surface_ratio": null,
+    "deep_surface_sensor_amplitude_ratio": null,
+    "deep_truth_local": 52,
+    "eeg_snr_db": -10,
+    "evaluation_deep_index": 7507,
+    "evaluation_surface_projection": {
+      "inverse_indices_by_patch": [],
+      "rule": "nearest coarse surface vertex in HEAD coordinates"
+    },
+    "h0_role": null,
+    "inverse_forward_fingerprint": "a97e6991fde1cedfac66857d5c07683c43af62f16ad19bfa31ea7199a9083556",
+    "location": 4,
+    "meg_snr_db": 20,
+    "pair_index": 1,
+    "panel": "erp_v3_fresh_development",
+    "replica_seed_roots": {
+      "check": 2026100302,
+      "fit": 2026100301
+    },
+    "replicate": 0,
+    "scenario": "deep_only",
+    "scenario_code": 1,
+    "seed": [
+      2026100301,
+      1,
+      4
+    ],
+    "snr_db": -10,
+    "surface_centers": [],
+    "truth_coordinate_frame": "HEAD",
+    "truth_deep_aseg_label": 10,
+    "truth_deep_fine_index": 52,
+    "truth_deep_xyz_head_m": [
+      -0.024605881296707256,
+      0.010755235601379644,
+      0.06825640012550281
+    ],
+    "truth_deep_xyz_mri_m": [
+      -0.02,
+      -0.02,
+      0.035
+    ],
+    "truth_forward": "refined_grid_oct7_surface_5mm_thalamus",
+    "truth_forward_array_bundle_sha256": "044f4e699ab98fbf3881ce3b8448f5a5a4f304a17065ab98218ae31b4c6d2f21",
+    "truth_forward_sha256": "f7417a1bbabd6ac863da8811470c5c273be3f950b028fff5efae9ac9a899b266",
+    "truth_grid": "refined_oct7_5mm",
+    "truth_surface_center_xyz_head_m": [],
+    "truth_surface_center_xyz_mri_m": [],
+    "truth_surface_centers_refined": [],
+    "truth_surface_nearest_inverse": [],
+    "truth_surface_nearest_inverse_distance_mm": [],
+    "truth_surface_patch_indices_refined": [],
+    "truth_surface_patch_nearest_inverse": [],
+    "truth_surface_patch_nearest_inverse_distance_mm": [],
+    "truth_surface_patch_weights": []
+  },
+  {
+    "alias_tier": "mid",
+    "case_id": "erp-v3-fresh-dev-05-deep_only-eeg-10-meg+20",
+    "case_number": 18,
+    "channel_order_sha256": "3ad3abb129987b8216a6e99c973d3bff8dac18423bfd19b10dfb8df72a2d535a",
+    "check_seed": [
+      2026100302,
+      1,
+      5
+    ],
+    "component_balance_revision": "v3_refined_truth_fresh_development",
+    "configuration_id": "erp-v3-fresh-dev-geometry-05",
+    "configuration_kind": "deep_only_h1",
+    "configuration_number": 5,
+    "correlation": 0.0,
+    "deep_alias_rho": 0.9993713135304675,
+    "deep_index": 30071,
+    "deep_local": 39,
+    "deep_nearest_inverse_distance_mm": 5.000000094449668,
+    "deep_nearest_inverse_global": 7505,
+    "deep_nearest_inverse_local": 7,
+    "deep_surface_ratio": null,
+    "deep_surface_sensor_amplitude_ratio": null,
+    "deep_truth_local": 39,
+    "eeg_snr_db": -10,
+    "evaluation_deep_index": 7505,
+    "evaluation_surface_projection": {
+      "inverse_indices_by_patch": [],
+      "rule": "nearest coarse surface vertex in HEAD coordinates"
+    },
+    "h0_role": null,
+    "inverse_forward_fingerprint": "a97e6991fde1cedfac66857d5c07683c43af62f16ad19bfa31ea7199a9083556",
+    "location": 5,
+    "meg_snr_db": 20,
+    "pair_index": 1,
+    "panel": "erp_v3_fresh_development",
+    "replica_seed_roots": {
+      "check": 2026100302,
+      "fit": 2026100301
+    },
+    "replicate": 0,
+    "scenario": "deep_only",
+    "scenario_code": 1,
+    "seed": [
+      2026100301,
+      1,
+      5
+    ],
+    "snr_db": -10,
+    "surface_centers": [],
+    "truth_coordinate_frame": "HEAD",
+    "truth_deep_aseg_label": 49,
+    "truth_deep_fine_index": 39,
+    "truth_deep_xyz_head_m": [
+      0.010648736540289333,
+      0.016411086851410406,
+      0.0595890317094775
+    ],
+    "truth_deep_xyz_mri_m": [
+      0.015,
+      -0.01,
+      0.03
+    ],
+    "truth_forward": "refined_grid_oct7_surface_5mm_thalamus",
+    "truth_forward_array_bundle_sha256": "044f4e699ab98fbf3881ce3b8448f5a5a4f304a17065ab98218ae31b4c6d2f21",
+    "truth_forward_sha256": "f7417a1bbabd6ac863da8811470c5c273be3f950b028fff5efae9ac9a899b266",
+    "truth_grid": "refined_oct7_5mm",
+    "truth_surface_center_xyz_head_m": [],
+    "truth_surface_center_xyz_mri_m": [],
+    "truth_surface_centers_refined": [],
+    "truth_surface_nearest_inverse": [],
+    "truth_surface_nearest_inverse_distance_mm": [],
+    "truth_surface_patch_indices_refined": [],
+    "truth_surface_patch_nearest_inverse": [],
+    "truth_surface_patch_nearest_inverse_distance_mm": [],
+    "truth_surface_patch_weights": []
+  },
+  {
+    "alias_tier": "high",
+    "case_id": "erp-v3-fresh-dev-06-deep_only-eeg-10-meg+20",
+    "case_number": 19,
+    "channel_order_sha256": "3ad3abb129987b8216a6e99c973d3bff8dac18423bfd19b10dfb8df72a2d535a",
+    "check_seed": [
+      2026100302,
+      1,
+      6
+    ],
+    "component_balance_revision": "v3_refined_truth_fresh_development",
+    "configuration_id": "erp-v3-fresh-dev-geometry-06",
+    "configuration_kind": "deep_only_h1",
+    "configuration_number": 6,
+    "correlation": 0.0,
+    "deep_alias_rho": 0.9997116472241104,
+    "deep_index": 30068,
+    "deep_local": 36,
+    "deep_nearest_inverse_distance_mm": 5.0000000944496685,
+    "deep_nearest_inverse_global": 7504,
+    "deep_nearest_inverse_local": 6,
+    "deep_surface_ratio": null,
+    "deep_surface_sensor_amplitude_ratio": null,
+    "deep_truth_local": 36,
+    "eeg_snr_db": -10,
+    "evaluation_deep_index": 7504,
+    "evaluation_surface_projection": {
+      "inverse_indices_by_patch": [],
+      "rule": "nearest coarse surface vertex in HEAD coordinates"
+    },
+    "h0_role": null,
+    "inverse_forward_fingerprint": "a97e6991fde1cedfac66857d5c07683c43af62f16ad19bfa31ea7199a9083556",
+    "location": 6,
+    "meg_snr_db": 20,
+    "pair_index": 1,
+    "panel": "erp_v3_fresh_development",
+    "replica_seed_roots": {
+      "check": 2026100302,
+      "fit": 2026100301
+    },
+    "replicate": 0,
+    "scenario": "deep_only",
+    "scenario_code": 1,
+    "seed": [
+      2026100301,
+      1,
+      6
+    ],
+    "snr_db": -10,
+    "surface_centers": [],
+    "truth_coordinate_frame": "HEAD",
+    "truth_deep_aseg_label": 10,
+    "truth_deep_fine_index": 36,
+    "truth_deep_xyz_head_m": [
+      -0.009337454998903191,
+      0.016155900360746274,
+      0.05889114724508619
+    ],
+    "truth_deep_xyz_mri_m": [
+      -0.005,
+      -0.01,
+      0.03
+    ],
+    "truth_forward": "refined_grid_oct7_surface_5mm_thalamus",
+    "truth_forward_array_bundle_sha256": "044f4e699ab98fbf3881ce3b8448f5a5a4f304a17065ab98218ae31b4c6d2f21",
+    "truth_forward_sha256": "f7417a1bbabd6ac863da8811470c5c273be3f950b028fff5efae9ac9a899b266",
+    "truth_grid": "refined_oct7_5mm",
+    "truth_surface_center_xyz_head_m": [],
+    "truth_surface_center_xyz_mri_m": [],
+    "truth_surface_centers_refined": [],
+    "truth_surface_nearest_inverse": [],
+    "truth_surface_nearest_inverse_distance_mm": [],
+    "truth_surface_patch_indices_refined": [],
+    "truth_surface_patch_nearest_inverse": [],
+    "truth_surface_patch_nearest_inverse_distance_mm": [],
+    "truth_surface_patch_weights": []
+  },
+  {
+    "alias_tier": "low",
+    "case_id": "erp-v3-fresh-dev-07-deep_plus_surface-eeg-10-meg+20",
+    "case_number": 20,
+    "channel_order_sha256": "3ad3abb129987b8216a6e99c973d3bff8dac18423bfd19b10dfb8df72a2d535a",
+    "check_seed": [
+      2026100302,
+      1,
+      7
+    ],
+    "component_balance_revision": "v3_refined_truth_fresh_development",
+    "configuration_id": "erp-v3-fresh-dev-geometry-07",
+    "configuration_kind": "deep_plus_single_surface_h1",
+    "configuration_number": 7,
+    "correlation": 0.0,
+    "deep_alias_rho": 0.9987017784620469,
+    "deep_index": 30042,
+    "deep_local": 10,
+    "deep_nearest_inverse_distance_mm": 5.000000274274239,
+    "deep_nearest_inverse_global": 7502,
+    "deep_nearest_inverse_local": 4,
+    "deep_surface_ratio": 0.5,
+    "deep_surface_sensor_amplitude_ratio": 0.5,
+    "deep_truth_local": 10,
+    "eeg_snr_db": -10,
+    "evaluation_deep_index": 7502,
+    "evaluation_surface_projection": {
+      "inverse_indices_by_patch": [
+        [
+          2333,
+          2262,
+          2333,
+          2334,
+          2390,
+          2334,
+          2390,
+          2390,
+          2333,
+          2422,
+          2422,
+          2390,
+          2422,
+          2453,
+          2490,
+          2490,
+          2422,
+          2573
+        ]
+      ],
+      "rule": "nearest coarse surface vertex in HEAD coordinates"
+    },
+    "h0_role": null,
+    "inverse_forward_fingerprint": "a97e6991fde1cedfac66857d5c07683c43af62f16ad19bfa31ea7199a9083556",
+    "location": 7,
+    "meg_snr_db": 20,
+    "pair_index": 1,
+    "panel": "erp_v3_fresh_development",
+    "replica_seed_roots": {
+      "check": 2026100302,
+      "fit": 2026100301
+    },
+    "replicate": 0,
+    "scenario": "deep_plus_surface",
+    "scenario_code": 2,
+    "seed": [
+      2026100301,
+      1,
+      7
+    ],
+    "snr_db": -10,
+    "surface_centers": [
+      9546
+    ],
+    "truth_coordinate_frame": "HEAD",
+    "truth_deep_aseg_label": 49,
+    "truth_deep_fine_index": 10,
+    "truth_deep_xyz_head_m": [
+      0.015724371967225648,
+      0.005436064555721262,
+      0.06153500475025102
+    ],
+    "truth_deep_xyz_mri_m": [
+      0.02,
+      -0.02,
+      0.025
+    ],
+    "truth_forward": "refined_grid_oct7_surface_5mm_thalamus",
+    "truth_forward_array_bundle_sha256": "044f4e699ab98fbf3881ce3b8448f5a5a4f304a17065ab98218ae31b4c6d2f21",
+    "truth_forward_sha256": "f7417a1bbabd6ac863da8811470c5c273be3f950b028fff5efae9ac9a899b266",
+    "truth_grid": "refined_oct7_5mm",
+    "truth_surface_center_xyz_head_m": [
+      [
+        -0.02565392763480552,
+        0.0617172253304448,
+        0.10513572880354341
+      ]
+    ],
+    "truth_surface_center_xyz_mri_m": [
+      [
+        -0.019110206604003907,
+        -0.00010966502130031586,
+        0.09468157196044921
+      ]
+    ],
+    "truth_surface_centers_refined": [
+      9546
+    ],
+    "truth_surface_nearest_inverse": [
+      2390
+    ],
+    "truth_surface_nearest_inverse_distance_mm": [
+      2.49242267981091
+    ],
+    "truth_surface_patch_indices_refined": [
+      [
+        9164,
+        9167,
+        9300,
+        9302,
+        9422,
+        9426,
+        9545,
+        9546,
+        9670,
+        9676,
+        9678,
+        9794,
+        9796,
+        9917,
+        9919,
+        9922,
+        9923,
+        9924
+      ]
+    ],
+    "truth_surface_patch_nearest_inverse": [
+      [
+        2333,
+        2262,
+        2333,
+        2334,
+        2390,
+        2334,
+        2390,
+        2390,
+        2333,
+        2422,
+        2422,
+        2390,
+        2422,
+        2453,
+        2490,
+        2490,
+        2422,
+        2573
+      ]
+    ],
+    "truth_surface_patch_nearest_inverse_distance_mm": [
+      [
+        1.5849101710211404,
+        2.950184868970456,
+        3.673374409387516e-05,
+        3.3057846559964905,
+        1.394351289378289,
+        2.8628465542771604,
+        3.25219241670372e-05,
+        2.49242267981091,
+        2.936740056775467,
+        1.4883300589756203,
+        3.5912885703432015e-05,
+        1.9330265717900956,
+        1.6985333735775994,
+        2.6606248642275503,
+        2.5267862076651557e-05,
+        2.660818956007893,
+        2.610190869525386,
+        2.895636235988821
+      ]
+    ],
+    "truth_surface_patch_weights": [
+      [
+        0.24020061494041667,
+        0.23337717395481744,
+        0.2480952951875693,
+        0.23641271386687257,
+        0.2504915586864074,
+        0.23106898217468153,
+        0.24817033495246052,
+        0.25599968136869655,
+        0.251618239538807,
+        0.2394971103441173,
+        0.2316494151005279,
+        0.25287381032627415,
+        0.22526357962603177,
+        0.24194882335016468,
+        0.2327937585357342,
+        0.2129174056770485,
+        0.20695324108726657,
+        0.19291638630702257
+      ]
+    ]
+  },
+  {
+    "alias_tier": "mid",
+    "case_id": "erp-v3-fresh-dev-08-deep_plus_surface-eeg-10-meg+20",
+    "case_number": 21,
+    "channel_order_sha256": "3ad3abb129987b8216a6e99c973d3bff8dac18423bfd19b10dfb8df72a2d535a",
+    "check_seed": [
+      2026100302,
+      1,
+      8
+    ],
+    "component_balance_revision": "v3_refined_truth_fresh_development",
+    "configuration_id": "erp-v3-fresh-dev-geometry-08",
+    "configuration_kind": "deep_plus_single_surface_h1",
+    "configuration_number": 8,
+    "correlation": 0.5,
+    "deep_alias_rho": 0.9994050508224828,
+    "deep_index": 30122,
+    "deep_local": 90,
+    "deep_nearest_inverse_distance_mm": 4.999999699676775,
+    "deep_nearest_inverse_global": 7509,
+    "deep_nearest_inverse_local": 11,
+    "deep_surface_ratio": 1.0,
+    "deep_surface_sensor_amplitude_ratio": 1.0,
+    "deep_truth_local": 90,
+    "eeg_snr_db": -10,
+    "evaluation_deep_index": 7509,
+    "evaluation_surface_projection": {
+      "inverse_indices_by_patch": [
+        [
+          5236,
+          5280,
+          5481,
+          5366,
+          5480,
+          5480,
+          5479,
+          5588,
+          5480,
+          5480,
+          5588,
+          5588,
+          5630
+        ]
+      ],
+      "rule": "nearest coarse surface vertex in HEAD coordinates"
+    },
+    "h0_role": null,
+    "inverse_forward_fingerprint": "a97e6991fde1cedfac66857d5c07683c43af62f16ad19bfa31ea7199a9083556",
+    "location": 8,
+    "meg_snr_db": 20,
+    "pair_index": 1,
+    "panel": "erp_v3_fresh_development",
+    "replica_seed_roots": {
+      "check": 2026100302,
+      "fit": 2026100301
+    },
+    "replicate": 0,
+    "scenario": "deep_plus_surface",
+    "scenario_code": 2,
+    "seed": [
+      2026100301,
+      1,
+      8
+    ],
+    "snr_db": -10,
+    "surface_centers": [
+      21761
+    ],
+    "truth_coordinate_frame": "HEAD",
+    "truth_deep_aseg_label": 10,
+    "truth_deep_fine_index": 90,
+    "truth_deep_xyz_head_m": [
+      -0.02473489261416331,
+      0.017732031067303897,
+      0.06939994023917356
+    ],
+    "truth_deep_xyz_mri_m": [
+      -0.02,
+      -0.015,
+      0.04
+    ],
+    "truth_forward": "refined_grid_oct7_surface_5mm_thalamus",
+    "truth_forward_array_bundle_sha256": "044f4e699ab98fbf3881ce3b8448f5a5a4f304a17065ab98218ae31b4c6d2f21",
+    "truth_forward_sha256": "f7417a1bbabd6ac863da8811470c5c273be3f950b028fff5efae9ac9a899b266",
+    "truth_grid": "refined_oct7_5mm",
+    "truth_surface_center_xyz_head_m": [
+      [
+        0.0577132893692215,
+        -0.005963809749402016,
+        0.05249981440253161
+      ]
+    ],
+    "truth_surface_center_xyz_mri_m": [
+      [
+        0.061499195098876955,
+        -0.023574468612670898,
+        0.00951772403717041
+      ]
+    ],
+    "truth_surface_centers_refined": [
+      21761
+    ],
+    "truth_surface_nearest_inverse": [
+      5480
+    ],
+    "truth_surface_nearest_inverse_distance_mm": [
+      3.4785914730490224
+    ],
+    "truth_surface_patch_indices_refined": [
+      [
+        20950,
+        21129,
+        21615,
+        21617,
+        21761,
+        21913,
+        21914,
+        22062,
+        22063,
+        22064,
+        22375,
+        22376,
+        22540
+      ]
+    ],
+    "truth_surface_patch_nearest_inverse": [
+      [
+        5236,
+        5280,
+        5481,
+        5366,
+        5480,
+        5480,
+        5479,
+        5588,
+        5480,
+        5480,
+        5588,
+        5588,
+        5630
+      ]
+    ],
+    "truth_surface_patch_nearest_inverse_distance_mm": [
+      [
+        1.4478981790758614e-05,
+        2.901446151417153,
+        3.1054001198465446,
+        2.823062025484972,
+        3.4785914730490224,
+        1.4574466354715993e-05,
+        3.197079077300806,
+        4.0833788808018525,
+        2.4032746324828294,
+        2.754131541647157,
+        3.224907189443305,
+        1.4539609307963971e-05,
+        2.858702983984455
+      ]
+    ],
+    "truth_surface_patch_weights": [
+      [
+        0.27195628327705157,
+        0.2733356442677805,
+        0.27637583611377564,
+        0.30525956979062757,
+        0.3149336782381605,
+        0.2964442466022301,
+        0.2513615110367418,
+        0.3005677499179281,
+        0.29621318295380356,
+        0.2645492361063044,
+        0.24721956877272797,
+        0.2552603924606358,
+        0.2391034756032132
+      ]
+    ]
+  },
+  {
+    "alias_tier": "high",
+    "case_id": "erp-v3-fresh-dev-09-deep_plus_surface-eeg-10-meg+20",
+    "case_number": 22,
+    "channel_order_sha256": "3ad3abb129987b8216a6e99c973d3bff8dac18423bfd19b10dfb8df72a2d535a",
+    "check_seed": [
+      2026100302,
+      1,
+      9
+    ],
+    "component_balance_revision": "v3_refined_truth_fresh_development",
+    "configuration_id": "erp-v3-fresh-dev-geometry-09",
+    "configuration_kind": "deep_plus_single_surface_h1",
+    "configuration_number": 9,
+    "correlation": 0.9,
+    "deep_alias_rho": 0.9997316277158932,
+    "deep_index": 30133,
+    "deep_local": 101,
+    "deep_nearest_inverse_distance_mm": 5.000000094449668,
+    "deep_nearest_inverse_global": 7511,
+    "deep_nearest_inverse_local": 13,
+    "deep_surface_ratio": 0.5,
+    "deep_surface_sensor_amplitude_ratio": 0.5,
+    "deep_truth_local": 101,
+    "eeg_snr_db": -10,
+    "evaluation_deep_index": 7511,
+    "evaluation_surface_projection": {
+      "inverse_indices_by_patch": [
+        [
+          2174,
+          2351,
+          2381,
+          2351,
+          2351,
+          2381,
+          2351,
+          2351,
+          2351
+        ]
+      ],
+      "rule": "nearest coarse surface vertex in HEAD coordinates"
+    },
+    "h0_role": null,
+    "inverse_forward_fingerprint": "a97e6991fde1cedfac66857d5c07683c43af62f16ad19bfa31ea7199a9083556",
+    "location": 9,
+    "meg_snr_db": 20,
+    "pair_index": 1,
+    "panel": "erp_v3_fresh_development",
+    "replica_seed_roots": {
+      "check": 2026100302,
+      "fit": 2026100301
+    },
+    "replicate": 0,
+    "scenario": "deep_plus_surface",
+    "scenario_code": 2,
+    "seed": [
+      2026100301,
+      1,
+      9
+    ],
+    "snr_db": -10,
+    "surface_centers": [
+      9624
+    ],
+    "truth_coordinate_frame": "HEAD",
+    "truth_deep_aseg_label": 49,
+    "truth_deep_fine_index": 101,
+    "truth_deep_xyz_head_m": [
+      0.00029777058514521716,
+      0.02211303763306499,
+      0.06735725378131625
+    ],
+    "truth_deep_xyz_mri_m": [
+      0.005,
+      -0.01,
+      0.04
+    ],
+    "truth_forward": "refined_grid_oct7_surface_5mm_thalamus",
+    "truth_forward_array_bundle_sha256": "044f4e699ab98fbf3881ce3b8448f5a5a4f304a17065ab98218ae31b4c6d2f21",
+    "truth_forward_sha256": "f7417a1bbabd6ac863da8811470c5c273be3f950b028fff5efae9ac9a899b266",
+    "truth_grid": "refined_oct7_5mm",
+    "truth_surface_center_xyz_head_m": [
+      [
+        -0.06337650895914419,
+        0.025944360362205765,
+        0.05509881668281465
+      ]
+    ],
+    "truth_surface_center_xyz_mri_m": [
+      [
+        -0.059009178161621094,
+        -0.00037641599774360655,
+        0.03456182479858398
+      ]
+    ],
+    "truth_surface_centers_refined": [
+      9624
+    ],
+    "truth_surface_nearest_inverse": [
+      2351
+    ],
+    "truth_surface_nearest_inverse_distance_mm": [
+      3.9196458595830337
+    ],
+    "truth_surface_patch_indices_refined": [
+      [
+        8984,
+        9111,
+        9252,
+        9253,
+        9376,
+        9513,
+        9624,
+        9625,
+        9749
+      ]
+    ],
+    "truth_surface_patch_nearest_inverse": [
+      [
+        2174,
+        2351,
+        2381,
+        2351,
+        2351,
+        2381,
+        2351,
+        2351,
+        2351
+      ]
+    ],
+    "truth_surface_patch_nearest_inverse_distance_mm": [
+      [
+        2.205627023519687,
+        2.42052555803599,
+        2.4450718876807045,
+        1.8739403746916081,
+        1.7835831090855096e-05,
+        1.7545182023053523,
+        3.9196458595830337,
+        2.2701292288976043,
+        2.7843957202178227
+      ]
+    ],
+    "truth_surface_patch_weights": [
+      [
+        0.31222640266489976,
+        0.305729847595481,
+        0.2872164602538432,
+        0.35262755878115604,
+        0.3438432126951699,
+        0.3152773816355911,
+        0.371297474020505,
+        0.3598276458478321,
+        0.34240139061858993
+      ]
+    ]
+  },
+  {
+    "alias_tier": "low",
+    "case_id": "erp-v3-fresh-dev-10-deep_plus_two_surface-eeg-10-meg+20",
+    "case_number": 23,
+    "channel_order_sha256": "3ad3abb129987b8216a6e99c973d3bff8dac18423bfd19b10dfb8df72a2d535a",
+    "check_seed": [
+      2026100302,
+      1,
+      10
+    ],
+    "component_balance_revision": "v3_refined_truth_fresh_development",
+    "configuration_id": "erp-v3-fresh-dev-geometry-10",
+    "configuration_kind": "deep_plus_two_surface_h1",
+    "configuration_number": 10,
+    "correlation": 0.9,
+    "deep_alias_rho": 0.9988099210527339,
+    "deep_index": 30111,
+    "deep_local": 79,
+    "deep_nearest_inverse_distance_mm": 5.00000027427424,
+    "deep_nearest_inverse_global": 7512,
+    "deep_nearest_inverse_local": 14,
+    "deep_surface_ratio": 1.0,
+    "deep_surface_sensor_amplitude_ratio": 1.0,
+    "deep_truth_local": 79,
+    "eeg_snr_db": -10,
+    "evaluation_deep_index": 7512,
+    "evaluation_surface_projection": {
+      "inverse_indices_by_patch": [
+        [
+          410,
+          546,
+          465,
+          493,
+          517,
+          465,
+          517,
+          517,
+          465,
+          546,
+          517,
+          546,
+          546,
+          546,
+          577,
+          577,
+          577,
+          516
+        ],
+        [
+          7040,
+          7076,
+          7097,
+          7076,
+          7097,
+          7149,
+          7194,
+          7148,
+          7178,
+          7178,
+          7178,
+          7148,
+          7149,
+          7194,
+          7194,
+          7194,
+          7194,
+          7233,
+          7233
+        ]
+      ],
+      "rule": "nearest coarse surface vertex in HEAD coordinates"
+    },
+    "h0_role": null,
+    "inverse_forward_fingerprint": "a97e6991fde1cedfac66857d5c07683c43af62f16ad19bfa31ea7199a9083556",
+    "location": 10,
+    "meg_snr_db": 20,
+    "pair_index": 1,
+    "panel": "erp_v3_fresh_development",
+    "replica_seed_roots": {
+      "check": 2026100302,
+      "fit": 2026100301
+    },
+    "replicate": 0,
+    "scenario": "deep_plus_two_surface",
+    "scenario_code": 3,
+    "seed": [
+      2026100301,
+      1,
+      10
+    ],
+    "snr_db": -10,
+    "surface_centers": [
+      2072,
+      28723
+    ],
+    "surface_component_sensor_balance": true,
+    "truth_coordinate_frame": "HEAD",
+    "truth_deep_aseg_label": 10,
+    "truth_deep_fine_index": 79,
+    "truth_deep_xyz_head_m": [
+      -0.014413090425839506,
+      0.02713092265643542,
+      0.05694517420431268
+    ],
+    "truth_deep_xyz_mri_m": [
+      -0.01,
+      0.0,
+      0.035
+    ],
+    "truth_forward": "refined_grid_oct7_surface_5mm_thalamus",
+    "truth_forward_array_bundle_sha256": "044f4e699ab98fbf3881ce3b8448f5a5a4f304a17065ab98218ae31b4c6d2f21",
+    "truth_forward_sha256": "f7417a1bbabd6ac863da8811470c5c273be3f950b028fff5efae9ac9a899b266",
+    "truth_grid": "refined_oct7_5mm",
+    "truth_surface_center_xyz_head_m": [
+      [
+        -0.04272261698578356,
+        -0.04024682004963565,
+        0.057488785689597005
+      ],
+      [
+        0.0060316502702863406,
+        0.09294189335178768,
+        0.07632089100565233
+      ]
+    ],
+    "truth_surface_center_xyz_mri_m": [
+      [
+        -0.03913070678710937,
+        -0.05533759307861328,
+        -0.0028237719535827636
+      ],
+      [
+        0.011946429252624511,
+        0.04237307357788086,
+        0.0883607177734375
+      ]
+    ],
+    "truth_surface_centers_refined": [
+      2072,
+      28723
+    ],
+    "truth_surface_nearest_inverse": [
+      465,
+      7178
+    ],
+    "truth_surface_nearest_inverse_distance_mm": [
+      2.095970798427277,
+      3.192604715707371
+    ],
+    "truth_surface_patch_indices_refined": [
+      [
+        1755,
+        1848,
+        1851,
+        1852,
+        1853,
+        1854,
+        2070,
+        2071,
+        2072,
+        2073,
+        2074,
+        2188,
+        2189,
+        2192,
+        2193,
+        2305,
+        2306,
+        2416
+      ],
+      [
+        28330,
+        28413,
+        28414,
+        28554,
+        28556,
+        28616,
+        28617,
+        28680,
+        28723,
+        28724,
+        28727,
+        28728,
+        28729,
+        28785,
+        28848,
+        28850,
+        28953,
+        28955,
+        28956
+      ]
+    ],
+    "truth_surface_patch_nearest_inverse": [
+      [
+        410,
+        546,
+        465,
+        493,
+        517,
+        465,
+        517,
+        517,
+        465,
+        546,
+        517,
+        546,
+        546,
+        546,
+        577,
+        577,
+        577,
+        516
+      ],
+      [
+        7040,
+        7076,
+        7097,
+        7076,
+        7097,
+        7149,
+        7194,
+        7148,
+        7178,
+        7178,
+        7178,
+        7148,
+        7149,
+        7194,
+        7194,
+        7194,
+        7194,
+        7233,
+        7233
+      ]
+    ],
+    "truth_surface_patch_nearest_inverse_distance_mm": [
+      [
+        3.157284085322882,
+        2.601051980005262,
+        2.2880882398721716e-05,
+        1.986889479897547,
+        2.334702216125355,
+        2.751875550111636,
+        2.5331170657786704,
+        2.8701399198344335,
+        2.095970798427277,
+        2.725797433843104,
+        0.5191842859035658,
+        1.9352156201989466,
+        3.261695806542876,
+        2.6692352447652553e-05,
+        2.232684571941374,
+        2.4242094173587137e-05,
+        2.7534118799904976,
+        2.866356667703536
+      ],
+      [
+        3.3529303887362243,
+        2.3454467187551704,
+        3.370593002294984e-05,
+        2.8552844957201033,
+        3.178697420648604,
+        3.3895653324827246,
+        3.194569500799989,
+        3.0799718226437727,
+        3.192604715707371,
+        3.215667956359859e-05,
+        2.9148192070927568,
+        2.8387871213185703,
+        3.336021250266247,
+        2.2157326900446594e-05,
+        3.4280449291854054,
+        3.800302845917688,
+        2.938734333199235,
+        2.9613125315915593e-05,
+        2.662743483873684
+      ]
+    ],
+    "truth_surface_patch_weights": [
+      [
+        0.23251105664024282,
+        0.2244285256164269,
+        0.2674846003047189,
+        0.15414794373428337,
+        0.2045373912614021,
+        0.2611146494124439,
+        0.21952381889861944,
+        0.1900929412295884,
+        0.273424897650932,
+        0.2585759225586135,
+        0.23217313294242461,
+        0.2271086474282991,
+        0.19535597018847847,
+        0.24086807416364903,
+        0.2561486835384042,
+        0.2616787864438722,
+        0.2665622961349117,
+        0.23976706706315515
+      ],
+      [
+        0.19646604950127472,
+        0.2267047220203868,
+        0.2043130617081603,
+        0.22529682767191608,
+        0.1938435655817347,
+        0.2440868423535373,
+        0.24104344372774547,
+        0.226073262051196,
+        0.2681475077436358,
+        0.2548241088404043,
+        0.2499284707152883,
+        0.20220294847455278,
+        0.23109629564892534,
+        0.249849244176422,
+        0.25945829679774207,
+        0.20742746910633442,
+        0.2431459522198652,
+        0.22181217369321574,
+        0.19093090761139558
+      ]
+    ]
+  },
+  {
+    "alias_tier": "mid",
+    "case_id": "erp-v3-fresh-dev-11-deep_plus_two_surface-eeg-10-meg+20",
+    "case_number": 24,
+    "channel_order_sha256": "3ad3abb129987b8216a6e99c973d3bff8dac18423bfd19b10dfb8df72a2d535a",
+    "check_seed": [
+      2026100302,
+      1,
+      11
+    ],
+    "component_balance_revision": "v3_refined_truth_fresh_development",
+    "configuration_id": "erp-v3-fresh-dev-geometry-11",
+    "configuration_kind": "deep_plus_two_surface_h1",
+    "configuration_number": 11,
+    "correlation": 0.0,
+    "deep_alias_rho": 0.9994103689773518,
+    "deep_index": 30114,
+    "deep_local": 82,
+    "deep_nearest_inverse_distance_mm": 5.000000274274245,
+    "deep_nearest_inverse_global": 7513,
+    "deep_nearest_inverse_local": 15,
+    "deep_surface_ratio": 0.5,
+    "deep_surface_sensor_amplitude_ratio": 0.5,
+    "deep_truth_local": 82,
+    "eeg_snr_db": -10,
+    "evaluation_deep_index": 7513,
+    "evaluation_surface_projection": {
+      "inverse_indices_by_patch": [
+        [
+          3182,
+          3274,
+          3274,
+          3241,
+          3255,
+          3256,
+          3256,
+          3241,
+          3274,
+          3256,
+          3256,
+          3274,
+          3274,
+          3315,
+          3315,
+          3353,
+          3255,
+          3274,
+          3315
+        ],
+        [
+          3891,
+          3939,
+          3891,
+          3892,
+          3990,
+          3891,
+          3941,
+          3939,
+          3962,
+          3939,
+          3962,
+          3891,
+          3891,
+          3941,
+          3962,
+          3964,
+          3962,
+          3962,
+          3962
+        ]
+      ],
+      "rule": "nearest coarse surface vertex in HEAD coordinates"
+    },
+    "h0_role": null,
+    "inverse_forward_fingerprint": "a97e6991fde1cedfac66857d5c07683c43af62f16ad19bfa31ea7199a9083556",
+    "location": 11,
+    "meg_snr_db": 20,
+    "pair_index": 1,
+    "panel": "erp_v3_fresh_development",
+    "replica_seed_roots": {
+      "check": 2026100302,
+      "fit": 2026100301
+    },
+    "replicate": 0,
+    "scenario": "deep_plus_two_surface",
+    "scenario_code": 3,
+    "seed": [
+      2026100301,
+      1,
+      11
+    ],
+    "snr_db": -10,
+    "surface_centers": [
+      13167,
+      15679
+    ],
+    "surface_component_sensor_balance": true,
+    "truth_coordinate_frame": "HEAD",
+    "truth_deep_aseg_label": 49,
+    "truth_deep_fine_index": 82,
+    "truth_deep_xyz_head_m": [
+      0.005573101113353019,
+      0.027386109147099554,
+      0.057643058668703985
+    ],
+    "truth_deep_xyz_mri_m": [
+      0.01,
+      0.0,
+      0.035
+    ],
+    "truth_forward": "refined_grid_oct7_surface_5mm_thalamus",
+    "truth_forward_array_bundle_sha256": "044f4e699ab98fbf3881ce3b8448f5a5a4f304a17065ab98218ae31b4c6d2f21",
+    "truth_forward_sha256": "f7417a1bbabd6ac863da8811470c5c273be3f950b028fff5efae9ac9a899b266",
+    "truth_grid": "refined_oct7_5mm",
+    "truth_surface_center_xyz_head_m": [
+      [
+        -0.03754307024883479,
+        0.04132417641696993,
+        0.012669347175257792
+      ],
+      [
+        0.013587076183980883,
+        -0.010058708734127082,
+        0.12339985153280135
+      ]
+    ],
+    "truth_surface_center_xyz_mri_m": [
+      [
+        -0.034477882385253907,
+        0.0371129035949707,
+        0.008162357330322266
+      ],
+      [
+        0.019825201034545898,
+        -0.06867710113525391,
+        0.06626045227050781
+      ]
+    ],
+    "truth_surface_centers_refined": [
+      13167,
+      15679
+    ],
+    "truth_surface_nearest_inverse": [
+      3274,
+      3891
+    ],
+    "truth_surface_nearest_inverse_distance_mm": [
+      2.5034923348767517,
+      2.0890912922447282
+    ],
+    "truth_surface_patch_indices_refined": [
+      [
+        12859,
+        12944,
+        12945,
+        13000,
+        13001,
+        13002,
+        13003,
+        13085,
+        13086,
+        13087,
+        13088,
+        13167,
+        13251,
+        13252,
+        13253,
+        13394,
+        14899,
+        14901,
+        14902
+      ],
+      [
+        15503,
+        15583,
+        15587,
+        15588,
+        15677,
+        15679,
+        15681,
+        15771,
+        15773,
+        15774,
+        15779,
+        15780,
+        15781,
+        15786,
+        15883,
+        15891,
+        15990,
+        15991,
+        16115
+      ]
+    ],
+    "truth_surface_patch_nearest_inverse": [
+      [
+        3182,
+        3274,
+        3274,
+        3241,
+        3255,
+        3256,
+        3256,
+        3241,
+        3274,
+        3256,
+        3256,
+        3274,
+        3274,
+        3315,
+        3315,
+        3353,
+        3255,
+        3274,
+        3315
+      ],
+      [
+        3891,
+        3939,
+        3891,
+        3892,
+        3990,
+        3891,
+        3941,
+        3939,
+        3962,
+        3939,
+        3962,
+        3891,
+        3891,
+        3941,
+        3962,
+        3964,
+        3962,
+        3962,
+        3962
+      ]
+    ],
+    "truth_surface_patch_nearest_inverse_distance_mm": [
+      [
+        2.465868341607993,
+        1.9328091612204934,
+        2.765734730633085,
+        2.3857379281163014,
+        9.665015208426102e-06,
+        2.1818749897531364,
+        9.969739018319834e-06,
+        2.113880744914595,
+        1.0767194807947138e-05,
+        2.420113632763791,
+        3.0509314106243424,
+        2.5034923348767517,
+        1.9991543264294729,
+        2.12543796837383,
+        9.971198104811294e-06,
+        3.4437278761713412,
+        1.3536588414196926,
+        2.4210176859746975,
+        3.584168913812913
+      ],
+      [
+        1.6808699992279856,
+        2.146829471375245,
+        3.2773726380910444e-05,
+        2.511914333326547,
+        2.0259954694951032,
+        2.0890912922447282,
+        2.01168495549671,
+        4.121914583369614e-05,
+        1.7760863987781428,
+        1.722786457489459,
+        2.5983344981894505,
+        1.340178984179692,
+        1.8809819902866745,
+        3.25384500513604e-05,
+        3.411395344965405e-05,
+        2.1703556787146074,
+        2.161874726296663,
+        1.941064741901834,
+        2.7446943753194524
+      ]
+    ],
+    "truth_surface_patch_weights": [
+      [
+        0.2212108610841564,
+        0.23700655358581857,
+        0.24438983870991904,
+        0.2138924004596886,
+        0.22854256310952364,
+        0.20733972681558557,
+        0.22045867214135936,
+        0.21443243678772125,
+        0.24566758096159821,
+        0.2386860437132268,
+        0.246510330407874,
+        0.2534880386867226,
+        0.23749623328758898,
+        0.2466583548838519,
+        0.2374596433352721,
+        0.19875761971897793,
+        0.2185215248823416,
+        0.22677356472089985,
+        0.21201658709354046
+      ],
+      [
+        0.22779280685011827,
+        0.23666194877502073,
+        0.23549765207964043,
+        0.21647673878878085,
+        0.2266178001352001,
+        0.24069296193659317,
+        0.23645959412393602,
+        0.23018846091574766,
+        0.2265530374644964,
+        0.23621424603699964,
+        0.22720483589804877,
+        0.23520614586427063,
+        0.22496073989278217,
+        0.23370136799391122,
+        0.23186368246186081,
+        0.22415419734202532,
+        0.2195167379012346,
+        0.22385268981309275,
+        0.22360022924238304
+      ]
+    ]
+  },
+  {
+    "alias_tier": "high",
+    "case_id": "erp-v3-fresh-dev-12-deep_plus_two_surface-eeg-10-meg+20",
+    "case_number": 25,
+    "channel_order_sha256": "3ad3abb129987b8216a6e99c973d3bff8dac18423bfd19b10dfb8df72a2d535a",
+    "check_seed": [
+      2026100302,
+      1,
+      12
+    ],
+    "component_balance_revision": "v3_refined_truth_fresh_development",
+    "configuration_id": "erp-v3-fresh-dev-geometry-12",
+    "configuration_kind": "deep_plus_two_surface_h1",
+    "configuration_number": 12,
+    "correlation": 0.5,
+    "deep_alias_rho": 0.9998009772105401,
+    "deep_index": 30086,
+    "deep_local": 54,
+    "deep_nearest_inverse_distance_mm": 5.0000002742742415,
+    "deep_nearest_inverse_global": 7500,
+    "deep_nearest_inverse_local": 2,
+    "deep_surface_ratio": 1.0,
+    "deep_surface_sensor_amplitude_ratio": 1.0,
+    "deep_truth_local": 54,
+    "eeg_snr_db": -10,
+    "evaluation_deep_index": 7500,
+    "evaluation_surface_projection": {
+      "inverse_indices_by_patch": [
+        [
+          730,
+          676,
+          676,
+          730,
+          676,
+          731,
+          676,
+          730,
+          730,
+          786,
+          814,
+          851,
+          817
+        ],
+        [
+          6891,
+          6820,
+          6843,
+          6891,
+          6909,
+          6909,
+          6891,
+          6938,
+          6961,
+          6938,
+          6937,
+          6938,
+          7002,
+          6938,
+          6937,
+          7002,
+          7003
+        ]
+      ],
+      "rule": "nearest coarse surface vertex in HEAD coordinates"
+    },
+    "h0_role": null,
+    "inverse_forward_fingerprint": "a97e6991fde1cedfac66857d5c07683c43af62f16ad19bfa31ea7199a9083556",
+    "location": 12,
+    "meg_snr_db": 20,
+    "pair_index": 1,
+    "panel": "erp_v3_fresh_development",
+    "replica_seed_roots": {
+      "check": 2026100302,
+      "fit": 2026100301
+    },
+    "replicate": 0,
+    "scenario": "deep_plus_two_surface",
+    "scenario_code": 3,
+    "seed": [
+      2026100301,
+      1,
+      12
+    ],
+    "snr_db": -10,
+    "surface_centers": [
+      2576,
+      27784
+    ],
+    "surface_component_sensor_balance": true,
+    "truth_coordinate_frame": "HEAD",
+    "truth_deep_aseg_label": 10,
+    "truth_deep_fine_index": 54,
+    "truth_deep_xyz_head_m": [
+      -0.014612785527110993,
+      0.010882828846711712,
+      0.06860534235769845
+    ],
+    "truth_deep_xyz_mri_m": [
+      -0.01,
+      -0.02,
+      0.035
+    ],
+    "truth_forward": "refined_grid_oct7_surface_5mm_thalamus",
+    "truth_forward_array_bundle_sha256": "044f4e699ab98fbf3881ce3b8448f5a5a4f304a17065ab98218ae31b4c6d2f21",
+    "truth_forward_sha256": "f7417a1bbabd6ac863da8811470c5c273be3f950b028fff5efae9ac9a899b266",
+    "truth_grid": "refined_oct7_5mm",
+    "truth_surface_center_xyz_head_m": [
+      [
+        -0.055059807373004706,
+        0.002220672054975414,
+        0.10763314885044702
+      ],
+      [
+        0.0399812086950592,
+        0.03859771268915035,
+        0.026633105330281383
+      ]
+    ],
+    "truth_surface_center_xyz_mri_m": [
+      [
+        -0.049167774200439454,
+        -0.050194576263427736,
+        0.06307734680175782
+      ],
+      [
+        0.04344533538818359,
+        0.02753098487854004,
+        0.015133201599121094
+      ]
+    ],
+    "truth_surface_centers_refined": [
+      2576,
+      27784
+    ],
+    "truth_surface_nearest_inverse": [
+      730,
+      6938
+    ],
+    "truth_surface_nearest_inverse_distance_mm": [
+      2.9562565567140555,
+      2.1756099244613627
+    ],
+    "truth_surface_patch_indices_refined": [
+      [
+        2576,
+        2583,
+        2590,
+        2695,
+        2703,
+        2808,
+        2810,
+        2920,
+        3018,
+        3154,
+        3270,
+        3273,
+        3274
+      ],
+      [
+        27463,
+        27464,
+        27562,
+        27567,
+        27569,
+        27639,
+        27641,
+        27708,
+        27710,
+        27782,
+        27783,
+        27784,
+        27938,
+        27939,
+        27940,
+        28017,
+        28018
+      ]
+    ],
+    "truth_surface_patch_nearest_inverse": [
+      [
+        730,
+        676,
+        676,
+        730,
+        676,
+        731,
+        676,
+        730,
+        730,
+        786,
+        814,
+        851,
+        817
+      ],
+      [
+        6891,
+        6820,
+        6843,
+        6891,
+        6909,
+        6909,
+        6891,
+        6938,
+        6961,
+        6938,
+        6937,
+        6938,
+        7002,
+        6938,
+        6937,
+        7002,
+        7003
+      ]
+    ],
+    "truth_surface_patch_nearest_inverse_distance_mm": [
+      [
+        2.9562565567140555,
+        3.223781917891685,
+        1.8616201461206487,
+        2.269607254995697,
+        3.496997814396592e-05,
+        2.1106042077150406,
+        2.0494240917156925,
+        3.3051826389029946e-05,
+        2.1830044762917784,
+        1.962161551823223,
+        2.767988693492237e-05,
+        2.744544176969686,
+        3.211513207608677
+      ],
+      [
+        2.2209668444282706,
+        1.933266467589223,
+        2.735273041111537,
+        1.0751370016829235e-05,
+        2.5634552400196617,
+        9.033524606968031e-06,
+        2.2715938862418725,
+        2.691052225311552,
+        2.280029381825602,
+        1.3784507990400986e-05,
+        2.839183532230197,
+        2.1756099244613627,
+        2.6639681400957214,
+        2.634313696879356,
+        3.0555582440745526,
+        2.7383928934946615,
+        1.2925216579879201e-05
+      ]
+    ],
+    "truth_surface_patch_weights": [
+      [
+        0.31275766376032704,
+        0.296475592033974,
+        0.2548792016265245,
+        0.29815719935635565,
+        0.26424223648164574,
+        0.28006486009325376,
+        0.2748573832919863,
+        0.29938505471917876,
+        0.2928390694628439,
+        0.2529754515418582,
+        0.26681533828981036,
+        0.25501151743090683,
+        0.24700783012385777
+      ],
+      [
+        0.23193840531945908,
+        0.23689431839048009,
+        0.2548320977685473,
+        0.23402631277185595,
+        0.23828493283784927,
+        0.2592287787740628,
+        0.2537381636179935,
+        0.23815838789435906,
+        0.249535444272169,
+        0.2608284582961213,
+        0.2517274055238897,
+        0.2670750163734419,
+        0.23448782046546124,
+        0.24682068830613027,
+        0.23112968523020783,
+        0.21129635773604954,
+        0.21524162373707373
+      ]
+    ]
+  },
+  {
+    "alias_tier": null,
+    "case_id": "erp-v3-fresh-dev-00-surface_only-eeg+20-meg-10",
+    "case_number": 26,
+    "channel_order_sha256": "3ad3abb129987b8216a6e99c973d3bff8dac18423bfd19b10dfb8df72a2d535a",
+    "check_seed": [
+      2026100302,
+      2,
+      0
+    ],
+    "component_balance_revision": "v3_refined_truth_fresh_development",
+    "configuration_id": "erp-v3-fresh-dev-geometry-00",
+    "configuration_kind": "single_surface_h0",
+    "configuration_number": 0,
+    "correlation": 0.0,
+    "deep_alias_rho": null,
+    "deep_index": null,
+    "deep_local": null,
+    "deep_nearest_inverse_distance_mm": null,
+    "deep_nearest_inverse_global": null,
+    "deep_nearest_inverse_local": null,
+    "deep_surface_ratio": null,
+    "deep_surface_sensor_amplitude_ratio": null,
+    "deep_truth_local": null,
+    "eeg_snr_db": 20,
+    "evaluation_deep_index": null,
+    "evaluation_surface_projection": {
+      "inverse_indices_by_patch": [
+        [
+          6182,
+          6183,
+          6217,
+          6182,
+          6262,
+          6295,
+          6182,
+          6295,
+          6295,
+          6361,
+          6432,
+          6361,
+          6411,
+          6433
+        ]
+      ],
+      "rule": "nearest coarse surface vertex in HEAD coordinates"
+    },
+    "h0_role": "gate_calibration",
+    "inverse_forward_fingerprint": "a97e6991fde1cedfac66857d5c07683c43af62f16ad19bfa31ea7199a9083556",
+    "location": 0,
+    "meg_snr_db": -10,
+    "pair_index": 2,
+    "panel": "erp_v3_fresh_development",
+    "replica_seed_roots": {
+      "check": 2026100302,
+      "fit": 2026100301
+    },
+    "replicate": 0,
+    "scenario": "surface_only",
+    "scenario_code": 0,
+    "seed": [
+      2026100301,
+      2,
+      0
+    ],
+    "snr_db": 20,
+    "surface_centers": [
+      25073
+    ],
+    "truth_coordinate_frame": "HEAD",
+    "truth_deep_aseg_label": null,
+    "truth_deep_fine_index": null,
+    "truth_deep_xyz_head_m": null,
+    "truth_deep_xyz_mri_m": null,
+    "truth_forward": "refined_grid_oct7_surface_5mm_thalamus",
+    "truth_forward_array_bundle_sha256": "044f4e699ab98fbf3881ce3b8448f5a5a4f304a17065ab98218ae31b4c6d2f21",
+    "truth_forward_sha256": "f7417a1bbabd6ac863da8811470c5c273be3f950b028fff5efae9ac9a899b266",
+    "truth_grid": "refined_oct7_5mm",
+    "truth_surface_center_xyz_head_m": [
+      [
+        0.042788240788756565,
+        0.051203479782252134,
+        0.0915455455810157
+      ]
+    ],
+    "truth_surface_center_xyz_mri_m": [
+      [
+        0.04867633819580078,
+        -4.4508639723062516e-05,
+        0.07507182312011719
+      ]
+    ],
+    "truth_surface_centers_refined": [
+      25073
+    ],
+    "truth_surface_nearest_inverse": [
+      6182
+    ],
+    "truth_surface_nearest_inverse_distance_mm": [
+      2.4622404721890856
+    ],
+    "truth_surface_patch_indices_refined": [
+      [
+        24733,
+        24734,
+        24852,
+        24853,
+        24961,
+        25069,
+        25073,
+        25194,
+        25195,
+        25200,
+        25442,
+        25449,
+        25539,
+        25648
+      ]
+    ],
+    "truth_surface_patch_nearest_inverse": [
+      [
+        6182,
+        6183,
+        6217,
+        6182,
+        6262,
+        6295,
+        6182,
+        6295,
+        6295,
+        6361,
+        6432,
+        6361,
+        6411,
+        6433
+      ]
+    ],
+    "truth_surface_patch_nearest_inverse_distance_mm": [
+      [
+        2.967950741166012e-05,
+        2.898467041147382,
+        1.9350011286498194,
+        3.344311288539493,
+        3.003213923257171,
+        2.966184704155574,
+        2.4622404721890856,
+        1.955230389501938,
+        2.4646183869505058e-05,
+        1.8175956136789655,
+        3.162650323496977,
+        3.0089100793768357e-05,
+        2.496349182614365,
+        2.097594671219851
+      ]
+    ],
+    "truth_surface_patch_weights": [
+      [
+        0.27955657190646926,
+        0.26551234554119957,
+        0.2761930192346992,
+        0.27070378556875463,
+        0.2652769054120262,
+        0.28227571537472795,
+        0.28816045437507437,
+        0.26743230140190005,
+        0.27568033689652444,
+        0.2710045780953877,
+        0.24760498749300114,
+        0.2604295168408197,
+        0.24426788973656285,
+        0.24277273366272606
+      ]
+    ]
+  },
+  {
+    "alias_tier": null,
+    "case_id": "erp-v3-fresh-dev-01-surface_only-eeg+20-meg-10",
+    "case_number": 27,
+    "channel_order_sha256": "3ad3abb129987b8216a6e99c973d3bff8dac18423bfd19b10dfb8df72a2d535a",
+    "check_seed": [
+      2026100302,
+      2,
+      1
+    ],
+    "component_balance_revision": "v3_refined_truth_fresh_development",
+    "configuration_id": "erp-v3-fresh-dev-geometry-01",
+    "configuration_kind": "single_surface_h0",
+    "configuration_number": 1,
+    "correlation": 0.0,
+    "deep_alias_rho": null,
+    "deep_index": null,
+    "deep_local": null,
+    "deep_nearest_inverse_distance_mm": null,
+    "deep_nearest_inverse_global": null,
+    "deep_nearest_inverse_local": null,
+    "deep_surface_ratio": null,
+    "deep_surface_sensor_amplitude_ratio": null,
+    "deep_truth_local": null,
+    "eeg_snr_db": 20,
+    "evaluation_deep_index": null,
+    "evaluation_surface_projection": {
+      "inverse_indices_by_patch": [
+        [
+          2254,
+          2151,
+          2293,
+          2254,
+          2254,
+          2293,
+          2289,
+          6199,
+          2254,
+          2254,
+          2293,
+          2293,
+          2444,
+          2442,
+          2444,
+          2484,
+          2442,
+          2590,
+          2444
+        ]
+      ],
+      "rule": "nearest coarse surface vertex in HEAD coordinates"
+    },
+    "h0_role": "gate_audit",
+    "inverse_forward_fingerprint": "a97e6991fde1cedfac66857d5c07683c43af62f16ad19bfa31ea7199a9083556",
+    "location": 1,
+    "meg_snr_db": -10,
+    "pair_index": 2,
+    "panel": "erp_v3_fresh_development",
+    "replica_seed_roots": {
+      "check": 2026100302,
+      "fit": 2026100301
+    },
+    "replicate": 0,
+    "scenario": "surface_only",
+    "scenario_code": 0,
+    "seed": [
+      2026100301,
+      2,
+      1
+    ],
+    "snr_db": 20,
+    "surface_centers": [
+      9397
+    ],
+    "truth_coordinate_frame": "HEAD",
+    "truth_deep_aseg_label": null,
+    "truth_deep_fine_index": null,
+    "truth_deep_xyz_head_m": null,
+    "truth_deep_xyz_mri_m": null,
+    "truth_forward": "refined_grid_oct7_surface_5mm_thalamus",
+    "truth_forward_array_bundle_sha256": "044f4e699ab98fbf3881ce3b8448f5a5a4f304a17065ab98218ae31b4c6d2f21",
+    "truth_forward_sha256": "f7417a1bbabd6ac863da8811470c5c273be3f950b028fff5efae9ac9a899b266",
+    "truth_grid": "refined_oct7_5mm",
+    "truth_surface_center_xyz_head_m": [
+      [
+        -0.007109804511939332,
+        0.01494772320799468,
+        0.044442522374147184
+      ]
+    ],
+    "truth_surface_center_xyz_mri_m": [
+      [
+        -0.0032934763431549073,
+        -0.002535614728927612,
+        0.017487781524658203
+      ]
+    ],
+    "truth_surface_centers_refined": [
+      9397
+    ],
+    "truth_surface_nearest_inverse": [
+      2254
+    ],
+    "truth_surface_nearest_inverse_distance_mm": [
+      2.5305063169954645
+    ],
+    "truth_surface_patch_indices_refined": [
+      [
+        8729,
+        8868,
+        8873,
+        9001,
+        9139,
+        9140,
+        9267,
+        9386,
+        9391,
+        9397,
+        9401,
+        9406,
+        9636,
+        9759,
+        9766,
+        9896,
+        10000,
+        10003,
+        10006
+      ]
+    ],
+    "truth_surface_patch_nearest_inverse": [
+      [
+        2254,
+        2151,
+        2293,
+        2254,
+        2254,
+        2293,
+        2289,
+        6199,
+        2254,
+        2254,
+        2293,
+        2293,
+        2444,
+        2442,
+        2444,
+        2484,
+        2442,
+        2590,
+        2444
+      ]
+    ],
+    "truth_surface_patch_nearest_inverse_distance_mm": [
+      [
+        3.0283581180360337,
+        2.188257602999869,
+        2.4110815461708137,
+        1.374141226081304e-05,
+        3.017815387790615,
+        1.3917441906914811e-05,
+        3.3092007679882354,
+        2.3172662225646206,
+        3.7627622895515738,
+        2.5305063169954645,
+        3.8816112012466393,
+        2.304878695292592,
+        3.0885516027238458,
+        1.5538098630697213e-05,
+        1.2799817564918928e-05,
+        3.0596262149673876,
+        2.2994289641446315,
+        3.279568899669889,
+        2.543514364425327
+      ]
+    ],
+    "truth_surface_patch_weights": [
+      [
+        0.2304919899991249,
+        0.22916510335803303,
+        0.2089871539967621,
+        0.25208785263767675,
+        0.24668032987644664,
+        0.2167236768643212,
+        0.2340364791842147,
+        0.20896335807899333,
+        0.2476330389829562,
+        0.2602895653180294,
+        0.24970443171509812,
+        0.22073921223583742,
+        0.23349067273860147,
+        0.19561726525140277,
+        0.24969031972742503,
+        0.23854624510206143,
+        0.18909910523073012,
+        0.20543683890018782,
+        0.22522557877653127
+      ]
+    ]
+  },
+  {
+    "alias_tier": null,
+    "case_id": "erp-v3-fresh-dev-02-surface_only-eeg+20-meg-10",
+    "case_number": 28,
+    "channel_order_sha256": "3ad3abb129987b8216a6e99c973d3bff8dac18423bfd19b10dfb8df72a2d535a",
+    "check_seed": [
+      2026100302,
+      2,
+      2
+    ],
+    "component_balance_revision": "v3_refined_truth_fresh_development",
+    "configuration_id": "erp-v3-fresh-dev-geometry-02",
+    "configuration_kind": "two_surface_h0",
+    "configuration_number": 2,
+    "correlation": 0.0,
+    "deep_alias_rho": null,
+    "deep_index": null,
+    "deep_local": null,
+    "deep_nearest_inverse_distance_mm": null,
+    "deep_nearest_inverse_global": null,
+    "deep_nearest_inverse_local": null,
+    "deep_surface_ratio": null,
+    "deep_surface_sensor_amplitude_ratio": null,
+    "deep_truth_local": null,
+    "eeg_snr_db": 20,
+    "evaluation_deep_index": null,
+    "evaluation_surface_projection": {
+      "inverse_indices_by_patch": [
+        [
+          3517,
+          3517,
+          3517,
+          3545,
+          3541,
+          3545,
+          3594,
+          3545,
+          3557,
+          3557,
+          3568,
+          3594,
+          3594,
+          3568,
+          3594,
+          3594,
+          3607,
+          3607
+        ],
+        [
+          3829,
+          3888,
+          3888,
+          3888
+        ]
+      ],
+      "rule": "nearest coarse surface vertex in HEAD coordinates"
+    },
+    "h0_role": "gate_calibration",
+    "inverse_forward_fingerprint": "a97e6991fde1cedfac66857d5c07683c43af62f16ad19bfa31ea7199a9083556",
+    "location": 2,
+    "meg_snr_db": -10,
+    "pair_index": 2,
+    "panel": "erp_v3_fresh_development",
+    "replica_seed_roots": {
+      "check": 2026100302,
+      "fit": 2026100301
+    },
+    "replicate": 0,
+    "scenario": "surface_only",
+    "scenario_code": 0,
+    "seed": [
+      2026100301,
+      2,
+      2
+    ],
+    "snr_db": 20,
+    "surface_centers": [
+      14269,
+      15326
+    ],
+    "surface_component_sensor_balance": true,
+    "truth_coordinate_frame": "HEAD",
+    "truth_deep_aseg_label": null,
+    "truth_deep_fine_index": null,
+    "truth_deep_xyz_head_m": null,
+    "truth_deep_xyz_mri_m": null,
+    "truth_forward": "refined_grid_oct7_surface_5mm_thalamus",
+    "truth_forward_array_bundle_sha256": "044f4e699ab98fbf3881ce3b8448f5a5a4f304a17065ab98218ae31b4c6d2f21",
+    "truth_forward_sha256": "f7417a1bbabd6ac863da8811470c5c273be3f950b028fff5efae9ac9a899b266",
+    "truth_grid": "refined_oct7_5mm",
+    "truth_surface_center_xyz_head_m": [
+      [
+        -0.04789662619260987,
+        0.08378542316682279,
+        0.04037464797284583
+      ],
+      [
+        0.026752313854012274,
+        -0.0553526763117254,
+        0.0702976447158587
+      ]
+    ],
+    "truth_surface_center_xyz_mri_m": [
+      [
+        -0.043315757751464845,
+        0.05535281753540039,
+        0.05577469253540039
+      ],
+      [
+        0.03055046844482422,
+        -0.0743836441040039,
+        -0.003718935966491699
+      ]
+    ],
+    "truth_surface_centers_refined": [
+      14269,
+      15326
+    ],
+    "truth_surface_nearest_inverse": [
+      3594,
+      3829
+    ],
+    "truth_surface_nearest_inverse_distance_mm": [
+      2.225857617222934,
+      2.8453335473382055
+    ],
+    "truth_surface_patch_indices_refined": [
+      [
+        14112,
+        14113,
+        14116,
+        14159,
+        14161,
+        14165,
+        14169,
+        14218,
+        14220,
+        14221,
+        14268,
+        14269,
+        14274,
+        14352,
+        14356,
+        14361,
+        14364,
+        14450
+      ],
+      [
+        15326,
+        15407,
+        15579,
+        15673
+      ]
+    ],
+    "truth_surface_patch_nearest_inverse": [
+      [
+        3517,
+        3517,
+        3517,
+        3545,
+        3541,
+        3545,
+        3594,
+        3545,
+        3557,
+        3557,
+        3568,
+        3594,
+        3594,
+        3568,
+        3594,
+        3594,
+        3607,
+        3607
+      ],
+      [
+        3829,
+        3888,
+        3888,
+        3888
+      ]
+    ],
+    "truth_surface_patch_nearest_inverse_distance_mm": [
+      [
+        2.514046681150313,
+        2.231059488500093,
+        2.100040641067043,
+        2.1661371757890064,
+        2.4540588447651865,
+        2.6662176453776432e-05,
+        3.2236748576675973,
+        2.236558065782662,
+        2.6489984868272314e-05,
+        2.0128010085192223,
+        2.2977913430319525e-05,
+        2.225857617222934,
+        2.2320608236368886,
+        2.6858323843954013,
+        2.4218179602859466,
+        2.0623636638236106e-05,
+        1.9696115674586387,
+        1.7918151012850343
+      ],
+      [
+        2.8453335473382055,
+        2.6049583215212984,
+        2.1525738950026557e-05,
+        3.1017976776968443
+      ]
+    ],
+    "truth_surface_patch_weights": [
+      [
+        0.23641682325730992,
+        0.21810870505718064,
+        0.2345009942287857,
+        0.2291367130436823,
+        0.23158304540140046,
+        0.24558551880490723,
+        0.24991946218550434,
+        0.2468812484099793,
+        0.22466148358456317,
+        0.21599530048489557,
+        0.23419560899972777,
+        0.2554546231878269,
+        0.24654978249097767,
+        0.22937336638862085,
+        0.24532102364473818,
+        0.2492042343861603,
+        0.22313804176724678,
+        0.22131924792807214
+      ],
+      [
+        0.5476251409830531,
+        0.4983234652473483,
+        0.4944052118531349,
+        0.45535032166412576
+      ]
+    ]
+  },
+  {
+    "alias_tier": null,
+    "case_id": "erp-v3-fresh-dev-03-surface_only-eeg+20-meg-10",
+    "case_number": 29,
+    "channel_order_sha256": "3ad3abb129987b8216a6e99c973d3bff8dac18423bfd19b10dfb8df72a2d535a",
+    "check_seed": [
+      2026100302,
+      2,
+      3
+    ],
+    "component_balance_revision": "v3_refined_truth_fresh_development",
+    "configuration_id": "erp-v3-fresh-dev-geometry-03",
+    "configuration_kind": "two_surface_h0",
+    "configuration_number": 3,
+    "correlation": 0.5,
+    "deep_alias_rho": null,
+    "deep_index": null,
+    "deep_local": null,
+    "deep_nearest_inverse_distance_mm": null,
+    "deep_nearest_inverse_global": null,
+    "deep_nearest_inverse_local": null,
+    "deep_surface_ratio": null,
+    "deep_surface_sensor_amplitude_ratio": null,
+    "deep_truth_local": null,
+    "eeg_snr_db": 20,
+    "evaluation_deep_index": null,
+    "evaluation_surface_projection": {
+      "inverse_indices_by_patch": [
+        [
+          14,
+          3,
+          14,
+          0,
+          3,
+          24,
+          7,
+          24,
+          14,
+          7,
+          51,
+          51,
+          51
+        ],
+        [
+          7439,
+          7413,
+          7428,
+          7442,
+          7439,
+          7439,
+          7420,
+          7444,
+          7439,
+          7444,
+          7444,
+          7469,
+          7469
+        ]
+      ],
+      "rule": "nearest coarse surface vertex in HEAD coordinates"
+    },
+    "h0_role": "gate_audit",
+    "inverse_forward_fingerprint": "a97e6991fde1cedfac66857d5c07683c43af62f16ad19bfa31ea7199a9083556",
+    "location": 3,
+    "meg_snr_db": -10,
+    "pair_index": 2,
+    "panel": "erp_v3_fresh_development",
+    "replica_seed_roots": {
+      "check": 2026100302,
+      "fit": 2026100301
+    },
+    "replicate": 0,
+    "scenario": "surface_only",
+    "scenario_code": 0,
+    "seed": [
+      2026100301,
+      2,
+      3
+    ],
+    "snr_db": 20,
+    "surface_centers": [
+      3,
+      29864
+    ],
+    "surface_component_sensor_balance": true,
+    "truth_coordinate_frame": "HEAD",
+    "truth_deep_aseg_label": null,
+    "truth_deep_fine_index": null,
+    "truth_deep_xyz_head_m": null,
+    "truth_deep_xyz_mri_m": null,
+    "truth_forward": "refined_grid_oct7_surface_5mm_thalamus",
+    "truth_forward_array_bundle_sha256": "044f4e699ab98fbf3881ce3b8448f5a5a4f304a17065ab98218ae31b4c6d2f21",
+    "truth_forward_sha256": "f7417a1bbabd6ac863da8811470c5c273be3f950b028fff5efae9ac9a899b266",
+    "truth_grid": "refined_oct7_5mm",
+    "truth_surface_center_xyz_head_m": [
+      [
+        -0.012550674881063612,
+        -0.043956426392923006,
+        0.09905958218590744
+      ],
+      [
+        0.02606726633637515,
+        0.08918049844558794,
+        0.03071578677841105
+      ]
+    ],
+    "truth_surface_center_xyz_mri_m": [
+      [
+        -0.00757634973526001,
+        -0.08228616333007813,
+        0.027677629470825197
+      ],
+      [
+        0.03032886505126953,
+        0.06610551452636719,
+        0.048432571411132816
+      ]
+    ],
+    "truth_surface_centers_refined": [
+      3,
+      29864
+    ],
+    "truth_surface_nearest_inverse": [
+      14,
+      7444
+    ],
+    "truth_surface_nearest_inverse_distance_mm": [
+      3.5288157567281213,
+      3.2000358764431653
+    ],
+    "truth_surface_patch_indices_refined": [
+      [
+        3,
+        13,
+        14,
+        15,
+        22,
+        26,
+        34,
+        62,
+        63,
+        64,
+        69,
+        129,
+        164
+      ],
+      [
+        29708,
+        29711,
+        29778,
+        29780,
+        29783,
+        29784,
+        29805,
+        29809,
+        29862,
+        29864,
+        29865,
+        29888,
+        29927
+      ]
+    ],
+    "truth_surface_patch_nearest_inverse": [
+      [
+        14,
+        3,
+        14,
+        0,
+        3,
+        24,
+        7,
+        24,
+        14,
+        7,
+        51,
+        51,
+        51
+      ],
+      [
+        7439,
+        7413,
+        7428,
+        7442,
+        7439,
+        7439,
+        7420,
+        7444,
+        7439,
+        7444,
+        7444,
+        7469,
+        7469
+      ]
+    ],
+    "truth_surface_patch_nearest_inverse_distance_mm": [
+      [
+        3.5288157567281213,
+        4.015067506338758e-05,
+        2.365218188344176,
+        1.7066478389255162,
+        3.2530784748799393,
+        2.261934818609761,
+        2.3170358021651906e-05,
+        3.2861482137068583,
+        3.0158126330672457e-05,
+        1.9398071033079884,
+        3.44782621244024,
+        2.4289898826383696,
+        3.468782472099971
+      ],
+      [
+        2.3185032310596454,
+        2.942565820071865,
+        3.067779562496668,
+        2.4561428907490237,
+        2.4148521427846545e-05,
+        2.3983019830124257,
+        2.971180103352544,
+        1.9633967930137035e-05,
+        2.894990461766568,
+        3.2000358764431653,
+        2.6639238823196365,
+        2.846459490103337,
+        2.5210381946641642
+      ]
+    ],
+    "truth_surface_patch_weights": [
+      [
+        0.31550502740507175,
+        0.29419454667031175,
+        0.30485018660028157,
+        0.27489960940191466,
+        0.24883472918477742,
+        0.27193900631674667,
+        0.28842165121950514,
+        0.2756052375563253,
+        0.29645958863808314,
+        0.29969487069901046,
+        0.22939484287640818,
+        0.24233009776946143,
+        0.24766247185302576
+      ],
+      [
+        0.2643058749557191,
+        0.2807485423574235,
+        0.25184985256817066,
+        0.25971375023709203,
+        0.2879847326292054,
+        0.2982709039854316,
+        0.2659006659319531,
+        0.2916983510265025,
+        0.29684389964418934,
+        0.30702254834743453,
+        0.2947080354494094,
+        0.25589767098887817,
+        0.2409059141555204
+      ]
+    ]
+  },
+  {
+    "alias_tier": "low",
+    "case_id": "erp-v3-fresh-dev-04-deep_only-eeg+20-meg-10",
+    "case_number": 30,
+    "channel_order_sha256": "3ad3abb129987b8216a6e99c973d3bff8dac18423bfd19b10dfb8df72a2d535a",
+    "check_seed": [
+      2026100302,
+      2,
+      4
+    ],
+    "component_balance_revision": "v3_refined_truth_fresh_development",
+    "configuration_id": "erp-v3-fresh-dev-geometry-04",
+    "configuration_kind": "deep_only_h1",
+    "configuration_number": 4,
+    "correlation": 0.0,
+    "deep_alias_rho": 0.9987041674197309,
+    "deep_index": 30084,
+    "deep_local": 52,
+    "deep_nearest_inverse_distance_mm": 5.000000274274239,
+    "deep_nearest_inverse_global": 7507,
+    "deep_nearest_inverse_local": 9,
+    "deep_surface_ratio": null,
+    "deep_surface_sensor_amplitude_ratio": null,
+    "deep_truth_local": 52,
+    "eeg_snr_db": 20,
+    "evaluation_deep_index": 7507,
+    "evaluation_surface_projection": {
+      "inverse_indices_by_patch": [],
+      "rule": "nearest coarse surface vertex in HEAD coordinates"
+    },
+    "h0_role": null,
+    "inverse_forward_fingerprint": "a97e6991fde1cedfac66857d5c07683c43af62f16ad19bfa31ea7199a9083556",
+    "location": 4,
+    "meg_snr_db": -10,
+    "pair_index": 2,
+    "panel": "erp_v3_fresh_development",
+    "replica_seed_roots": {
+      "check": 2026100302,
+      "fit": 2026100301
+    },
+    "replicate": 0,
+    "scenario": "deep_only",
+    "scenario_code": 1,
+    "seed": [
+      2026100301,
+      2,
+      4
+    ],
+    "snr_db": 20,
+    "surface_centers": [],
+    "truth_coordinate_frame": "HEAD",
+    "truth_deep_aseg_label": 10,
+    "truth_deep_fine_index": 52,
+    "truth_deep_xyz_head_m": [
+      -0.024605881296707256,
+      0.010755235601379644,
+      0.06825640012550281
+    ],
+    "truth_deep_xyz_mri_m": [
+      -0.02,
+      -0.02,
+      0.035
+    ],
+    "truth_forward": "refined_grid_oct7_surface_5mm_thalamus",
+    "truth_forward_array_bundle_sha256": "044f4e699ab98fbf3881ce3b8448f5a5a4f304a17065ab98218ae31b4c6d2f21",
+    "truth_forward_sha256": "f7417a1bbabd6ac863da8811470c5c273be3f950b028fff5efae9ac9a899b266",
+    "truth_grid": "refined_oct7_5mm",
+    "truth_surface_center_xyz_head_m": [],
+    "truth_surface_center_xyz_mri_m": [],
+    "truth_surface_centers_refined": [],
+    "truth_surface_nearest_inverse": [],
+    "truth_surface_nearest_inverse_distance_mm": [],
+    "truth_surface_patch_indices_refined": [],
+    "truth_surface_patch_nearest_inverse": [],
+    "truth_surface_patch_nearest_inverse_distance_mm": [],
+    "truth_surface_patch_weights": []
+  },
+  {
+    "alias_tier": "mid",
+    "case_id": "erp-v3-fresh-dev-05-deep_only-eeg+20-meg-10",
+    "case_number": 31,
+    "channel_order_sha256": "3ad3abb129987b8216a6e99c973d3bff8dac18423bfd19b10dfb8df72a2d535a",
+    "check_seed": [
+      2026100302,
+      2,
+      5
+    ],
+    "component_balance_revision": "v3_refined_truth_fresh_development",
+    "configuration_id": "erp-v3-fresh-dev-geometry-05",
+    "configuration_kind": "deep_only_h1",
+    "configuration_number": 5,
+    "correlation": 0.0,
+    "deep_alias_rho": 0.9993713135304675,
+    "deep_index": 30071,
+    "deep_local": 39,
+    "deep_nearest_inverse_distance_mm": 5.000000094449668,
+    "deep_nearest_inverse_global": 7505,
+    "deep_nearest_inverse_local": 7,
+    "deep_surface_ratio": null,
+    "deep_surface_sensor_amplitude_ratio": null,
+    "deep_truth_local": 39,
+    "eeg_snr_db": 20,
+    "evaluation_deep_index": 7505,
+    "evaluation_surface_projection": {
+      "inverse_indices_by_patch": [],
+      "rule": "nearest coarse surface vertex in HEAD coordinates"
+    },
+    "h0_role": null,
+    "inverse_forward_fingerprint": "a97e6991fde1cedfac66857d5c07683c43af62f16ad19bfa31ea7199a9083556",
+    "location": 5,
+    "meg_snr_db": -10,
+    "pair_index": 2,
+    "panel": "erp_v3_fresh_development",
+    "replica_seed_roots": {
+      "check": 2026100302,
+      "fit": 2026100301
+    },
+    "replicate": 0,
+    "scenario": "deep_only",
+    "scenario_code": 1,
+    "seed": [
+      2026100301,
+      2,
+      5
+    ],
+    "snr_db": 20,
+    "surface_centers": [],
+    "truth_coordinate_frame": "HEAD",
+    "truth_deep_aseg_label": 49,
+    "truth_deep_fine_index": 39,
+    "truth_deep_xyz_head_m": [
+      0.010648736540289333,
+      0.016411086851410406,
+      0.0595890317094775
+    ],
+    "truth_deep_xyz_mri_m": [
+      0.015,
+      -0.01,
+      0.03
+    ],
+    "truth_forward": "refined_grid_oct7_surface_5mm_thalamus",
+    "truth_forward_array_bundle_sha256": "044f4e699ab98fbf3881ce3b8448f5a5a4f304a17065ab98218ae31b4c6d2f21",
+    "truth_forward_sha256": "f7417a1bbabd6ac863da8811470c5c273be3f950b028fff5efae9ac9a899b266",
+    "truth_grid": "refined_oct7_5mm",
+    "truth_surface_center_xyz_head_m": [],
+    "truth_surface_center_xyz_mri_m": [],
+    "truth_surface_centers_refined": [],
+    "truth_surface_nearest_inverse": [],
+    "truth_surface_nearest_inverse_distance_mm": [],
+    "truth_surface_patch_indices_refined": [],
+    "truth_surface_patch_nearest_inverse": [],
+    "truth_surface_patch_nearest_inverse_distance_mm": [],
+    "truth_surface_patch_weights": []
+  },
+  {
+    "alias_tier": "high",
+    "case_id": "erp-v3-fresh-dev-06-deep_only-eeg+20-meg-10",
+    "case_number": 32,
+    "channel_order_sha256": "3ad3abb129987b8216a6e99c973d3bff8dac18423bfd19b10dfb8df72a2d535a",
+    "check_seed": [
+      2026100302,
+      2,
+      6
+    ],
+    "component_balance_revision": "v3_refined_truth_fresh_development",
+    "configuration_id": "erp-v3-fresh-dev-geometry-06",
+    "configuration_kind": "deep_only_h1",
+    "configuration_number": 6,
+    "correlation": 0.0,
+    "deep_alias_rho": 0.9997116472241104,
+    "deep_index": 30068,
+    "deep_local": 36,
+    "deep_nearest_inverse_distance_mm": 5.0000000944496685,
+    "deep_nearest_inverse_global": 7504,
+    "deep_nearest_inverse_local": 6,
+    "deep_surface_ratio": null,
+    "deep_surface_sensor_amplitude_ratio": null,
+    "deep_truth_local": 36,
+    "eeg_snr_db": 20,
+    "evaluation_deep_index": 7504,
+    "evaluation_surface_projection": {
+      "inverse_indices_by_patch": [],
+      "rule": "nearest coarse surface vertex in HEAD coordinates"
+    },
+    "h0_role": null,
+    "inverse_forward_fingerprint": "a97e6991fde1cedfac66857d5c07683c43af62f16ad19bfa31ea7199a9083556",
+    "location": 6,
+    "meg_snr_db": -10,
+    "pair_index": 2,
+    "panel": "erp_v3_fresh_development",
+    "replica_seed_roots": {
+      "check": 2026100302,
+      "fit": 2026100301
+    },
+    "replicate": 0,
+    "scenario": "deep_only",
+    "scenario_code": 1,
+    "seed": [
+      2026100301,
+      2,
+      6
+    ],
+    "snr_db": 20,
+    "surface_centers": [],
+    "truth_coordinate_frame": "HEAD",
+    "truth_deep_aseg_label": 10,
+    "truth_deep_fine_index": 36,
+    "truth_deep_xyz_head_m": [
+      -0.009337454998903191,
+      0.016155900360746274,
+      0.05889114724508619
+    ],
+    "truth_deep_xyz_mri_m": [
+      -0.005,
+      -0.01,
+      0.03
+    ],
+    "truth_forward": "refined_grid_oct7_surface_5mm_thalamus",
+    "truth_forward_array_bundle_sha256": "044f4e699ab98fbf3881ce3b8448f5a5a4f304a17065ab98218ae31b4c6d2f21",
+    "truth_forward_sha256": "f7417a1bbabd6ac863da8811470c5c273be3f950b028fff5efae9ac9a899b266",
+    "truth_grid": "refined_oct7_5mm",
+    "truth_surface_center_xyz_head_m": [],
+    "truth_surface_center_xyz_mri_m": [],
+    "truth_surface_centers_refined": [],
+    "truth_surface_nearest_inverse": [],
+    "truth_surface_nearest_inverse_distance_mm": [],
+    "truth_surface_patch_indices_refined": [],
+    "truth_surface_patch_nearest_inverse": [],
+    "truth_surface_patch_nearest_inverse_distance_mm": [],
+    "truth_surface_patch_weights": []
+  },
+  {
+    "alias_tier": "low",
+    "case_id": "erp-v3-fresh-dev-07-deep_plus_surface-eeg+20-meg-10",
+    "case_number": 33,
+    "channel_order_sha256": "3ad3abb129987b8216a6e99c973d3bff8dac18423bfd19b10dfb8df72a2d535a",
+    "check_seed": [
+      2026100302,
+      2,
+      7
+    ],
+    "component_balance_revision": "v3_refined_truth_fresh_development",
+    "configuration_id": "erp-v3-fresh-dev-geometry-07",
+    "configuration_kind": "deep_plus_single_surface_h1",
+    "configuration_number": 7,
+    "correlation": 0.0,
+    "deep_alias_rho": 0.9987017784620469,
+    "deep_index": 30042,
+    "deep_local": 10,
+    "deep_nearest_inverse_distance_mm": 5.000000274274239,
+    "deep_nearest_inverse_global": 7502,
+    "deep_nearest_inverse_local": 4,
+    "deep_surface_ratio": 0.5,
+    "deep_surface_sensor_amplitude_ratio": 0.5,
+    "deep_truth_local": 10,
+    "eeg_snr_db": 20,
+    "evaluation_deep_index": 7502,
+    "evaluation_surface_projection": {
+      "inverse_indices_by_patch": [
+        [
+          2333,
+          2262,
+          2333,
+          2334,
+          2390,
+          2334,
+          2390,
+          2390,
+          2333,
+          2422,
+          2422,
+          2390,
+          2422,
+          2453,
+          2490,
+          2490,
+          2422,
+          2573
+        ]
+      ],
+      "rule": "nearest coarse surface vertex in HEAD coordinates"
+    },
+    "h0_role": null,
+    "inverse_forward_fingerprint": "a97e6991fde1cedfac66857d5c07683c43af62f16ad19bfa31ea7199a9083556",
+    "location": 7,
+    "meg_snr_db": -10,
+    "pair_index": 2,
+    "panel": "erp_v3_fresh_development",
+    "replica_seed_roots": {
+      "check": 2026100302,
+      "fit": 2026100301
+    },
+    "replicate": 0,
+    "scenario": "deep_plus_surface",
+    "scenario_code": 2,
+    "seed": [
+      2026100301,
+      2,
+      7
+    ],
+    "snr_db": 20,
+    "surface_centers": [
+      9546
+    ],
+    "truth_coordinate_frame": "HEAD",
+    "truth_deep_aseg_label": 49,
+    "truth_deep_fine_index": 10,
+    "truth_deep_xyz_head_m": [
+      0.015724371967225648,
+      0.005436064555721262,
+      0.06153500475025102
+    ],
+    "truth_deep_xyz_mri_m": [
+      0.02,
+      -0.02,
+      0.025
+    ],
+    "truth_forward": "refined_grid_oct7_surface_5mm_thalamus",
+    "truth_forward_array_bundle_sha256": "044f4e699ab98fbf3881ce3b8448f5a5a4f304a17065ab98218ae31b4c6d2f21",
+    "truth_forward_sha256": "f7417a1bbabd6ac863da8811470c5c273be3f950b028fff5efae9ac9a899b266",
+    "truth_grid": "refined_oct7_5mm",
+    "truth_surface_center_xyz_head_m": [
+      [
+        -0.02565392763480552,
+        0.0617172253304448,
+        0.10513572880354341
+      ]
+    ],
+    "truth_surface_center_xyz_mri_m": [
+      [
+        -0.019110206604003907,
+        -0.00010966502130031586,
+        0.09468157196044921
+      ]
+    ],
+    "truth_surface_centers_refined": [
+      9546
+    ],
+    "truth_surface_nearest_inverse": [
+      2390
+    ],
+    "truth_surface_nearest_inverse_distance_mm": [
+      2.49242267981091
+    ],
+    "truth_surface_patch_indices_refined": [
+      [
+        9164,
+        9167,
+        9300,
+        9302,
+        9422,
+        9426,
+        9545,
+        9546,
+        9670,
+        9676,
+        9678,
+        9794,
+        9796,
+        9917,
+        9919,
+        9922,
+        9923,
+        9924
+      ]
+    ],
+    "truth_surface_patch_nearest_inverse": [
+      [
+        2333,
+        2262,
+        2333,
+        2334,
+        2390,
+        2334,
+        2390,
+        2390,
+        2333,
+        2422,
+        2422,
+        2390,
+        2422,
+        2453,
+        2490,
+        2490,
+        2422,
+        2573
+      ]
+    ],
+    "truth_surface_patch_nearest_inverse_distance_mm": [
+      [
+        1.5849101710211404,
+        2.950184868970456,
+        3.673374409387516e-05,
+        3.3057846559964905,
+        1.394351289378289,
+        2.8628465542771604,
+        3.25219241670372e-05,
+        2.49242267981091,
+        2.936740056775467,
+        1.4883300589756203,
+        3.5912885703432015e-05,
+        1.9330265717900956,
+        1.6985333735775994,
+        2.6606248642275503,
+        2.5267862076651557e-05,
+        2.660818956007893,
+        2.610190869525386,
+        2.895636235988821
+      ]
+    ],
+    "truth_surface_patch_weights": [
+      [
+        0.24020061494041667,
+        0.23337717395481744,
+        0.2480952951875693,
+        0.23641271386687257,
+        0.2504915586864074,
+        0.23106898217468153,
+        0.24817033495246052,
+        0.25599968136869655,
+        0.251618239538807,
+        0.2394971103441173,
+        0.2316494151005279,
+        0.25287381032627415,
+        0.22526357962603177,
+        0.24194882335016468,
+        0.2327937585357342,
+        0.2129174056770485,
+        0.20695324108726657,
+        0.19291638630702257
+      ]
+    ]
+  },
+  {
+    "alias_tier": "mid",
+    "case_id": "erp-v3-fresh-dev-08-deep_plus_surface-eeg+20-meg-10",
+    "case_number": 34,
+    "channel_order_sha256": "3ad3abb129987b8216a6e99c973d3bff8dac18423bfd19b10dfb8df72a2d535a",
+    "check_seed": [
+      2026100302,
+      2,
+      8
+    ],
+    "component_balance_revision": "v3_refined_truth_fresh_development",
+    "configuration_id": "erp-v3-fresh-dev-geometry-08",
+    "configuration_kind": "deep_plus_single_surface_h1",
+    "configuration_number": 8,
+    "correlation": 0.5,
+    "deep_alias_rho": 0.9994050508224828,
+    "deep_index": 30122,
+    "deep_local": 90,
+    "deep_nearest_inverse_distance_mm": 4.999999699676775,
+    "deep_nearest_inverse_global": 7509,
+    "deep_nearest_inverse_local": 11,
+    "deep_surface_ratio": 1.0,
+    "deep_surface_sensor_amplitude_ratio": 1.0,
+    "deep_truth_local": 90,
+    "eeg_snr_db": 20,
+    "evaluation_deep_index": 7509,
+    "evaluation_surface_projection": {
+      "inverse_indices_by_patch": [
+        [
+          5236,
+          5280,
+          5481,
+          5366,
+          5480,
+          5480,
+          5479,
+          5588,
+          5480,
+          5480,
+          5588,
+          5588,
+          5630
+        ]
+      ],
+      "rule": "nearest coarse surface vertex in HEAD coordinates"
+    },
+    "h0_role": null,
+    "inverse_forward_fingerprint": "a97e6991fde1cedfac66857d5c07683c43af62f16ad19bfa31ea7199a9083556",
+    "location": 8,
+    "meg_snr_db": -10,
+    "pair_index": 2,
+    "panel": "erp_v3_fresh_development",
+    "replica_seed_roots": {
+      "check": 2026100302,
+      "fit": 2026100301
+    },
+    "replicate": 0,
+    "scenario": "deep_plus_surface",
+    "scenario_code": 2,
+    "seed": [
+      2026100301,
+      2,
+      8
+    ],
+    "snr_db": 20,
+    "surface_centers": [
+      21761
+    ],
+    "truth_coordinate_frame": "HEAD",
+    "truth_deep_aseg_label": 10,
+    "truth_deep_fine_index": 90,
+    "truth_deep_xyz_head_m": [
+      -0.02473489261416331,
+      0.017732031067303897,
+      0.06939994023917356
+    ],
+    "truth_deep_xyz_mri_m": [
+      -0.02,
+      -0.015,
+      0.04
+    ],
+    "truth_forward": "refined_grid_oct7_surface_5mm_thalamus",
+    "truth_forward_array_bundle_sha256": "044f4e699ab98fbf3881ce3b8448f5a5a4f304a17065ab98218ae31b4c6d2f21",
+    "truth_forward_sha256": "f7417a1bbabd6ac863da8811470c5c273be3f950b028fff5efae9ac9a899b266",
+    "truth_grid": "refined_oct7_5mm",
+    "truth_surface_center_xyz_head_m": [
+      [
+        0.0577132893692215,
+        -0.005963809749402016,
+        0.05249981440253161
+      ]
+    ],
+    "truth_surface_center_xyz_mri_m": [
+      [
+        0.061499195098876955,
+        -0.023574468612670898,
+        0.00951772403717041
+      ]
+    ],
+    "truth_surface_centers_refined": [
+      21761
+    ],
+    "truth_surface_nearest_inverse": [
+      5480
+    ],
+    "truth_surface_nearest_inverse_distance_mm": [
+      3.4785914730490224
+    ],
+    "truth_surface_patch_indices_refined": [
+      [
+        20950,
+        21129,
+        21615,
+        21617,
+        21761,
+        21913,
+        21914,
+        22062,
+        22063,
+        22064,
+        22375,
+        22376,
+        22540
+      ]
+    ],
+    "truth_surface_patch_nearest_inverse": [
+      [
+        5236,
+        5280,
+        5481,
+        5366,
+        5480,
+        5480,
+        5479,
+        5588,
+        5480,
+        5480,
+        5588,
+        5588,
+        5630
+      ]
+    ],
+    "truth_surface_patch_nearest_inverse_distance_mm": [
+      [
+        1.4478981790758614e-05,
+        2.901446151417153,
+        3.1054001198465446,
+        2.823062025484972,
+        3.4785914730490224,
+        1.4574466354715993e-05,
+        3.197079077300806,
+        4.0833788808018525,
+        2.4032746324828294,
+        2.754131541647157,
+        3.224907189443305,
+        1.4539609307963971e-05,
+        2.858702983984455
+      ]
+    ],
+    "truth_surface_patch_weights": [
+      [
+        0.27195628327705157,
+        0.2733356442677805,
+        0.27637583611377564,
+        0.30525956979062757,
+        0.3149336782381605,
+        0.2964442466022301,
+        0.2513615110367418,
+        0.3005677499179281,
+        0.29621318295380356,
+        0.2645492361063044,
+        0.24721956877272797,
+        0.2552603924606358,
+        0.2391034756032132
+      ]
+    ]
+  },
+  {
+    "alias_tier": "high",
+    "case_id": "erp-v3-fresh-dev-09-deep_plus_surface-eeg+20-meg-10",
+    "case_number": 35,
+    "channel_order_sha256": "3ad3abb129987b8216a6e99c973d3bff8dac18423bfd19b10dfb8df72a2d535a",
+    "check_seed": [
+      2026100302,
+      2,
+      9
+    ],
+    "component_balance_revision": "v3_refined_truth_fresh_development",
+    "configuration_id": "erp-v3-fresh-dev-geometry-09",
+    "configuration_kind": "deep_plus_single_surface_h1",
+    "configuration_number": 9,
+    "correlation": 0.9,
+    "deep_alias_rho": 0.9997316277158932,
+    "deep_index": 30133,
+    "deep_local": 101,
+    "deep_nearest_inverse_distance_mm": 5.000000094449668,
+    "deep_nearest_inverse_global": 7511,
+    "deep_nearest_inverse_local": 13,
+    "deep_surface_ratio": 0.5,
+    "deep_surface_sensor_amplitude_ratio": 0.5,
+    "deep_truth_local": 101,
+    "eeg_snr_db": 20,
+    "evaluation_deep_index": 7511,
+    "evaluation_surface_projection": {
+      "inverse_indices_by_patch": [
+        [
+          2174,
+          2351,
+          2381,
+          2351,
+          2351,
+          2381,
+          2351,
+          2351,
+          2351
+        ]
+      ],
+      "rule": "nearest coarse surface vertex in HEAD coordinates"
+    },
+    "h0_role": null,
+    "inverse_forward_fingerprint": "a97e6991fde1cedfac66857d5c07683c43af62f16ad19bfa31ea7199a9083556",
+    "location": 9,
+    "meg_snr_db": -10,
+    "pair_index": 2,
+    "panel": "erp_v3_fresh_development",
+    "replica_seed_roots": {
+      "check": 2026100302,
+      "fit": 2026100301
+    },
+    "replicate": 0,
+    "scenario": "deep_plus_surface",
+    "scenario_code": 2,
+    "seed": [
+      2026100301,
+      2,
+      9
+    ],
+    "snr_db": 20,
+    "surface_centers": [
+      9624
+    ],
+    "truth_coordinate_frame": "HEAD",
+    "truth_deep_aseg_label": 49,
+    "truth_deep_fine_index": 101,
+    "truth_deep_xyz_head_m": [
+      0.00029777058514521716,
+      0.02211303763306499,
+      0.06735725378131625
+    ],
+    "truth_deep_xyz_mri_m": [
+      0.005,
+      -0.01,
+      0.04
+    ],
+    "truth_forward": "refined_grid_oct7_surface_5mm_thalamus",
+    "truth_forward_array_bundle_sha256": "044f4e699ab98fbf3881ce3b8448f5a5a4f304a17065ab98218ae31b4c6d2f21",
+    "truth_forward_sha256": "f7417a1bbabd6ac863da8811470c5c273be3f950b028fff5efae9ac9a899b266",
+    "truth_grid": "refined_oct7_5mm",
+    "truth_surface_center_xyz_head_m": [
+      [
+        -0.06337650895914419,
+        0.025944360362205765,
+        0.05509881668281465
+      ]
+    ],
+    "truth_surface_center_xyz_mri_m": [
+      [
+        -0.059009178161621094,
+        -0.00037641599774360655,
+        0.03456182479858398
+      ]
+    ],
+    "truth_surface_centers_refined": [
+      9624
+    ],
+    "truth_surface_nearest_inverse": [
+      2351
+    ],
+    "truth_surface_nearest_inverse_distance_mm": [
+      3.9196458595830337
+    ],
+    "truth_surface_patch_indices_refined": [
+      [
+        8984,
+        9111,
+        9252,
+        9253,
+        9376,
+        9513,
+        9624,
+        9625,
+        9749
+      ]
+    ],
+    "truth_surface_patch_nearest_inverse": [
+      [
+        2174,
+        2351,
+        2381,
+        2351,
+        2351,
+        2381,
+        2351,
+        2351,
+        2351
+      ]
+    ],
+    "truth_surface_patch_nearest_inverse_distance_mm": [
+      [
+        2.205627023519687,
+        2.42052555803599,
+        2.4450718876807045,
+        1.8739403746916081,
+        1.7835831090855096e-05,
+        1.7545182023053523,
+        3.9196458595830337,
+        2.2701292288976043,
+        2.7843957202178227
+      ]
+    ],
+    "truth_surface_patch_weights": [
+      [
+        0.31222640266489976,
+        0.305729847595481,
+        0.2872164602538432,
+        0.35262755878115604,
+        0.3438432126951699,
+        0.3152773816355911,
+        0.371297474020505,
+        0.3598276458478321,
+        0.34240139061858993
+      ]
+    ]
+  },
+  {
+    "alias_tier": "low",
+    "case_id": "erp-v3-fresh-dev-10-deep_plus_two_surface-eeg+20-meg-10",
+    "case_number": 36,
+    "channel_order_sha256": "3ad3abb129987b8216a6e99c973d3bff8dac18423bfd19b10dfb8df72a2d535a",
+    "check_seed": [
+      2026100302,
+      2,
+      10
+    ],
+    "component_balance_revision": "v3_refined_truth_fresh_development",
+    "configuration_id": "erp-v3-fresh-dev-geometry-10",
+    "configuration_kind": "deep_plus_two_surface_h1",
+    "configuration_number": 10,
+    "correlation": 0.9,
+    "deep_alias_rho": 0.9988099210527339,
+    "deep_index": 30111,
+    "deep_local": 79,
+    "deep_nearest_inverse_distance_mm": 5.00000027427424,
+    "deep_nearest_inverse_global": 7512,
+    "deep_nearest_inverse_local": 14,
+    "deep_surface_ratio": 1.0,
+    "deep_surface_sensor_amplitude_ratio": 1.0,
+    "deep_truth_local": 79,
+    "eeg_snr_db": 20,
+    "evaluation_deep_index": 7512,
+    "evaluation_surface_projection": {
+      "inverse_indices_by_patch": [
+        [
+          410,
+          546,
+          465,
+          493,
+          517,
+          465,
+          517,
+          517,
+          465,
+          546,
+          517,
+          546,
+          546,
+          546,
+          577,
+          577,
+          577,
+          516
+        ],
+        [
+          7040,
+          7076,
+          7097,
+          7076,
+          7097,
+          7149,
+          7194,
+          7148,
+          7178,
+          7178,
+          7178,
+          7148,
+          7149,
+          7194,
+          7194,
+          7194,
+          7194,
+          7233,
+          7233
+        ]
+      ],
+      "rule": "nearest coarse surface vertex in HEAD coordinates"
+    },
+    "h0_role": null,
+    "inverse_forward_fingerprint": "a97e6991fde1cedfac66857d5c07683c43af62f16ad19bfa31ea7199a9083556",
+    "location": 10,
+    "meg_snr_db": -10,
+    "pair_index": 2,
+    "panel": "erp_v3_fresh_development",
+    "replica_seed_roots": {
+      "check": 2026100302,
+      "fit": 2026100301
+    },
+    "replicate": 0,
+    "scenario": "deep_plus_two_surface",
+    "scenario_code": 3,
+    "seed": [
+      2026100301,
+      2,
+      10
+    ],
+    "snr_db": 20,
+    "surface_centers": [
+      2072,
+      28723
+    ],
+    "surface_component_sensor_balance": true,
+    "truth_coordinate_frame": "HEAD",
+    "truth_deep_aseg_label": 10,
+    "truth_deep_fine_index": 79,
+    "truth_deep_xyz_head_m": [
+      -0.014413090425839506,
+      0.02713092265643542,
+      0.05694517420431268
+    ],
+    "truth_deep_xyz_mri_m": [
+      -0.01,
+      0.0,
+      0.035
+    ],
+    "truth_forward": "refined_grid_oct7_surface_5mm_thalamus",
+    "truth_forward_array_bundle_sha256": "044f4e699ab98fbf3881ce3b8448f5a5a4f304a17065ab98218ae31b4c6d2f21",
+    "truth_forward_sha256": "f7417a1bbabd6ac863da8811470c5c273be3f950b028fff5efae9ac9a899b266",
+    "truth_grid": "refined_oct7_5mm",
+    "truth_surface_center_xyz_head_m": [
+      [
+        -0.04272261698578356,
+        -0.04024682004963565,
+        0.057488785689597005
+      ],
+      [
+        0.0060316502702863406,
+        0.09294189335178768,
+        0.07632089100565233
+      ]
+    ],
+    "truth_surface_center_xyz_mri_m": [
+      [
+        -0.03913070678710937,
+        -0.05533759307861328,
+        -0.0028237719535827636
+      ],
+      [
+        0.011946429252624511,
+        0.04237307357788086,
+        0.0883607177734375
+      ]
+    ],
+    "truth_surface_centers_refined": [
+      2072,
+      28723
+    ],
+    "truth_surface_nearest_inverse": [
+      465,
+      7178
+    ],
+    "truth_surface_nearest_inverse_distance_mm": [
+      2.095970798427277,
+      3.192604715707371
+    ],
+    "truth_surface_patch_indices_refined": [
+      [
+        1755,
+        1848,
+        1851,
+        1852,
+        1853,
+        1854,
+        2070,
+        2071,
+        2072,
+        2073,
+        2074,
+        2188,
+        2189,
+        2192,
+        2193,
+        2305,
+        2306,
+        2416
+      ],
+      [
+        28330,
+        28413,
+        28414,
+        28554,
+        28556,
+        28616,
+        28617,
+        28680,
+        28723,
+        28724,
+        28727,
+        28728,
+        28729,
+        28785,
+        28848,
+        28850,
+        28953,
+        28955,
+        28956
+      ]
+    ],
+    "truth_surface_patch_nearest_inverse": [
+      [
+        410,
+        546,
+        465,
+        493,
+        517,
+        465,
+        517,
+        517,
+        465,
+        546,
+        517,
+        546,
+        546,
+        546,
+        577,
+        577,
+        577,
+        516
+      ],
+      [
+        7040,
+        7076,
+        7097,
+        7076,
+        7097,
+        7149,
+        7194,
+        7148,
+        7178,
+        7178,
+        7178,
+        7148,
+        7149,
+        7194,
+        7194,
+        7194,
+        7194,
+        7233,
+        7233
+      ]
+    ],
+    "truth_surface_patch_nearest_inverse_distance_mm": [
+      [
+        3.157284085322882,
+        2.601051980005262,
+        2.2880882398721716e-05,
+        1.986889479897547,
+        2.334702216125355,
+        2.751875550111636,
+        2.5331170657786704,
+        2.8701399198344335,
+        2.095970798427277,
+        2.725797433843104,
+        0.5191842859035658,
+        1.9352156201989466,
+        3.261695806542876,
+        2.6692352447652553e-05,
+        2.232684571941374,
+        2.4242094173587137e-05,
+        2.7534118799904976,
+        2.866356667703536
+      ],
+      [
+        3.3529303887362243,
+        2.3454467187551704,
+        3.370593002294984e-05,
+        2.8552844957201033,
+        3.178697420648604,
+        3.3895653324827246,
+        3.194569500799989,
+        3.0799718226437727,
+        3.192604715707371,
+        3.215667956359859e-05,
+        2.9148192070927568,
+        2.8387871213185703,
+        3.336021250266247,
+        2.2157326900446594e-05,
+        3.4280449291854054,
+        3.800302845917688,
+        2.938734333199235,
+        2.9613125315915593e-05,
+        2.662743483873684
+      ]
+    ],
+    "truth_surface_patch_weights": [
+      [
+        0.23251105664024282,
+        0.2244285256164269,
+        0.2674846003047189,
+        0.15414794373428337,
+        0.2045373912614021,
+        0.2611146494124439,
+        0.21952381889861944,
+        0.1900929412295884,
+        0.273424897650932,
+        0.2585759225586135,
+        0.23217313294242461,
+        0.2271086474282991,
+        0.19535597018847847,
+        0.24086807416364903,
+        0.2561486835384042,
+        0.2616787864438722,
+        0.2665622961349117,
+        0.23976706706315515
+      ],
+      [
+        0.19646604950127472,
+        0.2267047220203868,
+        0.2043130617081603,
+        0.22529682767191608,
+        0.1938435655817347,
+        0.2440868423535373,
+        0.24104344372774547,
+        0.226073262051196,
+        0.2681475077436358,
+        0.2548241088404043,
+        0.2499284707152883,
+        0.20220294847455278,
+        0.23109629564892534,
+        0.249849244176422,
+        0.25945829679774207,
+        0.20742746910633442,
+        0.2431459522198652,
+        0.22181217369321574,
+        0.19093090761139558
+      ]
+    ]
+  },
+  {
+    "alias_tier": "mid",
+    "case_id": "erp-v3-fresh-dev-11-deep_plus_two_surface-eeg+20-meg-10",
+    "case_number": 37,
+    "channel_order_sha256": "3ad3abb129987b8216a6e99c973d3bff8dac18423bfd19b10dfb8df72a2d535a",
+    "check_seed": [
+      2026100302,
+      2,
+      11
+    ],
+    "component_balance_revision": "v3_refined_truth_fresh_development",
+    "configuration_id": "erp-v3-fresh-dev-geometry-11",
+    "configuration_kind": "deep_plus_two_surface_h1",
+    "configuration_number": 11,
+    "correlation": 0.0,
+    "deep_alias_rho": 0.9994103689773518,
+    "deep_index": 30114,
+    "deep_local": 82,
+    "deep_nearest_inverse_distance_mm": 5.000000274274245,
+    "deep_nearest_inverse_global": 7513,
+    "deep_nearest_inverse_local": 15,
+    "deep_surface_ratio": 0.5,
+    "deep_surface_sensor_amplitude_ratio": 0.5,
+    "deep_truth_local": 82,
+    "eeg_snr_db": 20,
+    "evaluation_deep_index": 7513,
+    "evaluation_surface_projection": {
+      "inverse_indices_by_patch": [
+        [
+          3182,
+          3274,
+          3274,
+          3241,
+          3255,
+          3256,
+          3256,
+          3241,
+          3274,
+          3256,
+          3256,
+          3274,
+          3274,
+          3315,
+          3315,
+          3353,
+          3255,
+          3274,
+          3315
+        ],
+        [
+          3891,
+          3939,
+          3891,
+          3892,
+          3990,
+          3891,
+          3941,
+          3939,
+          3962,
+          3939,
+          3962,
+          3891,
+          3891,
+          3941,
+          3962,
+          3964,
+          3962,
+          3962,
+          3962
+        ]
+      ],
+      "rule": "nearest coarse surface vertex in HEAD coordinates"
+    },
+    "h0_role": null,
+    "inverse_forward_fingerprint": "a97e6991fde1cedfac66857d5c07683c43af62f16ad19bfa31ea7199a9083556",
+    "location": 11,
+    "meg_snr_db": -10,
+    "pair_index": 2,
+    "panel": "erp_v3_fresh_development",
+    "replica_seed_roots": {
+      "check": 2026100302,
+      "fit": 2026100301
+    },
+    "replicate": 0,
+    "scenario": "deep_plus_two_surface",
+    "scenario_code": 3,
+    "seed": [
+      2026100301,
+      2,
+      11
+    ],
+    "snr_db": 20,
+    "surface_centers": [
+      13167,
+      15679
+    ],
+    "surface_component_sensor_balance": true,
+    "truth_coordinate_frame": "HEAD",
+    "truth_deep_aseg_label": 49,
+    "truth_deep_fine_index": 82,
+    "truth_deep_xyz_head_m": [
+      0.005573101113353019,
+      0.027386109147099554,
+      0.057643058668703985
+    ],
+    "truth_deep_xyz_mri_m": [
+      0.01,
+      0.0,
+      0.035
+    ],
+    "truth_forward": "refined_grid_oct7_surface_5mm_thalamus",
+    "truth_forward_array_bundle_sha256": "044f4e699ab98fbf3881ce3b8448f5a5a4f304a17065ab98218ae31b4c6d2f21",
+    "truth_forward_sha256": "f7417a1bbabd6ac863da8811470c5c273be3f950b028fff5efae9ac9a899b266",
+    "truth_grid": "refined_oct7_5mm",
+    "truth_surface_center_xyz_head_m": [
+      [
+        -0.03754307024883479,
+        0.04132417641696993,
+        0.012669347175257792
+      ],
+      [
+        0.013587076183980883,
+        -0.010058708734127082,
+        0.12339985153280135
+      ]
+    ],
+    "truth_surface_center_xyz_mri_m": [
+      [
+        -0.034477882385253907,
+        0.0371129035949707,
+        0.008162357330322266
+      ],
+      [
+        0.019825201034545898,
+        -0.06867710113525391,
+        0.06626045227050781
+      ]
+    ],
+    "truth_surface_centers_refined": [
+      13167,
+      15679
+    ],
+    "truth_surface_nearest_inverse": [
+      3274,
+      3891
+    ],
+    "truth_surface_nearest_inverse_distance_mm": [
+      2.5034923348767517,
+      2.0890912922447282
+    ],
+    "truth_surface_patch_indices_refined": [
+      [
+        12859,
+        12944,
+        12945,
+        13000,
+        13001,
+        13002,
+        13003,
+        13085,
+        13086,
+        13087,
+        13088,
+        13167,
+        13251,
+        13252,
+        13253,
+        13394,
+        14899,
+        14901,
+        14902
+      ],
+      [
+        15503,
+        15583,
+        15587,
+        15588,
+        15677,
+        15679,
+        15681,
+        15771,
+        15773,
+        15774,
+        15779,
+        15780,
+        15781,
+        15786,
+        15883,
+        15891,
+        15990,
+        15991,
+        16115
+      ]
+    ],
+    "truth_surface_patch_nearest_inverse": [
+      [
+        3182,
+        3274,
+        3274,
+        3241,
+        3255,
+        3256,
+        3256,
+        3241,
+        3274,
+        3256,
+        3256,
+        3274,
+        3274,
+        3315,
+        3315,
+        3353,
+        3255,
+        3274,
+        3315
+      ],
+      [
+        3891,
+        3939,
+        3891,
+        3892,
+        3990,
+        3891,
+        3941,
+        3939,
+        3962,
+        3939,
+        3962,
+        3891,
+        3891,
+        3941,
+        3962,
+        3964,
+        3962,
+        3962,
+        3962
+      ]
+    ],
+    "truth_surface_patch_nearest_inverse_distance_mm": [
+      [
+        2.465868341607993,
+        1.9328091612204934,
+        2.765734730633085,
+        2.3857379281163014,
+        9.665015208426102e-06,
+        2.1818749897531364,
+        9.969739018319834e-06,
+        2.113880744914595,
+        1.0767194807947138e-05,
+        2.420113632763791,
+        3.0509314106243424,
+        2.5034923348767517,
+        1.9991543264294729,
+        2.12543796837383,
+        9.971198104811294e-06,
+        3.4437278761713412,
+        1.3536588414196926,
+        2.4210176859746975,
+        3.584168913812913
+      ],
+      [
+        1.6808699992279856,
+        2.146829471375245,
+        3.2773726380910444e-05,
+        2.511914333326547,
+        2.0259954694951032,
+        2.0890912922447282,
+        2.01168495549671,
+        4.121914583369614e-05,
+        1.7760863987781428,
+        1.722786457489459,
+        2.5983344981894505,
+        1.340178984179692,
+        1.8809819902866745,
+        3.25384500513604e-05,
+        3.411395344965405e-05,
+        2.1703556787146074,
+        2.161874726296663,
+        1.941064741901834,
+        2.7446943753194524
+      ]
+    ],
+    "truth_surface_patch_weights": [
+      [
+        0.2212108610841564,
+        0.23700655358581857,
+        0.24438983870991904,
+        0.2138924004596886,
+        0.22854256310952364,
+        0.20733972681558557,
+        0.22045867214135936,
+        0.21443243678772125,
+        0.24566758096159821,
+        0.2386860437132268,
+        0.246510330407874,
+        0.2534880386867226,
+        0.23749623328758898,
+        0.2466583548838519,
+        0.2374596433352721,
+        0.19875761971897793,
+        0.2185215248823416,
+        0.22677356472089985,
+        0.21201658709354046
+      ],
+      [
+        0.22779280685011827,
+        0.23666194877502073,
+        0.23549765207964043,
+        0.21647673878878085,
+        0.2266178001352001,
+        0.24069296193659317,
+        0.23645959412393602,
+        0.23018846091574766,
+        0.2265530374644964,
+        0.23621424603699964,
+        0.22720483589804877,
+        0.23520614586427063,
+        0.22496073989278217,
+        0.23370136799391122,
+        0.23186368246186081,
+        0.22415419734202532,
+        0.2195167379012346,
+        0.22385268981309275,
+        0.22360022924238304
+      ]
+    ]
+  },
+  {
+    "alias_tier": "high",
+    "case_id": "erp-v3-fresh-dev-12-deep_plus_two_surface-eeg+20-meg-10",
+    "case_number": 38,
+    "channel_order_sha256": "3ad3abb129987b8216a6e99c973d3bff8dac18423bfd19b10dfb8df72a2d535a",
+    "check_seed": [
+      2026100302,
+      2,
+      12
+    ],
+    "component_balance_revision": "v3_refined_truth_fresh_development",
+    "configuration_id": "erp-v3-fresh-dev-geometry-12",
+    "configuration_kind": "deep_plus_two_surface_h1",
+    "configuration_number": 12,
+    "correlation": 0.5,
+    "deep_alias_rho": 0.9998009772105401,
+    "deep_index": 30086,
+    "deep_local": 54,
+    "deep_nearest_inverse_distance_mm": 5.0000002742742415,
+    "deep_nearest_inverse_global": 7500,
+    "deep_nearest_inverse_local": 2,
+    "deep_surface_ratio": 1.0,
+    "deep_surface_sensor_amplitude_ratio": 1.0,
+    "deep_truth_local": 54,
+    "eeg_snr_db": 20,
+    "evaluation_deep_index": 7500,
+    "evaluation_surface_projection": {
+      "inverse_indices_by_patch": [
+        [
+          730,
+          676,
+          676,
+          730,
+          676,
+          731,
+          676,
+          730,
+          730,
+          786,
+          814,
+          851,
+          817
+        ],
+        [
+          6891,
+          6820,
+          6843,
+          6891,
+          6909,
+          6909,
+          6891,
+          6938,
+          6961,
+          6938,
+          6937,
+          6938,
+          7002,
+          6938,
+          6937,
+          7002,
+          7003
+        ]
+      ],
+      "rule": "nearest coarse surface vertex in HEAD coordinates"
+    },
+    "h0_role": null,
+    "inverse_forward_fingerprint": "a97e6991fde1cedfac66857d5c07683c43af62f16ad19bfa31ea7199a9083556",
+    "location": 12,
+    "meg_snr_db": -10,
+    "pair_index": 2,
+    "panel": "erp_v3_fresh_development",
+    "replica_seed_roots": {
+      "check": 2026100302,
+      "fit": 2026100301
+    },
+    "replicate": 0,
+    "scenario": "deep_plus_two_surface",
+    "scenario_code": 3,
+    "seed": [
+      2026100301,
+      2,
+      12
+    ],
+    "snr_db": 20,
+    "surface_centers": [
+      2576,
+      27784
+    ],
+    "surface_component_sensor_balance": true,
+    "truth_coordinate_frame": "HEAD",
+    "truth_deep_aseg_label": 10,
+    "truth_deep_fine_index": 54,
+    "truth_deep_xyz_head_m": [
+      -0.014612785527110993,
+      0.010882828846711712,
+      0.06860534235769845
+    ],
+    "truth_deep_xyz_mri_m": [
+      -0.01,
+      -0.02,
+      0.035
+    ],
+    "truth_forward": "refined_grid_oct7_surface_5mm_thalamus",
+    "truth_forward_array_bundle_sha256": "044f4e699ab98fbf3881ce3b8448f5a5a4f304a17065ab98218ae31b4c6d2f21",
+    "truth_forward_sha256": "f7417a1bbabd6ac863da8811470c5c273be3f950b028fff5efae9ac9a899b266",
+    "truth_grid": "refined_oct7_5mm",
+    "truth_surface_center_xyz_head_m": [
+      [
+        -0.055059807373004706,
+        0.002220672054975414,
+        0.10763314885044702
+      ],
+      [
+        0.0399812086950592,
+        0.03859771268915035,
+        0.026633105330281383
+      ]
+    ],
+    "truth_surface_center_xyz_mri_m": [
+      [
+        -0.049167774200439454,
+        -0.050194576263427736,
+        0.06307734680175782
+      ],
+      [
+        0.04344533538818359,
+        0.02753098487854004,
+        0.015133201599121094
+      ]
+    ],
+    "truth_surface_centers_refined": [
+      2576,
+      27784
+    ],
+    "truth_surface_nearest_inverse": [
+      730,
+      6938
+    ],
+    "truth_surface_nearest_inverse_distance_mm": [
+      2.9562565567140555,
+      2.1756099244613627
+    ],
+    "truth_surface_patch_indices_refined": [
+      [
+        2576,
+        2583,
+        2590,
+        2695,
+        2703,
+        2808,
+        2810,
+        2920,
+        3018,
+        3154,
+        3270,
+        3273,
+        3274
+      ],
+      [
+        27463,
+        27464,
+        27562,
+        27567,
+        27569,
+        27639,
+        27641,
+        27708,
+        27710,
+        27782,
+        27783,
+        27784,
+        27938,
+        27939,
+        27940,
+        28017,
+        28018
+      ]
+    ],
+    "truth_surface_patch_nearest_inverse": [
+      [
+        730,
+        676,
+        676,
+        730,
+        676,
+        731,
+        676,
+        730,
+        730,
+        786,
+        814,
+        851,
+        817
+      ],
+      [
+        6891,
+        6820,
+        6843,
+        6891,
+        6909,
+        6909,
+        6891,
+        6938,
+        6961,
+        6938,
+        6937,
+        6938,
+        7002,
+        6938,
+        6937,
+        7002,
+        7003
+      ]
+    ],
+    "truth_surface_patch_nearest_inverse_distance_mm": [
+      [
+        2.9562565567140555,
+        3.223781917891685,
+        1.8616201461206487,
+        2.269607254995697,
+        3.496997814396592e-05,
+        2.1106042077150406,
+        2.0494240917156925,
+        3.3051826389029946e-05,
+        2.1830044762917784,
+        1.962161551823223,
+        2.767988693492237e-05,
+        2.744544176969686,
+        3.211513207608677
+      ],
+      [
+        2.2209668444282706,
+        1.933266467589223,
+        2.735273041111537,
+        1.0751370016829235e-05,
+        2.5634552400196617,
+        9.033524606968031e-06,
+        2.2715938862418725,
+        2.691052225311552,
+        2.280029381825602,
+        1.3784507990400986e-05,
+        2.839183532230197,
+        2.1756099244613627,
+        2.6639681400957214,
+        2.634313696879356,
+        3.0555582440745526,
+        2.7383928934946615,
+        1.2925216579879201e-05
+      ]
+    ],
+    "truth_surface_patch_weights": [
+      [
+        0.31275766376032704,
+        0.296475592033974,
+        0.2548792016265245,
+        0.29815719935635565,
+        0.26424223648164574,
+        0.28006486009325376,
+        0.2748573832919863,
+        0.29938505471917876,
+        0.2928390694628439,
+        0.2529754515418582,
+        0.26681533828981036,
+        0.25501151743090683,
+        0.24700783012385777
+      ],
+      [
+        0.23193840531945908,
+        0.23689431839048009,
+        0.2548320977685473,
+        0.23402631277185595,
+        0.23828493283784927,
+        0.2592287787740628,
+        0.2537381636179935,
+        0.23815838789435906,
+        0.249535444272169,
+        0.2608284582961213,
+        0.2517274055238897,
+        0.2670750163734419,
+        0.23448782046546124,
+        0.24682068830613027,
+        0.23112968523020783,
+        0.21129635773604954,
+        0.21524162373707373
+      ]
+    ]
+  }
+]

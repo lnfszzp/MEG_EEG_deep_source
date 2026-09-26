@@ -1,0 +1,843 @@
+{
+  "case_count": 39,
+  "channel_order": {
+    "eeg": [
+      "EEG 001",
+      "EEG 002",
+      "EEG 003",
+      "EEG 004",
+      "EEG 005",
+      "EEG 006",
+      "EEG 007",
+      "EEG 008",
+      "EEG 009",
+      "EEG 010",
+      "EEG 011",
+      "EEG 012",
+      "EEG 013",
+      "EEG 014",
+      "EEG 015",
+      "EEG 016",
+      "EEG 017",
+      "EEG 018",
+      "EEG 019",
+      "EEG 020",
+      "EEG 021",
+      "EEG 022",
+      "EEG 023",
+      "EEG 024",
+      "EEG 025",
+      "EEG 026",
+      "EEG 027",
+      "EEG 028",
+      "EEG 029",
+      "EEG 030",
+      "EEG 031",
+      "EEG 032",
+      "EEG 033",
+      "EEG 034",
+      "EEG 035",
+      "EEG 036",
+      "EEG 037",
+      "EEG 038",
+      "EEG 039",
+      "EEG 040",
+      "EEG 041",
+      "EEG 042",
+      "EEG 043",
+      "EEG 044",
+      "EEG 045",
+      "EEG 046",
+      "EEG 047",
+      "EEG 048",
+      "EEG 049",
+      "EEG 050",
+      "EEG 051",
+      "EEG 052",
+      "EEG 054",
+      "EEG 055",
+      "EEG 056",
+      "EEG 057",
+      "EEG 058",
+      "EEG 059",
+      "EEG 060"
+    ],
+    "eeg_count": 59,
+    "exact_match_to_inverse": true,
+    "meg": [
+      "MEG 0111",
+      "MEG 0121",
+      "MEG 0131",
+      "MEG 0141",
+      "MEG 0211",
+      "MEG 0221",
+      "MEG 0231",
+      "MEG 0241",
+      "MEG 0311",
+      "MEG 0321",
+      "MEG 0331",
+      "MEG 0341",
+      "MEG 0411",
+      "MEG 0421",
+      "MEG 0431",
+      "MEG 0441",
+      "MEG 0511",
+      "MEG 0521",
+      "MEG 0531",
+      "MEG 0541",
+      "MEG 0611",
+      "MEG 0621",
+      "MEG 0631",
+      "MEG 0641",
+      "MEG 0711",
+      "MEG 0721",
+      "MEG 0731",
+      "MEG 0741",
+      "MEG 0811",
+      "MEG 0821",
+      "MEG 0911",
+      "MEG 0921",
+      "MEG 0931",
+      "MEG 0941",
+      "MEG 1011",
+      "MEG 1021",
+      "MEG 1031",
+      "MEG 1041",
+      "MEG 1111",
+      "MEG 1121",
+      "MEG 1131",
+      "MEG 1141",
+      "MEG 1211",
+      "MEG 1221",
+      "MEG 1231",
+      "MEG 1241",
+      "MEG 1311",
+      "MEG 1321",
+      "MEG 1331",
+      "MEG 1341",
+      "MEG 1411",
+      "MEG 1421",
+      "MEG 1431",
+      "MEG 1441",
+      "MEG 1511",
+      "MEG 1521",
+      "MEG 1531",
+      "MEG 1541",
+      "MEG 1611",
+      "MEG 1621",
+      "MEG 1631",
+      "MEG 1641",
+      "MEG 1711",
+      "MEG 1721",
+      "MEG 1731",
+      "MEG 1741",
+      "MEG 1811",
+      "MEG 1821",
+      "MEG 1831",
+      "MEG 1841",
+      "MEG 1911",
+      "MEG 1921",
+      "MEG 1931",
+      "MEG 1941",
+      "MEG 2011",
+      "MEG 2021",
+      "MEG 2031",
+      "MEG 2041",
+      "MEG 2111",
+      "MEG 2121",
+      "MEG 2131",
+      "MEG 2141",
+      "MEG 2211",
+      "MEG 2221",
+      "MEG 2231",
+      "MEG 2241",
+      "MEG 2311",
+      "MEG 2321",
+      "MEG 2331",
+      "MEG 2341",
+      "MEG 2411",
+      "MEG 2421",
+      "MEG 2431",
+      "MEG 2441",
+      "MEG 2511",
+      "MEG 2521",
+      "MEG 2531",
+      "MEG 2541",
+      "MEG 2611",
+      "MEG 2621",
+      "MEG 2631",
+      "MEG 2641"
+    ],
+    "meg_count": 102,
+    "sha256": "3ad3abb129987b8216a6e99c973d3bff8dac18423bfd19b10dfb8df72a2d535a"
+  },
+  "configuration_count": 13,
+  "configuration_repetition_across_snr": 3,
+  "deep_alias": {
+    "candidate_count": 98,
+    "candidate_distance_to_inverse_deep_mm": [
+      3.0,
+      8.0
+    ],
+    "formula": "rho_j=max_i |<normalize([W_E G_Esurf_i/sqrt(r_E); W_M G_Msurf_i/sqrt(r_M)]), normalize([W_E G_Edeep_j/sqrt(r_E); W_M G_Mdeep_j/sqrt(r_M)])>|",
+    "minimum_distance_to_historical_coarse_deep_mm": 4.999999699676775,
+    "modality_rank_normalization": {
+      "eeg": 59,
+      "meg": 102
+    },
+    "nearest_inverse_all_unique": true,
+    "partition": "stable sort by rho then numpy.array_split into three count-balanced tiers",
+    "selected_label_counts": {
+      "10": 5,
+      "49": 4
+    },
+    "selected_nearest_inverse_local": [
+      9,
+      4,
+      14,
+      7,
+      11,
+      15,
+      6,
+      13,
+      2
+    ],
+    "selected_truth_deep_local": [
+      52,
+      10,
+      79,
+      39,
+      90,
+      82,
+      36,
+      101,
+      54
+    ],
+    "selected_xyz_head_m": [
+      [
+        -0.024605881296707256,
+        0.010755235601379644,
+        0.06825640012550281
+      ],
+      [
+        0.015724371967225648,
+        0.005436064555721262,
+        0.06153500475025102
+      ],
+      [
+        -0.014413090425839506,
+        0.02713092265643542,
+        0.05694517420431268
+      ],
+      [
+        0.010648736540289333,
+        0.016411086851410406,
+        0.0595890317094775
+      ],
+      [
+        -0.02473489261416331,
+        0.017732031067303897,
+        0.06939994023917356
+      ],
+      [
+        0.005573101113353019,
+        0.027386109147099554,
+        0.057643058668703985
+      ],
+      [
+        -0.009337454998903191,
+        0.016155900360746274,
+        0.05889114724508619
+      ],
+      [
+        0.00029777058514521716,
+        0.02211303763306499,
+        0.06735725378131625
+      ],
+      [
+        -0.014612785527110993,
+        0.010882828846711712,
+        0.06860534235769845
+      ]
+    ],
+    "selected_xyz_mri_m": [
+      [
+        -0.02,
+        -0.02,
+        0.035
+      ],
+      [
+        0.02,
+        -0.02,
+        0.025
+      ],
+      [
+        -0.01,
+        0.0,
+        0.035
+      ],
+      [
+        0.015,
+        -0.01,
+        0.03
+      ],
+      [
+        -0.02,
+        -0.015,
+        0.04
+      ],
+      [
+        0.01,
+        0.0,
+        0.035
+      ],
+      [
+        -0.005,
+        -0.01,
+        0.03
+      ],
+      [
+        0.005,
+        -0.01,
+        0.04
+      ],
+      [
+        -0.01,
+        -0.02,
+        0.035
+      ]
+    ],
+    "tiers": {
+      "high": {
+        "candidate_count": 32,
+        "rho_max": 0.9999652857838677,
+        "rho_median": 0.9997483433161336,
+        "rho_min": 0.999575058419703,
+        "selected_aseg_labels": [
+          10,
+          49,
+          10
+        ],
+        "selected_nearest_inverse_distance_mm": [
+          5.0000000944496685,
+          5.000000094449668,
+          5.0000002742742415
+        ],
+        "selected_nearest_inverse_local": [
+          6,
+          13,
+          2
+        ],
+        "selected_rho": [
+          0.9997116472241104,
+          0.9997316277158932,
+          0.9998009772105401
+        ],
+        "selected_truth_deep_local": [
+          36,
+          101,
+          54
+        ]
+      },
+      "low": {
+        "candidate_count": 33,
+        "rho_max": 0.9991243451899576,
+        "rho_median": 0.9987041674197309,
+        "rho_min": 0.9967519903427277,
+        "selected_aseg_labels": [
+          10,
+          49,
+          10
+        ],
+        "selected_nearest_inverse_distance_mm": [
+          5.000000274274239,
+          5.000000274274239,
+          5.00000027427424
+        ],
+        "selected_nearest_inverse_local": [
+          9,
+          4,
+          14
+        ],
+        "selected_rho": [
+          0.9987041674197309,
+          0.9987017784620469,
+          0.9988099210527339
+        ],
+        "selected_truth_deep_local": [
+          52,
+          10,
+          79
+        ]
+      },
+      "mid": {
+        "candidate_count": 33,
+        "rho_max": 0.9995735246041492,
+        "rho_median": 0.9993741274427949,
+        "rho_min": 0.9991465829921935,
+        "selected_aseg_labels": [
+          49,
+          10,
+          49
+        ],
+        "selected_nearest_inverse_distance_mm": [
+          5.000000094449668,
+          4.999999699676775,
+          5.000000274274245
+        ],
+        "selected_nearest_inverse_local": [
+          7,
+          11,
+          15
+        ],
+        "selected_rho": [
+          0.9993713135304675,
+          0.9994050508224828,
+          0.9994103689773518
+        ],
+        "selected_truth_deep_local": [
+          39,
+          90,
+          82
+        ]
+      }
+    },
+    "uses_data_or_truth_metrics": false,
+    "uses_forward_and_noise_covariance_only": true
+  },
+  "formal_performance_claim_allowed": false,
+  "generator_path": "作者风格版/78-v3全新开发面板.py",
+  "generator_sha256": "f276be97301956e3bae3818b62a11d29fdcf416a3c5dd1746da5958bbfe3c846",
+  "geometry_seed_sha256": "f019ecc0b18e7382d034a665eab78d18421eecbcd1d0440fe8561f7ebe40632f",
+  "geometry_seed_uint64": 9400013741349411312,
+  "history": {
+    "case_count": 625,
+    "case_id_overlap": 0,
+    "deep_local_count": 16,
+    "manifest_count": 30,
+    "manifest_sha256": {
+      "calibration_component_balanced_v2_manifest.json": "4d091c2cbc12d1ec2165ff27e754bf1e3d540c2b4f00c89d3967ac6a3e89eefb",
+      "calibration_component_balanced_v3_manifest.json": "bb9f1a7d949efa6ba91dc8aceff604edca79752ecfb507134d06e4ccf56421d2",
+      "calibration_component_balanced_v4_manifest.json": "09dde6a2c14ceeeaa4a3185d218f8017bc6141b37e4172d19f6f85c22cf73ff1",
+      "calibration_manifest.json": "459b7b983b9ad4bbbc8b84e3d0a494e8466dbe093a32af02b78e7d871119a313",
+      "development_component_balanced_all_snr.json": "c64d02429fd5e9e9c2a7831a36b7f86c2a0fe614ecb2c837fa0284fe96fb5425",
+      "development_component_balanced_all_snr_mixed_only.json": "42d1001f3f617b0094dea459a70ea6cb50fefabac0b9daaf88958bb62cee1b56",
+      "development_component_balanced_m10_m10.json": "cab84749b2c6b4ac0c555fe34b2035fe1b88af705181b632be94eee460ee9981",
+      "development_component_balanced_m10_m10_case00.json": "7ee2301fb88987206c544b3a88a6a3058347b0f11f268a8260dc357b59089f10",
+      "development_component_balanced_m10_m10_case01.json": "9b52b8d695150e7db3db7bfd171361e1aa5e0453fcab562e3983decda4a0b1a9",
+      "development_component_balanced_m10_m10_case02.json": "151c6c3e8a80bfc30fc078b9cc41e515b25d607ec59e151daf73d9bf0c1f2231",
+      "development_component_balanced_m10_m10_case03.json": "d97a4cb40cdcc67ae8f0ca5cbc8b7cc1fa111e9843fb0284a68d0eedfcf9f09a",
+      "development_component_balanced_m10_m10_case04.json": "2209d3f5a580bb626ad1fe30d95562e344e2505c0517d1a2e3359f6b09d794f3",
+      "development_component_balanced_m10_m10_cases00_02_03.json": "d24c3f3483755c6ee05c00602525f67a8d721a7d614265d69863d27c8a6ea2df",
+      "development_component_balanced_m10_m10_cases01_04.json": "426aeca7ce9121bae124084f392b880bf0e970795f4fd5d5b8b6bf72f067c356",
+      "development_component_balanced_new_snr_mixed_only.json": "2a1eb5a354a4e10bbd4bd92abf65ca55b69b8d210b2f25c5b49e6a23c5f44647",
+      "development_localization_v5_mm_floor_probe.json": "ba1abe7a2dea848a1a3617df0276c124d81ff19488a302749ce6256bf05228af",
+      "development_localization_v5_new_positions.json": "54fd2126c34b251939f854e73f11901329e7efb24e3c5669ecc28260a100190b",
+      "development_manifest.json": "70f376c2c753e5f9d2adc22b067fdb2f0aba797f80bca7eb1d7951f884f3260e",
+      "development_sensor_balanced_m10_m10.json": "3432879db311544eb1eea7ae08a417e08bcb4842ae9f3a77cef0def5d87b00ad",
+      "development_sensor_balanced_m10_m10_case01.json": "3eca5db9ad2f00c53b552575ba19c839b2f65808f48eb8a7aac82dacf61cb026",
+      "development_sensor_balanced_m10_m10_case04.json": "ab27ff0034c958d2595b5e792d2ac587ad2eda14a4b9bc9410274d46a14bb8c7",
+      "development_sensor_balanced_m10_m10_cases00_01.json": "a8c752227fc448c6883d00d65be000d56279a696ee029c877908aecc5f1fe086",
+      "development_sensor_balanced_m10_m10_cases02_04.json": "dcd34ea081bddd70da7443e120bce290eec34e3a03eeb9f28234245d8f5834a0",
+      "hierarchical_v1_gate_calibration_manifest.json": "46b7b83998792690087241bed802396418e2cb0b192b62c93d8ceb114c7fbde3",
+      "hierarchical_v1_surface_calibration_manifest.json": "2aa6154471c019e55968995a98cd89602c60ba24ef9d9bcb3b3ce45f5fcc28a0",
+      "hierarchical_v1_validation_manifest.json": "6ef97341434bca99bc7c75d205c8dc6d3815b3260ca3c62c10c615ce2efb0eff",
+      "hierarchical_v2_gate_calibration_manifest.json": "bafbd6453a98f42f1fca9a3b853cec998e3dae8756a1b8863e92d4df30550c85",
+      "hierarchical_v2_surface_calibration_manifest.json": "3fd0ed0e94e12bbfa20d5bcd4b2e49791d1583f6bd2b6b06757ce8d26fcd6568",
+      "validation_component_balanced_v2_manifest.json": "68a405ace52d0c04a193c37198304682a0440a0007fed0433fe3a43e686d9aa7",
+      "validation_manifest.json": "2da4682fbd23b591a20e56fd9612f5324ecb9cf68ed744f85c51400d11759fb7"
+    },
+    "seed_root_overlap": 0,
+    "seed_tuple_overlap": 0,
+    "surface_center_count": 296
+  },
+  "inverse_forward": {
+    "fingerprint": "a97e6991fde1cedfac66857d5c07683c43af62f16ad19bfa31ea7199a9083556",
+    "n_deep": 16,
+    "n_surface": 7498
+  },
+  "manifest_sha256": "e2a49a6c14d7275a49d0d2502b98173ebad4f18237d3d95b970242524e9063fe",
+  "numpy_version_for_deterministic_geometry": "2.5.2",
+  "per_snr": {
+    "gate_audit_h0": 2,
+    "gate_calibration_h0": 2,
+    "h0": 4,
+    "h1": 9
+  },
+  "protocol": "erp-v3-fresh-development-manifest",
+  "purpose": "fresh v3 development only; no formal or blind validation claim",
+  "replica_seed_roots": {
+    "check": 2026100302,
+    "fit": 2026100301
+  },
+  "schema_version": 1,
+  "simulation_or_inverse_run_by_generator": false,
+  "snr_pairs_eeg_meg_db": [
+    [
+      -10,
+      -10
+    ],
+    [
+      -10,
+      20
+    ],
+    [
+      20,
+      -10
+    ]
+  ],
+  "surface_geometry": {
+    "double_source_pair_distance_mm": [
+      160.7086205238192,
+      154.55633442221188,
+      143.07641365311673,
+      132.34703380116977,
+      130.0657175078011
+    ],
+    "historical_center_separation_required_mm": 10.0,
+    "minimum_distance_to_any_historical_center_mm": 10.308228837583295,
+    "minimum_selected_center_distance_mm": 49.24110077052526,
+    "nearest_inverse_distance_mm": [
+      2.225857617222934,
+      2.8453335473382055,
+      2.9562565567140555,
+      2.4622404721890856,
+      2.5305063169954645,
+      3.2000358764431653,
+      2.095970798427277,
+      2.0890912922447282,
+      2.49242267981091,
+      3.4785914730490224,
+      3.9196458595830337,
+      2.1756099244613627,
+      2.5034923348767517,
+      3.192604715707371,
+      3.5288157567281213
+    ],
+    "nearest_inverse_local": [
+      3594,
+      3829,
+      730,
+      6182,
+      2254,
+      7444,
+      465,
+      3891,
+      2390,
+      5480,
+      2351,
+      6938,
+      3274,
+      7178,
+      14
+    ],
+    "patch_count": 15,
+    "patch_overlap_vertex_count": 0,
+    "selected_hemi": [
+      0,
+      1,
+      0,
+      1,
+      0,
+      1,
+      0,
+      1,
+      0,
+      1,
+      0,
+      1,
+      0,
+      1,
+      0
+    ],
+    "selected_truth_local": [
+      14269,
+      15326,
+      2576,
+      25073,
+      9397,
+      29864,
+      2072,
+      15679,
+      9546,
+      21761,
+      9624,
+      27784,
+      13167,
+      28723,
+      3
+    ],
+    "selected_vertex_numbers": [
+      147254,
+      8202,
+      33657,
+      100970,
+      94117,
+      154478,
+      28147,
+      12490,
+      95443,
+      73038,
+      96102,
+      129206,
+      134042,
+      140016,
+      1210
+    ],
+    "selected_xyz_head_m": [
+      [
+        -0.04789662619260987,
+        0.08378542316682279,
+        0.04037464797284583
+      ],
+      [
+        0.026752313854012274,
+        -0.0553526763117254,
+        0.0702976447158587
+      ],
+      [
+        -0.055059807373004706,
+        0.002220672054975414,
+        0.10763314885044702
+      ],
+      [
+        0.042788240788756565,
+        0.051203479782252134,
+        0.0915455455810157
+      ],
+      [
+        -0.007109804511939332,
+        0.01494772320799468,
+        0.044442522374147184
+      ],
+      [
+        0.02606726633637515,
+        0.08918049844558794,
+        0.03071578677841105
+      ],
+      [
+        -0.04272261698578356,
+        -0.04024682004963565,
+        0.057488785689597005
+      ],
+      [
+        0.013587076183980883,
+        -0.010058708734127082,
+        0.12339985153280135
+      ],
+      [
+        -0.02565392763480552,
+        0.0617172253304448,
+        0.10513572880354341
+      ],
+      [
+        0.0577132893692215,
+        -0.005963809749402016,
+        0.05249981440253161
+      ],
+      [
+        -0.06337650895914419,
+        0.025944360362205765,
+        0.05509881668281465
+      ],
+      [
+        0.0399812086950592,
+        0.03859771268915035,
+        0.026633105330281383
+      ],
+      [
+        -0.03754307024883479,
+        0.04132417641696993,
+        0.012669347175257792
+      ],
+      [
+        0.0060316502702863406,
+        0.09294189335178768,
+        0.07632089100565233
+      ],
+      [
+        -0.012550674881063612,
+        -0.043956426392923006,
+        0.09905958218590744
+      ]
+    ],
+    "selected_xyz_mri_m": [
+      [
+        -0.043315757751464845,
+        0.05535281753540039,
+        0.05577469253540039
+      ],
+      [
+        0.03055046844482422,
+        -0.0743836441040039,
+        -0.003718935966491699
+      ],
+      [
+        -0.049167774200439454,
+        -0.050194576263427736,
+        0.06307734680175782
+      ],
+      [
+        0.04867633819580078,
+        -4.4508639723062516e-05,
+        0.07507182312011719
+      ],
+      [
+        -0.0032934763431549073,
+        -0.002535614728927612,
+        0.017487781524658203
+      ],
+      [
+        0.03032886505126953,
+        0.06610551452636719,
+        0.048432571411132816
+      ],
+      [
+        -0.03913070678710937,
+        -0.05533759307861328,
+        -0.0028237719535827636
+      ],
+      [
+        0.019825201034545898,
+        -0.06867710113525391,
+        0.06626045227050781
+      ],
+      [
+        -0.019110206604003907,
+        -0.00010966502130031586,
+        0.09468157196044921
+      ],
+      [
+        0.061499195098876955,
+        -0.023574468612670898,
+        0.00951772403717041
+      ],
+      [
+        -0.059009178161621094,
+        -0.00037641599774360655,
+        0.03456182479858398
+      ],
+      [
+        0.04344533538818359,
+        0.02753098487854004,
+        0.015133201599121094
+      ],
+      [
+        -0.034477882385253907,
+        0.0371129035949707,
+        0.008162357330322266
+      ],
+      [
+        0.011946429252624511,
+        0.04237307357788086,
+        0.0883607177734375
+      ],
+      [
+        -0.00757634973526001,
+        -0.08228616333007813,
+        0.027677629470825197
+      ]
+    ],
+    "truth_to_inverse_required_mm": [
+      2.0,
+      5.0
+    ]
+  },
+  "truth_forward": {
+    "array_bundle_sha256": "044f4e699ab98fbf3881ce3b8448f5a5a4f304a17065ab98218ae31b4c6d2f21",
+    "array_sha256": {
+      "coordinate_frame": "a5f33e264bc9cc2e03012159940d05f8fe9a07aec9619c4305fb899b581be125",
+      "deep_aseg_labels": "e427f9de7dc5dfdbbdd6e517180b9b4fc007a473cfdc42f677a42ce2754aada9",
+      "deep_spacing_mm": "05828936b7a33902ec3b9bd97461f16dc91ee62471134b10408c9cdee6dd0e0d",
+      "deep_xyz_head": "bbee21e3483e7d2a39109c68a664fd9b8fb401ec9c42ecfc1017f650280dc0ea",
+      "deep_xyz_mri": "69cc53bb2f7597f0e06d2b58309a69f98259be04af47ecc9c3ee084f1bd4cb67",
+      "eeg_ch_names": "5cef91256386153110088de7ae34c08432b8ea746deb8d0ca47ad957162f93da",
+      "gain_eeg": "6639c6e9a5ef09de5b1bffb35a6bc8f6527398b49353419df865b35ad6e0a3ec",
+      "gain_meg": "a4fa0aff5562022ab8fa1bc313b7981a905d7a70281c5c2ed039fe1b00479d31",
+      "head_mri_t": "ca77b4966760826694876e70e8dc92d902718017b0397528b61e312440ea70c7",
+      "meg_ch_names": "ccd2962a83ae60c0569f53a63a8ca83489ae07b8984d207b0fea15f76e39b5cc",
+      "mri_head_t": "f6e333c92525b57f3fa48bd5bde74bfb647d706f32432e3d58c34a180d4e34dc",
+      "n_deep": "e72d38b53748cbf2ccdbb75f309a1d8fe997b0fe0fbc62ea79f881b3bf9bb95c",
+      "n_surf": "f03a08452b65b904fa21f77f6271e5f61c9a8d5a3b1eed206e22fd79ac2e129d",
+      "surface_edges": "eb315317ff634124c56cf5ed958154220d144facb2fc0c001247e2cd567e82d4",
+      "surface_hemi": "e0f99496223f92d1f77c6580f6881d7f3732a58bef1c21193b7301928692db0a",
+      "surface_spacing_mm": "9b939315dc3ced2636fe192eb77ca9a7c62304ed33b9f3e96b188786698db9ca",
+      "surface_vertex_numbers": "5a352c10e2fa17b8fce996a4933d271d4e9d144c8572671ff4d696a7bc3062ef",
+      "surface_xyz_head": "6100ea41812e7b3e6268d162df1b298a2a789b8f61490266a39931b9d5647aaa",
+      "surface_xyz_mri": "12031332b820f00369ffdee9b98c0b42a7aa22cc6e9070d0cd7766141babffee",
+      "vertices": "ed24866f17dd319e56daa6d5aa60e935aac1ded663644ee03b1c58c0cc91228d"
+    },
+    "builder_path": "refined_grid.py",
+    "builder_sha256": "4f0bad2a1f8c437d1e082e1466ac5e8410e1fc79ff3edaa9180e869345828da8",
+    "coordinate_frame": [
+      "HEAD"
+    ],
+    "deep_aseg_labels_sha256": "e427f9de7dc5dfdbbdd6e517180b9b4fc007a473cfdc42f677a42ce2754aada9",
+    "deep_head_to_mri_max_error_m": 1.4821483875836085e-17,
+    "deep_spacing_mm": 4.999999699676775,
+    "deep_xyz_head_sha256": "bbee21e3483e7d2a39109c68a664fd9b8fb401ec9c42ecfc1017f650280dc0ea",
+    "deep_xyz_mri_sha256": "69cc53bb2f7597f0e06d2b58309a69f98259be04af47ecc9c3ee084f1bd4cb67",
+    "file_sha256": "f7417a1bbabd6ac863da8811470c5c273be3f950b028fff5efae9ac9a899b266",
+    "head_to_mri_transform": [
+      [
+        0.9993095397949219,
+        0.012759342789649963,
+        0.034894198179244995,
+        0.0020699098240584135
+      ],
+      [
+        0.009984787553548813,
+        0.8124047517776489,
+        -0.5830085277557373,
+        0.011302143335342407
+      ],
+      [
+        -0.03578702360391617,
+        0.5829542875289917,
+        0.8117163777351379,
+        -0.02755521982908249
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ]
+    ],
+    "mri_to_head_transform": [
+      [
+        0.9993095769596262,
+        0.009984755063574359,
+        -0.03578701855478537,
+        -0.0031674490068257554
+      ],
+      [
+        0.012759324533206697,
+        0.8124046904861855,
+        0.582954402698665,
+        0.00685511180731421
+      ],
+      [
+        0.034894223219565354,
+        -0.583008407669289,
+        0.8117164304034404,
+        0.028884041372387915
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ]
+    ],
+    "n_deep": 135,
+    "n_surface": 30032,
+    "path": "results/refined_forward_oct7_5mm.npz",
+    "surface_head_to_mri_max_error_m": 3.1080126089379415e-17,
+    "surface_hemi_sha256": "e0f99496223f92d1f77c6580f6881d7f3732a58bef1c21193b7301928692db0a",
+    "surface_spacing_mm": 2.702885363372079,
+    "surface_vertex_numbers_sha256": "5a352c10e2fa17b8fce996a4933d271d4e9d144c8572671ff4d696a7bc3062ef",
+    "surface_xyz_head_sha256": "6100ea41812e7b3e6268d162df1b298a2a789b8f61490266a39931b9d5647aaa",
+    "surface_xyz_mri_sha256": "12031332b820f00369ffdee9b98c0b42a7aa22cc6e9070d0cd7766141babffee"
+  }
+}
