@@ -1,0 +1,123 @@
+{
+  "complete": true,
+  "development_diagnosis_only": true,
+  "formal_or_blind_validation": false,
+  "old_21_cases_already_unblinded": true,
+  "final_parameter_selection_allowed": false,
+  "parameter_selected": null,
+  "case_count": 3,
+  "new_inverse_call_count": 6,
+  "baseline_inverse_call_count": 0,
+  "comparison_row_count": 9,
+  "all_new_joint_solvers_converged": true,
+  "only_changed_setting": "mrf_strength",
+  "comparison": {
+    "6": {
+      "0.8": {
+        "global_An_auc": 0.7645820376384955,
+        "surface_An_auc": 0.7560073627844712,
+        "surface_DLE_mm": null,
+        "surface_component_DLE_mm": null,
+        "surface_SD_mm": 6.95549082548329,
+        "surface_patch_hit_count": 0,
+        "surface_patch_count": 2,
+        "deep_false_positive": 0,
+        "deep_peak_distance_mm": 0.0
+      },
+      "0.5": {
+        "global_An_auc": 0.9913251790938198,
+        "surface_An_auc": 0.9909973226238286,
+        "surface_DLE_mm": 10.782179418741444,
+        "surface_component_DLE_mm": 11.417739227573419,
+        "surface_SD_mm": 6.179944413320155,
+        "surface_patch_hit_count": 1,
+        "surface_patch_count": 2,
+        "deep_false_positive": 0,
+        "deep_peak_distance_mm": 0.0
+      },
+      "0.0": {
+        "global_An_auc": 0.5170478888812108,
+        "surface_An_auc": 0.49979919678714857,
+        "surface_DLE_mm": null,
+        "surface_component_DLE_mm": null,
+        "surface_SD_mm": 3.06643586135413,
+        "surface_patch_hit_count": 0,
+        "surface_patch_count": 2,
+        "deep_false_positive": 0,
+        "deep_peak_distance_mm": 0.0
+      }
+    },
+    "14": {
+      "0.8": {
+        "global_An_auc": 0.9434747205566659,
+        "surface_An_auc": 0.9433539561727571,
+        "surface_DLE_mm": 23.70293115319796,
+        "surface_component_DLE_mm": 23.70293115319796,
+        "surface_SD_mm": 22.8874289287447,
+        "surface_patch_hit_count": 0,
+        "surface_patch_count": 1,
+        "deep_false_positive": 0,
+        "deep_peak_distance_mm": null
+      },
+      "0.5": {
+        "global_An_auc": 0.9901991265082537,
+        "surface_An_auc": 0.9901781872672513,
+        "surface_DLE_mm": 17.188491313532896,
+        "surface_component_DLE_mm": 17.188491313532896,
+        "surface_SD_mm": 11.308778005071426,
+        "surface_patch_hit_count": 1,
+        "surface_patch_count": 1,
+        "deep_false_positive": 0,
+        "deep_peak_distance_mm": null
+      },
+      "0.0": {
+        "global_An_auc": 0.5547708934784218,
+        "surface_An_auc": 0.5547692170739307,
+        "surface_DLE_mm": 13.745853537074543,
+        "surface_component_DLE_mm": 13.745853537074543,
+        "surface_SD_mm": 11.28192616520942,
+        "surface_patch_hit_count": 0,
+        "surface_patch_count": 1,
+        "deep_false_positive": 0,
+        "deep_peak_distance_mm": null
+      }
+    },
+    "17": {
+      "0.8": {
+        "global_An_auc": 0.9973096762717895,
+        "surface_An_auc": 0.9973039215686275,
+        "surface_DLE_mm": 5.129172818812595,
+        "surface_component_DLE_mm": 6.493869492787749,
+        "surface_SD_mm": 2.0520395699452307,
+        "surface_patch_hit_count": 2,
+        "surface_patch_count": 2,
+        "deep_false_positive": 0,
+        "deep_peak_distance_mm": null
+      },
+      "0.5": {
+        "global_An_auc": 0.9995923751926954,
+        "surface_An_auc": 0.9995915032679739,
+        "surface_DLE_mm": null,
+        "surface_component_DLE_mm": null,
+        "surface_SD_mm": 0.0,
+        "surface_patch_hit_count": 1,
+        "surface_patch_count": 2,
+        "deep_false_positive": 0,
+        "deep_peak_distance_mm": null
+      },
+      "0.0": {
+        "global_An_auc": 0.7217775406142535,
+        "surface_An_auc": 0.7217765894236483,
+        "surface_DLE_mm": 5.4925098194671325,
+        "surface_component_DLE_mm": 5.886014707995168,
+        "surface_SD_mm": 0.0,
+        "surface_patch_hit_count": 2,
+        "surface_patch_count": 2,
+        "deep_false_positive": 0,
+        "deep_peak_distance_mm": null
+      }
+    }
+  },
+  "interpretation_boundary": "mechanism diagnosis on revealed cases only; these rows cannot choose the final MRF strength",
+  "wall_seconds": 410.93233209999744
+}

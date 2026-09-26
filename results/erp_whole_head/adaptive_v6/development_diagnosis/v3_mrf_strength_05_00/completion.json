@@ -1,0 +1,9 @@
+{
+  "complete": true,
+  "development_diagnosis_only": true,
+  "new_inverse_call_count": 6,
+  "comparison_row_count": 9,
+  "all_new_joint_solvers_converged": true,
+  "final_parameter_selection_allowed": false,
+  "wall_seconds": 410.93233209999744
+}
