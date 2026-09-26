@@ -1,0 +1,9 @@
+{
+  "complete": true,
+  "phase": "development_diagnosis",
+  "case_count": 2,
+  "all_eight_direction_family_fits_strictly_converged": true,
+  "threshold_tuned_or_applied": false,
+  "blind_validation_claim": false,
+  "wall_seconds": 1829.1565643000067
+}

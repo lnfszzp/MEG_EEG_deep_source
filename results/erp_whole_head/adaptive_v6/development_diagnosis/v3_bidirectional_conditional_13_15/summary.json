@@ -1,0 +1,20 @@
+{
+  "complete": true,
+  "phase": "development_diagnosis",
+  "scope": "revealed old hierarchical-v1 validation cases 13 and 15 only",
+  "old_21_cases_are_diagnostic_only": true,
+  "blind_validation_claim": false,
+  "threshold_tuned_or_applied": false,
+  "decision_threshold": null,
+  "family_decision_made": false,
+  "case_count": 2,
+  "all_eight_direction_family_fits_strictly_converged": true,
+  "case13_symmetric_crossfit_score": -0.014257243840006676,
+  "case15_symmetric_crossfit_score": 0.0007976482458634669,
+  "crossfit_orders_case13_above_case15": false,
+  "case13_partial_symmetric_mean": 28.671550813826087,
+  "case15_partial_symmetric_mean": 0.2327871983702976,
+  "partial_orders_case13_above_case15": true,
+  "interpretation_limit": "Ordering in two revealed failures is diagnostic only. It cannot select a threshold, estimate error rates, or replace fresh development, calibration and one-time validation.",
+  "wall_seconds": 1829.1565643000067
+}

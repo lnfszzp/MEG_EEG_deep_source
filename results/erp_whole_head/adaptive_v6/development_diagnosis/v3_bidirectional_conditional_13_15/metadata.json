@@ -1,0 +1,67 @@
+{
+  "schema_version": 1,
+  "phase": "development_diagnosis",
+  "protocol": "erp-v6-v3-bidirectional-conditional-revealed-13-15",
+  "output": "D:\\博士\\工作＆汇报\\源定位\\新建文件夹\\results\\erp_whole_head\\adaptive_v6\\development_diagnosis\\v3_bidirectional_conditional_13_15",
+  "source": "D:\\博士\\工作＆汇报\\源定位\\新建文件夹\\results\\erp_whole_head\\adaptive_v6\\formal_hierarchical_v2_validation",
+  "source_metadata_sha256": "95883b0bc1886ea879528d8583b9c2ce2516b6f4852796c3c3fab073821ea6ce",
+  "source_completion_sha256": "7ba8814fe537a5e9819b4abcd98b3bac1d0c90d07a37d55e9577dc1fc9d82eba",
+  "source_case_json_sha256": {
+    "erp-v6-hierarchical-v1-validation-13-eeg-10-meg+20": "2d11a4236ec486e7045a6c0feb3c6b58a7bc93caed70190c5de78e8796f5c0ca",
+    "erp-v6-hierarchical-v1-validation-15-eeg+20-meg-10": "7e12d9c426f215dfcdbbf630ac4fe20ea780ef76e469189f5c73b91bcf4f4f19"
+  },
+  "manifest": "D:\\博士\\工作＆汇报\\源定位\\新建文件夹\\results\\erp_whole_head\\adaptive_v6\\protocol\\hierarchical_v1_validation_manifest.json",
+  "manifest_sha256": "6ef97341434bca99bc7c75d205c8dc6d3815b3260ca3c62c10c615ce2efb0eff",
+  "consumed_marker": "D:\\博士\\工作＆汇报\\源定位\\新建文件夹\\results\\erp_whole_head\\adaptive_v6\\protocol\\hierarchical_v1_validation_manifest_consumed.json",
+  "consumed_marker_sha256": "4492b2428f45af693f53ebb116098f10cc0c1ba93bb279e28f018e6701656ed3",
+  "seed_roots": {
+    "check": 2026100102,
+    "fit": 2026100101
+  },
+  "case_ids": [
+    "erp-v6-hierarchical-v1-validation-13-eeg-10-meg+20",
+    "erp-v6-hierarchical-v1-validation-15-eeg+20-meg-10"
+  ],
+  "shared_fingerprint": "a97e6991fde1cedfac66857d5c07683c43af62f16ad19bfa31ea7199a9083556",
+  "solver_settings": {
+    "solver_kind": "admm",
+    "mrf_strength": 0.8,
+    "outer_iterations": 80,
+    "max_inner_retries": 20,
+    "epsilon_fraction": 0.05,
+    "tolerance": 0.001,
+    "outer_tolerance": 0.01,
+    "surface_reweight_floor": 0.5,
+    "deep_reweight_floor": 0.5,
+    "edge_weight_floor": 0.5,
+    "max_iter": 2000,
+    "rho": 1.0,
+    "adaptive_rho": true,
+    "edge_fraction": 0.5,
+    "noise_multiplier": 1.0,
+    "calibration": "layer",
+    "temporal_mode": "smooth",
+    "ridge_fraction": 0.0,
+    "edge_penalty_mode": "group",
+    "source_penalty_mode": "group",
+    "deep_alias_penalty": false
+  },
+  "primary_channel_weights": "all whitened EEG/MEG channels exactly one",
+  "score_formula": "mean_{direction,modality} g/sqrt(1+q)",
+  "partial_score_role": "uncalibrated conditional unique-deep diagnostic only",
+  "deep_alias_penalty": false,
+  "threshold": null,
+  "truth_access": "case selection and context only; never used by fitting, scoring or a decision",
+  "old_21_cases_are_diagnostic_only": true,
+  "blind_validation_claim": false,
+  "code_sha256": {
+    "benchmark/erp_trial_covariance.py": "818e41cd1e3c75921db386b9858f78e3722551cc9e32ddbd2e88e819b22e7d89",
+    "benchmark/metrics.py": "f07a42e26dc2118c418744e3a4971c5fcd3037b7b93e26a7e2e4e899400986d8",
+    "benchmark/protocol.py": "26f816e0530cf6f36445b7222fc5db3d0ce216f4ec089f0a2779c65e1c4c8d4a",
+    "candidates/oaster_balanced.py": "74a9de1efc6d1e83f522024c9a3440d799fc054be348d91884171a62ddd99e92",
+    "candidates/oaster_partial_confirmation.py": "363648bc81fe274d00025cf77fa5730636c4129f6eb32d84e689eabd9164debd",
+    "candidates/oaster_predictive.py": "575a660382fa0330720d9e1d3bcd253f08a3727c4358b7d919a67e33812f1775",
+    "run_erp_whole_head_matrix.py": "bb4ac256f7b48aeb7a948c2bf175df282f9839d149211944c4d9c2b8b5077d17"
+  },
+  "script_sha256": "2c966ab1e618abd685f76287d7e9624564ba8647e1339cea4c2620cd81fad4e1"
+}
