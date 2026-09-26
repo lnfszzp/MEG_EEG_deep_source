@@ -7,6 +7,7 @@ import json
 import os
 from pathlib import Path
 import sys
+import tempfile
 
 for variable in ("OMP_NUM_THREADS", "MKL_NUM_THREADS", "OPENBLAS_NUM_THREADS"):
     os.environ[variable] = "1"
@@ -73,6 +74,7 @@ direct_dependencies = [
     "benchmark/protocol.py",
     "candidates/oaster_balanced.py",
     "metrics/user_metrics/An_auc.py",
+    "metrics/user_metrics/An_roc.py",
     "run_erp_whole_head_matrix.py",
 ]
 for name in direct_dependencies:
@@ -80,6 +82,14 @@ for name in direct_dependencies:
     current_hash = hashlib.sha256((root / name).read_bytes()).hexdigest()
     if metadata["code_sha256"].get(metadata_key) != current_hash:
         raise RuntimeError(f"重建直接依赖已变化，不能解释冻结结果：{name}")
+script_path = Path(__file__).resolve()
+frozen_input_paths = [metadata_path, evidence_path, manifest]
+frozen_input_paths += [source / (case_id + suffix) for case_id in case_ids
+                       for suffix in (".json", ".npz")]
+frozen_input_sha256 = {
+    str(path.relative_to(root)): hashlib.sha256(path.read_bytes()).hexdigest()
+    for path in frozen_input_paths
+}
 
 
 # %% 3. 精确重建独立确认观测，并审计每例冻结的 full/null 源估计。
@@ -311,15 +321,12 @@ summary = {
         "ablation_only: the baseline-centered sample covariance has rank at most B-1; "
         "when channels exceed B-1 it is singular and must not be treated as a calibrated Gaussian Z test"),
     "singular_full_covariance_modality_cases": singular_modality_cases,
-    "input_sha256": {
-        "source_metadata": hashlib.sha256(metadata_path.read_bytes()).hexdigest(),
-        "source_evidence": hashlib.sha256(evidence_path.read_bytes()).hexdigest(),
-        "development_manifest": hashlib.sha256(manifest.read_bytes()).hexdigest(),
-    },
+    "input_sha256": frozen_input_sha256,
     "verified_code_sha256": {
         name: hashlib.sha256((root / name).read_bytes()).hexdigest()
         for name in direct_dependencies
     },
+    "analysis_script_sha256": hashlib.sha256(script_path.read_bytes()).hexdigest(),
 }
 
 
@@ -378,15 +385,22 @@ lines += [
     "- studentized 值是经验排序分数，不是Gaussian Z检验，也不能直接解释成p值。", "",
 ]
 
-output.mkdir(parents=True)
-with (output / "scores.csv").open("w", encoding="utf-8-sig", newline="") as stream:
-    writer = csv.DictWriter(stream, fieldnames=rows[0].keys())
-    writer.writeheader()
-    writer.writerows(rows)
-(output / "summary.json").write_text(
-    json.dumps(summary, ensure_ascii=False, indent=2, allow_nan=False) + "\n",
-    encoding="utf-8")
-figure.savefig(output / "score_comparison.png", dpi=220, facecolor="white")
-plt.close(figure)
-(output / "REPORT.md").write_text("\n".join(lines), encoding="utf-8")
+if frozen_input_sha256 != {
+        str(path.relative_to(root)): hashlib.sha256(path.read_bytes()).hexdigest()
+        for path in frozen_input_paths}:
+    raise RuntimeError("评分期间冻结输入发生变化，拒绝写出结果")
+output.parent.mkdir(parents=True, exist_ok=True)
+with tempfile.TemporaryDirectory(prefix=output.name + ".tmp-", dir=output.parent) as temporary_name:
+    temporary = Path(temporary_name)
+    with (temporary / "scores.csv").open("w", encoding="utf-8-sig", newline="") as stream:
+        writer = csv.DictWriter(stream, fieldnames=rows[0].keys())
+        writer.writeheader()
+        writer.writerows(rows)
+    (temporary / "summary.json").write_text(
+        json.dumps(summary, ensure_ascii=False, indent=2, allow_nan=False) + "\n",
+        encoding="utf-8")
+    figure.savefig(temporary / "score_comparison.png", dpi=220, facecolor="white")
+    plt.close(figure)
+    (temporary / "REPORT.md").write_text("\n".join(lines), encoding="utf-8")
+    temporary.rename(output)
 print(json.dumps(summary, ensure_ascii=False, indent=2), flush=True)
