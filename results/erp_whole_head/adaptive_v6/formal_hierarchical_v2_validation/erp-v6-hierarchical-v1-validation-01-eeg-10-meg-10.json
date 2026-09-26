@@ -1,0 +1,69 @@
+{
+  "case_id": "erp-v6-hierarchical-v1-validation-01-eeg-10-meg-10",
+  "stage": "validation",
+  "complete": true,
+  "truth_used_by_decisions": false,
+  "truth_used_only_for_posthoc_metrics": true,
+  "gate_score": -0.013664118005693537,
+  "gate_modality_scores": [
+    -0.016990200821580145,
+    -0.006723445560267678
+  ],
+  "gate_modality_response_excess": [
+    0.0,
+    0.26346865795296304
+  ],
+  "gate_reliability_balance": 0.791471948041966,
+  "gate_reliability_eeg_weight": 0.6978679870104915,
+  "gate_formula": "h_m=g_m/sqrt(1+q_m); b=min(1+q_E,1+q_M)/max(1+q_E,1+q_M); w_E=0.5+0.25*b; score=w_E*h_E+(1-w_E)*h_M",
+  "primary_channel_weights": {
+    "minimum": 1.0,
+    "maximum": 1.0,
+    "semantics": "all whitened EEG/MEG channels equal one only for primary H0/H1 fit and primary held-out gate score"
+  },
+  "deep_channel_weights": {
+    "minimum": 0.8757397293481609,
+    "maximum": 1.0,
+    "semantics": "original training-derived modality evidence weights retained only for deep LOO selection and deep amplitude/refit"
+  },
+  "conditional_surface_channel_weights": {
+    "minimum": 1.0,
+    "maximum": 1.0,
+    "semantics": "frozen W=1 on every whitened channel for conditional-surface train20 and combined40 fits"
+  },
+  "gate_model_convergence": {
+    "null": true,
+    "full": true
+  },
+  "deep_present_decision": false,
+  "selected_family": "H0 combined40 MRF-innovation dipole",
+  "h0_innovation_indices": [
+    6012
+  ],
+  "surface_component_dle_mm": [
+    2.154036214385183
+  ],
+  "surface_patch_support_hits": [
+    3
+  ],
+  "metrics": {
+    "auc": 1.0,
+    "auc_tie_corrected": 1.0,
+    "surface_auc_tie_corrected": 1.0,
+    "deep_auc_tie_corrected": null,
+    "rmse": 0.4870212169197418,
+    "surface_sd_mm": 0.0,
+    "deep_sd_mm": null,
+    "surface_dle_mm": 2.154036214385183,
+    "deep_dle_mm": null,
+    "has_deep_true": 0,
+    "deep_score": 0.0,
+    "deep_peak_distance_mm": null,
+    "deep_detected": 0,
+    "deep_false_positive": 0,
+    "active_count": 3,
+    "surface_active_count": 3,
+    "deep_active_count": 0
+  },
+  "elapsed_seconds": 46.39118419995066
+}

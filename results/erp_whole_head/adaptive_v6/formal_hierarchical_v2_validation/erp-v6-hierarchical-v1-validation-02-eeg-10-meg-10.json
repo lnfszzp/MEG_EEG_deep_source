@@ -1,0 +1,72 @@
+{
+  "case_id": "erp-v6-hierarchical-v1-validation-02-eeg-10-meg-10",
+  "stage": "validation",
+  "complete": true,
+  "truth_used_by_decisions": false,
+  "truth_used_only_for_posthoc_metrics": true,
+  "gate_score": 1.135454990401124e-05,
+  "gate_modality_scores": [
+    1.5682463041018475e-05,
+    4.920359570917932e-06
+  ],
+  "gate_modality_response_excess": [
+    0.2643887035141006,
+    0.11807212935280353
+  ],
+  "gate_reliability_balance": 0.8842788030653539,
+  "gate_reliability_eeg_weight": 0.7210697007663385,
+  "gate_formula": "h_m=g_m/sqrt(1+q_m); b=min(1+q_E,1+q_M)/max(1+q_E,1+q_M); w_E=0.5+0.25*b; score=w_E*h_E+(1-w_E)*h_M",
+  "primary_channel_weights": {
+    "minimum": 1.0,
+    "maximum": 1.0,
+    "semantics": "all whitened EEG/MEG channels equal one only for primary H0/H1 fit and primary held-out gate score"
+  },
+  "deep_channel_weights": {
+    "minimum": 0.536110128383164,
+    "maximum": 1.0,
+    "semantics": "original training-derived modality evidence weights retained only for deep LOO selection and deep amplitude/refit"
+  },
+  "conditional_surface_channel_weights": {
+    "minimum": 1.0,
+    "maximum": 1.0,
+    "semantics": "frozen W=1 on every whitened channel for conditional-surface train20 and combined40 fits"
+  },
+  "gate_model_convergence": {
+    "null": true,
+    "full": true
+  },
+  "deep_present_decision": false,
+  "selected_family": "H0 combined40 MRF-innovation dipole",
+  "h0_innovation_indices": [
+    709,
+    6354
+  ],
+  "surface_component_dle_mm": [
+    4.2838198108697565,
+    10.587369146960281
+  ],
+  "surface_patch_support_hits": [
+    1,
+    0
+  ],
+  "metrics": {
+    "auc": 0.9541872123602892,
+    "auc_tie_corrected": 0.9985744882553281,
+    "surface_auc_tie_corrected": 0.9985714386246403,
+    "deep_auc_tie_corrected": null,
+    "rmse": 1.7374606484224775,
+    "surface_sd_mm": 6.339067809358892,
+    "deep_sd_mm": null,
+    "surface_dle_mm": 7.435594478915019,
+    "deep_dle_mm": null,
+    "has_deep_true": 0,
+    "deep_score": 0.0,
+    "deep_peak_distance_mm": null,
+    "deep_detected": 0,
+    "deep_false_positive": 0,
+    "active_count": 2,
+    "surface_active_count": 2,
+    "deep_active_count": 0
+  },
+  "elapsed_seconds": 26.776271900045685
+}

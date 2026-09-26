@@ -1,0 +1,84 @@
+{
+  "stage": "validation",
+  "complete": true,
+  "case_count": 21,
+  "expected_case_count": 21,
+  "failure_count": 0,
+  "failures": [],
+  "family_error_case_ids": [
+    "erp-v6-hierarchical-v1-validation-13-eeg-10-meg+20",
+    "erp-v6-hierarchical-v1-validation-15-eeg+20-meg-10"
+  ],
+  "minimum_global_An_auc": 0.5172413793103449,
+  "minimum_surface_An_auc": 0.5,
+  "maximum_surface_DLE_mm": 23.27813180746822,
+  "maximum_surface_component_DLE_mm": 23.27813180746822,
+  "maximum_surface_SD_mm": 26.508691638043075,
+  "maximum_deep_peak_distance_mm": 0.0,
+  "h0_deep_false_case_ids": [
+    "erp-v6-hierarchical-v1-validation-15-eeg+20-meg-10"
+  ],
+  "h0_deep_false_count": 1,
+  "h0_deep_false_count_by_snr": {
+    "eeg-10_meg-10": 0,
+    "eeg-10_meg+20": 0,
+    "eeg+20_meg-10": 1
+  },
+  "h1_detected_case_ids": [
+    "erp-v6-hierarchical-v1-validation-04-eeg-10-meg-10",
+    "erp-v6-hierarchical-v1-validation-05-eeg-10-meg-10",
+    "erp-v6-hierarchical-v1-validation-06-eeg-10-meg-10",
+    "erp-v6-hierarchical-v1-validation-11-eeg-10-meg+20",
+    "erp-v6-hierarchical-v1-validation-12-eeg-10-meg+20",
+    "erp-v6-hierarchical-v1-validation-18-eeg+20-meg-10",
+    "erp-v6-hierarchical-v1-validation-19-eeg+20-meg-10",
+    "erp-v6-hierarchical-v1-validation-20-eeg+20-meg-10"
+  ],
+  "h1_detected_count": 8,
+  "h1_case_count": 9,
+  "h1_detected_count_by_snr": {
+    "eeg-10_meg-10": 3,
+    "eeg-10_meg+20": 2,
+    "eeg+20_meg-10": 3
+  },
+  "h1_case_count_by_snr": {
+    "eeg-10_meg-10": 3,
+    "eeg-10_meg+20": 3,
+    "eeg+20_meg-10": 3
+  },
+  "deep_only_surface_false_case_ids": [],
+  "deep_only_surface_false_count": 0,
+  "all_selection_and_final_solvers_converged": true,
+  "supplemental_minimum_requested_parcel_AUC": 0.4622222222222222,
+  "supplemental_exact_patch_miss_case_ids": [
+    "erp-v6-hierarchical-v1-validation-02-eeg-10-meg-10",
+    "erp-v6-hierarchical-v1-validation-03-eeg-10-meg-10",
+    "erp-v6-hierarchical-v1-validation-05-eeg-10-meg-10",
+    "erp-v6-hierarchical-v1-validation-06-eeg-10-meg-10",
+    "erp-v6-hierarchical-v1-validation-08-eeg-10-meg+20",
+    "erp-v6-hierarchical-v1-validation-09-eeg-10-meg+20",
+    "erp-v6-hierarchical-v1-validation-14-eeg+20-meg-10",
+    "erp-v6-hierarchical-v1-validation-17-eeg+20-meg-10"
+  ],
+  "gate_calibration_sha256": "e7dda00bb9a205eae2ea3bca6dd93446e3f440028c4d5464d10ddcb2bbff2bc4",
+  "surface_calibration_sha256": "d01e02558e18952e1bc253e8e0254b3f8047b3924a9de135ff261f29b7eebf8b",
+  "gate_threshold": 0.006348868975392994,
+  "surface_threshold": 0.0,
+  "wall_seconds": 5829.13713280001,
+  "gates": {
+    "complete_finite_metrics": false,
+    "global_An_auc": false,
+    "surface_An_auc": false,
+    "surface_DLE": false,
+    "surface_component_DLE": false,
+    "surface_SD": false,
+    "deep_distance": true,
+    "h0_deep_false_positive_per_snr": false,
+    "h1_case_count": true,
+    "h1_detected_total": true,
+    "h1_detected_per_snr": true,
+    "deep_only_surface_false_positive": true,
+    "all_selection_and_final_solvers_converged": true
+  },
+  "passed": false
+}
