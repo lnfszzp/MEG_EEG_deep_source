@@ -1,0 +1,44 @@
+{
+  "stage": "surface-calibration",
+  "complete": true,
+  "valid": true,
+  "case_count": 57,
+  "finite_score_count": 57,
+  "all_converged": true,
+  "failure_count": 0,
+  "failures": [],
+  "gate_power": {
+    "h1_case_count": 57,
+    "h1_cases_per_snr": 19,
+    "gate_threshold": 0.006348868975392994,
+    "comparison": "strict_greater",
+    "detected_total": 56,
+    "detected_total_min": 52,
+    "detected_by_snr": {
+      "eeg-10_meg-10": 18,
+      "eeg-10_meg+20": 19,
+      "eeg+20_meg-10": 19
+    },
+    "detected_per_snr_min": 17,
+    "pooled_An_auc": 0.9984610649430594,
+    "pooled_An_auc_min": 0.9,
+    "per_snr_An_auc": {
+      "eeg-10_meg-10": 0.9916897506925207,
+      "eeg-10_meg+20": 1.0,
+      "eeg+20_meg-10": 1.0
+    },
+    "per_snr_An_auc_min": 0.9,
+    "gates": {
+      "detected_total": true,
+      "detected_per_snr": true,
+      "pooled_An_auc": true,
+      "per_snr_An_auc": true
+    },
+    "passed": true,
+    "evaluated_after_gate_threshold_frozen": true,
+    "used_to_fit_gate_threshold": false,
+    "validation_opened_on_failure": false,
+    "failure_action": "retire_protocol_without_validation"
+  },
+  "wall_seconds": 7215.895628100028
+}

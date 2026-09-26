@@ -1,0 +1,183 @@
+{
+  "case_id": "erp-v6-hierarchical-v2-surface-calibration-036-eeg-10-meg+20",
+  "stage": "surface-calibration",
+  "complete": true,
+  "truth_used_by_decisions": false,
+  "truth_used_only_for_posthoc_metrics": false,
+  "gate_score": 0.06993567386826276,
+  "gate_modality_scores": [
+    0.01308113430163394,
+    1.013135132320244
+  ],
+  "gate_modality_response_excess": [
+    0.05769462710692963,
+    61.5238359960443
+  ],
+  "gate_reliability_balance": 0.016916662425732275,
+  "gate_reliability_eeg_weight": 0.504229165606433,
+  "gate_formula": "h_m=g_m/sqrt(1+q_m); b=min(1+q_E,1+q_M)/max(1+q_E,1+q_M); w_E=0.5+0.25*b; score=w_E*h_E+(1-w_E)*h_M",
+  "primary_channel_weights": {
+    "minimum": 1.0,
+    "maximum": 1.0,
+    "semantics": "all whitened EEG/MEG channels equal one only for primary H0/H1 fit and primary held-out gate score"
+  },
+  "deep_channel_weights": {
+    "minimum": 0.06848961612528089,
+    "maximum": 1.0,
+    "semantics": "original training-derived modality evidence weights retained only for deep LOO selection and deep amplitude/refit"
+  },
+  "conditional_surface_channel_weights": {
+    "minimum": 1.0,
+    "maximum": 1.0,
+    "semantics": "frozen W=1 on every whitened channel for conditional-surface train20 and combined40 fits"
+  },
+  "gate_model_convergence": {
+    "null": true,
+    "full": true
+  },
+  "deep_present_decision": true,
+  "selected_deep_index": 7499,
+  "amplitude_deep_index": 7499,
+  "deep_loo_candidate_indices": [
+    7499,
+    7502,
+    7507,
+    7508
+  ],
+  "deep_loo_modality_scores": [
+    [
+      0.02503110658301719,
+      4.770076842534268e-07,
+      -2.1499130610964635e-05,
+      4.879906765152266e-05
+    ],
+    [
+      61.29497209631901,
+      0.00013093391908263177,
+      -0.0016536740896458948,
+      0.004684671912048739
+    ]
+  ],
+  "deep_loo_sum_scores": [
+    61.32000320290202,
+    0.0001314109267668852,
+    -0.0016751732202568595,
+    0.004733470979700262
+  ],
+  "secondary_surface_score": 0.0,
+  "secondary_modality_scores": [
+    0.0,
+    0.0
+  ],
+  "surface_selection_solver": {
+    "history": [
+      {
+        "outer": 0,
+        "iterations": 5500,
+        "retries": 2,
+        "converged": true,
+        "primal_relative": 1.0515046213055814,
+        "dual_relative": 0.30983841202077667,
+        "surrogate_reference": 917.1874353235045,
+        "surrogate_objective": 917.1874353235283,
+        "surrogate_roundoff": 2.6068034779982113e-11,
+        "primal_dual_gap": 2.376054908381775e-11,
+        "primal_dual_gap_relative": 2.5905881577451465e-14,
+        "dual_scale": 0.9999999995718832,
+        "dual_candidate": "primal_residual",
+        "source_dual_violation": 0.0,
+        "log_objective": 917.1874353235241,
+        "local_stationarity_gap_relative": 0.07390095600127769,
+        "relative_change": 1.0,
+        "accepted_step": 1.0,
+        "rho": 64.0,
+        "rho_updates": 6,
+        "active_rows": 12
+      },
+      {
+        "outer": 1,
+        "iterations": 25,
+        "retries": 0,
+        "converged": true,
+        "primal_relative": 1.2347606709897203,
+        "dual_relative": 3.056160642118434,
+        "surrogate_reference": 917.1874353235213,
+        "surrogate_objective": 917.1874353235045,
+        "surrogate_roundoff": 2.606803477998259e-11,
+        "primal_dual_gap": 1.727977598875441e-05,
+        "primal_dual_gap_relative": 1.8839961520689168e-08,
+        "dual_scale": 1.0,
+        "dual_candidate": "admm_linear_residual",
+        "source_dual_violation": 0.0,
+        "log_objective": 917.1874353235045,
+        "local_stationarity_gap_relative": 0.0,
+        "relative_change": 1.0261161964910892,
+        "accepted_step": 1.0,
+        "rho": 64.0,
+        "rho_updates": 0,
+        "active_rows": 0
+      },
+      {
+        "outer": 2,
+        "iterations": 25,
+        "retries": 0,
+        "converged": true,
+        "primal_relative": 1.2062641894536577,
+        "dual_relative": 4.163209385215951,
+        "surrogate_reference": 917.1874353235045,
+        "surrogate_objective": 917.1874353235045,
+        "surrogate_roundoff": 2.6068034779982113e-11,
+        "primal_dual_gap": 0.0,
+        "primal_dual_gap_relative": 0.0,
+        "dual_scale": 1.0,
+        "dual_candidate": "primal_residual",
+        "source_dual_violation": 0.0,
+        "log_objective": 917.1874353235045,
+        "local_stationarity_gap_relative": 0.0,
+        "relative_change": 0.0,
+        "accepted_step": 1.0,
+        "rho": 64.0,
+        "rho_updates": 0,
+        "active_rows": 0
+      }
+    ],
+    "converged": true,
+    "inner_converged": true,
+    "final_inner_converged": true,
+    "outer_converged": true,
+    "adaptive_objective": true,
+    "final_stationarity_gap_relative": 0.0,
+    "numerical_stall": false,
+    "descent_guard_triggered": false,
+    "amplitude_epsilon": 1e-12,
+    "edge_epsilon": 1e-12,
+    "amplitude_weight_range": [
+      1.0,
+      1.0
+    ],
+    "amplitude_weight_floor_range": [
+      0.5,
+      0.5
+    ],
+    "amplitude_penalty_model": "per-source linear/log-sum mixture",
+    "edge_weight_floor": 0.5,
+    "edge_penalty_model": "linear/log-sum mixture",
+    "source_penalty_mode": "group",
+    "elementwise_source_count": 0,
+    "ridge_penalty": 0.0,
+    "edge_penalty_mode": "group",
+    "edge_weight_range": [
+      1.0,
+      1.0
+    ],
+    "rho_initial": 1.0,
+    "rho_final": 64.0,
+    "rho_updates": 6,
+    "outer_tolerance": 0.01,
+    "adaptive_rho": true,
+    "rho_adaptation_policy": "first_convex_surrogate_only",
+    "convergence_note": "Feasible primal-dual bound for the current convex MM surrogate; no global-optimality claim for log-sum."
+  },
+  "surface_final_solver": null,
+  "elapsed_seconds": 203.00668360001873
+}

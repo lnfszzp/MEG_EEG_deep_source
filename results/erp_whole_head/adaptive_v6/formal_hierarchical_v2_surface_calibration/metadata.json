@@ -1,0 +1,2316 @@
+{
+  "schema_version": 1,
+  "protocol": "erp-v6-hierarchical-v2-formal-run",
+  "stage": "surface-calibration",
+  "execution_lock": "D:\\博士\\工作＆汇报\\源定位\\新建文件夹\\results\\erp_whole_head\\adaptive_v6\\protocol\\hierarchical_v2_execution_lock.json",
+  "execution_lock_sha256": "55aa87452d472c2d495cf2fe248d8a828dafd72b334721cbf5b7987ca1019593",
+  "manifest": "D:\\博士\\工作＆汇报\\源定位\\新建文件夹\\results\\erp_whole_head\\adaptive_v6\\protocol\\hierarchical_v2_surface_calibration_manifest.json",
+  "manifest_sha256": "3fd0ed0e94e12bbfa20d5bcd4b2e49791d1583f6bd2b6b06757ce8d26fcd6568",
+  "seed_roots": {
+    "check": 2026100204,
+    "fit": 2026100203
+  },
+  "case_ids": [
+    "erp-v6-hierarchical-v2-surface-calibration-000-eeg-10-meg-10",
+    "erp-v6-hierarchical-v2-surface-calibration-001-eeg-10-meg-10",
+    "erp-v6-hierarchical-v2-surface-calibration-002-eeg-10-meg-10",
+    "erp-v6-hierarchical-v2-surface-calibration-003-eeg-10-meg-10",
+    "erp-v6-hierarchical-v2-surface-calibration-004-eeg-10-meg-10",
+    "erp-v6-hierarchical-v2-surface-calibration-005-eeg-10-meg-10",
+    "erp-v6-hierarchical-v2-surface-calibration-006-eeg-10-meg-10",
+    "erp-v6-hierarchical-v2-surface-calibration-007-eeg-10-meg-10",
+    "erp-v6-hierarchical-v2-surface-calibration-008-eeg-10-meg-10",
+    "erp-v6-hierarchical-v2-surface-calibration-009-eeg-10-meg-10",
+    "erp-v6-hierarchical-v2-surface-calibration-010-eeg-10-meg-10",
+    "erp-v6-hierarchical-v2-surface-calibration-011-eeg-10-meg-10",
+    "erp-v6-hierarchical-v2-surface-calibration-012-eeg-10-meg-10",
+    "erp-v6-hierarchical-v2-surface-calibration-013-eeg-10-meg-10",
+    "erp-v6-hierarchical-v2-surface-calibration-014-eeg-10-meg-10",
+    "erp-v6-hierarchical-v2-surface-calibration-015-eeg-10-meg-10",
+    "erp-v6-hierarchical-v2-surface-calibration-016-eeg-10-meg-10",
+    "erp-v6-hierarchical-v2-surface-calibration-017-eeg-10-meg-10",
+    "erp-v6-hierarchical-v2-surface-calibration-018-eeg-10-meg-10",
+    "erp-v6-hierarchical-v2-surface-calibration-019-eeg-10-meg+20",
+    "erp-v6-hierarchical-v2-surface-calibration-020-eeg-10-meg+20",
+    "erp-v6-hierarchical-v2-surface-calibration-021-eeg-10-meg+20",
+    "erp-v6-hierarchical-v2-surface-calibration-022-eeg-10-meg+20",
+    "erp-v6-hierarchical-v2-surface-calibration-023-eeg-10-meg+20",
+    "erp-v6-hierarchical-v2-surface-calibration-024-eeg-10-meg+20",
+    "erp-v6-hierarchical-v2-surface-calibration-025-eeg-10-meg+20",
+    "erp-v6-hierarchical-v2-surface-calibration-026-eeg-10-meg+20",
+    "erp-v6-hierarchical-v2-surface-calibration-027-eeg-10-meg+20",
+    "erp-v6-hierarchical-v2-surface-calibration-028-eeg-10-meg+20",
+    "erp-v6-hierarchical-v2-surface-calibration-029-eeg-10-meg+20",
+    "erp-v6-hierarchical-v2-surface-calibration-030-eeg-10-meg+20",
+    "erp-v6-hierarchical-v2-surface-calibration-031-eeg-10-meg+20",
+    "erp-v6-hierarchical-v2-surface-calibration-032-eeg-10-meg+20",
+    "erp-v6-hierarchical-v2-surface-calibration-033-eeg-10-meg+20",
+    "erp-v6-hierarchical-v2-surface-calibration-034-eeg-10-meg+20",
+    "erp-v6-hierarchical-v2-surface-calibration-035-eeg-10-meg+20",
+    "erp-v6-hierarchical-v2-surface-calibration-036-eeg-10-meg+20",
+    "erp-v6-hierarchical-v2-surface-calibration-037-eeg-10-meg+20",
+    "erp-v6-hierarchical-v2-surface-calibration-038-eeg+20-meg-10",
+    "erp-v6-hierarchical-v2-surface-calibration-039-eeg+20-meg-10",
+    "erp-v6-hierarchical-v2-surface-calibration-040-eeg+20-meg-10",
+    "erp-v6-hierarchical-v2-surface-calibration-041-eeg+20-meg-10",
+    "erp-v6-hierarchical-v2-surface-calibration-042-eeg+20-meg-10",
+    "erp-v6-hierarchical-v2-surface-calibration-043-eeg+20-meg-10",
+    "erp-v6-hierarchical-v2-surface-calibration-044-eeg+20-meg-10",
+    "erp-v6-hierarchical-v2-surface-calibration-045-eeg+20-meg-10",
+    "erp-v6-hierarchical-v2-surface-calibration-046-eeg+20-meg-10",
+    "erp-v6-hierarchical-v2-surface-calibration-047-eeg+20-meg-10",
+    "erp-v6-hierarchical-v2-surface-calibration-048-eeg+20-meg-10",
+    "erp-v6-hierarchical-v2-surface-calibration-049-eeg+20-meg-10",
+    "erp-v6-hierarchical-v2-surface-calibration-050-eeg+20-meg-10",
+    "erp-v6-hierarchical-v2-surface-calibration-051-eeg+20-meg-10",
+    "erp-v6-hierarchical-v2-surface-calibration-052-eeg+20-meg-10",
+    "erp-v6-hierarchical-v2-surface-calibration-053-eeg+20-meg-10",
+    "erp-v6-hierarchical-v2-surface-calibration-054-eeg+20-meg-10",
+    "erp-v6-hierarchical-v2-surface-calibration-055-eeg+20-meg-10",
+    "erp-v6-hierarchical-v2-surface-calibration-056-eeg+20-meg-10"
+  ],
+  "consumed_marker": "D:\\博士\\工作＆汇报\\源定位\\新建文件夹\\results\\erp_whole_head\\adaptive_v6\\protocol\\hierarchical_v2_surface_calibration_manifest_consumed.json",
+  "consumed_marker_sha256": "eb127796e097e3bb505ecd918e9706fe70eec263945ba0dac0a5a0c368cdc222",
+  "code_sha256": {
+    "algorithms/spatial_fused_fusion.py": "68c65de7c6c41628f36f72cb8b9f913ea569aec8ff675109461acdad6353197d",
+    "benchmark/deep_acceptance.py": "6f520b42e241179639f2c9f4ab8d66c67180ed35756ed2197cb27c867d0efcc7",
+    "benchmark/erp_protocol.py": "f74f9b1dd33036105d50d4ccd6242c1a068cb090fe4a234eb7736f8071e16647",
+    "benchmark/erp_replicates.py": "ef5f3c8869dc71800c537940c71f4e67e53cd04906535a5672e3460f8e0b7a39",
+    "benchmark/erp_trial_covariance.py": "818e41cd1e3c75921db386b9858f78e3722551cc9e32ddbd2e88e819b22e7d89",
+    "benchmark/methods.py": "1625c67d91d20112d711a3d77de175ed0509c1acfa45c1561845f6761c307dcf",
+    "benchmark/metrics.py": "f07a42e26dc2118c418744e3a4971c5fcd3037b7b93e26a7e2e4e899400986d8",
+    "benchmark/protocol.py": "26f816e0530cf6f36445b7222fc5db3d0ce216f4ec089f0a2779c65e1c4c8d4a",
+    "candidates/graph_irls.py": "9e6fec79d97e1c331e824fc165b71732e0ed90a1573d0183ea167d5c0cccd760",
+    "candidates/graph_reweight_solver.py": "48042de304322ff6715293d485da09af39d203c799b6ee637918a1f6a5381257",
+    "candidates/oaster_balanced.py": "74a9de1efc6d1e83f522024c9a3440d799fc054be348d91884171a62ddd99e92",
+    "candidates/oaster_predictive.py": "575a660382fa0330720d9e1d3bcd253f08a3727c4358b7d919a67e33812f1775",
+    "metrics/user_metrics/An_auc.py": "7a4f59da932648851e3a0bc1f28101c79d616ac0d99bf37925b57473bd767194",
+    "metrics/user_metrics/An_roc.py": "182e82076715a1b0ccefa72c0360a8f43a98b70d85fbf24fe0e0592b267bf673",
+    "metrics/user_metrics/DLE_an.py": "c63752183cb8ffd144ea1a12d786cb049ecde3baf11116193a7f4f5eacefa669",
+    "metrics/user_metrics/SD.py": "dacd584ed3fd74a0af9b3b123489448853c2ecb190de28cc8b9bfd1e4714ff93",
+    "metrics/user_metrics/_common.py": "e50de172818c087108a2f06303e5f0302ac4d9d4167eff153a84b0a6142b9379",
+    "protected_multilayer.py": "bf35006d1945dc96ac7fc13edf4149e0d4f8520dbe6825730c40ab38697521c8",
+    "run_erp_whole_head_matrix.py": "bb4ac256f7b48aeb7a948c2bf175df282f9839d149211944c4d9c2b8b5077d17",
+    "run_strict_oaster.py": "9a63e37a0b32265732e03f24751191e8734df4be2585fb8dec7e30a1d0195e47",
+    "作者风格版/70-v2盲可靠性融合开发.py": "7671d7e1f81580fe5dec2fa94f6ce56ca1adb4e97f269328a9d0ab5a1784ae26",
+    "作者风格版/71-层级盲定位v2正式清单.py": "4fda4363198f3d7bf67e142ec99dcb2967b0b94b7a4cff309121f5caa259e3f4",
+    "作者风格版/72-层级盲定位v2正式运行.py": "5dbaad7ce3534e08599346326c9cd7984e4f784141deaced4648b74bc44e5e62",
+    "作者风格版/73-冻结层级盲定位v2执行锁.py": "746365eff4569a96bc125fd19bdf815e6830fe047844f55a5817bc66c6f8bfc3"
+  },
+  "shared_fingerprint": "a97e6991fde1cedfac66857d5c07683c43af62f16ad19bfa31ea7199a9083556",
+  "environment": {
+    "python": "3.13.15",
+    "numpy": "2.5.2",
+    "scipy": "1.18.1",
+    "mne": "1.12.1",
+    "OMP_NUM_THREADS": "1",
+    "MKL_NUM_THREADS": "1",
+    "OPENBLAS_NUM_THREADS": "1",
+    "python_debug": true
+  },
+  "covariance": "trial",
+  "solver_settings": {
+    "deep_reweight_floor": 0.5,
+    "edge_weight_floor": 0.5,
+    "epsilon_fraction": 0.05,
+    "max_inner_retries": 20,
+    "mrf_strength": 0.8,
+    "outer_iterations": 80,
+    "outer_tolerance": 0.01,
+    "solver_kind": "admm",
+    "surface_reweight_floor": 0.5,
+    "tolerance": 0.001
+  },
+  "gate_score_kind": "snr_blind_adaptive_reliability_p1",
+  "gate_formula": "h_m=g_m/sqrt(1+q_m); b=min(1+q_E,1+q_M)/max(1+q_E,1+q_M); w_E=0.5+0.25*b; score=w_E*h_E+(1-w_E)*h_M",
+  "primary_channel_weights": "all whitened channels exactly one for primary H0/H1 fit and score",
+  "deep_channel_weights": "training-derived modality evidence weights for deep LOO and amplitude",
+  "conditional_surface_channel_weights": "all whitened channels exactly one for train20 and combined40 frozen surface fits",
+  "gate_power_predeclaration": {
+    "auc_metric": "metrics/user_metrics/An_auc.py",
+    "detected_per_snr_min": 17,
+    "detected_total_min": 52,
+    "evaluated_after_gate_threshold_frozen": true,
+    "failure_action": "retire_protocol_without_validation",
+    "h1_case_count": 57,
+    "h1_cases_per_snr": 19,
+    "h1_source": "57 pure-deep surface-calibration cases",
+    "per_snr_gate_auc_min": 0.9,
+    "pooled_gate_auc_min": 0.9,
+    "used_to_fit_gate_threshold": false,
+    "validation_opened_on_failure": false
+  },
+  "gate_calibration": {
+    "payload": {
+      "all_converged": true,
+      "case_count": 57,
+      "case_ids": [
+        "erp-v6-hierarchical-v2-gate-calibration-000-eeg-10-meg-10",
+        "erp-v6-hierarchical-v2-gate-calibration-001-eeg-10-meg-10",
+        "erp-v6-hierarchical-v2-gate-calibration-002-eeg-10-meg-10",
+        "erp-v6-hierarchical-v2-gate-calibration-003-eeg-10-meg-10",
+        "erp-v6-hierarchical-v2-gate-calibration-004-eeg-10-meg-10",
+        "erp-v6-hierarchical-v2-gate-calibration-005-eeg-10-meg-10",
+        "erp-v6-hierarchical-v2-gate-calibration-006-eeg-10-meg-10",
+        "erp-v6-hierarchical-v2-gate-calibration-007-eeg-10-meg-10",
+        "erp-v6-hierarchical-v2-gate-calibration-008-eeg-10-meg-10",
+        "erp-v6-hierarchical-v2-gate-calibration-009-eeg-10-meg-10",
+        "erp-v6-hierarchical-v2-gate-calibration-010-eeg-10-meg-10",
+        "erp-v6-hierarchical-v2-gate-calibration-011-eeg-10-meg-10",
+        "erp-v6-hierarchical-v2-gate-calibration-012-eeg-10-meg-10",
+        "erp-v6-hierarchical-v2-gate-calibration-013-eeg-10-meg-10",
+        "erp-v6-hierarchical-v2-gate-calibration-014-eeg-10-meg-10",
+        "erp-v6-hierarchical-v2-gate-calibration-015-eeg-10-meg-10",
+        "erp-v6-hierarchical-v2-gate-calibration-016-eeg-10-meg-10",
+        "erp-v6-hierarchical-v2-gate-calibration-017-eeg-10-meg-10",
+        "erp-v6-hierarchical-v2-gate-calibration-018-eeg-10-meg-10",
+        "erp-v6-hierarchical-v2-gate-calibration-019-eeg-10-meg+20",
+        "erp-v6-hierarchical-v2-gate-calibration-020-eeg-10-meg+20",
+        "erp-v6-hierarchical-v2-gate-calibration-021-eeg-10-meg+20",
+        "erp-v6-hierarchical-v2-gate-calibration-022-eeg-10-meg+20",
+        "erp-v6-hierarchical-v2-gate-calibration-023-eeg-10-meg+20",
+        "erp-v6-hierarchical-v2-gate-calibration-024-eeg-10-meg+20",
+        "erp-v6-hierarchical-v2-gate-calibration-025-eeg-10-meg+20",
+        "erp-v6-hierarchical-v2-gate-calibration-026-eeg-10-meg+20",
+        "erp-v6-hierarchical-v2-gate-calibration-027-eeg-10-meg+20",
+        "erp-v6-hierarchical-v2-gate-calibration-028-eeg-10-meg+20",
+        "erp-v6-hierarchical-v2-gate-calibration-029-eeg-10-meg+20",
+        "erp-v6-hierarchical-v2-gate-calibration-030-eeg-10-meg+20",
+        "erp-v6-hierarchical-v2-gate-calibration-031-eeg-10-meg+20",
+        "erp-v6-hierarchical-v2-gate-calibration-032-eeg-10-meg+20",
+        "erp-v6-hierarchical-v2-gate-calibration-033-eeg-10-meg+20",
+        "erp-v6-hierarchical-v2-gate-calibration-034-eeg-10-meg+20",
+        "erp-v6-hierarchical-v2-gate-calibration-035-eeg-10-meg+20",
+        "erp-v6-hierarchical-v2-gate-calibration-036-eeg-10-meg+20",
+        "erp-v6-hierarchical-v2-gate-calibration-037-eeg-10-meg+20",
+        "erp-v6-hierarchical-v2-gate-calibration-038-eeg+20-meg-10",
+        "erp-v6-hierarchical-v2-gate-calibration-039-eeg+20-meg-10",
+        "erp-v6-hierarchical-v2-gate-calibration-040-eeg+20-meg-10",
+        "erp-v6-hierarchical-v2-gate-calibration-041-eeg+20-meg-10",
+        "erp-v6-hierarchical-v2-gate-calibration-042-eeg+20-meg-10",
+        "erp-v6-hierarchical-v2-gate-calibration-043-eeg+20-meg-10",
+        "erp-v6-hierarchical-v2-gate-calibration-044-eeg+20-meg-10",
+        "erp-v6-hierarchical-v2-gate-calibration-045-eeg+20-meg-10",
+        "erp-v6-hierarchical-v2-gate-calibration-046-eeg+20-meg-10",
+        "erp-v6-hierarchical-v2-gate-calibration-047-eeg+20-meg-10",
+        "erp-v6-hierarchical-v2-gate-calibration-048-eeg+20-meg-10",
+        "erp-v6-hierarchical-v2-gate-calibration-049-eeg+20-meg-10",
+        "erp-v6-hierarchical-v2-gate-calibration-050-eeg+20-meg-10",
+        "erp-v6-hierarchical-v2-gate-calibration-051-eeg+20-meg-10",
+        "erp-v6-hierarchical-v2-gate-calibration-052-eeg+20-meg-10",
+        "erp-v6-hierarchical-v2-gate-calibration-053-eeg+20-meg-10",
+        "erp-v6-hierarchical-v2-gate-calibration-054-eeg+20-meg-10",
+        "erp-v6-hierarchical-v2-gate-calibration-055-eeg+20-meg-10",
+        "erp-v6-hierarchical-v2-gate-calibration-056-eeg+20-meg-10"
+      ],
+      "code_sha256": {
+        "algorithms/spatial_fused_fusion.py": "68c65de7c6c41628f36f72cb8b9f913ea569aec8ff675109461acdad6353197d",
+        "benchmark/deep_acceptance.py": "6f520b42e241179639f2c9f4ab8d66c67180ed35756ed2197cb27c867d0efcc7",
+        "benchmark/erp_protocol.py": "f74f9b1dd33036105d50d4ccd6242c1a068cb090fe4a234eb7736f8071e16647",
+        "benchmark/erp_replicates.py": "ef5f3c8869dc71800c537940c71f4e67e53cd04906535a5672e3460f8e0b7a39",
+        "benchmark/erp_trial_covariance.py": "818e41cd1e3c75921db386b9858f78e3722551cc9e32ddbd2e88e819b22e7d89",
+        "benchmark/methods.py": "1625c67d91d20112d711a3d77de175ed0509c1acfa45c1561845f6761c307dcf",
+        "benchmark/metrics.py": "f07a42e26dc2118c418744e3a4971c5fcd3037b7b93e26a7e2e4e899400986d8",
+        "benchmark/protocol.py": "26f816e0530cf6f36445b7222fc5db3d0ce216f4ec089f0a2779c65e1c4c8d4a",
+        "candidates/graph_irls.py": "9e6fec79d97e1c331e824fc165b71732e0ed90a1573d0183ea167d5c0cccd760",
+        "candidates/graph_reweight_solver.py": "48042de304322ff6715293d485da09af39d203c799b6ee637918a1f6a5381257",
+        "candidates/oaster_balanced.py": "74a9de1efc6d1e83f522024c9a3440d799fc054be348d91884171a62ddd99e92",
+        "candidates/oaster_predictive.py": "575a660382fa0330720d9e1d3bcd253f08a3727c4358b7d919a67e33812f1775",
+        "metrics/user_metrics/An_auc.py": "7a4f59da932648851e3a0bc1f28101c79d616ac0d99bf37925b57473bd767194",
+        "metrics/user_metrics/An_roc.py": "182e82076715a1b0ccefa72c0360a8f43a98b70d85fbf24fe0e0592b267bf673",
+        "metrics/user_metrics/DLE_an.py": "c63752183cb8ffd144ea1a12d786cb049ecde3baf11116193a7f4f5eacefa669",
+        "metrics/user_metrics/SD.py": "dacd584ed3fd74a0af9b3b123489448853c2ecb190de28cc8b9bfd1e4714ff93",
+        "metrics/user_metrics/_common.py": "e50de172818c087108a2f06303e5f0302ac4d9d4167eff153a84b0a6142b9379",
+        "protected_multilayer.py": "bf35006d1945dc96ac7fc13edf4149e0d4f8520dbe6825730c40ab38697521c8",
+        "run_erp_whole_head_matrix.py": "bb4ac256f7b48aeb7a948c2bf175df282f9839d149211944c4d9c2b8b5077d17",
+        "run_strict_oaster.py": "9a63e37a0b32265732e03f24751191e8734df4be2585fb8dec7e30a1d0195e47",
+        "作者风格版/70-v2盲可靠性融合开发.py": "7671d7e1f81580fe5dec2fa94f6ce56ca1adb4e97f269328a9d0ab5a1784ae26",
+        "作者风格版/71-层级盲定位v2正式清单.py": "4fda4363198f3d7bf67e142ec99dcb2967b0b94b7a4cff309121f5caa259e3f4",
+        "作者风格版/72-层级盲定位v2正式运行.py": "5dbaad7ce3534e08599346326c9cd7984e4f784141deaced4648b74bc44e5e62",
+        "作者风格版/73-冻结层级盲定位v2执行锁.py": "746365eff4569a96bc125fd19bdf815e6830fe047844f55a5817bc66c6f8bfc3"
+      },
+      "comparison": "strict_greater",
+      "complete": true,
+      "conditional_surface_channel_weights": "all whitened channels exactly one for train20 and combined40 frozen surface fits",
+      "consumed_marker": "D:\\博士\\工作＆汇报\\源定位\\新建文件夹\\results\\erp_whole_head\\adaptive_v6\\protocol\\hierarchical_v2_gate_calibration_manifest_consumed.json",
+      "consumed_marker_sha256": "dbc6ab2843c2e71e5d2136a4a7fe0dce6a2b2975257f50e5a7740a57494591ae",
+      "covariance": "trial",
+      "deep_channel_weights": "training-derived modality evidence weights for deep LOO and amplitude",
+      "environment": {
+        "MKL_NUM_THREADS": "1",
+        "OMP_NUM_THREADS": "1",
+        "OPENBLAS_NUM_THREADS": "1",
+        "mne": "1.12.1",
+        "numpy": "2.5.2",
+        "python": "3.13.15",
+        "python_debug": true,
+        "scipy": "1.18.1"
+      },
+      "execution_lock": "D:\\博士\\工作＆汇报\\源定位\\新建文件夹\\results\\erp_whole_head\\adaptive_v6\\protocol\\hierarchical_v2_execution_lock.json",
+      "execution_lock_sha256": "55aa87452d472c2d495cf2fe248d8a828dafd72b334721cbf5b7987ca1019593",
+      "failure_count": 0,
+      "failures": [],
+      "finite_score_count": 57,
+      "gate_calibration": null,
+      "gate_formula": "h_m=g_m/sqrt(1+q_m); b=min(1+q_E,1+q_M)/max(1+q_E,1+q_M); w_E=0.5+0.25*b; score=w_E*h_E+(1-w_E)*h_M",
+      "gate_power": null,
+      "gate_power_predeclaration": {
+        "auc_metric": "metrics/user_metrics/An_auc.py",
+        "detected_per_snr_min": 17,
+        "detected_total_min": 52,
+        "evaluated_after_gate_threshold_frozen": true,
+        "failure_action": "retire_protocol_without_validation",
+        "h1_case_count": 57,
+        "h1_cases_per_snr": 19,
+        "h1_source": "57 pure-deep surface-calibration cases",
+        "per_snr_gate_auc_min": 0.9,
+        "pooled_gate_auc_min": 0.9,
+        "used_to_fit_gate_threshold": false,
+        "validation_opened_on_failure": false
+      },
+      "gate_score_kind": "snr_blind_adaptive_reliability_p1",
+      "gate_threshold": null,
+      "interrupted_prefix_recovery": null,
+      "manifest": "D:\\博士\\工作＆汇报\\源定位\\新建文件夹\\results\\erp_whole_head\\adaptive_v6\\protocol\\hierarchical_v2_gate_calibration_manifest.json",
+      "manifest_sha256": "bafbd6453a98f42f1fca9a3b853cec998e3dae8756a1b8863e92d4df30550c85",
+      "primary_channel_weights": "all whitened channels exactly one for primary H0/H1 fit and score",
+      "protocol": "erp-v6-hierarchical-v2-formal-run",
+      "resumed": false,
+      "resumed_prefix_case_count": 0,
+      "schema_version": 1,
+      "scores": [
+        0.009308981609493885,
+        -0.007873177197344863,
+        -0.004709512281203681,
+        4.9123907496130296e-05,
+        -0.010541883407183726,
+        -4.037178944897601e-05,
+        -0.04610764193303662,
+        7.390659382531148e-06,
+        -0.028400614736610607,
+        8.483282606892251e-07,
+        -0.01888352517983569,
+        -0.025175355509389652,
+        -0.008248624207576515,
+        -5.068147412916636e-05,
+        -0.0025337777793756682,
+        -0.007636572178812289,
+        1.327670170446896e-05,
+        -0.000325126911415102,
+        -0.014442483341268011,
+        -0.030208873822108406,
+        -0.0044803423483188035,
+        -0.005561881189946866,
+        -0.018710509610243304,
+        -0.00038635035837215285,
+        -0.0038821746178836145,
+        -0.005015424727956534,
+        -0.002042864980299827,
+        -0.03607210178240377,
+        -0.003489313524355462,
+        -0.0002469823244803781,
+        -0.02950871218231238,
+        -0.008819526137345535,
+        0.006348868975392994,
+        -0.0052583115002892596,
+        0.0006226032761469272,
+        -0.0035832302685474353,
+        -0.001422148905745823,
+        -0.07094547901547732,
+        -0.005473133710843611,
+        0.0010604880101447234,
+        -0.00481225043944215,
+        -0.000391241987459413,
+        -0.0011843415630834707,
+        -0.0031299569824451735,
+        -0.05307395088386709,
+        -0.006075643376684816,
+        0.0056105075436230735,
+        -0.0026602908984646534,
+        -0.0015140829060373642,
+        -0.024232730984333588,
+        -0.02482748078373461,
+        -0.012566273553725558,
+        -0.002214564491844474,
+        -0.005144654892940635,
+        0.00020929838556187102,
+        8.767250417962844e-05,
+        -0.016662351808567042
+      ],
+      "seed_roots": {
+        "check": 2026100202,
+        "fit": 2026100201
+      },
+      "shared_fingerprint": "a97e6991fde1cedfac66857d5c07683c43af62f16ad19bfa31ea7199a9083556",
+      "solver_settings": {
+        "deep_reweight_floor": 0.5,
+        "edge_weight_floor": 0.5,
+        "epsilon_fraction": 0.05,
+        "max_inner_retries": 20,
+        "mrf_strength": 0.8,
+        "outer_iterations": 80,
+        "outer_tolerance": 0.01,
+        "solver_kind": "admm",
+        "surface_reweight_floor": 0.5,
+        "tolerance": 0.001
+      },
+      "stage": "gate-calibration",
+      "surface_calibration": null,
+      "surface_threshold": null,
+      "threshold": 0.006348868975392994,
+      "threshold_construction": "max(0, second-largest of 57 pure-surface scores)",
+      "truth_access": "metrics only after the blind final estimate is frozen",
+      "valid": true,
+      "wall_seconds": 10102.15565749997
+    },
+    "path": "D:\\博士\\工作＆汇报\\源定位\\新建文件夹\\results\\erp_whole_head\\adaptive_v6\\formal_hierarchical_v2_gate_calibration\\frozen_gate_calibration.json",
+    "sha256": "e7dda00bb9a205eae2ea3bca6dd93446e3f440028c4d5464d10ddcb2bbff2bc4",
+    "seal_path": "D:\\博士\\工作＆汇报\\源定位\\新建文件夹\\results\\erp_whole_head\\adaptive_v6\\formal_hierarchical_v2_gate_calibration\\calibration_seal.json",
+    "seal_sha256": "7acf46f498aa0f7e3388ac8d4ebf42f548a631052ce40ffab6952ac4e5ed742b",
+    "threshold": 0.006348868975392994,
+    "cases": [
+      {
+        "case_id": "erp-v6-hierarchical-v2-gate-calibration-000-eeg-10-meg-10",
+        "case_number": 0,
+        "component_balance_revision": "formal_hierarchical_v2_gate_calibration",
+        "configuration_id": "erp-v6-hierarchical-v2-gate-geometry-00",
+        "configuration_kind": "single_surface",
+        "configuration_number": 0,
+        "correlation": 0.0,
+        "deep_index": null,
+        "deep_local": null,
+        "deep_surface_ratio": null,
+        "eeg_snr_db": -10,
+        "location": null,
+        "meg_snr_db": -10,
+        "pair_index": 0,
+        "panel": "erp_v6_hierarchical_v2_gate_calibration",
+        "replica_seed_roots": {
+          "check": 2026100202,
+          "fit": 2026100201
+        },
+        "replicate": 0,
+        "scenario": "surface_only",
+        "scenario_code": 0,
+        "seed": [
+          2026100201,
+          0,
+          0
+        ],
+        "snr_db": -10,
+        "surface_centers": [
+          5159
+        ]
+      },
+      {
+        "case_id": "erp-v6-hierarchical-v2-gate-calibration-001-eeg-10-meg-10",
+        "case_number": 1,
+        "component_balance_revision": "formal_hierarchical_v2_gate_calibration",
+        "configuration_id": "erp-v6-hierarchical-v2-gate-geometry-01",
+        "configuration_kind": "two_surface_only",
+        "configuration_number": 1,
+        "correlation": 0.0,
+        "deep_index": null,
+        "deep_local": null,
+        "deep_surface_ratio": null,
+        "eeg_snr_db": -10,
+        "location": null,
+        "meg_snr_db": -10,
+        "pair_index": 0,
+        "panel": "erp_v6_hierarchical_v2_gate_calibration",
+        "replica_seed_roots": {
+          "check": 2026100202,
+          "fit": 2026100201
+        },
+        "replicate": 0,
+        "scenario": "surface_only",
+        "scenario_code": 0,
+        "seed": [
+          2026100201,
+          0,
+          1
+        ],
+        "snr_db": -10,
+        "surface_centers": [
+          108,
+          3511
+        ],
+        "surface_component_sensor_balance": true
+      },
+      {
+        "case_id": "erp-v6-hierarchical-v2-gate-calibration-002-eeg-10-meg-10",
+        "case_number": 2,
+        "component_balance_revision": "formal_hierarchical_v2_gate_calibration",
+        "configuration_id": "erp-v6-hierarchical-v2-gate-geometry-02",
+        "configuration_kind": "single_surface",
+        "configuration_number": 2,
+        "correlation": 0.0,
+        "deep_index": null,
+        "deep_local": null,
+        "deep_surface_ratio": null,
+        "eeg_snr_db": -10,
+        "location": null,
+        "meg_snr_db": -10,
+        "pair_index": 0,
+        "panel": "erp_v6_hierarchical_v2_gate_calibration",
+        "replica_seed_roots": {
+          "check": 2026100202,
+          "fit": 2026100201
+        },
+        "replicate": 0,
+        "scenario": "surface_only",
+        "scenario_code": 0,
+        "seed": [
+          2026100201,
+          0,
+          2
+        ],
+        "snr_db": -10,
+        "surface_centers": [
+          2554
+        ]
+      },
+      {
+        "case_id": "erp-v6-hierarchical-v2-gate-calibration-003-eeg-10-meg-10",
+        "case_number": 3,
+        "component_balance_revision": "formal_hierarchical_v2_gate_calibration",
+        "configuration_id": "erp-v6-hierarchical-v2-gate-geometry-03",
+        "configuration_kind": "two_surface_only",
+        "configuration_number": 3,
+        "correlation": 0.5,
+        "deep_index": null,
+        "deep_local": null,
+        "deep_surface_ratio": null,
+        "eeg_snr_db": -10,
+        "location": null,
+        "meg_snr_db": -10,
+        "pair_index": 0,
+        "panel": "erp_v6_hierarchical_v2_gate_calibration",
+        "replica_seed_roots": {
+          "check": 2026100202,
+          "fit": 2026100201
+        },
+        "replicate": 0,
+        "scenario": "surface_only",
+        "scenario_code": 0,
+        "seed": [
+          2026100201,
+          0,
+          3
+        ],
+        "snr_db": -10,
+        "surface_centers": [
+          3032,
+          5003
+        ],
+        "surface_component_sensor_balance": true
+      },
+      {
+        "case_id": "erp-v6-hierarchical-v2-gate-calibration-004-eeg-10-meg-10",
+        "case_number": 4,
+        "component_balance_revision": "formal_hierarchical_v2_gate_calibration",
+        "configuration_id": "erp-v6-hierarchical-v2-gate-geometry-04",
+        "configuration_kind": "single_surface",
+        "configuration_number": 4,
+        "correlation": 0.0,
+        "deep_index": null,
+        "deep_local": null,
+        "deep_surface_ratio": null,
+        "eeg_snr_db": -10,
+        "location": null,
+        "meg_snr_db": -10,
+        "pair_index": 0,
+        "panel": "erp_v6_hierarchical_v2_gate_calibration",
+        "replica_seed_roots": {
+          "check": 2026100202,
+          "fit": 2026100201
+        },
+        "replicate": 0,
+        "scenario": "surface_only",
+        "scenario_code": 0,
+        "seed": [
+          2026100201,
+          0,
+          4
+        ],
+        "snr_db": -10,
+        "surface_centers": [
+          981
+        ]
+      },
+      {
+        "case_id": "erp-v6-hierarchical-v2-gate-calibration-005-eeg-10-meg-10",
+        "case_number": 5,
+        "component_balance_revision": "formal_hierarchical_v2_gate_calibration",
+        "configuration_id": "erp-v6-hierarchical-v2-gate-geometry-05",
+        "configuration_kind": "two_surface_only",
+        "configuration_number": 5,
+        "correlation": 0.0,
+        "deep_index": null,
+        "deep_local": null,
+        "deep_surface_ratio": null,
+        "eeg_snr_db": -10,
+        "location": null,
+        "meg_snr_db": -10,
+        "pair_index": 0,
+        "panel": "erp_v6_hierarchical_v2_gate_calibration",
+        "replica_seed_roots": {
+          "check": 2026100202,
+          "fit": 2026100201
+        },
+        "replicate": 0,
+        "scenario": "surface_only",
+        "scenario_code": 0,
+        "seed": [
+          2026100201,
+          0,
+          5
+        ],
+        "snr_db": -10,
+        "surface_centers": [
+          681,
+          3449
+        ],
+        "surface_component_sensor_balance": true
+      },
+      {
+        "case_id": "erp-v6-hierarchical-v2-gate-calibration-006-eeg-10-meg-10",
+        "case_number": 6,
+        "component_balance_revision": "formal_hierarchical_v2_gate_calibration",
+        "configuration_id": "erp-v6-hierarchical-v2-gate-geometry-06",
+        "configuration_kind": "two_surface_only",
+        "configuration_number": 6,
+        "correlation": 0.5,
+        "deep_index": null,
+        "deep_local": null,
+        "deep_surface_ratio": null,
+        "eeg_snr_db": -10,
+        "location": null,
+        "meg_snr_db": -10,
+        "pair_index": 0,
+        "panel": "erp_v6_hierarchical_v2_gate_calibration",
+        "replica_seed_roots": {
+          "check": 2026100202,
+          "fit": 2026100201
+        },
+        "replicate": 0,
+        "scenario": "surface_only",
+        "scenario_code": 0,
+        "seed": [
+          2026100201,
+          0,
+          6
+        ],
+        "snr_db": -10,
+        "surface_centers": [
+          3074,
+          4527
+        ],
+        "surface_component_sensor_balance": true
+      },
+      {
+        "case_id": "erp-v6-hierarchical-v2-gate-calibration-007-eeg-10-meg-10",
+        "case_number": 7,
+        "component_balance_revision": "formal_hierarchical_v2_gate_calibration",
+        "configuration_id": "erp-v6-hierarchical-v2-gate-geometry-07",
+        "configuration_kind": "single_surface",
+        "configuration_number": 7,
+        "correlation": 0.0,
+        "deep_index": null,
+        "deep_local": null,
+        "deep_surface_ratio": null,
+        "eeg_snr_db": -10,
+        "location": null,
+        "meg_snr_db": -10,
+        "pair_index": 0,
+        "panel": "erp_v6_hierarchical_v2_gate_calibration",
+        "replica_seed_roots": {
+          "check": 2026100202,
+          "fit": 2026100201
+        },
+        "replicate": 0,
+        "scenario": "surface_only",
+        "scenario_code": 0,
+        "seed": [
+          2026100201,
+          0,
+          7
+        ],
+        "snr_db": -10,
+        "surface_centers": [
+          5806
+        ]
+      },
+      {
+        "case_id": "erp-v6-hierarchical-v2-gate-calibration-008-eeg-10-meg-10",
+        "case_number": 8,
+        "component_balance_revision": "formal_hierarchical_v2_gate_calibration",
+        "configuration_id": "erp-v6-hierarchical-v2-gate-geometry-08",
+        "configuration_kind": "single_surface",
+        "configuration_number": 8,
+        "correlation": 0.0,
+        "deep_index": null,
+        "deep_local": null,
+        "deep_surface_ratio": null,
+        "eeg_snr_db": -10,
+        "location": null,
+        "meg_snr_db": -10,
+        "pair_index": 0,
+        "panel": "erp_v6_hierarchical_v2_gate_calibration",
+        "replica_seed_roots": {
+          "check": 2026100202,
+          "fit": 2026100201
+        },
+        "replicate": 0,
+        "scenario": "surface_only",
+        "scenario_code": 0,
+        "seed": [
+          2026100201,
+          0,
+          8
+        ],
+        "snr_db": -10,
+        "surface_centers": [
+          2849
+        ]
+      },
+      {
+        "case_id": "erp-v6-hierarchical-v2-gate-calibration-009-eeg-10-meg-10",
+        "case_number": 9,
+        "component_balance_revision": "formal_hierarchical_v2_gate_calibration",
+        "configuration_id": "erp-v6-hierarchical-v2-gate-geometry-09",
+        "configuration_kind": "single_surface",
+        "configuration_number": 9,
+        "correlation": 0.0,
+        "deep_index": null,
+        "deep_local": null,
+        "deep_surface_ratio": null,
+        "eeg_snr_db": -10,
+        "location": null,
+        "meg_snr_db": -10,
+        "pair_index": 0,
+        "panel": "erp_v6_hierarchical_v2_gate_calibration",
+        "replica_seed_roots": {
+          "check": 2026100202,
+          "fit": 2026100201
+        },
+        "replicate": 0,
+        "scenario": "surface_only",
+        "scenario_code": 0,
+        "seed": [
+          2026100201,
+          0,
+          9
+        ],
+        "snr_db": -10,
+        "surface_centers": [
+          2380
+        ]
+      },
+      {
+        "case_id": "erp-v6-hierarchical-v2-gate-calibration-010-eeg-10-meg-10",
+        "case_number": 10,
+        "component_balance_revision": "formal_hierarchical_v2_gate_calibration",
+        "configuration_id": "erp-v6-hierarchical-v2-gate-geometry-10",
+        "configuration_kind": "two_surface_only",
+        "configuration_number": 10,
+        "correlation": 0.0,
+        "deep_index": null,
+        "deep_local": null,
+        "deep_surface_ratio": null,
+        "eeg_snr_db": -10,
+        "location": null,
+        "meg_snr_db": -10,
+        "pair_index": 0,
+        "panel": "erp_v6_hierarchical_v2_gate_calibration",
+        "replica_seed_roots": {
+          "check": 2026100202,
+          "fit": 2026100201
+        },
+        "replicate": 0,
+        "scenario": "surface_only",
+        "scenario_code": 0,
+        "seed": [
+          2026100201,
+          0,
+          10
+        ],
+        "snr_db": -10,
+        "surface_centers": [
+          2456,
+          5027
+        ],
+        "surface_component_sensor_balance": true
+      },
+      {
+        "case_id": "erp-v6-hierarchical-v2-gate-calibration-011-eeg-10-meg-10",
+        "case_number": 11,
+        "component_balance_revision": "formal_hierarchical_v2_gate_calibration",
+        "configuration_id": "erp-v6-hierarchical-v2-gate-geometry-11",
+        "configuration_kind": "single_surface",
+        "configuration_number": 11,
+        "correlation": 0.0,
+        "deep_index": null,
+        "deep_local": null,
+        "deep_surface_ratio": null,
+        "eeg_snr_db": -10,
+        "location": null,
+        "meg_snr_db": -10,
+        "pair_index": 0,
+        "panel": "erp_v6_hierarchical_v2_gate_calibration",
+        "replica_seed_roots": {
+          "check": 2026100202,
+          "fit": 2026100201
+        },
+        "replicate": 0,
+        "scenario": "surface_only",
+        "scenario_code": 0,
+        "seed": [
+          2026100201,
+          0,
+          11
+        ],
+        "snr_db": -10,
+        "surface_centers": [
+          5736
+        ]
+      },
+      {
+        "case_id": "erp-v6-hierarchical-v2-gate-calibration-012-eeg-10-meg-10",
+        "case_number": 12,
+        "component_balance_revision": "formal_hierarchical_v2_gate_calibration",
+        "configuration_id": "erp-v6-hierarchical-v2-gate-geometry-12",
+        "configuration_kind": "single_surface",
+        "configuration_number": 12,
+        "correlation": 0.0,
+        "deep_index": null,
+        "deep_local": null,
+        "deep_surface_ratio": null,
+        "eeg_snr_db": -10,
+        "location": null,
+        "meg_snr_db": -10,
+        "pair_index": 0,
+        "panel": "erp_v6_hierarchical_v2_gate_calibration",
+        "replica_seed_roots": {
+          "check": 2026100202,
+          "fit": 2026100201
+        },
+        "replicate": 0,
+        "scenario": "surface_only",
+        "scenario_code": 0,
+        "seed": [
+          2026100201,
+          0,
+          12
+        ],
+        "snr_db": -10,
+        "surface_centers": [
+          5145
+        ]
+      },
+      {
+        "case_id": "erp-v6-hierarchical-v2-gate-calibration-013-eeg-10-meg-10",
+        "case_number": 13,
+        "component_balance_revision": "formal_hierarchical_v2_gate_calibration",
+        "configuration_id": "erp-v6-hierarchical-v2-gate-geometry-13",
+        "configuration_kind": "two_surface_only",
+        "configuration_number": 13,
+        "correlation": 0.5,
+        "deep_index": null,
+        "deep_local": null,
+        "deep_surface_ratio": null,
+        "eeg_snr_db": -10,
+        "location": null,
+        "meg_snr_db": -10,
+        "pair_index": 0,
+        "panel": "erp_v6_hierarchical_v2_gate_calibration",
+        "replica_seed_roots": {
+          "check": 2026100202,
+          "fit": 2026100201
+        },
+        "replicate": 0,
+        "scenario": "surface_only",
+        "scenario_code": 0,
+        "seed": [
+          2026100201,
+          0,
+          13
+        ],
+        "snr_db": -10,
+        "surface_centers": [
+          548,
+          3507
+        ],
+        "surface_component_sensor_balance": true
+      },
+      {
+        "case_id": "erp-v6-hierarchical-v2-gate-calibration-014-eeg-10-meg-10",
+        "case_number": 14,
+        "component_balance_revision": "formal_hierarchical_v2_gate_calibration",
+        "configuration_id": "erp-v6-hierarchical-v2-gate-geometry-14",
+        "configuration_kind": "two_surface_only",
+        "configuration_number": 14,
+        "correlation": 0.0,
+        "deep_index": null,
+        "deep_local": null,
+        "deep_surface_ratio": null,
+        "eeg_snr_db": -10,
+        "location": null,
+        "meg_snr_db": -10,
+        "pair_index": 0,
+        "panel": "erp_v6_hierarchical_v2_gate_calibration",
+        "replica_seed_roots": {
+          "check": 2026100202,
+          "fit": 2026100201
+        },
+        "replicate": 0,
+        "scenario": "surface_only",
+        "scenario_code": 0,
+        "seed": [
+          2026100201,
+          0,
+          14
+        ],
+        "snr_db": -10,
+        "surface_centers": [
+          3974,
+          6438
+        ],
+        "surface_component_sensor_balance": true
+      },
+      {
+        "case_id": "erp-v6-hierarchical-v2-gate-calibration-015-eeg-10-meg-10",
+        "case_number": 15,
+        "component_balance_revision": "formal_hierarchical_v2_gate_calibration",
+        "configuration_id": "erp-v6-hierarchical-v2-gate-geometry-15",
+        "configuration_kind": "two_surface_only",
+        "configuration_number": 15,
+        "correlation": 0.5,
+        "deep_index": null,
+        "deep_local": null,
+        "deep_surface_ratio": null,
+        "eeg_snr_db": -10,
+        "location": null,
+        "meg_snr_db": -10,
+        "pair_index": 0,
+        "panel": "erp_v6_hierarchical_v2_gate_calibration",
+        "replica_seed_roots": {
+          "check": 2026100202,
+          "fit": 2026100201
+        },
+        "replicate": 0,
+        "scenario": "surface_only",
+        "scenario_code": 0,
+        "seed": [
+          2026100201,
+          0,
+          15
+        ],
+        "snr_db": -10,
+        "surface_centers": [
+          3773,
+          6083
+        ],
+        "surface_component_sensor_balance": true
+      },
+      {
+        "case_id": "erp-v6-hierarchical-v2-gate-calibration-016-eeg-10-meg-10",
+        "case_number": 16,
+        "component_balance_revision": "formal_hierarchical_v2_gate_calibration",
+        "configuration_id": "erp-v6-hierarchical-v2-gate-geometry-16",
+        "configuration_kind": "single_surface",
+        "configuration_number": 16,
+        "correlation": 0.0,
+        "deep_index": null,
+        "deep_local": null,
+        "deep_surface_ratio": null,
+        "eeg_snr_db": -10,
+        "location": null,
+        "meg_snr_db": -10,
+        "pair_index": 0,
+        "panel": "erp_v6_hierarchical_v2_gate_calibration",
+        "replica_seed_roots": {
+          "check": 2026100202,
+          "fit": 2026100201
+        },
+        "replicate": 0,
+        "scenario": "surface_only",
+        "scenario_code": 0,
+        "seed": [
+          2026100201,
+          0,
+          16
+        ],
+        "snr_db": -10,
+        "surface_centers": [
+          2951
+        ]
+      },
+      {
+        "case_id": "erp-v6-hierarchical-v2-gate-calibration-017-eeg-10-meg-10",
+        "case_number": 17,
+        "component_balance_revision": "formal_hierarchical_v2_gate_calibration",
+        "configuration_id": "erp-v6-hierarchical-v2-gate-geometry-17",
+        "configuration_kind": "single_surface",
+        "configuration_number": 17,
+        "correlation": 0.0,
+        "deep_index": null,
+        "deep_local": null,
+        "deep_surface_ratio": null,
+        "eeg_snr_db": -10,
+        "location": null,
+        "meg_snr_db": -10,
+        "pair_index": 0,
+        "panel": "erp_v6_hierarchical_v2_gate_calibration",
+        "replica_seed_roots": {
+          "check": 2026100202,
+          "fit": 2026100201
+        },
+        "replicate": 0,
+        "scenario": "surface_only",
+        "scenario_code": 0,
+        "seed": [
+          2026100201,
+          0,
+          17
+        ],
+        "snr_db": -10,
+        "surface_centers": [
+          642
+        ]
+      },
+      {
+        "case_id": "erp-v6-hierarchical-v2-gate-calibration-018-eeg-10-meg-10",
+        "case_number": 18,
+        "component_balance_revision": "formal_hierarchical_v2_gate_calibration",
+        "configuration_id": "erp-v6-hierarchical-v2-gate-geometry-18",
+        "configuration_kind": "two_surface_only",
+        "configuration_number": 18,
+        "correlation": 0.0,
+        "deep_index": null,
+        "deep_local": null,
+        "deep_surface_ratio": null,
+        "eeg_snr_db": -10,
+        "location": null,
+        "meg_snr_db": -10,
+        "pair_index": 0,
+        "panel": "erp_v6_hierarchical_v2_gate_calibration",
+        "replica_seed_roots": {
+          "check": 2026100202,
+          "fit": 2026100201
+        },
+        "replicate": 0,
+        "scenario": "surface_only",
+        "scenario_code": 0,
+        "seed": [
+          2026100201,
+          0,
+          18
+        ],
+        "snr_db": -10,
+        "surface_centers": [
+          3739,
+          7193
+        ],
+        "surface_component_sensor_balance": true
+      },
+      {
+        "case_id": "erp-v6-hierarchical-v2-gate-calibration-019-eeg-10-meg+20",
+        "case_number": 19,
+        "component_balance_revision": "formal_hierarchical_v2_gate_calibration",
+        "configuration_id": "erp-v6-hierarchical-v2-gate-geometry-00",
+        "configuration_kind": "single_surface",
+        "configuration_number": 0,
+        "correlation": 0.0,
+        "deep_index": null,
+        "deep_local": null,
+        "deep_surface_ratio": null,
+        "eeg_snr_db": -10,
+        "location": null,
+        "meg_snr_db": 20,
+        "pair_index": 1,
+        "panel": "erp_v6_hierarchical_v2_gate_calibration",
+        "replica_seed_roots": {
+          "check": 2026100202,
+          "fit": 2026100201
+        },
+        "replicate": 0,
+        "scenario": "surface_only",
+        "scenario_code": 0,
+        "seed": [
+          2026100201,
+          1,
+          0
+        ],
+        "snr_db": -10,
+        "surface_centers": [
+          5159
+        ]
+      },
+      {
+        "case_id": "erp-v6-hierarchical-v2-gate-calibration-020-eeg-10-meg+20",
+        "case_number": 20,
+        "component_balance_revision": "formal_hierarchical_v2_gate_calibration",
+        "configuration_id": "erp-v6-hierarchical-v2-gate-geometry-01",
+        "configuration_kind": "two_surface_only",
+        "configuration_number": 1,
+        "correlation": 0.0,
+        "deep_index": null,
+        "deep_local": null,
+        "deep_surface_ratio": null,
+        "eeg_snr_db": -10,
+        "location": null,
+        "meg_snr_db": 20,
+        "pair_index": 1,
+        "panel": "erp_v6_hierarchical_v2_gate_calibration",
+        "replica_seed_roots": {
+          "check": 2026100202,
+          "fit": 2026100201
+        },
+        "replicate": 0,
+        "scenario": "surface_only",
+        "scenario_code": 0,
+        "seed": [
+          2026100201,
+          1,
+          1
+        ],
+        "snr_db": -10,
+        "surface_centers": [
+          108,
+          3511
+        ],
+        "surface_component_sensor_balance": true
+      },
+      {
+        "case_id": "erp-v6-hierarchical-v2-gate-calibration-021-eeg-10-meg+20",
+        "case_number": 21,
+        "component_balance_revision": "formal_hierarchical_v2_gate_calibration",
+        "configuration_id": "erp-v6-hierarchical-v2-gate-geometry-02",
+        "configuration_kind": "single_surface",
+        "configuration_number": 2,
+        "correlation": 0.0,
+        "deep_index": null,
+        "deep_local": null,
+        "deep_surface_ratio": null,
+        "eeg_snr_db": -10,
+        "location": null,
+        "meg_snr_db": 20,
+        "pair_index": 1,
+        "panel": "erp_v6_hierarchical_v2_gate_calibration",
+        "replica_seed_roots": {
+          "check": 2026100202,
+          "fit": 2026100201
+        },
+        "replicate": 0,
+        "scenario": "surface_only",
+        "scenario_code": 0,
+        "seed": [
+          2026100201,
+          1,
+          2
+        ],
+        "snr_db": -10,
+        "surface_centers": [
+          2554
+        ]
+      },
+      {
+        "case_id": "erp-v6-hierarchical-v2-gate-calibration-022-eeg-10-meg+20",
+        "case_number": 22,
+        "component_balance_revision": "formal_hierarchical_v2_gate_calibration",
+        "configuration_id": "erp-v6-hierarchical-v2-gate-geometry-03",
+        "configuration_kind": "two_surface_only",
+        "configuration_number": 3,
+        "correlation": 0.5,
+        "deep_index": null,
+        "deep_local": null,
+        "deep_surface_ratio": null,
+        "eeg_snr_db": -10,
+        "location": null,
+        "meg_snr_db": 20,
+        "pair_index": 1,
+        "panel": "erp_v6_hierarchical_v2_gate_calibration",
+        "replica_seed_roots": {
+          "check": 2026100202,
+          "fit": 2026100201
+        },
+        "replicate": 0,
+        "scenario": "surface_only",
+        "scenario_code": 0,
+        "seed": [
+          2026100201,
+          1,
+          3
+        ],
+        "snr_db": -10,
+        "surface_centers": [
+          3032,
+          5003
+        ],
+        "surface_component_sensor_balance": true
+      },
+      {
+        "case_id": "erp-v6-hierarchical-v2-gate-calibration-023-eeg-10-meg+20",
+        "case_number": 23,
+        "component_balance_revision": "formal_hierarchical_v2_gate_calibration",
+        "configuration_id": "erp-v6-hierarchical-v2-gate-geometry-04",
+        "configuration_kind": "single_surface",
+        "configuration_number": 4,
+        "correlation": 0.0,
+        "deep_index": null,
+        "deep_local": null,
+        "deep_surface_ratio": null,
+        "eeg_snr_db": -10,
+        "location": null,
+        "meg_snr_db": 20,
+        "pair_index": 1,
+        "panel": "erp_v6_hierarchical_v2_gate_calibration",
+        "replica_seed_roots": {
+          "check": 2026100202,
+          "fit": 2026100201
+        },
+        "replicate": 0,
+        "scenario": "surface_only",
+        "scenario_code": 0,
+        "seed": [
+          2026100201,
+          1,
+          4
+        ],
+        "snr_db": -10,
+        "surface_centers": [
+          981
+        ]
+      },
+      {
+        "case_id": "erp-v6-hierarchical-v2-gate-calibration-024-eeg-10-meg+20",
+        "case_number": 24,
+        "component_balance_revision": "formal_hierarchical_v2_gate_calibration",
+        "configuration_id": "erp-v6-hierarchical-v2-gate-geometry-05",
+        "configuration_kind": "two_surface_only",
+        "configuration_number": 5,
+        "correlation": 0.0,
+        "deep_index": null,
+        "deep_local": null,
+        "deep_surface_ratio": null,
+        "eeg_snr_db": -10,
+        "location": null,
+        "meg_snr_db": 20,
+        "pair_index": 1,
+        "panel": "erp_v6_hierarchical_v2_gate_calibration",
+        "replica_seed_roots": {
+          "check": 2026100202,
+          "fit": 2026100201
+        },
+        "replicate": 0,
+        "scenario": "surface_only",
+        "scenario_code": 0,
+        "seed": [
+          2026100201,
+          1,
+          5
+        ],
+        "snr_db": -10,
+        "surface_centers": [
+          681,
+          3449
+        ],
+        "surface_component_sensor_balance": true
+      },
+      {
+        "case_id": "erp-v6-hierarchical-v2-gate-calibration-025-eeg-10-meg+20",
+        "case_number": 25,
+        "component_balance_revision": "formal_hierarchical_v2_gate_calibration",
+        "configuration_id": "erp-v6-hierarchical-v2-gate-geometry-06",
+        "configuration_kind": "two_surface_only",
+        "configuration_number": 6,
+        "correlation": 0.5,
+        "deep_index": null,
+        "deep_local": null,
+        "deep_surface_ratio": null,
+        "eeg_snr_db": -10,
+        "location": null,
+        "meg_snr_db": 20,
+        "pair_index": 1,
+        "panel": "erp_v6_hierarchical_v2_gate_calibration",
+        "replica_seed_roots": {
+          "check": 2026100202,
+          "fit": 2026100201
+        },
+        "replicate": 0,
+        "scenario": "surface_only",
+        "scenario_code": 0,
+        "seed": [
+          2026100201,
+          1,
+          6
+        ],
+        "snr_db": -10,
+        "surface_centers": [
+          3074,
+          4527
+        ],
+        "surface_component_sensor_balance": true
+      },
+      {
+        "case_id": "erp-v6-hierarchical-v2-gate-calibration-026-eeg-10-meg+20",
+        "case_number": 26,
+        "component_balance_revision": "formal_hierarchical_v2_gate_calibration",
+        "configuration_id": "erp-v6-hierarchical-v2-gate-geometry-07",
+        "configuration_kind": "single_surface",
+        "configuration_number": 7,
+        "correlation": 0.0,
+        "deep_index": null,
+        "deep_local": null,
+        "deep_surface_ratio": null,
+        "eeg_snr_db": -10,
+        "location": null,
+        "meg_snr_db": 20,
+        "pair_index": 1,
+        "panel": "erp_v6_hierarchical_v2_gate_calibration",
+        "replica_seed_roots": {
+          "check": 2026100202,
+          "fit": 2026100201
+        },
+        "replicate": 0,
+        "scenario": "surface_only",
+        "scenario_code": 0,
+        "seed": [
+          2026100201,
+          1,
+          7
+        ],
+        "snr_db": -10,
+        "surface_centers": [
+          5806
+        ]
+      },
+      {
+        "case_id": "erp-v6-hierarchical-v2-gate-calibration-027-eeg-10-meg+20",
+        "case_number": 27,
+        "component_balance_revision": "formal_hierarchical_v2_gate_calibration",
+        "configuration_id": "erp-v6-hierarchical-v2-gate-geometry-08",
+        "configuration_kind": "single_surface",
+        "configuration_number": 8,
+        "correlation": 0.0,
+        "deep_index": null,
+        "deep_local": null,
+        "deep_surface_ratio": null,
+        "eeg_snr_db": -10,
+        "location": null,
+        "meg_snr_db": 20,
+        "pair_index": 1,
+        "panel": "erp_v6_hierarchical_v2_gate_calibration",
+        "replica_seed_roots": {
+          "check": 2026100202,
+          "fit": 2026100201
+        },
+        "replicate": 0,
+        "scenario": "surface_only",
+        "scenario_code": 0,
+        "seed": [
+          2026100201,
+          1,
+          8
+        ],
+        "snr_db": -10,
+        "surface_centers": [
+          2849
+        ]
+      },
+      {
+        "case_id": "erp-v6-hierarchical-v2-gate-calibration-028-eeg-10-meg+20",
+        "case_number": 28,
+        "component_balance_revision": "formal_hierarchical_v2_gate_calibration",
+        "configuration_id": "erp-v6-hierarchical-v2-gate-geometry-09",
+        "configuration_kind": "single_surface",
+        "configuration_number": 9,
+        "correlation": 0.0,
+        "deep_index": null,
+        "deep_local": null,
+        "deep_surface_ratio": null,
+        "eeg_snr_db": -10,
+        "location": null,
+        "meg_snr_db": 20,
+        "pair_index": 1,
+        "panel": "erp_v6_hierarchical_v2_gate_calibration",
+        "replica_seed_roots": {
+          "check": 2026100202,
+          "fit": 2026100201
+        },
+        "replicate": 0,
+        "scenario": "surface_only",
+        "scenario_code": 0,
+        "seed": [
+          2026100201,
+          1,
+          9
+        ],
+        "snr_db": -10,
+        "surface_centers": [
+          2380
+        ]
+      },
+      {
+        "case_id": "erp-v6-hierarchical-v2-gate-calibration-029-eeg-10-meg+20",
+        "case_number": 29,
+        "component_balance_revision": "formal_hierarchical_v2_gate_calibration",
+        "configuration_id": "erp-v6-hierarchical-v2-gate-geometry-10",
+        "configuration_kind": "two_surface_only",
+        "configuration_number": 10,
+        "correlation": 0.0,
+        "deep_index": null,
+        "deep_local": null,
+        "deep_surface_ratio": null,
+        "eeg_snr_db": -10,
+        "location": null,
+        "meg_snr_db": 20,
+        "pair_index": 1,
+        "panel": "erp_v6_hierarchical_v2_gate_calibration",
+        "replica_seed_roots": {
+          "check": 2026100202,
+          "fit": 2026100201
+        },
+        "replicate": 0,
+        "scenario": "surface_only",
+        "scenario_code": 0,
+        "seed": [
+          2026100201,
+          1,
+          10
+        ],
+        "snr_db": -10,
+        "surface_centers": [
+          2456,
+          5027
+        ],
+        "surface_component_sensor_balance": true
+      },
+      {
+        "case_id": "erp-v6-hierarchical-v2-gate-calibration-030-eeg-10-meg+20",
+        "case_number": 30,
+        "component_balance_revision": "formal_hierarchical_v2_gate_calibration",
+        "configuration_id": "erp-v6-hierarchical-v2-gate-geometry-11",
+        "configuration_kind": "single_surface",
+        "configuration_number": 11,
+        "correlation": 0.0,
+        "deep_index": null,
+        "deep_local": null,
+        "deep_surface_ratio": null,
+        "eeg_snr_db": -10,
+        "location": null,
+        "meg_snr_db": 20,
+        "pair_index": 1,
+        "panel": "erp_v6_hierarchical_v2_gate_calibration",
+        "replica_seed_roots": {
+          "check": 2026100202,
+          "fit": 2026100201
+        },
+        "replicate": 0,
+        "scenario": "surface_only",
+        "scenario_code": 0,
+        "seed": [
+          2026100201,
+          1,
+          11
+        ],
+        "snr_db": -10,
+        "surface_centers": [
+          5736
+        ]
+      },
+      {
+        "case_id": "erp-v6-hierarchical-v2-gate-calibration-031-eeg-10-meg+20",
+        "case_number": 31,
+        "component_balance_revision": "formal_hierarchical_v2_gate_calibration",
+        "configuration_id": "erp-v6-hierarchical-v2-gate-geometry-12",
+        "configuration_kind": "single_surface",
+        "configuration_number": 12,
+        "correlation": 0.0,
+        "deep_index": null,
+        "deep_local": null,
+        "deep_surface_ratio": null,
+        "eeg_snr_db": -10,
+        "location": null,
+        "meg_snr_db": 20,
+        "pair_index": 1,
+        "panel": "erp_v6_hierarchical_v2_gate_calibration",
+        "replica_seed_roots": {
+          "check": 2026100202,
+          "fit": 2026100201
+        },
+        "replicate": 0,
+        "scenario": "surface_only",
+        "scenario_code": 0,
+        "seed": [
+          2026100201,
+          1,
+          12
+        ],
+        "snr_db": -10,
+        "surface_centers": [
+          5145
+        ]
+      },
+      {
+        "case_id": "erp-v6-hierarchical-v2-gate-calibration-032-eeg-10-meg+20",
+        "case_number": 32,
+        "component_balance_revision": "formal_hierarchical_v2_gate_calibration",
+        "configuration_id": "erp-v6-hierarchical-v2-gate-geometry-13",
+        "configuration_kind": "two_surface_only",
+        "configuration_number": 13,
+        "correlation": 0.5,
+        "deep_index": null,
+        "deep_local": null,
+        "deep_surface_ratio": null,
+        "eeg_snr_db": -10,
+        "location": null,
+        "meg_snr_db": 20,
+        "pair_index": 1,
+        "panel": "erp_v6_hierarchical_v2_gate_calibration",
+        "replica_seed_roots": {
+          "check": 2026100202,
+          "fit": 2026100201
+        },
+        "replicate": 0,
+        "scenario": "surface_only",
+        "scenario_code": 0,
+        "seed": [
+          2026100201,
+          1,
+          13
+        ],
+        "snr_db": -10,
+        "surface_centers": [
+          548,
+          3507
+        ],
+        "surface_component_sensor_balance": true
+      },
+      {
+        "case_id": "erp-v6-hierarchical-v2-gate-calibration-033-eeg-10-meg+20",
+        "case_number": 33,
+        "component_balance_revision": "formal_hierarchical_v2_gate_calibration",
+        "configuration_id": "erp-v6-hierarchical-v2-gate-geometry-14",
+        "configuration_kind": "two_surface_only",
+        "configuration_number": 14,
+        "correlation": 0.0,
+        "deep_index": null,
+        "deep_local": null,
+        "deep_surface_ratio": null,
+        "eeg_snr_db": -10,
+        "location": null,
+        "meg_snr_db": 20,
+        "pair_index": 1,
+        "panel": "erp_v6_hierarchical_v2_gate_calibration",
+        "replica_seed_roots": {
+          "check": 2026100202,
+          "fit": 2026100201
+        },
+        "replicate": 0,
+        "scenario": "surface_only",
+        "scenario_code": 0,
+        "seed": [
+          2026100201,
+          1,
+          14
+        ],
+        "snr_db": -10,
+        "surface_centers": [
+          3974,
+          6438
+        ],
+        "surface_component_sensor_balance": true
+      },
+      {
+        "case_id": "erp-v6-hierarchical-v2-gate-calibration-034-eeg-10-meg+20",
+        "case_number": 34,
+        "component_balance_revision": "formal_hierarchical_v2_gate_calibration",
+        "configuration_id": "erp-v6-hierarchical-v2-gate-geometry-15",
+        "configuration_kind": "two_surface_only",
+        "configuration_number": 15,
+        "correlation": 0.5,
+        "deep_index": null,
+        "deep_local": null,
+        "deep_surface_ratio": null,
+        "eeg_snr_db": -10,
+        "location": null,
+        "meg_snr_db": 20,
+        "pair_index": 1,
+        "panel": "erp_v6_hierarchical_v2_gate_calibration",
+        "replica_seed_roots": {
+          "check": 2026100202,
+          "fit": 2026100201
+        },
+        "replicate": 0,
+        "scenario": "surface_only",
+        "scenario_code": 0,
+        "seed": [
+          2026100201,
+          1,
+          15
+        ],
+        "snr_db": -10,
+        "surface_centers": [
+          3773,
+          6083
+        ],
+        "surface_component_sensor_balance": true
+      },
+      {
+        "case_id": "erp-v6-hierarchical-v2-gate-calibration-035-eeg-10-meg+20",
+        "case_number": 35,
+        "component_balance_revision": "formal_hierarchical_v2_gate_calibration",
+        "configuration_id": "erp-v6-hierarchical-v2-gate-geometry-16",
+        "configuration_kind": "single_surface",
+        "configuration_number": 16,
+        "correlation": 0.0,
+        "deep_index": null,
+        "deep_local": null,
+        "deep_surface_ratio": null,
+        "eeg_snr_db": -10,
+        "location": null,
+        "meg_snr_db": 20,
+        "pair_index": 1,
+        "panel": "erp_v6_hierarchical_v2_gate_calibration",
+        "replica_seed_roots": {
+          "check": 2026100202,
+          "fit": 2026100201
+        },
+        "replicate": 0,
+        "scenario": "surface_only",
+        "scenario_code": 0,
+        "seed": [
+          2026100201,
+          1,
+          16
+        ],
+        "snr_db": -10,
+        "surface_centers": [
+          2951
+        ]
+      },
+      {
+        "case_id": "erp-v6-hierarchical-v2-gate-calibration-036-eeg-10-meg+20",
+        "case_number": 36,
+        "component_balance_revision": "formal_hierarchical_v2_gate_calibration",
+        "configuration_id": "erp-v6-hierarchical-v2-gate-geometry-17",
+        "configuration_kind": "single_surface",
+        "configuration_number": 17,
+        "correlation": 0.0,
+        "deep_index": null,
+        "deep_local": null,
+        "deep_surface_ratio": null,
+        "eeg_snr_db": -10,
+        "location": null,
+        "meg_snr_db": 20,
+        "pair_index": 1,
+        "panel": "erp_v6_hierarchical_v2_gate_calibration",
+        "replica_seed_roots": {
+          "check": 2026100202,
+          "fit": 2026100201
+        },
+        "replicate": 0,
+        "scenario": "surface_only",
+        "scenario_code": 0,
+        "seed": [
+          2026100201,
+          1,
+          17
+        ],
+        "snr_db": -10,
+        "surface_centers": [
+          642
+        ]
+      },
+      {
+        "case_id": "erp-v6-hierarchical-v2-gate-calibration-037-eeg-10-meg+20",
+        "case_number": 37,
+        "component_balance_revision": "formal_hierarchical_v2_gate_calibration",
+        "configuration_id": "erp-v6-hierarchical-v2-gate-geometry-18",
+        "configuration_kind": "two_surface_only",
+        "configuration_number": 18,
+        "correlation": 0.0,
+        "deep_index": null,
+        "deep_local": null,
+        "deep_surface_ratio": null,
+        "eeg_snr_db": -10,
+        "location": null,
+        "meg_snr_db": 20,
+        "pair_index": 1,
+        "panel": "erp_v6_hierarchical_v2_gate_calibration",
+        "replica_seed_roots": {
+          "check": 2026100202,
+          "fit": 2026100201
+        },
+        "replicate": 0,
+        "scenario": "surface_only",
+        "scenario_code": 0,
+        "seed": [
+          2026100201,
+          1,
+          18
+        ],
+        "snr_db": -10,
+        "surface_centers": [
+          3739,
+          7193
+        ],
+        "surface_component_sensor_balance": true
+      },
+      {
+        "case_id": "erp-v6-hierarchical-v2-gate-calibration-038-eeg+20-meg-10",
+        "case_number": 38,
+        "component_balance_revision": "formal_hierarchical_v2_gate_calibration",
+        "configuration_id": "erp-v6-hierarchical-v2-gate-geometry-00",
+        "configuration_kind": "single_surface",
+        "configuration_number": 0,
+        "correlation": 0.0,
+        "deep_index": null,
+        "deep_local": null,
+        "deep_surface_ratio": null,
+        "eeg_snr_db": 20,
+        "location": null,
+        "meg_snr_db": -10,
+        "pair_index": 2,
+        "panel": "erp_v6_hierarchical_v2_gate_calibration",
+        "replica_seed_roots": {
+          "check": 2026100202,
+          "fit": 2026100201
+        },
+        "replicate": 0,
+        "scenario": "surface_only",
+        "scenario_code": 0,
+        "seed": [
+          2026100201,
+          2,
+          0
+        ],
+        "snr_db": 20,
+        "surface_centers": [
+          5159
+        ]
+      },
+      {
+        "case_id": "erp-v6-hierarchical-v2-gate-calibration-039-eeg+20-meg-10",
+        "case_number": 39,
+        "component_balance_revision": "formal_hierarchical_v2_gate_calibration",
+        "configuration_id": "erp-v6-hierarchical-v2-gate-geometry-01",
+        "configuration_kind": "two_surface_only",
+        "configuration_number": 1,
+        "correlation": 0.0,
+        "deep_index": null,
+        "deep_local": null,
+        "deep_surface_ratio": null,
+        "eeg_snr_db": 20,
+        "location": null,
+        "meg_snr_db": -10,
+        "pair_index": 2,
+        "panel": "erp_v6_hierarchical_v2_gate_calibration",
+        "replica_seed_roots": {
+          "check": 2026100202,
+          "fit": 2026100201
+        },
+        "replicate": 0,
+        "scenario": "surface_only",
+        "scenario_code": 0,
+        "seed": [
+          2026100201,
+          2,
+          1
+        ],
+        "snr_db": 20,
+        "surface_centers": [
+          108,
+          3511
+        ],
+        "surface_component_sensor_balance": true
+      },
+      {
+        "case_id": "erp-v6-hierarchical-v2-gate-calibration-040-eeg+20-meg-10",
+        "case_number": 40,
+        "component_balance_revision": "formal_hierarchical_v2_gate_calibration",
+        "configuration_id": "erp-v6-hierarchical-v2-gate-geometry-02",
+        "configuration_kind": "single_surface",
+        "configuration_number": 2,
+        "correlation": 0.0,
+        "deep_index": null,
+        "deep_local": null,
+        "deep_surface_ratio": null,
+        "eeg_snr_db": 20,
+        "location": null,
+        "meg_snr_db": -10,
+        "pair_index": 2,
+        "panel": "erp_v6_hierarchical_v2_gate_calibration",
+        "replica_seed_roots": {
+          "check": 2026100202,
+          "fit": 2026100201
+        },
+        "replicate": 0,
+        "scenario": "surface_only",
+        "scenario_code": 0,
+        "seed": [
+          2026100201,
+          2,
+          2
+        ],
+        "snr_db": 20,
+        "surface_centers": [
+          2554
+        ]
+      },
+      {
+        "case_id": "erp-v6-hierarchical-v2-gate-calibration-041-eeg+20-meg-10",
+        "case_number": 41,
+        "component_balance_revision": "formal_hierarchical_v2_gate_calibration",
+        "configuration_id": "erp-v6-hierarchical-v2-gate-geometry-03",
+        "configuration_kind": "two_surface_only",
+        "configuration_number": 3,
+        "correlation": 0.5,
+        "deep_index": null,
+        "deep_local": null,
+        "deep_surface_ratio": null,
+        "eeg_snr_db": 20,
+        "location": null,
+        "meg_snr_db": -10,
+        "pair_index": 2,
+        "panel": "erp_v6_hierarchical_v2_gate_calibration",
+        "replica_seed_roots": {
+          "check": 2026100202,
+          "fit": 2026100201
+        },
+        "replicate": 0,
+        "scenario": "surface_only",
+        "scenario_code": 0,
+        "seed": [
+          2026100201,
+          2,
+          3
+        ],
+        "snr_db": 20,
+        "surface_centers": [
+          3032,
+          5003
+        ],
+        "surface_component_sensor_balance": true
+      },
+      {
+        "case_id": "erp-v6-hierarchical-v2-gate-calibration-042-eeg+20-meg-10",
+        "case_number": 42,
+        "component_balance_revision": "formal_hierarchical_v2_gate_calibration",
+        "configuration_id": "erp-v6-hierarchical-v2-gate-geometry-04",
+        "configuration_kind": "single_surface",
+        "configuration_number": 4,
+        "correlation": 0.0,
+        "deep_index": null,
+        "deep_local": null,
+        "deep_surface_ratio": null,
+        "eeg_snr_db": 20,
+        "location": null,
+        "meg_snr_db": -10,
+        "pair_index": 2,
+        "panel": "erp_v6_hierarchical_v2_gate_calibration",
+        "replica_seed_roots": {
+          "check": 2026100202,
+          "fit": 2026100201
+        },
+        "replicate": 0,
+        "scenario": "surface_only",
+        "scenario_code": 0,
+        "seed": [
+          2026100201,
+          2,
+          4
+        ],
+        "snr_db": 20,
+        "surface_centers": [
+          981
+        ]
+      },
+      {
+        "case_id": "erp-v6-hierarchical-v2-gate-calibration-043-eeg+20-meg-10",
+        "case_number": 43,
+        "component_balance_revision": "formal_hierarchical_v2_gate_calibration",
+        "configuration_id": "erp-v6-hierarchical-v2-gate-geometry-05",
+        "configuration_kind": "two_surface_only",
+        "configuration_number": 5,
+        "correlation": 0.0,
+        "deep_index": null,
+        "deep_local": null,
+        "deep_surface_ratio": null,
+        "eeg_snr_db": 20,
+        "location": null,
+        "meg_snr_db": -10,
+        "pair_index": 2,
+        "panel": "erp_v6_hierarchical_v2_gate_calibration",
+        "replica_seed_roots": {
+          "check": 2026100202,
+          "fit": 2026100201
+        },
+        "replicate": 0,
+        "scenario": "surface_only",
+        "scenario_code": 0,
+        "seed": [
+          2026100201,
+          2,
+          5
+        ],
+        "snr_db": 20,
+        "surface_centers": [
+          681,
+          3449
+        ],
+        "surface_component_sensor_balance": true
+      },
+      {
+        "case_id": "erp-v6-hierarchical-v2-gate-calibration-044-eeg+20-meg-10",
+        "case_number": 44,
+        "component_balance_revision": "formal_hierarchical_v2_gate_calibration",
+        "configuration_id": "erp-v6-hierarchical-v2-gate-geometry-06",
+        "configuration_kind": "two_surface_only",
+        "configuration_number": 6,
+        "correlation": 0.5,
+        "deep_index": null,
+        "deep_local": null,
+        "deep_surface_ratio": null,
+        "eeg_snr_db": 20,
+        "location": null,
+        "meg_snr_db": -10,
+        "pair_index": 2,
+        "panel": "erp_v6_hierarchical_v2_gate_calibration",
+        "replica_seed_roots": {
+          "check": 2026100202,
+          "fit": 2026100201
+        },
+        "replicate": 0,
+        "scenario": "surface_only",
+        "scenario_code": 0,
+        "seed": [
+          2026100201,
+          2,
+          6
+        ],
+        "snr_db": 20,
+        "surface_centers": [
+          3074,
+          4527
+        ],
+        "surface_component_sensor_balance": true
+      },
+      {
+        "case_id": "erp-v6-hierarchical-v2-gate-calibration-045-eeg+20-meg-10",
+        "case_number": 45,
+        "component_balance_revision": "formal_hierarchical_v2_gate_calibration",
+        "configuration_id": "erp-v6-hierarchical-v2-gate-geometry-07",
+        "configuration_kind": "single_surface",
+        "configuration_number": 7,
+        "correlation": 0.0,
+        "deep_index": null,
+        "deep_local": null,
+        "deep_surface_ratio": null,
+        "eeg_snr_db": 20,
+        "location": null,
+        "meg_snr_db": -10,
+        "pair_index": 2,
+        "panel": "erp_v6_hierarchical_v2_gate_calibration",
+        "replica_seed_roots": {
+          "check": 2026100202,
+          "fit": 2026100201
+        },
+        "replicate": 0,
+        "scenario": "surface_only",
+        "scenario_code": 0,
+        "seed": [
+          2026100201,
+          2,
+          7
+        ],
+        "snr_db": 20,
+        "surface_centers": [
+          5806
+        ]
+      },
+      {
+        "case_id": "erp-v6-hierarchical-v2-gate-calibration-046-eeg+20-meg-10",
+        "case_number": 46,
+        "component_balance_revision": "formal_hierarchical_v2_gate_calibration",
+        "configuration_id": "erp-v6-hierarchical-v2-gate-geometry-08",
+        "configuration_kind": "single_surface",
+        "configuration_number": 8,
+        "correlation": 0.0,
+        "deep_index": null,
+        "deep_local": null,
+        "deep_surface_ratio": null,
+        "eeg_snr_db": 20,
+        "location": null,
+        "meg_snr_db": -10,
+        "pair_index": 2,
+        "panel": "erp_v6_hierarchical_v2_gate_calibration",
+        "replica_seed_roots": {
+          "check": 2026100202,
+          "fit": 2026100201
+        },
+        "replicate": 0,
+        "scenario": "surface_only",
+        "scenario_code": 0,
+        "seed": [
+          2026100201,
+          2,
+          8
+        ],
+        "snr_db": 20,
+        "surface_centers": [
+          2849
+        ]
+      },
+      {
+        "case_id": "erp-v6-hierarchical-v2-gate-calibration-047-eeg+20-meg-10",
+        "case_number": 47,
+        "component_balance_revision": "formal_hierarchical_v2_gate_calibration",
+        "configuration_id": "erp-v6-hierarchical-v2-gate-geometry-09",
+        "configuration_kind": "single_surface",
+        "configuration_number": 9,
+        "correlation": 0.0,
+        "deep_index": null,
+        "deep_local": null,
+        "deep_surface_ratio": null,
+        "eeg_snr_db": 20,
+        "location": null,
+        "meg_snr_db": -10,
+        "pair_index": 2,
+        "panel": "erp_v6_hierarchical_v2_gate_calibration",
+        "replica_seed_roots": {
+          "check": 2026100202,
+          "fit": 2026100201
+        },
+        "replicate": 0,
+        "scenario": "surface_only",
+        "scenario_code": 0,
+        "seed": [
+          2026100201,
+          2,
+          9
+        ],
+        "snr_db": 20,
+        "surface_centers": [
+          2380
+        ]
+      },
+      {
+        "case_id": "erp-v6-hierarchical-v2-gate-calibration-048-eeg+20-meg-10",
+        "case_number": 48,
+        "component_balance_revision": "formal_hierarchical_v2_gate_calibration",
+        "configuration_id": "erp-v6-hierarchical-v2-gate-geometry-10",
+        "configuration_kind": "two_surface_only",
+        "configuration_number": 10,
+        "correlation": 0.0,
+        "deep_index": null,
+        "deep_local": null,
+        "deep_surface_ratio": null,
+        "eeg_snr_db": 20,
+        "location": null,
+        "meg_snr_db": -10,
+        "pair_index": 2,
+        "panel": "erp_v6_hierarchical_v2_gate_calibration",
+        "replica_seed_roots": {
+          "check": 2026100202,
+          "fit": 2026100201
+        },
+        "replicate": 0,
+        "scenario": "surface_only",
+        "scenario_code": 0,
+        "seed": [
+          2026100201,
+          2,
+          10
+        ],
+        "snr_db": 20,
+        "surface_centers": [
+          2456,
+          5027
+        ],
+        "surface_component_sensor_balance": true
+      },
+      {
+        "case_id": "erp-v6-hierarchical-v2-gate-calibration-049-eeg+20-meg-10",
+        "case_number": 49,
+        "component_balance_revision": "formal_hierarchical_v2_gate_calibration",
+        "configuration_id": "erp-v6-hierarchical-v2-gate-geometry-11",
+        "configuration_kind": "single_surface",
+        "configuration_number": 11,
+        "correlation": 0.0,
+        "deep_index": null,
+        "deep_local": null,
+        "deep_surface_ratio": null,
+        "eeg_snr_db": 20,
+        "location": null,
+        "meg_snr_db": -10,
+        "pair_index": 2,
+        "panel": "erp_v6_hierarchical_v2_gate_calibration",
+        "replica_seed_roots": {
+          "check": 2026100202,
+          "fit": 2026100201
+        },
+        "replicate": 0,
+        "scenario": "surface_only",
+        "scenario_code": 0,
+        "seed": [
+          2026100201,
+          2,
+          11
+        ],
+        "snr_db": 20,
+        "surface_centers": [
+          5736
+        ]
+      },
+      {
+        "case_id": "erp-v6-hierarchical-v2-gate-calibration-050-eeg+20-meg-10",
+        "case_number": 50,
+        "component_balance_revision": "formal_hierarchical_v2_gate_calibration",
+        "configuration_id": "erp-v6-hierarchical-v2-gate-geometry-12",
+        "configuration_kind": "single_surface",
+        "configuration_number": 12,
+        "correlation": 0.0,
+        "deep_index": null,
+        "deep_local": null,
+        "deep_surface_ratio": null,
+        "eeg_snr_db": 20,
+        "location": null,
+        "meg_snr_db": -10,
+        "pair_index": 2,
+        "panel": "erp_v6_hierarchical_v2_gate_calibration",
+        "replica_seed_roots": {
+          "check": 2026100202,
+          "fit": 2026100201
+        },
+        "replicate": 0,
+        "scenario": "surface_only",
+        "scenario_code": 0,
+        "seed": [
+          2026100201,
+          2,
+          12
+        ],
+        "snr_db": 20,
+        "surface_centers": [
+          5145
+        ]
+      },
+      {
+        "case_id": "erp-v6-hierarchical-v2-gate-calibration-051-eeg+20-meg-10",
+        "case_number": 51,
+        "component_balance_revision": "formal_hierarchical_v2_gate_calibration",
+        "configuration_id": "erp-v6-hierarchical-v2-gate-geometry-13",
+        "configuration_kind": "two_surface_only",
+        "configuration_number": 13,
+        "correlation": 0.5,
+        "deep_index": null,
+        "deep_local": null,
+        "deep_surface_ratio": null,
+        "eeg_snr_db": 20,
+        "location": null,
+        "meg_snr_db": -10,
+        "pair_index": 2,
+        "panel": "erp_v6_hierarchical_v2_gate_calibration",
+        "replica_seed_roots": {
+          "check": 2026100202,
+          "fit": 2026100201
+        },
+        "replicate": 0,
+        "scenario": "surface_only",
+        "scenario_code": 0,
+        "seed": [
+          2026100201,
+          2,
+          13
+        ],
+        "snr_db": 20,
+        "surface_centers": [
+          548,
+          3507
+        ],
+        "surface_component_sensor_balance": true
+      },
+      {
+        "case_id": "erp-v6-hierarchical-v2-gate-calibration-052-eeg+20-meg-10",
+        "case_number": 52,
+        "component_balance_revision": "formal_hierarchical_v2_gate_calibration",
+        "configuration_id": "erp-v6-hierarchical-v2-gate-geometry-14",
+        "configuration_kind": "two_surface_only",
+        "configuration_number": 14,
+        "correlation": 0.0,
+        "deep_index": null,
+        "deep_local": null,
+        "deep_surface_ratio": null,
+        "eeg_snr_db": 20,
+        "location": null,
+        "meg_snr_db": -10,
+        "pair_index": 2,
+        "panel": "erp_v6_hierarchical_v2_gate_calibration",
+        "replica_seed_roots": {
+          "check": 2026100202,
+          "fit": 2026100201
+        },
+        "replicate": 0,
+        "scenario": "surface_only",
+        "scenario_code": 0,
+        "seed": [
+          2026100201,
+          2,
+          14
+        ],
+        "snr_db": 20,
+        "surface_centers": [
+          3974,
+          6438
+        ],
+        "surface_component_sensor_balance": true
+      },
+      {
+        "case_id": "erp-v6-hierarchical-v2-gate-calibration-053-eeg+20-meg-10",
+        "case_number": 53,
+        "component_balance_revision": "formal_hierarchical_v2_gate_calibration",
+        "configuration_id": "erp-v6-hierarchical-v2-gate-geometry-15",
+        "configuration_kind": "two_surface_only",
+        "configuration_number": 15,
+        "correlation": 0.5,
+        "deep_index": null,
+        "deep_local": null,
+        "deep_surface_ratio": null,
+        "eeg_snr_db": 20,
+        "location": null,
+        "meg_snr_db": -10,
+        "pair_index": 2,
+        "panel": "erp_v6_hierarchical_v2_gate_calibration",
+        "replica_seed_roots": {
+          "check": 2026100202,
+          "fit": 2026100201
+        },
+        "replicate": 0,
+        "scenario": "surface_only",
+        "scenario_code": 0,
+        "seed": [
+          2026100201,
+          2,
+          15
+        ],
+        "snr_db": 20,
+        "surface_centers": [
+          3773,
+          6083
+        ],
+        "surface_component_sensor_balance": true
+      },
+      {
+        "case_id": "erp-v6-hierarchical-v2-gate-calibration-054-eeg+20-meg-10",
+        "case_number": 54,
+        "component_balance_revision": "formal_hierarchical_v2_gate_calibration",
+        "configuration_id": "erp-v6-hierarchical-v2-gate-geometry-16",
+        "configuration_kind": "single_surface",
+        "configuration_number": 16,
+        "correlation": 0.0,
+        "deep_index": null,
+        "deep_local": null,
+        "deep_surface_ratio": null,
+        "eeg_snr_db": 20,
+        "location": null,
+        "meg_snr_db": -10,
+        "pair_index": 2,
+        "panel": "erp_v6_hierarchical_v2_gate_calibration",
+        "replica_seed_roots": {
+          "check": 2026100202,
+          "fit": 2026100201
+        },
+        "replicate": 0,
+        "scenario": "surface_only",
+        "scenario_code": 0,
+        "seed": [
+          2026100201,
+          2,
+          16
+        ],
+        "snr_db": 20,
+        "surface_centers": [
+          2951
+        ]
+      },
+      {
+        "case_id": "erp-v6-hierarchical-v2-gate-calibration-055-eeg+20-meg-10",
+        "case_number": 55,
+        "component_balance_revision": "formal_hierarchical_v2_gate_calibration",
+        "configuration_id": "erp-v6-hierarchical-v2-gate-geometry-17",
+        "configuration_kind": "single_surface",
+        "configuration_number": 17,
+        "correlation": 0.0,
+        "deep_index": null,
+        "deep_local": null,
+        "deep_surface_ratio": null,
+        "eeg_snr_db": 20,
+        "location": null,
+        "meg_snr_db": -10,
+        "pair_index": 2,
+        "panel": "erp_v6_hierarchical_v2_gate_calibration",
+        "replica_seed_roots": {
+          "check": 2026100202,
+          "fit": 2026100201
+        },
+        "replicate": 0,
+        "scenario": "surface_only",
+        "scenario_code": 0,
+        "seed": [
+          2026100201,
+          2,
+          17
+        ],
+        "snr_db": 20,
+        "surface_centers": [
+          642
+        ]
+      },
+      {
+        "case_id": "erp-v6-hierarchical-v2-gate-calibration-056-eeg+20-meg-10",
+        "case_number": 56,
+        "component_balance_revision": "formal_hierarchical_v2_gate_calibration",
+        "configuration_id": "erp-v6-hierarchical-v2-gate-geometry-18",
+        "configuration_kind": "two_surface_only",
+        "configuration_number": 18,
+        "correlation": 0.0,
+        "deep_index": null,
+        "deep_local": null,
+        "deep_surface_ratio": null,
+        "eeg_snr_db": 20,
+        "location": null,
+        "meg_snr_db": -10,
+        "pair_index": 2,
+        "panel": "erp_v6_hierarchical_v2_gate_calibration",
+        "replica_seed_roots": {
+          "check": 2026100202,
+          "fit": 2026100201
+        },
+        "replicate": 0,
+        "scenario": "surface_only",
+        "scenario_code": 0,
+        "seed": [
+          2026100201,
+          2,
+          18
+        ],
+        "snr_db": 20,
+        "surface_centers": [
+          3739,
+          7193
+        ],
+        "surface_component_sensor_balance": true
+      }
+    ]
+  },
+  "surface_calibration": null,
+  "gate_threshold": 0.006348868975392994,
+  "surface_threshold": null,
+  "truth_access": "metrics only after the blind final estimate is frozen",
+  "resumed": false,
+  "resumed_prefix_case_count": 0,
+  "interrupted_prefix_recovery": null
+}
