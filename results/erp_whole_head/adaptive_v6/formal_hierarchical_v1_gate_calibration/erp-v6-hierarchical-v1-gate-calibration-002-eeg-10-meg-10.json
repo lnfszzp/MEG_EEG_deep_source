@@ -1,0 +1,17 @@
+{
+  "case_id": "erp-v6-hierarchical-v1-gate-calibration-002-eeg-10-meg-10",
+  "stage": "gate-calibration",
+  "complete": true,
+  "truth_used_by_decisions": false,
+  "truth_used_only_for_posthoc_metrics": false,
+  "gate_score": -0.01751034275070327,
+  "gate_modality_scores": [
+    -0.016247685253126157,
+    -0.021298315243434607
+  ],
+  "gate_model_convergence": {
+    "null": true,
+    "full": true
+  },
+  "elapsed_seconds": 109.98413970001275
+}
