@@ -67,7 +67,16 @@ def build_refined_forward(path: Path = CACHE) -> Path:
     raw_eeg = raw.copy().pick_types(meg=False, eeg=True, stim=False, eog=False, exclude="bads")
     common_eeg = [name for name in surf_eeg["info"]["ch_names"] if name in raw_eeg.info["ch_names"]]
     surf_eeg = mne.pick_channels_forward(surf_eeg, include=common_eeg)
-    surf_xyz = np.vstack([src["rr"][src["vertno"]] for src in surf_meg["src"]])
+    surf_vertex_numbers = np.concatenate([src["vertno"] for src in surf_meg["src"]])
+    surf_hemi = np.concatenate([
+        np.full(src["vertno"].size, hemi, dtype=np.int8)
+        for hemi, src in enumerate(surf_meg["src"])
+    ])
+    surf_xyz_head = np.asarray(surf_meg["source_rr"], dtype=float)
+    surf_xyz_mri = np.vstack([
+        src_surf[hemi]["rr"][surf_meg["src"][hemi]["vertno"]]
+        for hemi in range(2)
+    ])
     surf_edges = np.column_stack(
         mne.spatial_src_adjacency(surf_meg["src"]).tocsr().nonzero()
     )
@@ -91,9 +100,11 @@ def build_refined_forward(path: Path = CACHE) -> Path:
     inside = np.all((vox >= 0) & (vox < np.asarray(aseg_data.shape)), axis=1)
     labels = np.zeros(volume_xyz.shape[0], dtype=int)
     labels[inside] = aseg_data[tuple(vox[inside].T)]
-    deep_xyz = volume_xyz[np.isin(labels, (10, 49))]
+    deep_keep = np.isin(labels, (10, 49))
+    deep_xyz_mri = volume_xyz[deep_keep]
+    deep_aseg_labels = labels[deep_keep]
     deep_src = mne.setup_volume_source_space(
-        pos={"rr": deep_xyz, "nn": np.tile([0.0, 0.0, 1.0], (deep_xyz.shape[0], 1))},
+        pos={"rr": deep_xyz_mri, "nn": np.tile([0.0, 0.0, 1.0], (deep_xyz_mri.shape[0], 1))},
         add_interpolator=False,
         verbose=False,
     )
@@ -113,11 +124,14 @@ def build_refined_forward(path: Path = CACHE) -> Path:
     deep_meg = mne.pick_types_forward(fwd_deep, meg="mag", eeg=False)
     deep_eeg = mne.pick_types_forward(fwd_deep, meg=False, eeg=True)
     deep_eeg = mne.pick_channels_forward(deep_eeg, include=common_eeg)
-    gm3 = deep_meg["sol"]["data"].reshape(deep_meg["sol"]["data"].shape[0], deep_xyz.shape[0], 3)
-    ge3 = deep_eeg["sol"]["data"].reshape(deep_eeg["sol"]["data"].shape[0], deep_xyz.shape[0], 3)
+    deep_xyz_head = np.asarray(deep_meg["source_rr"], dtype=float)
+    if deep_xyz_head.shape != deep_xyz_mri.shape:
+        raise ValueError("refined deep HEAD/MRI coordinate counts do not match")
+    gm3 = deep_meg["sol"]["data"].reshape(deep_meg["sol"]["data"].shape[0], deep_xyz_mri.shape[0], 3)
+    ge3 = deep_eeg["sol"]["data"].reshape(deep_eeg["sol"]["data"].shape[0], deep_xyz_mri.shape[0], 3)
     gm = np.zeros(gm3.shape[:2])
     ge = np.zeros(ge3.shape[:2])
-    for index in range(deep_xyz.shape[0]):
+    for index in range(deep_xyz_mri.shape[0]):
         joint = np.vstack(
             [gm3[:, index] / max(np.linalg.norm(gm3[:, index]), 1e-20), ge3[:, index] / max(np.linalg.norm(ge3[:, index]), 1e-20)]
         )
@@ -129,17 +143,29 @@ def build_refined_forward(path: Path = CACHE) -> Path:
     coarse_meg = load_mat(SIMULATION_DATA_ROOT / "deep_plus_two_surface" / "sub_MEG.mat")
     if surf_eeg["sol"]["data"].shape[0] != coarse_eeg["F"].shape[0] or surf_meg["sol"]["data"].shape[0] != coarse_meg["F"].shape[0]:
         raise ValueError("refined forward channels do not match the simulation data")
-    surface_spacing = np.median(np.linalg.norm(surf_xyz[surf_edges[:, 0]] - surf_xyz[surf_edges[:, 1]], axis=1))
-    deep_spacing = np.median(cKDTree(deep_xyz).query(deep_xyz, k=2)[0][:, 1])
+    surface_spacing = np.median(np.linalg.norm(surf_xyz_head[surf_edges[:, 0]] - surf_xyz_head[surf_edges[:, 1]], axis=1))
+    deep_spacing = np.median(cKDTree(deep_xyz_head).query(deep_xyz_head, k=2)[0][:, 1])
+    mri_head_t = np.asarray(mne.read_trans(trans_file)["trans"], dtype=float)
     path.parent.mkdir(parents=True, exist_ok=True)
     np.savez(
         path,
         gain_eeg=np.hstack([surf_eeg["sol"]["data"], ge]),
         gain_meg=np.hstack([surf_meg["sol"]["data"], gm]),
-        vertices=np.vstack([surf_xyz, deep_xyz]),
+        vertices=np.vstack([surf_xyz_head, deep_xyz_head]),
+        surface_xyz_head=surf_xyz_head,
+        surface_xyz_mri=surf_xyz_mri,
+        deep_xyz_head=deep_xyz_head,
+        deep_xyz_mri=deep_xyz_mri,
+        surface_vertex_numbers=surf_vertex_numbers.astype(np.int64),
+        surface_hemi=surf_hemi,
+        deep_aseg_labels=deep_aseg_labels.astype(np.int16),
+        eeg_ch_names=np.asarray(surf_eeg["info"]["ch_names"]),
+        meg_ch_names=np.asarray(surf_meg["info"]["ch_names"]),
+        mri_head_t=mri_head_t,
+        coordinate_frame=np.asarray(["HEAD"]),
         surface_edges=surf_edges.astype(np.int32),
-        n_surf=np.array([surf_xyz.shape[0]], dtype=np.int64),
-        n_deep=np.array([deep_xyz.shape[0]], dtype=np.int64),
+        n_surf=np.array([surf_xyz_head.shape[0]], dtype=np.int64),
+        n_deep=np.array([deep_xyz_head.shape[0]], dtype=np.int64),
         surface_spacing_mm=np.array([surface_spacing * 1000.0]),
         deep_spacing_mm=np.array([deep_spacing * 1000.0]),
     )
