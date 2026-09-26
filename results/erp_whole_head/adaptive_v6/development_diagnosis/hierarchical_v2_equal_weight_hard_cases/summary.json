@@ -1,0 +1,61 @@
+{
+  "complete": true,
+  "phase": "development_diagnosis",
+  "case_count": 6,
+  "h0_count": 3,
+  "h1_count": 3,
+  "case_suffixes": {
+    "pure_surface_H0": [1, 33, 54],
+    "pure_deep_H1": [0, 5, 27]
+  },
+  "solver": {
+    "outer_iterations_ceiling": 80,
+    "all_null_converged": true,
+    "all_full_converged": true,
+    "maximum_observed_outer_iterations": 18,
+    "maximum_observed_stationarity_gap_relative": 0.0009995823578479392
+  },
+  "equal_weight_effect": {
+    "exact_zero_weight_h1_cases_rescued": [
+      "erp-v6-hierarchical-v1-surface-calibration-000-eeg-10-meg-10",
+      "erp-v6-hierarchical-v1-surface-calibration-005-eeg-10-meg-10"
+    ],
+    "interpretation": "Equal weights repair complete modality deletion, but they do not by themselves remove high-SNR single-modality H0 leakage."
+  },
+  "snr_blind_consensus": {
+    "h0_max": 0.02336300856564151,
+    "h1_min": -0.0010130548500368007,
+    "h1_positive_count": 2,
+    "h1_total": 3,
+    "hard_cases_separated": false,
+    "failure_case": "erp-v6-hierarchical-v1-surface-calibration-027-eeg-10-meg+20"
+  },
+  "energy_normalized_fixed": {
+    "h0_max": 0.01198696508668583,
+    "h1_min": 0.02206949610277804,
+    "h1_positive_count": 3,
+    "h1_total": 3,
+    "hard_cases_separated": true,
+    "h1_min_over_h0_max": 1.84112458351039,
+    "interpretation": "Promising only as a development candidate; this six-case posthoc separation is not a calibrated threshold or a validation result."
+  },
+  "studentized_fixed_3_to_1": {
+    "h0_max": 5.03788472301,
+    "h1_min": 2.4567078045436963,
+    "hard_cases_separated": false,
+    "interpretation": "Studentization alone does not suppress the high-SNR EEG H0 leakage in suffix 054."
+  },
+  "retired_113_case_context_not_reestimated_here": {
+    "warning": "These figures were used during score development and are not independent evidence.",
+    "snr_blind_consensus_an_auc": 0.9890350877192983,
+    "snr_blind_consensus_h0_second_largest": 0.0177449,
+    "snr_blind_consensus_h1_detected": 54,
+    "snr_blind_consensus_h1_total": 56,
+    "energy_normalized_fixed_an_auc": 0.9924812030075187,
+    "energy_normalized_fixed_h0_second_largest": 0.009014712893,
+    "energy_normalized_fixed_h1_detected": 55,
+    "energy_normalized_fixed_h1_total": 56
+  },
+  "validation_read": false,
+  "formal_claim_allowed": false
+}
