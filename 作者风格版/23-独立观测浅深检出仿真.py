@@ -34,6 +34,8 @@ parser.add_argument("--snr-pair", nargs=2, type=int)
 parser.add_argument("--limit", type=int)
 parser.add_argument("--comparators", action="store_true")
 parser.add_argument("--save-sources", action="store_true")
+parser.add_argument("--primary-equal-channel-weights", action="store_true",
+    help="开发消融：一级H0/H1在分模态白化后使用逐通道全1权重")
 parser.add_argument("--preflight", action="store_true", help="只核对正式冻结链，不消费或运行病例")
 args = parser.parse_args()
 if not __debug__:
@@ -43,6 +45,8 @@ if args.preflight and not formal:
     raise ValueError("--preflight只用于正式calibration/validation")
 if formal and (args.limit is not None or args.snr_pair is not None):
     raise ValueError("校准/验证必须完成整个冻结 manifest，不能挑选病例")
+if formal and args.primary_equal_channel_weights:
+    raise ValueError("旧v4正式链禁止启用未冻结的一级全1权重开发消融")
 if args.output.exists():
     raise FileExistsError(f"输出已存在，不覆盖或事后重跑验证：{args.output}")
 cases = json.loads(args.manifest.read_text(encoding="utf-8"))
@@ -219,6 +223,9 @@ metadata = {"phase": args.phase, "manifest": str(args.manifest.resolve()),
     "code_sha256": code_hashes, "shared_fingerprint": shared_hash, "environment": environment,
     "solver_settings": args.solver_settings, "covariance": args.covariance, "alpha": .05,
     "score_kind": args.score_kind,
+    "primary_channel_weights": ("whitened_channel_equal"
+                                if args.primary_equal_channel_weights
+                                else "training_active_evidence"),
     "calibration_path": None if calibration_path is None else str(calibration_path),
     "calibration_sha256": calibration_sha256,
     "execution_lock_sha256": execution_lock_sha,
@@ -235,12 +242,15 @@ for case in cases:
     tick = time.perf_counter()
     print(f"{args.phase}: {case['case_id']} starting", flush=True)
     observation = prepare(shared, case, seed_root=args.seed_root)
+    primary_weights = (np.ones_like(observation["channel_weights"])
+                       if args.primary_equal_channel_weights
+                       else observation["channel_weights"])
     null, full, fitting = fit_predictive_models(observation["training"], observation["gain"], shared["n_surf"],
         adjacency=shared["adjacency"], baseline=observation["baseline"], active=observation["active_windows"][0],
-        channel_weights=observation["channel_weights"], solver_settings=args.solver_settings)
+        channel_weights=primary_weights, solver_settings=args.solver_settings)
     noise_score, evidence = score_predictive_models(observation["confirmation"], observation["gain"], null, full,
         baseline=observation["baseline"], active=observation["active_windows"][0],
-        channel_weights=observation["channel_weights"],
+        channel_weights=primary_weights,
         modality_sizes=observation["metadata"]["retained_channels"])
     score = {"noise": noise_score, "excess": evidence["excess_fraction_score"],
              "conjunctive": evidence["conjunctive_modality_score"]}[args.score_kind]
