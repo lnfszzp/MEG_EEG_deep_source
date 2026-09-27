@@ -40,6 +40,9 @@ parser.add_argument(
                    "hierarchical_v3_fresh_development")
 parser.add_argument("--preflight", action="store_true",
                     help="只核验冻结面板、off-grid forward、调用预算和作者风格")
+parser.add_argument(
+    "--evaluate-frozen", action="store_true",
+    help="只续算已完整冻结的39张final map；沿用原盲运行身份并另记评估脚本哈希")
 args = parser.parse_args()
 output = args.output if args.output.is_absolute() else root / args.output
 output = output.resolve()
@@ -210,6 +213,23 @@ code_bundle_sha256 = hashlib.sha256("\n".join(
     f"{name}:{digest}" for name, digest in code_sha256.items()
 ).encode("utf-8")).hexdigest()
 script_sha256 = hashlib.sha256(script_path.read_bytes()).hexdigest()
+identity_path = output / "run_identity.json"
+blind_script_sha256 = script_sha256
+if args.evaluate_frozen:
+    final_root = output / "final_cases"
+    final_directories = ([] if not final_root.is_dir() else
+                         list(final_root.glob("case_*")))
+    if len(final_directories) != 39 or not identity_path.is_file() or \
+            any(not (path / "decision.json").is_file() or
+                    not (path / "final_map.npz").is_file()
+                    for path in final_directories):
+        raise ValueError("--evaluate-frozen 只允许续算完整冻结的39张final map")
+    frozen_identity = json.loads(identity_path.read_text(encoding="utf-8"))
+    if frozen_identity.get("code_bundle_sha256") != code_bundle_sha256:
+        raise ValueError("--evaluate-frozen 的核心代码bundle与原盲运行不一致")
+    blind_script_sha256 = str(frozen_identity.get("script_sha256", ""))
+    if len(blind_script_sha256) != 64:
+        raise ValueError("原盲运行缺少合法script哈希")
 
 
 # %% 3. preflight 只读核验；不创建结果或checkpoint。
@@ -260,7 +280,7 @@ identity = {
     "gate_decision_rule": gate_decision_rule,
     "solver_settings": base_settings, "mrf_strengths": list(strengths),
     "code_sha256": code_sha256, "code_bundle_sha256": code_bundle_sha256,
-    "script_sha256": script_sha256,
+    "script_sha256": blind_script_sha256,
     "truth_access_rule": (
         "The simulator receives each complete case, but Stage1 decision code retains "
         "only sensor observations and an identity; no scenario/SNR/source field enters "
@@ -270,7 +290,6 @@ identity = {
 identity_payload = (json.dumps(identity, ensure_ascii=False, indent=2,
                                sort_keys=True, allow_nan=False) + "\n").encode("utf-8")
 identity_sha256 = hashlib.sha256(identity_payload).hexdigest()
-identity_path = output / "run_identity.json"
 if output.exists():
     if not identity_path.is_file() or identity_path.read_bytes() != identity_payload:
         raise ValueError("已有输出不是同一79脚本/manifest/forward/settings的可续跑checkpoint")
@@ -829,7 +848,7 @@ for case in cases:
         surface_component_dle = [None] * len(surface_groups)
     finite_component = [value for value in surface_component_dle
                         if value is not None and np.isfinite(value)]
-    component_max = (max(finite_component) if
+    component_max = (max(finite_component, default=None) if
                      len(finite_component) == len(surface_groups) else None)
 
     amplitude = metrics.source_amplitude(selected, active_samples, baseline)
@@ -979,6 +998,8 @@ summary = {
 }
 metadata = {
     **identity, "identity_sha256": identity_sha256,
+    "evaluation_script_sha256": script_sha256,
+    "frozen_evaluation_resume": bool(args.evaluate_frozen),
     "threshold_sha256": threshold_sha256,
     "threshold_calibration_role": "6 predeclared gate_calibration pure-surface cases only",
     "gate_audit_and_h1_role": "not used by threshold; posthoc development audit only",
@@ -1025,6 +1046,8 @@ completion = {
     "case_count": 39, "gate_score_checkpoint_count": 39,
     "final_map_checkpoint_count": 39, "posthoc_checkpoint_count": 39,
     "threshold_sha256": threshold_sha256,
+    "evaluation_script_sha256": script_sha256,
+    "frozen_evaluation_resume": bool(args.evaluate_frozen),
     "summary_sha256": hashlib.sha256((output / "summary.json").read_bytes()).hexdigest(),
     "rows_sha256": hashlib.sha256(rows_path.read_bytes()).hexdigest(),
 }
