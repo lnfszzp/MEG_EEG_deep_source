@@ -8,6 +8,92 @@ from candidates.oaster_balanced import _smooth_temporal_basis
 from candidates.oaster_predictive import _validate_observations
 
 
+def score_low_rank_deep_scan(confirmation, gain, null_estimate, n_surf, *,
+                             baseline, active, channel_weights):
+    """Score every deep lead field beyond the fitted H0 sensor modes.
+
+    Unlike a span of selected cortical lead fields, the nuisance space is the
+    low-rank sensor prediction actually made by the training H0 fit.  The
+    confirmation data only refit nuisance and deep temporal coefficients.
+    """
+    confirmation, gain, baseline, active, weights = _validate_observations(
+        confirmation, gain, baseline, active, channel_weights)
+    if baseline.sum() <= 3:
+        raise ValueError("at least four baseline samples are required for finite-baseline centering")
+    null_estimate = np.asarray(null_estimate, float)
+    expected = (gain.shape[1], confirmation.shape[1])
+    if (not isinstance(n_surf, (int, np.integer)) or not 0 < n_surf < gain.shape[1]
+            or null_estimate.shape != expected or not np.isfinite(null_estimate).all()):
+        raise ValueError("a finite full-grid H0 training fit and a nonempty deep grid are required")
+
+    basis, basis_info = _smooth_temporal_basis(confirmation, baseline, active)
+    weighted_gain = weights[:, None] * gain
+    nuisance = weighted_gain[:, :n_surf] @ (null_estimate[:n_surf] @ basis.T)
+    u, singular, _ = np.linalg.svd(nuisance, full_matrices=False)
+    relative_tolerance = np.finfo(float).eps * max(nuisance.shape)
+    tolerance = relative_tolerance * singular.max(initial=0.)
+    nuisance_rank = int(np.count_nonzero(singular > tolerance))
+    nuisance_basis = u[:, :nuisance_rank]
+
+    deep_gain = weighted_gain[:, n_surf:]
+    conditional_gain = deep_gain - nuisance_basis @ (nuisance_basis.T @ deep_gain)
+    deep_norm = np.linalg.norm(deep_gain, axis=0)
+    conditional_norm = np.linalg.norm(conditional_gain, axis=0)
+    fractions = np.zeros_like(conditional_norm)
+    np.divide(conditional_norm, deep_norm, out=fractions, where=deep_norm > 0)
+    identifiable = (deep_norm > 0) & (fractions > relative_tolerance)
+    directions = np.zeros_like(conditional_gain)
+    directions[:, identifiable] = (
+        conditional_gain[:, identifiable] / conditional_norm[identifiable])
+
+    centered = weights[:, None] * (
+        confirmation - confirmation[:, baseline].mean(axis=1, keepdims=True))
+    response = centered @ basis.T
+    null_residual = response - nuisance_basis @ (nuisance_basis.T @ response)
+    fitted_deep = directions.T @ null_residual
+    improvement = np.sum(fitted_deep ** 2, axis=1)
+    projected_baseline = directions.T @ centered[:, baseline]
+    projected_variance = np.sum(projected_baseline ** 2, axis=1) / (baseline.sum() - 1)
+    mean_correction = float(
+        np.sum(basis[:, active].sum(axis=1) ** 2) / baseline.sum())
+    expected_noise = projected_variance * (len(basis) + mean_correction)
+    if np.any(identifiable & (~np.isfinite(expected_noise) | (expected_noise <= 0))):
+        raise ValueError("confirmation baseline has no finite conditional noise variance")
+    finite_baseline_correction = (baseline.sum() - 3) / (baseline.sum() - 1)
+    scores = np.full(gain.shape[1] - n_surf, -1., float)
+    scores[identifiable] = (finite_baseline_correction
+                            * improvement[identifiable] / expected_noise[identifiable] - 1.)
+    if not np.isfinite(scores).all():
+        raise ValueError("low-rank deep scan produced nonfinite scores")
+
+    valid_indices = np.flatnonzero(identifiable)
+    selected_local = (int(valid_indices[np.argmax(scores[identifiable])])
+                      if valid_indices.size else None)
+    return scores, dict(**basis_info,
+        mode="held_out_low_rank_same_point_deep_scan",
+        score="(B-3)/(B-1) * partial improvement / plug-in baseline expectation - 1",
+        nuisance_definition="column space of W G_surface (X0_surface Phi.T)",
+        nuisance_rank=nuisance_rank, nuisance_rank_bound=int(len(basis)),
+        deep_candidate_count=int(scores.size),
+        identifiable=identifiable.tolist(),
+        identifiable_count=int(np.count_nonzero(identifiable)),
+        conditional_gain_fraction=fractions.tolist(),
+        conditional_gain_fraction_threshold=float(relative_tolerance),
+        identifiability_rule=(
+            "positive weighted deep-gain norm and conditional_gain_fraction > "
+            "eps * max(nuisance.shape), matching the nuisance SVD tolerance"),
+        finite_baseline_correction=float(finite_baseline_correction),
+        loss_improvement=improvement.tolist(),
+        projected_baseline_variance=projected_variance.tolist(),
+        expected_null_improvement=expected_noise.tolist(),
+        baseline_mean_mode_correction=mean_correction,
+        selected_deep_local_index=selected_local,
+        selected_deep_index=(None if selected_local is None else n_surf + selected_local),
+        truth_used=False, reference_threshold=None,
+        confirmation_refitted_for_localization=False,
+        confirmation_used_only_for_nested_test_statistic=True)
+
+
 def score_partial_deep_presence(confirmation, gain, null_estimate, full_estimate,
                                 n_surf, *, baseline, active, channel_weights,
                                 support_energy_fraction=.01):

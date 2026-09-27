@@ -1,4 +1,4 @@
-"""# %% v3 全新开发运行：双向条件门控、held-out MRF 选择和同 family 联合重拟合。"""
+"""# %% v3 全新开发运行：可选双向门控、held-out MRF 选择和同 family 联合重拟合。"""
 
 # %% 1. 固定输入、作者风格和不可越过的开发边界。
 import argparse
@@ -6,6 +6,7 @@ import ast
 from collections import Counter
 import csv
 import hashlib
+import inspect
 import json
 import os
 from pathlib import Path
@@ -28,24 +29,35 @@ from benchmark import metrics, protocol
 from benchmark.erp_trial_covariance import prepare_trial_covariance_case
 from candidates.oaster_balanced import (
     _smooth_temporal_basis, reconstruct_evoked_oaster_v5_from_whitened)
-from candidates.oaster_partial_confirmation import score_partial_deep_presence
+from candidates.oaster_partial_confirmation import (
+    score_low_rank_deep_scan, score_partial_deep_presence)
 from candidates.oaster_predictive import fit_predictive_models
 from refined_grid import load_refined_forward, refined_sd_dle
 import run_erp_whole_head_matrix as original
 
 parser = argparse.ArgumentParser(description=__doc__)
 parser.add_argument(
-    "--output", type=Path,
-    default=root / "results/erp_whole_head/adaptive_v6/development_diagnosis/"
-                   "hierarchical_v3_fresh_development")
+    "--output", type=Path, default=None)
+parser.add_argument("--gate-mode", choices=("partial", "lowrank"),
+                    default="partial",
+                    help="partial保持原门控；lowrank使用同一深点双向低秩扫描")
+parser.add_argument("--stop-after-gate", action="store_true",
+                    help="39例门控和阈值封存后只写门控审计，不运行Stage2")
 parser.add_argument("--preflight", action="store_true",
                     help="只核验冻结面板、off-grid forward、调用预算和作者风格")
 parser.add_argument(
     "--evaluate-frozen", action="store_true",
     help="只续算已完整冻结的39张final map；沿用原盲运行身份并另记评估脚本哈希")
 args = parser.parse_args()
-output = args.output if args.output.is_absolute() else root / args.output
+default_output = root / (
+    "results/erp_whole_head/adaptive_v6/development_diagnosis/"
+    + ("hierarchical_v3_fresh_development" if args.gate_mode == "partial" else
+       "hierarchical_v3_lowrank_gate_development"))
+output = default_output if args.output is None else (
+    args.output if args.output.is_absolute() else root / args.output)
 output = output.resolve()
+if args.evaluate_frozen and (args.gate_mode != "partial" or args.stop_after_gate):
+    raise ValueError("--evaluate-frozen只能续评估原partial完整final map")
 
 script_path = Path(__file__).resolve()
 script_text = script_path.read_text(encoding="utf-8")
@@ -194,7 +206,10 @@ base_settings = {
     "deep_alias_penalty": False,
 }
 strengths = (.5, .8)
-gate_statistic_rule = "min(partial_A_to_B, partial_B_to_A)"
+gate_statistic_rule = (
+    "min(partial_A_to_B, partial_B_to_A)" if args.gate_mode == "partial" else
+    "max_jointly_identifiable_deep_index min(lowrank_A_to_B[index], "
+    "lowrank_B_to_A[index]); -1 if none")
 gate_decision_rule = "H1 iff statistic > max(6 gate_calibration H0 statistics)"
 
 core_files = (
@@ -215,6 +230,26 @@ code_bundle_sha256 = hashlib.sha256("\n".join(
 script_sha256 = hashlib.sha256(script_path.read_bytes()).hexdigest()
 identity_path = output / "run_identity.json"
 blind_script_sha256 = script_sha256
+legacy_partial_identity_sha256 = \
+    "9ff24f75b13e7c0e1aa3cac4243f12c97987c46a1b77bfb1d1875c16242293f0"
+legacy_partial_function_sha256 = \
+    "5b84774610be436c847facca88dada0fb82affae7eb6cb167d285c3620e35496"
+legacy_partial_resume = bool(
+    args.gate_mode == "partial" and identity_path.is_file() and
+    hashlib.sha256(identity_path.read_bytes()).hexdigest() ==
+    legacy_partial_identity_sha256)
+if legacy_partial_resume:
+    frozen_identity = json.loads(identity_path.read_text(encoding="utf-8"))
+    unchanged_core = {
+        name: digest for name, digest in frozen_identity["code_sha256"].items()
+        if name != "candidates/oaster_partial_confirmation.py"}
+    if any(code_sha256.get(name) != digest
+           for name, digest in unchanged_core.items()) or \
+            hashlib.sha256(inspect.getsource(
+                score_partial_deep_presence).encode("utf-8")).hexdigest() != \
+            legacy_partial_function_sha256:
+        raise ValueError("原partial checkpoint的核心代码或partial scorer已变化")
+    blind_script_sha256 = str(frozen_identity["script_sha256"])
 if args.evaluate_frozen:
     final_root = output / "final_cases"
     final_directories = ([] if not final_root.is_dir() else
@@ -225,7 +260,8 @@ if args.evaluate_frozen:
                     for path in final_directories):
         raise ValueError("--evaluate-frozen 只允许续算完整冻结的39张final map")
     frozen_identity = json.loads(identity_path.read_text(encoding="utf-8"))
-    if frozen_identity.get("code_bundle_sha256") != code_bundle_sha256:
+    if not legacy_partial_resume and \
+            frozen_identity.get("code_bundle_sha256") != code_bundle_sha256:
         raise ValueError("--evaluate-frozen 的核心代码bundle与原盲运行不一致")
     blind_script_sha256 = str(frozen_identity.get("script_sha256", ""))
     if len(blind_script_sha256) != 64:
@@ -247,59 +283,75 @@ if args.preflight:
         "gate_score_cases": 39, "gate_calibration_h0": 6,
         "gate_audit_h0_not_used_for_threshold": 6,
         "h1_not_used_for_threshold": 27,
+        "gate_mode": args.gate_mode,
         "gate_statistic": gate_statistic_rule,
         "gate_decision": gate_decision_rule,
+        "stop_after_gate": bool(args.stop_after_gate),
+        "default_output": str(default_output),
         "mrf_strengths": list(strengths),
-        "inverse_calls_planned": 39 * 6,
+        "inverse_calls_planned": 39 * (4 if args.stop_after_gate else 6),
         "inverse_calls_per_case": {
             "bidirectional_gate_H0_H1": 4,
-            "heldout_mrf_new_fit": 1,
-            "heldout_mrf_08_reused_from_A_to_B_gate_fit": 1,
-            "combined40_final": 1},
+            **({} if args.stop_after_gate else {
+                "heldout_mrf_new_fit": 1,
+                "heldout_mrf_08_reused_from_A_to_B_gate_fit": 0,
+                "combined40_final": 1})},
         "manifest_sha256": manifest_sha256, "audit_sha256": audit_sha256,
         "refined_forward_sha256": truth_audit["file_sha256"],
         "shared_fingerprint": shared_fingerprint,
         "code_bundle_sha256": code_bundle_sha256,
         "script_has_def_or_class": False,
-        "checkpoint_resume": True, "output_exists": output.exists(),
+        "checkpoint_resume": True,
+        "legacy_partial_identity_resume": legacy_partial_resume,
+        "output_exists": output.exists(),
     }, ensure_ascii=False, indent=2), flush=True)
     raise SystemExit(0)
 
 
-# %% 4. 建立或核验断点身份；Stage 1 对39例只保存双向conditional分数。
-identity = {
-    "schema_version": 1,
-    "protocol": "erp-v3-fresh-development-two-stage-runner",
-    "development_only": True, "formal_or_blind_validation": False,
-    "manifest": str(manifest_path), "manifest_sha256": manifest_sha256,
-    "audit": str(audit_path), "audit_sha256": audit_sha256,
-    "refined_forward": str(refined_path),
-    "refined_forward_sha256": truth_audit["file_sha256"],
-    "shared_fingerprint": shared_fingerprint, "seed_roots": seed_roots,
-    "gate_statistic_rule": gate_statistic_rule,
-    "gate_decision_rule": gate_decision_rule,
-    "solver_settings": base_settings, "mrf_strengths": list(strengths),
-    "code_sha256": code_sha256, "code_bundle_sha256": code_bundle_sha256,
-    "script_sha256": blind_script_sha256,
-    "truth_access_rule": (
-        "The simulator receives each complete case, but Stage1 decision code retains "
-        "only sensor observations and an identity; no scenario/SNR/source field enters "
-        "a score. Only 6 gate_calibration H0 roles set the threshold. Audit-H0 and H1 "
-        "labels/positions are read for metrics only after each final-map hash is fixed."),
-}
-identity_payload = (json.dumps(identity, ensure_ascii=False, indent=2,
-                               sort_keys=True, allow_nan=False) + "\n").encode("utf-8")
-identity_sha256 = hashlib.sha256(identity_payload).hexdigest()
-if output.exists():
-    if not identity_path.is_file() or identity_path.read_bytes() != identity_payload:
-        raise ValueError("已有输出不是同一79脚本/manifest/forward/settings的可续跑checkpoint")
+# %% 4. 建立或核验断点身份；Stage 1 对39例只保存所选双向门控分数。
+if legacy_partial_resume:
+    identity_payload = identity_path.read_bytes()
+    identity = json.loads(identity_payload)
+    identity_sha256 = legacy_partial_identity_sha256
 else:
-    output.mkdir(parents=True)
-    with identity_path.open("xb") as stream:
-        stream.write(identity_payload)
+    identity = {
+        "schema_version": 2,
+        "protocol": "erp-v3-fresh-development-two-stage-runner",
+        "development_only": True, "formal_or_blind_validation": False,
+        "manifest": str(manifest_path), "manifest_sha256": manifest_sha256,
+        "audit": str(audit_path), "audit_sha256": audit_sha256,
+        "refined_forward": str(refined_path),
+        "refined_forward_sha256": truth_audit["file_sha256"],
+        "shared_fingerprint": shared_fingerprint, "seed_roots": seed_roots,
+        "gate_mode": args.gate_mode,
+        "gate_statistic_rule": gate_statistic_rule,
+        "gate_decision_rule": gate_decision_rule,
+        "solver_settings": base_settings, "mrf_strengths": list(strengths),
+        "code_sha256": code_sha256, "code_bundle_sha256": code_bundle_sha256,
+        "script_sha256": blind_script_sha256,
+        "truth_access_rule": (
+            "The simulator receives each complete case, but Stage1 decision code "
+            "retains only sensor observations and an identity; no scenario/SNR/source "
+            "field enters a score. Only 6 gate_calibration H0 roles set the threshold. "
+            "Audit-H0/H1 roles, presence and SNR are read only after the threshold is "
+            "frozen; detailed source positions are read only after each final-map hash "
+            "when Stage2 runs."),
+    }
+    identity_payload = (json.dumps(
+        identity, ensure_ascii=False, indent=2, sort_keys=True,
+        allow_nan=False) + "\n").encode("utf-8")
+    identity_sha256 = hashlib.sha256(identity_payload).hexdigest()
+    if output.exists():
+        if not identity_path.is_file() or identity_path.read_bytes() != identity_payload:
+            raise ValueError("已有输出不是同一79脚本/manifest/forward/settings的可续跑checkpoint")
+    else:
+        output.mkdir(parents=True)
+        with identity_path.open("xb") as stream:
+            stream.write(identity_payload)
 (output / "gate_scores").mkdir(exist_ok=True)
-(output / "final_cases").mkdir(exist_ok=True)
-(output / "posthoc").mkdir(exist_ok=True)
+if not args.stop_after_gate:
+    (output / "final_cases").mkdir(exist_ok=True)
+    (output / "posthoc").mkdir(exist_ok=True)
 
 started = time.perf_counter()
 gate_score_sha256 = {}
@@ -315,11 +367,45 @@ for original_case in cases:
                 score_record.get("case_id") != name or \
                 score_record.get("identity_sha256") != identity_sha256 or \
                 score_record.get("truth_or_label_used") is not False or \
+                score_record.get("gate_mode", "partial") != args.gate_mode or \
                 len(score_record.get("directions", [])) != 2 or \
                 set(score_record.get("directions", [{}])[0].get(
                     "mrf_08_candidates", {})) != {"H0", "H1"} or \
                 not np.isfinite(score_record.get("gate_statistic", np.nan)):
             raise ValueError(f"{name}: gate score checkpoint 非法，拒绝静默重算")
+        if args.gate_mode == "lowrank" and (
+                len(score_record.get("same_deep_bidirectional_scores", [])) != n_deep or
+                len(score_record.get("jointly_identifiable", [])) != n_deep or
+                any(len(item.get("deep_scores", [])) != n_deep or
+                    len(item.get("lowrank_scan", {}).get("identifiable", [])) != n_deep
+                    for item in score_record["directions"])):
+            raise ValueError(f"{name}: lowrank gate checkpoint缺少{n_deep}个逐点分数")
+        if args.gate_mode == "lowrank":
+            saved_direction_scores = np.asarray(
+                [item["deep_scores"] for item in score_record["directions"]], float)
+            saved_same_scores = np.asarray(
+                score_record["same_deep_bidirectional_scores"], float)
+            expected_same_scores = np.minimum(
+                saved_direction_scores[0], saved_direction_scores[1])
+            expected_joint = np.logical_and(
+                np.asarray(score_record["directions"][0]["lowrank_scan"][
+                    "identifiable"], bool),
+                np.asarray(score_record["directions"][1]["lowrank_scan"][
+                    "identifiable"], bool))
+            joint_indices = np.flatnonzero(expected_joint)
+            expected_local = (None if not joint_indices.size else int(
+                joint_indices[np.argmax(expected_same_scores[joint_indices])]))
+            expected_statistic = (-1. if expected_local is None else
+                                  float(expected_same_scores[expected_local]))
+            if not np.isfinite(saved_direction_scores).all() or \
+                    not np.array_equal(saved_same_scores, expected_same_scores) or \
+                    not np.array_equal(np.asarray(
+                        score_record["jointly_identifiable"], bool), expected_joint) or \
+                    score_record.get("selected_deep_local_index") != expected_local or \
+                    score_record.get("selected_deep_index") != (
+                        None if expected_local is None else n_surf + expected_local) or \
+                    float(score_record["gate_statistic"]) != expected_statistic:
+                raise ValueError(f"{name}: lowrank gate checkpoint聚合规则不一致")
         gate_score_sha256[number] = hashlib.sha256(score_payload).hexdigest()
         print(name, "gate score checkpoint 已核验", flush=True)
         continue
@@ -381,15 +467,46 @@ for original_case in cases:
             }
         if not all(item["strict_converged"] for item in solver_checks.values()):
             raise RuntimeError(f"{name} {direction}: conditional gate H0/H1未严格收敛")
-        partial_score, partial = score_partial_deep_presence(
-            blind[check_key], blind["gain"], null, full, n_surf,
-            baseline=blind["baseline"], active=blind["active"],
-            channel_weights=weights)
-        fraction = partial["conditional_gain_fraction"]
-        if not np.isfinite(partial_score) or \
-                (fraction is not None and
-                 (not np.isfinite(fraction) or not 0 <= fraction <= 1 + 1e-12)):
-            raise RuntimeError(f"{name} {direction}: conditional score非法")
+        if args.gate_mode == "partial":
+            partial_score, partial = score_partial_deep_presence(
+                blind[check_key], blind["gain"], null, full, n_surf,
+                baseline=blind["baseline"], active=blind["active"],
+                channel_weights=weights)
+            fraction = partial["conditional_gain_fraction"]
+            if not np.isfinite(partial_score) or \
+                    (fraction is not None and
+                     (not np.isfinite(fraction) or
+                      not 0 <= fraction <= 1 + 1e-12)):
+                raise RuntimeError(f"{name} {direction}: conditional score非法")
+            gate_direction = {
+                "partial_score": float(partial_score),
+                "selected_deep_index": partial["selected_deep_index"],
+                "conditional_gain_fraction": fraction,
+                "candidate_available": bool(partial["candidate_available"]),
+                "identifiable": bool(partial["identifiable"]),
+            }
+        else:
+            deep_scores, lowrank = score_low_rank_deep_scan(
+                blind[check_key], blind["gain"], null, n_surf,
+                baseline=blind["baseline"], active=blind["active"],
+                channel_weights=weights)
+            deep_scores = np.asarray(deep_scores, float)
+            if deep_scores.shape != (n_deep,) or \
+                    not np.isfinite(deep_scores).all() or \
+                    lowrank.get("truth_used") is not False or \
+                    len(lowrank.get("conditional_gain_fraction", [])) != n_deep or \
+                    len(lowrank.get("identifiable", [])) != n_deep:
+                raise RuntimeError(f"{name} {direction}: lowrank逐深点分数非法")
+            direction_local = lowrank.get("selected_deep_local_index")
+            if direction_local is not None:
+                direction_local = int(direction_local)
+            gate_direction = {
+                "deep_scores": deep_scores.tolist(),
+                "selected_deep_local_index": direction_local,
+                "selected_deep_index": (None if direction_local is None else
+                                        int(n_surf + direction_local)),
+                "lowrank_scan": lowrank,
+            }
         heldout_candidates = {}
         heldout_basis = None
         if direction == "A_to_B":
@@ -445,16 +562,36 @@ for original_case in cases:
                 }
         directions.append({
             "direction": direction, "fit_half": fit_key,
-            "held_out_half": check_key, "partial_score": float(partial_score),
-            "selected_deep_index": partial["selected_deep_index"],
-            "conditional_gain_fraction": fraction,
-            "candidate_available": bool(partial["candidate_available"]),
-            "identifiable": bool(partial["identifiable"]),
+            "held_out_half": check_key, **gate_direction,
             "mrf_08_candidates": heldout_candidates,
             "mrf_08_temporal_basis": heldout_basis,
             "solver_checks": solver_checks,
         })
-    statistic = float(min(item["partial_score"] for item in directions))
+    if args.gate_mode == "partial":
+        statistic = float(min(item["partial_score"] for item in directions))
+        lowrank_record = {}
+    else:
+        same_deep_scores = np.minimum(
+            np.asarray(directions[0]["deep_scores"], float),
+            np.asarray(directions[1]["deep_scores"], float))
+        jointly_identifiable = np.logical_and(
+            np.asarray(directions[0]["lowrank_scan"]["identifiable"], bool),
+            np.asarray(directions[1]["lowrank_scan"]["identifiable"], bool))
+        joint_indices = np.flatnonzero(jointly_identifiable)
+        selected_deep_local = (None if not joint_indices.size else int(
+            joint_indices[np.argmax(same_deep_scores[joint_indices])]))
+        statistic = (-1. if selected_deep_local is None else
+                     float(same_deep_scores[selected_deep_local]))
+        lowrank_record = {
+            "gate_mode": "lowrank",
+            "same_deep_bidirectional_scores": same_deep_scores.tolist(),
+            "jointly_identifiable": jointly_identifiable.tolist(),
+            "selected_deep_local_index": selected_deep_local,
+            "selected_deep_index": (None if selected_deep_local is None else
+                                    int(n_surf + selected_deep_local)),
+            "selected_deep_tie_rule": (
+                "numpy argmax among jointly identifiable: lowest local index"),
+        }
     score_record = {
         "complete": True, "stage": "gate_score_sealed",
         "case_number": number, "case_id": name,
@@ -462,6 +599,7 @@ for original_case in cases:
         "fit_check": "bidirectional independent 20-trial half means",
         "gate_statistic_rule": gate_statistic_rule,
         "gate_statistic": statistic, "directions": directions,
+        **lowrank_record,
         "all_four_fits_strictly_converged": True,
         "truth_or_label_used": False,
         "scenario_snr_source_fields_used_by_score": False,
@@ -526,6 +664,94 @@ else:
     os.replace(temporary, threshold_path)
 threshold_sha256 = hashlib.sha256(threshold_payload).hexdigest()
 print(f"gate threshold已冻结：{gate_threshold:.9g}（仅6个calibration H0）", flush=True)
+
+if args.stop_after_gate:
+    gate_rows = []
+    for original_case in cases:
+        number = int(original_case["case_number"])
+        record = json.loads(
+            (output / "gate_scores" / f"case_{number:02d}.json").read_text(
+                encoding="utf-8"))
+        gate_rows.append({
+            "case_number": number,
+            "case_id": original_case["case_id"],
+            "scenario": original_case["scenario"],
+            "h0_role": original_case["h0_role"],
+            "eeg_snr_db": original_case["eeg_snr_db"],
+            "meg_snr_db": original_case["meg_snr_db"],
+            "has_deep_true": int(original_case["deep_index"] is not None),
+            "gate_statistic": float(record["gate_statistic"]),
+            "deep_present_decision": int(
+                float(record["gate_statistic"]) > gate_threshold),
+            "gate_score_sha256": gate_score_sha256[number],
+        })
+    snr_rows = {}
+    for eeg_snr, meg_snr in sorted({
+            (row["eeg_snr_db"], row["meg_snr_db"]) for row in gate_rows}):
+        cell = [row for row in gate_rows
+                if (row["eeg_snr_db"], row["meg_snr_db"]) ==
+                (eeg_snr, meg_snr)]
+        cell_audit = [row for row in cell if row["h0_role"] == "gate_audit"]
+        cell_h1 = [row for row in cell if row["has_deep_true"]]
+        snr_rows[f"eeg{eeg_snr:+g}_meg{meg_snr:+g}"] = {
+            "eeg_snr_db": eeg_snr, "meg_snr_db": meg_snr,
+            "audit_h0_count": len(cell_audit),
+            "audit_h0_false_positive_count": sum(
+                row["deep_present_decision"] for row in cell_audit),
+            "h1_count": len(cell_h1),
+            "h1_detection_count": sum(
+                row["deep_present_decision"] for row in cell_h1),
+        }
+    audit_rows = [row for row in gate_rows if row["h0_role"] == "gate_audit"]
+    h1_rows = [row for row in gate_rows if row["has_deep_true"]]
+    h1_scenarios = {}
+    for scenario in ("deep_only", "deep_plus_surface", "deep_plus_two_surface"):
+        selected_rows = [row for row in h1_rows if row["scenario"] == scenario]
+        h1_scenarios[scenario] = {
+            "count": len(selected_rows),
+            "detection_count": sum(
+                row["deep_present_decision"] for row in selected_rows),
+        }
+    gate_only_summary = {
+        "complete": True, "stage": "gate_only_complete",
+        "development_only": True, "formal_or_blind_validation": False,
+        "stage2_ran": False, "case_count": len(gate_rows),
+        "gate_mode": args.gate_mode,
+        "identity_sha256": identity_sha256,
+        "gate_score_identity_reused_from_legacy_partial": legacy_partial_resume,
+        "gate_only_evaluation_script_sha256": script_sha256,
+        "gate_statistic_rule": gate_statistic_rule,
+        "threshold": gate_threshold, "threshold_sha256": threshold_sha256,
+        "calibration_h0_count": len(calibration_scores),
+        "calibration_h0_false_positive_count": sum(
+            row["deep_present_decision"] for row in gate_rows
+            if row["h0_role"] == "gate_calibration"),
+        "audit_h0_count": len(audit_rows),
+        "audit_h0_false_positive_count": sum(
+            row["deep_present_decision"] for row in audit_rows),
+        "h1_count": len(h1_rows),
+        "h1_detection_count": sum(
+            row["deep_present_decision"] for row in h1_rows),
+        "by_snr": snr_rows, "by_h1_scenario": h1_scenarios,
+        "audit_h0_h1_roles_snr_and_truth_unsealed_only_after_threshold_frozen": True,
+        "audit_h0_or_h1_used_by_threshold": False,
+        "gate_score_sha256": {
+            str(number): gate_score_sha256[number] for number in range(39)},
+    }
+    gate_only_payload = (json.dumps(
+        gate_only_summary, ensure_ascii=False, indent=2, sort_keys=True,
+        allow_nan=False) + "\n").encode("utf-8")
+    gate_only_path = output / "gate_only_summary.json"
+    if gate_only_path.is_file():
+        if gate_only_path.read_bytes() != gate_only_payload:
+            raise ValueError("已有gate-only汇总与冻结门控结果不一致")
+    else:
+        temporary = gate_only_path.with_suffix(".json.tmp")
+        with temporary.open("xb") as stream:
+            stream.write(gate_only_payload)
+        os.replace(temporary, gate_only_path)
+    print(json.dumps(gate_only_summary, ensure_ascii=False, indent=2), flush=True)
+    raise SystemExit(0)
 
 
 # %% 6. family固定后盲选MRF 0.5/0.8，再用combined40在同family联合重拟合并先落图哈希。
@@ -974,6 +1200,8 @@ h1 = [row for row in rows if row["has_deep_true"]]
 summary = {
     "complete": True, "development_only": True,
     "formal_or_blind_validation": False, "case_count": len(rows),
+    "gate_mode": args.gate_mode,
+    "gate_statistic_rule": gate_statistic_rule,
     "gate_threshold": gate_threshold,
     "gate_threshold_calibration_h0_count": len(calibration_h0),
     "gate_calibration_h0_false_positive_count": sum(
@@ -998,6 +1226,8 @@ summary = {
 }
 metadata = {
     **identity, "identity_sha256": identity_sha256,
+    "gate_mode": args.gate_mode,
+    "gate_statistic_rule": gate_statistic_rule,
     "evaluation_script_sha256": script_sha256,
     "frozen_evaluation_resume": bool(args.evaluate_frozen),
     "threshold_sha256": threshold_sha256,
@@ -1028,7 +1258,7 @@ with temporary_rows.open("w", encoding="utf-8-sig", newline="") as stream:
 os.replace(temporary_rows, rows_path)
 
 report = [
-    "# v3 全新开发结果", "",
+    f"# v3 全新开发结果（{args.gate_mode} gate）", "",
     "本目录仅是 fresh development，不是正式校准或 blind validation。", "",
     f"- gate statistic：`{gate_statistic_rule}`。",
     f"- 阈值：6个预声明 calibration H0 的最大值 `{gate_threshold:.9g}`；严格 `>` 才报H1。",
@@ -1043,6 +1273,7 @@ report = [
 (output / "REPORT.md").write_text("\n".join(report), encoding="utf-8")
 completion = {
     "complete": True, "development_only": True,
+    "gate_mode": args.gate_mode,
     "case_count": 39, "gate_score_checkpoint_count": 39,
     "final_map_checkpoint_count": 39, "posthoc_checkpoint_count": 39,
     "threshold_sha256": threshold_sha256,

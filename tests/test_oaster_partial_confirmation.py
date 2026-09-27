@@ -1,7 +1,89 @@
 import numpy as np
 import pytest
 
-from candidates.oaster_partial_confirmation import score_partial_deep_presence
+from candidates.oaster_partial_confirmation import (
+    score_low_rank_deep_scan, score_partial_deep_presence)
+
+
+def test_low_rank_scan_survives_full_rank_surface_support():
+    rng = np.random.default_rng(11)
+    n_sensors, n_surf, n_times = 6, 6, 80
+    baseline = np.zeros(n_times, bool)
+    baseline[:40] = True
+    active = np.zeros(n_times, bool)
+    active[45:75] = True
+    surface_gain = np.eye(n_sensors)
+    deep_gain = np.c_[np.array([1., -1., 0., 0., 0., 0.]) / np.sqrt(2),
+                      np.array([0., 0., 1., -1., 0., 0.]) / np.sqrt(2)]
+    gain = np.c_[surface_gain, deep_gain]
+    null = np.zeros((gain.shape[1], n_times))
+    null[:n_surf, active] = 1.
+    full = null.copy()
+    full[n_surf, active] = 1.
+    confirmation = .05 * rng.normal(size=(n_sensors, n_times))
+    confirmation[:, active] += np.ones((n_sensors, 1)) + deep_gain[:, :1]
+
+    scores, info = score_low_rank_deep_scan(
+        confirmation, gain, null, n_surf, baseline=baseline, active=active,
+        channel_weights=np.ones(n_sensors))
+    old_score, old_info = score_partial_deep_presence(
+        confirmation, gain, null, full, n_surf, baseline=baseline,
+        active=active, channel_weights=np.ones(n_sensors))
+
+    assert np.linalg.matrix_rank(surface_gain) == n_sensors
+    assert np.linalg.norm(surface_gain @ np.linalg.lstsq(
+        surface_gain, deep_gain[:, 0], rcond=None)[0] - deep_gain[:, 0]) < 1e-12
+    assert old_info["surface_support"] == list(range(n_surf))
+    assert old_info["nuisance_rank"] == n_sensors
+    assert old_score == -1 and not old_info["identifiable"]
+    assert scores.shape == (2,) and np.isfinite(scores).all()
+    assert scores[0] > 10 and scores[0] > scores[1]
+    assert info["nuisance_rank"] == 1
+    assert info["nuisance_rank"] <= info["nuisance_rank_bound"]
+    assert info["selected_deep_local_index"] == 0
+    assert info["truth_used"] is False and info["reference_threshold"] is None
+    assert info["finite_baseline_correction"] == pytest.approx(37 / 39)
+
+    noise_scores, noise_info = score_low_rank_deep_scan(
+        .05 * rng.normal(size=confirmation.shape), gain, null, n_surf,
+        baseline=baseline, active=active, channel_weights=np.ones(n_sensors))
+    assert np.isfinite(noise_scores).all()
+    assert noise_info["nuisance_rank"] == info["nuisance_rank"]
+    assert noise_info["conditional_gain_fraction"] == pytest.approx(
+        info["conditional_gain_fraction"])
+
+
+def test_low_rank_scan_rejects_exact_and_near_numerical_aliases():
+    rng = np.random.default_rng(12)
+    n_sensors, n_surf, n_times = 6, 6, 80
+    baseline = np.zeros(n_times, bool)
+    baseline[:40] = True
+    active = np.zeros(n_times, bool)
+    active[45:75] = True
+    surface_gain = np.eye(n_sensors)
+    exact = surface_gain[:, 0] + surface_gain[:, 1]
+    near = exact + np.finfo(float).eps * surface_gain[:, 2]
+    gain = np.c_[surface_gain, exact, near]
+    null = np.zeros((gain.shape[1], n_times))
+    null[0, active] = 1.
+    null[1, active] = np.linspace(-1., 1., active.sum())
+
+    scores, info = score_low_rank_deep_scan(
+        .05 * rng.normal(size=(n_sensors, n_times)), gain, null, n_surf,
+        baseline=baseline, active=active, channel_weights=np.ones(n_sensors))
+
+    assert info["nuisance_rank"] == 2
+    assert scores.tolist() == [-1., -1.]
+    assert info["identifiable"] == [False, False]
+    assert info["identifiable_count"] == 0
+    assert info["selected_deep_local_index"] is None
+    assert info["selected_deep_index"] is None
+    assert info["conditional_gain_fraction_threshold"] == pytest.approx(
+        np.finfo(float).eps * max(n_sensors, info["temporal_rank"]))
+    assert (max(info["conditional_gain_fraction"])
+            <= info["conditional_gain_fraction_threshold"])
+    assert info["conditional_gain_fraction"][1] > 0
+    assert "nuisance SVD tolerance" in info["identifiability_rule"]
 
 
 def test_partial_score_uses_training_support_and_held_out_deep_direction():
