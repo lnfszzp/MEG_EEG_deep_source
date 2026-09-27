@@ -1,0 +1,26 @@
+{
+  "all_gate_and_final_solvers_strictly_converged": true,
+  "auc_only_uses_frozen_fine_to_coarse_projection": true,
+  "audit_h0_and_h1_truth_unsealed_only_after_each_final_map_hash": true,
+  "calibration_h0_roles_unsealed_before_final_maps_for_threshold": true,
+  "case_count": 39,
+  "complete": true,
+  "development_only": true,
+  "distance_metrics_use_true_fine_HEAD_coordinates": true,
+  "formal_or_blind_validation": false,
+  "gate_audit_h0_count": 6,
+  "gate_audit_h0_false_positive_count": 1,
+  "gate_calibration_h0_false_positive_count": 0,
+  "gate_threshold": 0.252505832387967,
+  "gate_threshold_calibration_h0_count": 6,
+  "h1_count": 27,
+  "h1_family_detection_count": 13,
+  "h1_localization_detection_count": 10,
+  "median_global_An_auc": 0.8876992197919445,
+  "minimum_global_An_auc": 0.0009982696659124324,
+  "mrf_selection_counts": {
+    "0.5": 37,
+    "0.8": 2
+  },
+  "wall_seconds_this_invocation": 40.103377200022805
+}

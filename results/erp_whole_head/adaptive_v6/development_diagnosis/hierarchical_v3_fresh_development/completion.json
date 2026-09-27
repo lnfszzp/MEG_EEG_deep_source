@@ -1,0 +1,13 @@
+{
+  "case_count": 39,
+  "complete": true,
+  "development_only": true,
+  "evaluation_script_sha256": "f95eb2060100537c9b9b8e7b0ce7de6bbeaf7f98692b79242ca39b67b6fb4ff8",
+  "final_map_checkpoint_count": 39,
+  "frozen_evaluation_resume": true,
+  "gate_score_checkpoint_count": 39,
+  "posthoc_checkpoint_count": 39,
+  "rows_sha256": "3ba0aa06caa8d1d6efd5d2ad9c96a5f5b8485458068688ae91b86452021dacce",
+  "summary_sha256": "638222da576b7081933f3ecc99f9649f2fc1bc837b0708d443baab281084cf12",
+  "threshold_sha256": "a0c0e16710eb8818c1060f5faada5e47594414783eaf26c5b282fb6ae6548c00"
+}

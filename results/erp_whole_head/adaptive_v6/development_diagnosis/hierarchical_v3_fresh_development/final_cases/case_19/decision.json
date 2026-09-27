@@ -1,0 +1,73 @@
+{
+  "case_id": "erp-v3-fresh-dev-06-deep_only-eeg-10-meg+20",
+  "case_number": 19,
+  "complete": true,
+  "deep_present_decision": true,
+  "elapsed_seconds": 522.7703134000185,
+  "final_map_file": "final_map.npz",
+  "final_map_sha256": "574417b20d117e754c38c618466464fa58cf3d3f2856ab4314b2b1212bf8b40f",
+  "final_solver": {
+    "converged": true,
+    "final_inner_converged": true,
+    "final_stationarity_gap_relative": 0.000842241268876492,
+    "outer_converged": true,
+    "outer_iterations": 9,
+    "strict_converged": true
+  },
+  "gate_score_sha256": "e151e3fa7290547c898bcdc715fc139c7c2f266233cbf2f254ef33902b704362",
+  "gate_statistic": 1.023130557257664,
+  "gate_threshold": 0.252505832387967,
+  "identity_sha256": "9ff24f75b13e7c0e1aa3cac4243f12c97987c46a1b77bfb1d1875c16242293f0",
+  "mrf_candidates": [
+    {
+      "eeg_heldout_squared_loss": 727.6805462507538,
+      "eeg_noise_normalized_loss": 1.1090414892257707,
+      "meg_heldout_squared_loss": 1855.5643691426617,
+      "meg_noise_normalized_loss": 1.6787914502342447,
+      "mrf_strength": 0.8,
+      "reused_from_gate_fit": true,
+      "solver": {
+        "converged": true,
+        "final_inner_converged": true,
+        "final_stationarity_gap_relative": 0.000918022226858251,
+        "outer_converged": true,
+        "outer_iterations": 7,
+        "strict_converged": true
+      },
+      "total_heldout_squared_loss": 2583.244915393415,
+      "total_noise_normalized_loss": 1.466559237547255
+    },
+    {
+      "eeg_heldout_squared_loss": 727.653666583331,
+      "eeg_noise_normalized_loss": 1.109000522531605,
+      "meg_heldout_squared_loss": 1771.7614525750528,
+      "meg_noise_normalized_loss": 1.6029721350016513,
+      "mrf_strength": 0.5,
+      "reused_from_gate_fit": false,
+      "solver": {
+        "converged": true,
+        "final_inner_converged": true,
+        "final_stationarity_gap_relative": 0.000599580248523326,
+        "outer_converged": true,
+        "outer_iterations": 7,
+        "strict_converged": true
+      },
+      "total_heldout_squared_loss": 2499.4151191583833,
+      "total_noise_normalized_loss": 1.4189674039903246
+    }
+  ],
+  "mrf_selection_rule": "minimum confirmation20 all-whitened-channel raw squared loss; exact tie -> 0.8",
+  "selected_family": "H1",
+  "selected_mrf_strength": 0.5,
+  "stage": "final_map_frozen_before_truth_unseal",
+  "strict_greater_than_threshold": true,
+  "temporal_basis": {
+    "active_samples": 61,
+    "attenuation_floor": 0.01,
+    "smoothing_fraction": 0.1,
+    "temporal_rank": 10,
+    "temporal_selection": "amplitude_independent_smooth_subspace"
+  },
+  "threshold_sha256": "a0c0e16710eb8818c1060f5faada5e47594414783eaf26c5b282fb6ae6548c00",
+  "truth_scenario_snr_source_positions_used_by_decision": false
+}
