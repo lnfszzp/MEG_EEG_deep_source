@@ -1,0 +1,120 @@
+{
+  "all_four_fits_strictly_converged": true,
+  "case_id": "erp-v3-fresh-dev-04-deep_only-eeg+20-meg-10",
+  "case_id_saved_as_identity_and_human_readable_only": true,
+  "case_number": 30,
+  "complete": true,
+  "directions": [
+    {
+      "candidate_available": true,
+      "conditional_gain_fraction": 0.00018094300895596258,
+      "direction": "A_to_B",
+      "fit_half": "training",
+      "held_out_half": "confirmation",
+      "identifiable": true,
+      "mrf_08_candidates": {
+        "H0": {
+          "eeg_heldout_squared_loss": 1032.91013671801,
+          "eeg_noise_normalized_loss": 1.6548544805766254,
+          "meg_heldout_squared_loss": 1110.6516990646026,
+          "meg_noise_normalized_loss": 0.9907322924152837,
+          "mrf_strength": 0.8,
+          "reused_from_gate_fit": true,
+          "solver": {
+            "converged": true,
+            "final_inner_converged": true,
+            "final_stationarity_gap_relative": 0.0008247709656647567,
+            "outer_converged": true,
+            "outer_iterations": 17,
+            "strict_converged": true
+          },
+          "total_heldout_squared_loss": 2143.561835782613,
+          "total_noise_normalized_loss": 1.2282537176829293
+        },
+        "H1": {
+          "eeg_heldout_squared_loss": 624.7919740460434,
+          "eeg_noise_normalized_loss": 1.0009968543475343,
+          "meg_heldout_squared_loss": 1108.7139298741668,
+          "meg_noise_normalized_loss": 0.9890037482516822,
+          "mrf_strength": 0.8,
+          "reused_from_gate_fit": true,
+          "solver": {
+            "converged": true,
+            "final_inner_converged": true,
+            "final_stationarity_gap_relative": 0.0007726550227127759,
+            "outer_converged": true,
+            "outer_iterations": 3,
+            "strict_converged": true
+          },
+          "total_heldout_squared_loss": 1733.5059039202101,
+          "total_noise_normalized_loss": 0.9932930487810916
+        }
+      },
+      "mrf_08_temporal_basis": {
+        "active_samples": 61,
+        "attenuation_floor": 0.01,
+        "smoothing_fraction": 0.1,
+        "temporal_rank": 10,
+        "temporal_selection": "amplitude_independent_smooth_subspace"
+      },
+      "partial_score": -0.09164801761140418,
+      "selected_deep_index": 7507,
+      "solver_checks": {
+        "full": {
+          "converged": true,
+          "final_inner_converged": true,
+          "final_stationarity_gap_relative": 0.0007726550227127759,
+          "outer_converged": true,
+          "outer_iterations": 3,
+          "strict_converged": true
+        },
+        "null": {
+          "converged": true,
+          "final_inner_converged": true,
+          "final_stationarity_gap_relative": 0.0008247709656647567,
+          "outer_converged": true,
+          "outer_iterations": 17,
+          "strict_converged": true
+        }
+      }
+    },
+    {
+      "candidate_available": true,
+      "conditional_gain_fraction": 0.00016867353376127622,
+      "direction": "B_to_A",
+      "fit_half": "confirmation",
+      "held_out_half": "training",
+      "identifiable": true,
+      "mrf_08_candidates": {},
+      "mrf_08_temporal_basis": null,
+      "partial_score": -0.3702457367363404,
+      "selected_deep_index": 7499,
+      "solver_checks": {
+        "full": {
+          "converged": true,
+          "final_inner_converged": true,
+          "final_stationarity_gap_relative": 0.000778492072923627,
+          "outer_converged": true,
+          "outer_iterations": 3,
+          "strict_converged": true
+        },
+        "null": {
+          "converged": true,
+          "final_inner_converged": true,
+          "final_stationarity_gap_relative": 0.00021496626706130311,
+          "outer_converged": true,
+          "outer_iterations": 10,
+          "strict_converged": true
+        }
+      }
+    }
+  ],
+  "elapsed_seconds": 410.8161762999953,
+  "fit_check": "bidirectional independent 20-trial half means",
+  "gate_statistic": -0.3702457367363404,
+  "gate_statistic_rule": "min(partial_A_to_B, partial_B_to_A)",
+  "identity_sha256": "9ff24f75b13e7c0e1aa3cac4243f12c97987c46a1b77bfb1d1875c16242293f0",
+  "scenario_snr_source_fields_used_by_score": false,
+  "stage": "gate_score_sealed",
+  "truth_or_label_used": false
+}

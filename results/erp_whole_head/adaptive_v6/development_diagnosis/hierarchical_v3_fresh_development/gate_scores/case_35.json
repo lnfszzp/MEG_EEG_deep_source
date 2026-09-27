@@ -1,0 +1,120 @@
+{
+  "all_four_fits_strictly_converged": true,
+  "case_id": "erp-v3-fresh-dev-09-deep_plus_surface-eeg+20-meg-10",
+  "case_id_saved_as_identity_and_human_readable_only": true,
+  "case_number": 35,
+  "complete": true,
+  "directions": [
+    {
+      "candidate_available": true,
+      "conditional_gain_fraction": 1.2498652850465633e-05,
+      "direction": "A_to_B",
+      "fit_half": "training",
+      "held_out_half": "confirmation",
+      "identifiable": true,
+      "mrf_08_candidates": {
+        "H0": {
+          "eeg_heldout_squared_loss": 1166.475695274271,
+          "eeg_noise_normalized_loss": 1.8067568227927024,
+          "meg_heldout_squared_loss": 1125.1831046490456,
+          "meg_noise_normalized_loss": 0.9949896036214394,
+          "mrf_strength": 0.8,
+          "reused_from_gate_fit": true,
+          "solver": {
+            "converged": true,
+            "final_inner_converged": true,
+            "final_stationarity_gap_relative": 0.0007915748204523439,
+            "outer_converged": true,
+            "outer_iterations": 20,
+            "strict_converged": true
+          },
+          "total_heldout_squared_loss": 2291.658799923317,
+          "total_noise_normalized_loss": 1.2900087478358155
+        },
+        "H1": {
+          "eeg_heldout_squared_loss": 829.2481824687534,
+          "eeg_noise_normalized_loss": 1.2844243712352599,
+          "meg_heldout_squared_loss": 1071.1862653228877,
+          "meg_noise_normalized_loss": 0.9472406696604179,
+          "mrf_strength": 0.8,
+          "reused_from_gate_fit": true,
+          "solver": {
+            "converged": true,
+            "final_inner_converged": true,
+            "final_stationarity_gap_relative": 0.00045263714549817404,
+            "outer_converged": true,
+            "outer_iterations": 4,
+            "strict_converged": true
+          },
+          "total_heldout_squared_loss": 1900.4344477916409,
+          "total_noise_normalized_loss": 1.0697827540564846
+        }
+      },
+      "mrf_08_temporal_basis": {
+        "active_samples": 61,
+        "attenuation_floor": 0.01,
+        "smoothing_fraction": 0.1,
+        "temporal_rank": 10,
+        "temporal_selection": "amplitude_independent_smooth_subspace"
+      },
+      "partial_score": 0.05184137944870071,
+      "selected_deep_index": 7511,
+      "solver_checks": {
+        "full": {
+          "converged": true,
+          "final_inner_converged": true,
+          "final_stationarity_gap_relative": 0.00045263714549817404,
+          "outer_converged": true,
+          "outer_iterations": 4,
+          "strict_converged": true
+        },
+        "null": {
+          "converged": true,
+          "final_inner_converged": true,
+          "final_stationarity_gap_relative": 0.0007915748204523439,
+          "outer_converged": true,
+          "outer_iterations": 20,
+          "strict_converged": true
+        }
+      }
+    },
+    {
+      "candidate_available": true,
+      "conditional_gain_fraction": 1.349646758742207e-15,
+      "direction": "B_to_A",
+      "fit_half": "confirmation",
+      "held_out_half": "training",
+      "identifiable": true,
+      "mrf_08_candidates": {},
+      "mrf_08_temporal_basis": null,
+      "partial_score": -1.0,
+      "selected_deep_index": 7511,
+      "solver_checks": {
+        "full": {
+          "converged": true,
+          "final_inner_converged": true,
+          "final_stationarity_gap_relative": 0.0005940072090747219,
+          "outer_converged": true,
+          "outer_iterations": 4,
+          "strict_converged": true
+        },
+        "null": {
+          "converged": true,
+          "final_inner_converged": true,
+          "final_stationarity_gap_relative": 0.0007764049278256491,
+          "outer_converged": true,
+          "outer_iterations": 18,
+          "strict_converged": true
+        }
+      }
+    }
+  ],
+  "elapsed_seconds": 460.65884699998423,
+  "fit_check": "bidirectional independent 20-trial half means",
+  "gate_statistic": -1.0,
+  "gate_statistic_rule": "min(partial_A_to_B, partial_B_to_A)",
+  "identity_sha256": "9ff24f75b13e7c0e1aa3cac4243f12c97987c46a1b77bfb1d1875c16242293f0",
+  "scenario_snr_source_fields_used_by_score": false,
+  "stage": "gate_score_sealed",
+  "truth_or_label_used": false
+}

@@ -1,0 +1,93 @@
+{
+  "all_gate_score_sha256": {
+    "0": "46b98e847e0f7809c8df68f8620ea0cacd8eb9045b4c647a7e016eed98e404e0",
+    "1": "3959d528f7c3bd9966bc116ed74db83810638b7b335d002501e5e24181af4228",
+    "10": "7496f93ab5e93757829730182654618e01d653afd9d3ff216fe8bb175ae1f43a",
+    "11": "c82aa7839f1f2d1e6f0e1f957adc00e39313f076186074a49db3aed9b33bbd2c",
+    "12": "c5e31024667224433d5b70a3c65025afefaca7a74cd2fd8d79e052c4b80089c0",
+    "13": "e85cb51ab43e56444a42041f150be3ca8999aab5c8676fd1b0d7b0d58433f8b2",
+    "14": "4c0e5adc54bece2c711494612577e3a2342f4d91d9084ac7606b4206eb7146e4",
+    "15": "e76f604ac97f06866602c27ac9abef5af354fa208d0ee92c6d252f58a806d538",
+    "16": "d664613cf15bf643b033b4271e7c4353879ea9980279dea21c8bb89b9a41733e",
+    "17": "7bc5b04032e6c51bd9e982669b5d23399075a00436c878a00a51e7eefbadd620",
+    "18": "ad9814731e979988bbc1e6ebb78e1d92786ed9754e27efe8f6d7e2dffd31da6d",
+    "19": "e151e3fa7290547c898bcdc715fc139c7c2f266233cbf2f254ef33902b704362",
+    "2": "025fab2f833536d118a1be562c41506d3261ffe1341bc3bb22bbeb4fa4b21d99",
+    "20": "a205859ad3c866c1e080db37f7a14e71e384e4eee3b203943fb32515e23df328",
+    "21": "65dd03f2dee161ae3f609434c9ab7f5980b38f6d978d207f2fe4a47aec137629",
+    "22": "36f85bddd852c185e2a553507712babaca3a04b39df7dfcc5b719d3097d785b4",
+    "23": "feabcc8fa6856b2a31967cdef397098ea0f0ccab29c965e2f16704e706f7787d",
+    "24": "c77ff8e4a211e34fc9abab6cc809ed735213c105cae5d8677d4ed68f9f57224f",
+    "25": "c352858a603259231b3a35cbfde0b9128f1c3ed70e2c9bd55b047bef8245f490",
+    "26": "88f4d12ebf06922c706be2f62b1d8e95b11d1d69a90c168ef645562cf250ea66",
+    "27": "d1286f35511f8ccdd8df13a912970f380d52b2949f65bde69a91c7704a2de62c",
+    "28": "d683f57f5c5546adcf5386c2c4ca7f0fde7a0b6d9bff3d386a81f56c82f38eb5",
+    "29": "460a279f596abcb0408e23be39fac5ab802e5f60fcf66780b734a779ba54f86f",
+    "3": "b5bf45dc2cdf2da8d08ad5bef46d0775de211b6dbe038382aaf8cf308188f1a9",
+    "30": "57fc5a12cd2d078c7928e20a736fb92dc9ad013858890364a63fd4e79ffbba7c",
+    "31": "3bb4a4333510393e40fb483cccc9192868506c05710d32647ef7f98123925623",
+    "32": "1ab55a5dc5a6476873ebd79319ae18b947cfb729e1a5f310ddc56c65cd696d53",
+    "33": "f35627e32e00c4406466cbd39e40fe19738ae299ba213c41e092871280c7b558",
+    "34": "ec3f4b1f6cbf3e7c0378f8e141bc7a7512152b5df38a1fabd08614dc85db1679",
+    "35": "9f82f310a8c76f9bd41f7d82761203a6ae8ada5bfa0fa848993930f0cee84d66",
+    "36": "3cd01dd44e122fce98ff70448641c305da64c9f604ea9e4fec2bd1e4b17a1bee",
+    "37": "5b3cd1f70b10b16b7f28ca92166779c87b5d13767ecf6d40f8a462fe5902f5c7",
+    "38": "dda021759f83cf7144d995bd9353fcd3866c739d4a0ce26d41f4e19ce3aa9837",
+    "4": "125c54859f6bcecae1aa25ced5fc669e0ef860936edfab1af823e681e556483c",
+    "5": "56746dcda9b5421610166e261d8adb44e69d416e85d7069268a6b15218b06f00",
+    "6": "61136d9eebf6e23d0a2a7955208478859f8682971286000f37937ce0478b620a",
+    "7": "330f14df88e8721dbeaa829c0a3bac324e8db849506da61ed205740576e548c0",
+    "8": "fa825c3b3a813dddd138064f7a6530039e9c12431d741612fe8783ef99f9d497",
+    "9": "16bb4d59ea22fc0aacf209eb22fafc4706f2fe43f12911f5589037a512ad1ba4"
+  },
+  "audit_h0_labels_used": false,
+  "calibration_case_count": 6,
+  "calibration_cases": [
+    {
+      "case_id": "erp-v3-fresh-dev-00-surface_only-eeg-10-meg-10",
+      "case_number": 0,
+      "gate_score_sha256": "46b98e847e0f7809c8df68f8620ea0cacd8eb9045b4c647a7e016eed98e404e0",
+      "gate_statistic": 0.24034783484006272
+    },
+    {
+      "case_id": "erp-v3-fresh-dev-02-surface_only-eeg-10-meg-10",
+      "case_number": 2,
+      "gate_score_sha256": "025fab2f833536d118a1be562c41506d3261ffe1341bc3bb22bbeb4fa4b21d99",
+      "gate_statistic": -1.0
+    },
+    {
+      "case_id": "erp-v3-fresh-dev-00-surface_only-eeg-10-meg+20",
+      "case_number": 13,
+      "gate_score_sha256": "e85cb51ab43e56444a42041f150be3ca8999aab5c8676fd1b0d7b0d58433f8b2",
+      "gate_statistic": 0.252505832387967
+    },
+    {
+      "case_id": "erp-v3-fresh-dev-02-surface_only-eeg-10-meg+20",
+      "case_number": 15,
+      "gate_score_sha256": "e76f604ac97f06866602c27ac9abef5af354fa208d0ee92c6d252f58a806d538",
+      "gate_statistic": 0.22908397400810587
+    },
+    {
+      "case_id": "erp-v3-fresh-dev-00-surface_only-eeg+20-meg-10",
+      "case_number": 26,
+      "gate_score_sha256": "88f4d12ebf06922c706be2f62b1d8e95b11d1d69a90c168ef645562cf250ea66",
+      "gate_statistic": 0.24727749615688333
+    },
+    {
+      "case_id": "erp-v3-fresh-dev-02-surface_only-eeg+20-meg-10",
+      "case_number": 28,
+      "gate_score_sha256": "d683f57f5c5546adcf5386c2c4ca7f0fde7a0b6d9bff3d386a81f56c82f38eb5",
+      "gate_statistic": -0.04571973843320054
+    }
+  ],
+  "complete": true,
+  "decision_rule": "H1 iff statistic > threshold (strict)",
+  "development_only": true,
+  "formal_or_blind_validation": false,
+  "gate_statistic_rule": "min(partial_A_to_B, partial_B_to_A)",
+  "h1_labels_used": false,
+  "identity_sha256": "9ff24f75b13e7c0e1aa3cac4243f12c97987c46a1b77bfb1d1875c16242293f0",
+  "stage": "gate_threshold_frozen",
+  "threshold": 0.252505832387967,
+  "threshold_rule": "maximum statistic among 6 predeclared gate_calibration H0 cases"
+}
