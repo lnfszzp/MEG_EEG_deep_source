@@ -69,17 +69,21 @@ def _validate_observations(data, gain, baseline, active, channel_weights):
 
 
 def fit_predictive_models(training, gain, n_surf, *, adjacency, baseline, active,
-                          channel_weights, solver_settings=None):
-    """Fit H0 (all cortex) and H1 (cortex + deep) using training data only.
+                          channel_weights, solver_settings=None, fit_full=True):
+    """Fit H0 and, unless disabled, H1 using training data only.
 
-    Return complete source matrices ``(null, full, diagnostics)``. When deep
-    evidence is rejected, use ``null``; zeroing just the deep rows of ``full``
-    would retain the surface bias of the rejected joint decomposition.
+    Return ``(null, full, diagnostics)``; ``fit_full=False`` returns ``None``
+    for ``full`` and avoids the unused joint inverse.  When deep evidence is
+    rejected, use ``null``; zeroing just the deep rows of ``full`` would retain
+    the surface bias of the rejected joint decomposition.
     """
     training, gain, baseline, active, weights = _validate_observations(
         training, gain, baseline, active, channel_weights)
     if not isinstance(n_surf, (int, np.integer)) or not 0 < n_surf < gain.shape[1]:
         raise ValueError("n_surf must split nonempty cortical and deep grids")
+    if not isinstance(fit_full, (bool, np.bool_)):
+        raise ValueError("fit_full must be boolean")
+    fit_full = bool(fit_full)
     graph = sparse.csr_matrix(adjacency)
     if graph.shape != (gain.shape[1], gain.shape[1]) or not np.isfinite(graph.data).all():
         raise ValueError("adjacency must match the full source grid")
@@ -107,13 +111,18 @@ def fit_predictive_models(training, gain, n_surf, *, adjacency, baseline, active
     cortical, null_info = reconstruct_evoked_oaster_v5_from_whitened(
         training, gain[:, :n_surf], n_surf,
         adjacency=graph[:n_surf, :n_surf], **options)
-    full, full_info = reconstruct_evoked_oaster_v5_from_whitened(
-        training, gain, n_surf, adjacency=graph, **options)
-    null = np.zeros_like(full)
+    full = full_info = None
+    if fit_full:
+        full, full_info = reconstruct_evoked_oaster_v5_from_whitened(
+            training, gain, n_surf, adjacency=graph, **options)
+    null = (np.zeros_like(full) if fit_full else
+            np.zeros((gain.shape[1], training.shape[1]), dtype=cortical.dtype))
     null[:n_surf] = cortical
-    return null, full, dict(mode="independent_confirmation_joint_vs_surface",
+    return null, full, dict(mode=("independent_confirmation_joint_vs_surface"
+                                  if fit_full else "training_surface_only"),
         solver_kind=solver_kind, structural_settings=structural,
         solver_settings=settings, null_model=null_info, full_model=full_info,
+        fitted_families=["H0", "H1"] if fit_full else ["H0"],
         confirmation_used_for_fit=False, spatial_templates_used=False)
 
 

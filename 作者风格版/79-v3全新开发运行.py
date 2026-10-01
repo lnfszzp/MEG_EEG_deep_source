@@ -41,23 +41,42 @@ parser.add_argument(
 parser.add_argument("--gate-mode", choices=("partial", "lowrank"),
                     default="partial",
                     help="partial保持原门控；lowrank使用同一深点双向低秩扫描")
+parser.add_argument(
+    "--parameter-profile",
+    choices=("baseline", "mrf05", "mrf095", "noise05", "edge10",
+             "surfacefloor025", "epsilon100"),
+    default="baseline", help="预声明的低秩H0调参配置；默认保持原算法参数")
+parser.add_argument(
+    "--case-split", choices=("all", "tuning15"), default="all",
+    help="all保持原39例；tuning15只跑预声明6个calibration H0和9个均衡H1")
 parser.add_argument("--stop-after-gate", action="store_true",
-                    help="39例门控和阈值封存后只写门控审计，不运行Stage2")
+                    help="所选病例门控和阈值封存后只写门控审计，不运行Stage2")
 parser.add_argument("--preflight", action="store_true",
                     help="只核验冻结面板、off-grid forward、调用预算和作者风格")
 parser.add_argument(
     "--evaluate-frozen", action="store_true",
     help="只续算已完整冻结的39张final map；沿用原盲运行身份并另记评估脚本哈希")
 args = parser.parse_args()
-default_output = root / (
-    "results/erp_whole_head/adaptive_v6/development_diagnosis/"
-    + ("hierarchical_v3_fresh_development" if args.gate_mode == "partial" else
-       "hierarchical_v3_lowrank_gate_development"))
+default_run_name = (
+    "hierarchical_v3_fresh_development" if args.gate_mode == "partial" else
+    "hierarchical_v3_lowrank_gate_development")
+if args.case_split == "tuning15":
+    default_run_name = f"hierarchical_v3_lowrank_gate_tuning15_{args.parameter_profile}"
+default_output = (root / "results/erp_whole_head/adaptive_v6/development_diagnosis"
+                  / default_run_name)
 output = default_output if args.output is None else (
     args.output if args.output.is_absolute() else root / args.output)
 output = output.resolve()
-if args.evaluate_frozen and (args.gate_mode != "partial" or args.stop_after_gate):
+if args.evaluate_frozen and (args.gate_mode != "partial" or args.stop_after_gate
+        or args.parameter_profile != "baseline" or args.case_split != "all"):
     raise ValueError("--evaluate-frozen只能续评估原partial完整final map")
+if args.case_split == "tuning15" and (
+        args.gate_mode != "lowrank" or not args.stop_after_gate
+        or args.evaluate_frozen):
+    raise ValueError("tuning15只允许lowrank + --stop-after-gate开发调参")
+if args.parameter_profile != "baseline" and args.case_split != "tuning15":
+    raise ValueError("非baseline参数profile只允许在tuning15中使用")
+h0_only_gate = bool(args.gate_mode == "lowrank" and args.stop_after_gate)
 
 script_path = Path(__file__).resolve()
 script_text = script_path.read_text(encoding="utf-8")
@@ -193,6 +212,29 @@ for case in cases:
                                 rtol=0., atol=1e-12):
             raise ValueError(f"{case['case_id']}: 78冻结的 refined patch 已变化")
 
+tuning_case_numbers = (
+    0, 2, 4, 8, 12, 13, 15, 18, 22, 23, 26, 28, 32, 33, 37)
+if args.case_split == "tuning15":
+    cases = [case for case in cases
+             if int(case["case_number"]) in tuning_case_numbers]
+case_numbers = tuple(int(case["case_number"]) for case in cases)
+if (args.case_split == "tuning15" and case_numbers != tuning_case_numbers) or \
+        (args.case_split == "all" and case_numbers != tuple(range(39))):
+    raise ValueError("所选case split与预声明编号不一致")
+if args.case_split == "tuning15":
+    tuning_h0 = [case for case in cases if case["h0_role"] == "gate_calibration"]
+    tuning_h1 = [case for case in cases if case["deep_index"] is not None]
+    if len(tuning_h0) != 6 or len(tuning_h1) != 9 or \
+            Counter((case["eeg_snr_db"], case["meg_snr_db"])
+                    for case in tuning_h0) != {pair: 2 for pair in snr_pairs} or \
+            Counter((case["eeg_snr_db"], case["meg_snr_db"], case["scenario"])
+                    for case in tuning_h1) != {
+                        (*pair, scenario): 1 for pair in snr_pairs for scenario in
+                        ("deep_only", "deep_plus_surface", "deep_plus_two_surface")} or \
+            Counter(case["alias_tier"] for case in tuning_h1) != {
+                "low": 3, "mid": 3, "high": 3}:
+        raise ValueError("tuning15不再是按SNR/情形/alias均衡的预声明开发集")
+
 base_settings = {
     "solver_kind": "admm", "mrf_strength": .8,
     "outer_iterations": 80, "max_inner_retries": 20,
@@ -205,6 +247,16 @@ base_settings = {
     "edge_penalty_mode": "group", "source_penalty_mode": "group",
     "deep_alias_penalty": False,
 }
+parameter_overrides = {
+    "baseline": {},
+    "mrf05": {"mrf_strength": .5},
+    "mrf095": {"mrf_strength": .95},
+    "noise05": {"noise_multiplier": .5},
+    "edge10": {"edge_fraction": 1.},
+    "surfacefloor025": {"surface_reweight_floor": .25},
+    "epsilon100": {"epsilon_fraction": 1.},
+}[args.parameter_profile]
+base_settings.update(parameter_overrides)
 strengths = (.5, .8)
 gate_statistic_rule = (
     "min(partial_A_to_B, partial_B_to_A)" if args.gate_mode == "partial" else
@@ -234,6 +286,8 @@ legacy_partial_identity_sha256 = \
     "9ff24f75b13e7c0e1aa3cac4243f12c97987c46a1b77bfb1d1875c16242293f0"
 legacy_partial_function_sha256 = \
     "5b84774610be436c847facca88dada0fb82affae7eb6cb167d285c3620e35496"
+legacy_partial_predictive_function_sha256 = \
+    "58f951b61287b15a4a7dbf5516ed2a366597960a8b2a17c7ccefd18c47be4f2a"
 legacy_partial_resume = bool(
     args.gate_mode == "partial" and identity_path.is_file() and
     hashlib.sha256(identity_path.read_bytes()).hexdigest() ==
@@ -242,12 +296,16 @@ if legacy_partial_resume:
     frozen_identity = json.loads(identity_path.read_text(encoding="utf-8"))
     unchanged_core = {
         name: digest for name, digest in frozen_identity["code_sha256"].items()
-        if name != "candidates/oaster_partial_confirmation.py"}
+        if name not in {"candidates/oaster_partial_confirmation.py",
+                        "candidates/oaster_predictive.py"}}
     if any(code_sha256.get(name) != digest
            for name, digest in unchanged_core.items()) or \
             hashlib.sha256(inspect.getsource(
                 score_partial_deep_presence).encode("utf-8")).hexdigest() != \
-            legacy_partial_function_sha256:
+            legacy_partial_function_sha256 or \
+            hashlib.sha256(inspect.getsource(
+                fit_predictive_models).encode("utf-8")).hexdigest() != \
+            legacy_partial_predictive_function_sha256:
         raise ValueError("原partial checkpoint的核心代码或partial scorer已变化")
     blind_script_sha256 = str(frozen_identity["script_sha256"])
 if args.evaluate_frozen:
@@ -272,26 +330,41 @@ if args.evaluate_frozen:
 if args.preflight:
     role_counts = Counter(case["h0_role"] for case in cases)
     scenario_counts = Counter(case["scenario"] for case in cases)
-    if role_counts != {None: 27, "gate_calibration": 6, "gate_audit": 6} or \
-            scenario_counts != {
-                "surface_only": 12, "deep_only": 9,
-                "deep_plus_surface": 9, "deep_plus_two_surface": 9}:
+    expected_roles = (
+        {None: 27, "gate_calibration": 6, "gate_audit": 6}
+        if args.case_split == "all" else
+        {None: 9, "gate_calibration": 6})
+    expected_scenarios = (
+        {"surface_only": 12, "deep_only": 9,
+         "deep_plus_surface": 9, "deep_plus_two_surface": 9}
+        if args.case_split == "all" else
+        {"surface_only": 6, "deep_only": 3,
+         "deep_plus_surface": 3, "deep_plus_two_surface": 3})
+    if role_counts != expected_roles or scenario_counts != expected_scenarios:
         raise ValueError("78 的 H0角色或四种情形计数已变化")
+    h1_count = sum(case["deep_index"] is not None for case in cases)
     print(json.dumps({
         "preflight": "PASS", "development_only": True,
         "formal_or_blind_validation": False, "case_count": len(cases),
-        "gate_score_cases": 39, "gate_calibration_h0": 6,
-        "gate_audit_h0_not_used_for_threshold": 6,
-        "h1_not_used_for_threshold": 27,
+        "case_split": args.case_split, "case_numbers": list(case_numbers),
+        "parameter_profile": args.parameter_profile,
+        "parameter_overrides": parameter_overrides,
+        "solver_settings": base_settings,
+        "gate_score_cases": len(cases), "gate_calibration_h0": 6,
+        "gate_audit_h0_not_used_for_threshold": role_counts["gate_audit"],
+        "h1_not_used_for_threshold": h1_count,
         "gate_mode": args.gate_mode,
         "gate_statistic": gate_statistic_rule,
         "gate_decision": gate_decision_rule,
         "stop_after_gate": bool(args.stop_after_gate),
+        "gate_fit_families": ["H0"] if h0_only_gate else ["H0", "H1"],
         "default_output": str(default_output),
         "mrf_strengths": list(strengths),
-        "inverse_calls_planned": 39 * (4 if args.stop_after_gate else 6),
+        "inverse_calls_planned": len(cases) * (
+            2 if h0_only_gate else 4 if args.stop_after_gate else 6),
         "inverse_calls_per_case": {
-            "bidirectional_gate_H0_H1": 4,
+            **({"bidirectional_gate_H0": 2} if h0_only_gate else
+               {"bidirectional_gate_H0_H1": 4}),
             **({} if args.stop_after_gate else {
                 "heldout_mrf_new_fit": 1,
                 "heldout_mrf_08_reused_from_A_to_B_gate_fit": 0,
@@ -308,14 +381,14 @@ if args.preflight:
     raise SystemExit(0)
 
 
-# %% 4. 建立或核验断点身份；Stage 1 对39例只保存所选双向门控分数。
+# %% 4. 建立或核验断点身份；Stage 1 对所选病例只保存双向门控分数。
 if legacy_partial_resume:
     identity_payload = identity_path.read_bytes()
     identity = json.loads(identity_payload)
     identity_sha256 = legacy_partial_identity_sha256
 else:
     identity = {
-        "schema_version": 2,
+        "schema_version": 3,
         "protocol": "erp-v3-fresh-development-two-stage-runner",
         "development_only": True, "formal_or_blind_validation": False,
         "manifest": str(manifest_path), "manifest_sha256": manifest_sha256,
@@ -326,6 +399,15 @@ else:
         "gate_mode": args.gate_mode,
         "gate_statistic_rule": gate_statistic_rule,
         "gate_decision_rule": gate_decision_rule,
+        "case_split": args.case_split, "case_numbers": list(case_numbers),
+        "parameter_profile": args.parameter_profile,
+        "parameter_overrides": parameter_overrides,
+        "tuning15_rule": (
+            None if args.case_split == "all" else
+            "6 predeclared gate_calibration H0 plus 9 H1 balanced across "
+            "three SNR pairs, three H1 scenarios and low/mid/high alias tiers"),
+        "gate_fit_families": ["H0"] if h0_only_gate else ["H0", "H1"],
+        "gate_inverse_fits_per_case": 2 if h0_only_gate else 4,
         "solver_settings": base_settings, "mrf_strengths": list(strengths),
         "code_sha256": code_sha256, "code_bundle_sha256": code_bundle_sha256,
         "script_sha256": blind_script_sha256,
@@ -370,7 +452,8 @@ for original_case in cases:
                 score_record.get("gate_mode", "partial") != args.gate_mode or \
                 len(score_record.get("directions", [])) != 2 or \
                 set(score_record.get("directions", [{}])[0].get(
-                    "mrf_08_candidates", {})) != {"H0", "H1"} or \
+                    "mrf_08_candidates", {})) != (
+                        {"H0"} if h0_only_gate else {"H0", "H1"}) or \
                 not np.isfinite(score_record.get("gate_statistic", np.nan)):
             raise ValueError(f"{name}: gate score checkpoint 非法，拒绝静默重算")
         if args.gate_mode == "lowrank" and (
@@ -447,9 +530,9 @@ for original_case in cases:
             blind[fit_key], blind["gain"], n_surf,
             adjacency=shared["adjacency"], baseline=blind["baseline"],
             active=blind["active"], channel_weights=weights,
-            solver_settings=base_settings)
+            solver_settings=base_settings, fit_full=not h0_only_gate)
         solver_checks = {}
-        for family in ("null", "full"):
+        for family in (("null",) if h0_only_gate else ("null", "full")):
             solver = fitting[family + "_model"]["windows"][0]["solver"]
             strict = bool(
                 solver["converged"] and solver["outer_converged"]
@@ -466,7 +549,7 @@ for original_case in cases:
                     solver["final_stationarity_gap_relative"]),
             }
         if not all(item["strict_converged"] for item in solver_checks.values()):
-            raise RuntimeError(f"{name} {direction}: conditional gate H0/H1未严格收敛")
+            raise RuntimeError(f"{name} {direction}: required gate fit未严格收敛")
         if args.gate_mode == "partial":
             partial_score, partial = score_partial_deep_presence(
                 blind[check_key], blind["gain"], null, full, n_surf,
@@ -522,8 +605,9 @@ for original_case in cases:
             total_noise = float(np.sum(
                 centered[:, blind["baseline"]] ** 2)
                 / (blind["baseline"].sum() - 1) * noise_factor)
-            for family, estimate, solver_family in (
-                    ("H0", null, "null"), ("H1", full, "full")):
+            candidate_fits = (("H0", null, "null"),) if h0_only_gate else (
+                ("H0", null, "null"), ("H1", full, "full"))
+            for family, estimate, solver_family in candidate_fits:
                 prediction = blind["gain"] @ (estimate @ basis.T)
                 total_loss = float(np.sum((response - prediction) ** 2))
                 block_losses = []
@@ -539,7 +623,7 @@ for original_case in cases:
                     if expected_noise <= 0 or \
                             not np.isfinite([loss, expected_noise]).all():
                         raise RuntimeError(
-                            f"{name} {direction} {family}: MRF=0.8 held-out损失非法")
+                            f"{name} {direction} {family}: gate fit held-out损失非法")
                     block_losses.append(loss)
                     block_normalized_losses.append(loss / expected_noise)
                     start += size
@@ -548,9 +632,9 @@ for original_case in cases:
                         not np.isclose(sum(block_losses), total_loss,
                                        rtol=1e-12, atol=1e-12):
                     raise RuntimeError(
-                        f"{name} {direction} {family}: MRF=0.8总损失非法")
+                        f"{name} {direction} {family}: gate fit总损失非法")
                 heldout_candidates[family] = {
-                    "mrf_strength": .8,
+                    "mrf_strength": float(base_settings["mrf_strength"]),
                     "total_heldout_squared_loss": total_loss,
                     "total_noise_normalized_loss": total_loss / total_noise,
                     "eeg_heldout_squared_loss": block_losses[0],
@@ -596,11 +680,17 @@ for original_case in cases:
         "complete": True, "stage": "gate_score_sealed",
         "case_number": number, "case_id": name,
         "identity_sha256": identity_sha256,
+        "case_split": args.case_split,
+        "parameter_profile": args.parameter_profile,
         "fit_check": "bidirectional independent 20-trial half means",
         "gate_statistic_rule": gate_statistic_rule,
         "gate_statistic": statistic, "directions": directions,
         **lowrank_record,
-        "all_four_fits_strictly_converged": True,
+        "fit_count": 2 if h0_only_gate else 4,
+        "fitted_families_per_direction": (
+            ["H0"] if h0_only_gate else ["H0", "H1"]),
+        "all_required_fits_strictly_converged": True,
+        **({} if h0_only_gate else {"all_four_fits_strictly_converged": True}),
         "truth_or_label_used": False,
         "scenario_snr_source_fields_used_by_score": False,
         "case_id_saved_as_identity_and_human_readable_only": True,
@@ -615,8 +705,9 @@ for original_case in cases:
     gate_score_sha256[number] = hashlib.sha256(score_payload).hexdigest()
     print(name, f"sealed gate statistic={statistic:.6g}", flush=True)
 
-if len(gate_score_sha256) != 39:
-    raise RuntimeError("Stage1必须先完整冻结39例gate score")
+if set(gate_score_sha256) != set(case_numbers):
+    raise RuntimeError(
+        f"Stage1必须先完整冻结{len(case_numbers)}例gate score")
 
 
 # %% 5. 只解封6个gate_calibration H0角色；最大统计量冻结为严格大于阈值。
@@ -641,6 +732,10 @@ threshold_record = {
     "complete": True, "stage": "gate_threshold_frozen",
     "development_only": True, "formal_or_blind_validation": False,
     "identity_sha256": identity_sha256,
+    "case_split": args.case_split,
+    "case_numbers": list(case_numbers),
+    "parameter_profile": args.parameter_profile,
+    "parameter_overrides": parameter_overrides,
     "gate_statistic_rule": gate_statistic_rule,
     "threshold_rule": "maximum statistic among 6 predeclared gate_calibration H0 cases",
     "decision_rule": "H1 iff statistic > threshold (strict)",
@@ -648,7 +743,7 @@ threshold_record = {
     "calibration_cases": calibration_scores,
     "audit_h0_labels_used": False, "h1_labels_used": False,
     "all_gate_score_sha256": {
-        str(number): gate_score_sha256[number] for number in range(39)},
+        str(number): gate_score_sha256[number] for number in case_numbers},
 }
 threshold_payload = (json.dumps(
     threshold_record, ensure_ascii=False, indent=2, sort_keys=True,
@@ -656,7 +751,7 @@ threshold_payload = (json.dumps(
 threshold_path = output / "gate_threshold.json"
 if threshold_path.is_file():
     if threshold_path.read_bytes() != threshold_payload:
-        raise ValueError("已冻结gate threshold与当前39个score或6个calibration角色不一致")
+        raise ValueError("已冻结gate threshold与当前score或6个calibration角色不一致")
 else:
     temporary = threshold_path.with_suffix(".json.tmp")
     with temporary.open("xb") as stream:
@@ -717,6 +812,10 @@ if args.stop_after_gate:
         "development_only": True, "formal_or_blind_validation": False,
         "stage2_ran": False, "case_count": len(gate_rows),
         "gate_mode": args.gate_mode,
+        "case_split": args.case_split,
+        "case_numbers": list(case_numbers),
+        "parameter_profile": args.parameter_profile,
+        "parameter_overrides": parameter_overrides,
         "identity_sha256": identity_sha256,
         "gate_score_identity_reused_from_legacy_partial": legacy_partial_resume,
         "gate_only_evaluation_script_sha256": script_sha256,
@@ -736,7 +835,7 @@ if args.stop_after_gate:
         "audit_h0_h1_roles_snr_and_truth_unsealed_only_after_threshold_frozen": True,
         "audit_h0_or_h1_used_by_threshold": False,
         "gate_score_sha256": {
-            str(number): gate_score_sha256[number] for number in range(39)},
+            str(number): gate_score_sha256[number] for number in case_numbers},
     }
     gate_only_payload = (json.dumps(
         gate_only_summary, ensure_ascii=False, indent=2, sort_keys=True,

@@ -38,6 +38,30 @@ def test_fit_uses_only_training_and_keeps_complete_null(monkeypatch):
         assert not {"truth", "labels", "groups", "deep_index"} & set(inspect.signature(function).parameters)
 
 
+def test_fit_can_skip_unused_full_model(monkeypatch):
+    data = np.ones((3, 30))
+    baseline = np.arange(30) < 15
+    active = (np.arange(30) >= 20) & (np.arange(30) < 25)
+    calls = []
+
+    def capture(data, gain, n_surf, **kwargs):
+        calls.append((gain.shape, kwargs["adjacency"].shape))
+        return np.full((gain.shape[1], data.shape[1]), 2.), {"converged": True}
+
+    monkeypatch.setattr(inverse, "reconstruct_evoked_oaster_v5_from_whitened", capture)
+    null, full, diagnostics = inverse.fit_predictive_models(
+        data, np.eye(3), 2, adjacency=sparse.eye(3), baseline=baseline,
+        active=active, channel_weights=np.ones(3), fit_full=False)
+    assert calls == [((3, 2), (2, 2))]
+    assert null.shape == (3, 30) and np.all(null[:2] == 2) and not null[2:].any()
+    assert full is None and diagnostics["full_model"] is None
+    assert diagnostics["fitted_families"] == ["H0"]
+    with pytest.raises(ValueError, match="fit_full must be boolean"):
+        inverse.fit_predictive_models(
+            data, np.eye(3), 2, adjacency=sparse.eye(3), baseline=baseline,
+            active=active, channel_weights=np.ones(3), fit_full="no")
+
+
 def test_admm_defaults_and_structural_overrides_are_forwarded_without_mutation(monkeypatch):
     data = np.ones((3, 30))
     baseline = np.arange(30) < 15
