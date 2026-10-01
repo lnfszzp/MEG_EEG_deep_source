@@ -1,0 +1,91 @@
+{
+  "all_gate_score_sha256": {
+    "0": "0e99b4970134f9c6172fd4a68593ebe95033a486ffc32cc72dba98b9143ffced",
+    "12": "ed589a945d463b8b3fc0fe44349123d629b8b7f33b461f4f697c3d87faa09a5d",
+    "13": "2f2c84a2c86600222f9de7d9f657f60e3688a123d9f681b0c758954e76749a00",
+    "15": "d878f23e4a6cb11c845e84df8f9f741dfbfc045042c2dbaad72d6505b3f758d6",
+    "18": "f77f3242545e2b5620c9d9b9950c4f834c4b0842f411b755c7d7bde4f5e396ac",
+    "2": "a5dcb3ee938172f668bb10cfe2896e5f498e1fbff4c8bebe6b0a288716d3a599",
+    "22": "dd71bb010e22aa4f8a605a6d66cecb8e1aefbfedaec57481496b62ee008f2ecf",
+    "23": "8848a0b5765bee932455cf9bbcb1bb89a2ebd7a6b26c1f57c9a5ce44d91eb08f",
+    "26": "a8fd5d49c44d3a8cee4608e9d0319593ed9fe3e786641ab173fbccbdc1f74d06",
+    "28": "e2753e25de9e7383a817e784ae261a7b498de1f42b764178c2901186f92c5408",
+    "32": "9d770d3d19a7c5ea76203d55d9754a84bee6386f8e77574afb99db94c5f16312",
+    "33": "9e4bec1091b1792fbea7c9212750f29bcf8729115730c53b9072139ded06d257",
+    "37": "887fbe65d0c9a28556c9cbb1de5a1a1f86fcea74ceca1f3017d0b4f3e39886f3",
+    "4": "7cf8cf511d51b239128d24b58fe039458c30ccbff14ce224defdf68a981a7670",
+    "8": "e5a34540a8b791d3b8195ce4ef66cea8441fdfaf93f9ba0fe0bdeae7c4339035"
+  },
+  "audit_h0_labels_used": false,
+  "calibration_case_count": 6,
+  "calibration_cases": [
+    {
+      "case_id": "erp-v3-fresh-dev-00-surface_only-eeg-10-meg-10",
+      "case_number": 0,
+      "gate_score_sha256": "0e99b4970134f9c6172fd4a68593ebe95033a486ffc32cc72dba98b9143ffced",
+      "gate_statistic": 0.8557503767074439
+    },
+    {
+      "case_id": "erp-v3-fresh-dev-02-surface_only-eeg-10-meg-10",
+      "case_number": 2,
+      "gate_score_sha256": "a5dcb3ee938172f668bb10cfe2896e5f498e1fbff4c8bebe6b0a288716d3a599",
+      "gate_statistic": -0.05979499356257645
+    },
+    {
+      "case_id": "erp-v3-fresh-dev-00-surface_only-eeg-10-meg+20",
+      "case_number": 13,
+      "gate_score_sha256": "2f2c84a2c86600222f9de7d9f657f60e3688a123d9f681b0c758954e76749a00",
+      "gate_statistic": 1.0566034718189292
+    },
+    {
+      "case_id": "erp-v3-fresh-dev-02-surface_only-eeg-10-meg+20",
+      "case_number": 15,
+      "gate_score_sha256": "d878f23e4a6cb11c845e84df8f9f741dfbfc045042c2dbaad72d6505b3f758d6",
+      "gate_statistic": 1.6731919035472465
+    },
+    {
+      "case_id": "erp-v3-fresh-dev-00-surface_only-eeg+20-meg-10",
+      "case_number": 26,
+      "gate_score_sha256": "a8fd5d49c44d3a8cee4608e9d0319593ed9fe3e786641ab173fbccbdc1f74d06",
+      "gate_statistic": 0.7120185450006036
+    },
+    {
+      "case_id": "erp-v3-fresh-dev-02-surface_only-eeg+20-meg-10",
+      "case_number": 28,
+      "gate_score_sha256": "e2753e25de9e7383a817e784ae261a7b498de1f42b764178c2901186f92c5408",
+      "gate_statistic": 1.157681946146858
+    }
+  ],
+  "case_numbers": [
+    0,
+    2,
+    4,
+    8,
+    12,
+    13,
+    15,
+    18,
+    22,
+    23,
+    26,
+    28,
+    32,
+    33,
+    37
+  ],
+  "case_split": "tuning15",
+  "complete": true,
+  "decision_rule": "H1 iff statistic > threshold (strict)",
+  "development_only": true,
+  "formal_or_blind_validation": false,
+  "gate_statistic_rule": "max_jointly_identifiable_deep_index min(lowrank_A_to_B[index], lowrank_B_to_A[index]); -1 if none",
+  "h1_labels_used": false,
+  "identity_sha256": "d7a2351f35c82706e2792b7f8ce44f16698581edf33cbc0cb35d8ab094bad731",
+  "parameter_overrides": {
+    "mrf_strength": 0.5
+  },
+  "parameter_profile": "mrf05",
+  "stage": "gate_threshold_frozen",
+  "threshold": 1.6731919035472465,
+  "threshold_rule": "maximum statistic among 6 predeclared gate_calibration H0 cases"
+}
