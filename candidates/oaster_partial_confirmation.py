@@ -9,15 +9,20 @@ from candidates.oaster_predictive import _validate_observations
 
 
 def score_low_rank_deep_scan(confirmation, gain, null_estimate, n_surf, *,
-                             baseline, active, channel_weights):
+                             baseline, active, channel_weights,
+                             score_mode="baseline"):
     """Score every deep lead field beyond the fitted H0 sensor modes.
 
     Unlike a span of selected cortical lead fields, the nuisance space is the
     low-rank sensor prediction actually made by the training H0 fit.  The
     confirmation data only refit nuisance and deep temporal coefficients.
+    Residual normalization is an empirical floor, not a Student/F test; it
+    retains the baseline scale factor for a paired denominator-only comparison.
     """
     confirmation, gain, baseline, active, weights = _validate_observations(
         confirmation, gain, baseline, active, channel_weights)
+    if not isinstance(score_mode, str) or score_mode not in {"baseline", "studentized"}:
+        raise ValueError("score_mode must be baseline or studentized")
     if baseline.sum() <= 3:
         raise ValueError("at least four baseline samples are required for finite-baseline centering")
     null_estimate = np.asarray(null_estimate, float)
@@ -60,18 +65,44 @@ def score_low_rank_deep_scan(confirmation, gain, null_estimate, n_surf, *,
     if np.any(identifiable & (~np.isfinite(expected_noise) | (expected_noise <= 0))):
         raise ValueError("confirmation baseline has no finite conditional noise variance")
     finite_baseline_correction = (baseline.sum() - 3) / (baseline.sum() - 1)
-    scores = np.full(gain.shape[1] - n_surf, -1., float)
-    scores[identifiable] = (finite_baseline_correction
-                            * improvement[identifiable] / expected_noise[identifiable] - 1.)
-    if not np.isfinite(scores).all():
+    baseline_scores = np.full(gain.shape[1] - n_surf, -1., float)
+    studentized_scores = baseline_scores.copy()
+    total_null_residual = float(np.sum(null_residual ** 2))
+    residual_roundoff_tolerance = (64 * np.finfo(float).eps
+                                    * max(total_null_residual, 1.))
+    if np.any(improvement > total_null_residual + residual_roundoff_tolerance):
+        raise ValueError("deep improvement exceeds the projected H0 residual")
+    residual_after_deep = np.maximum(total_null_residual - improvement, 0.)
+    effective_sensor_count = int(np.count_nonzero(weights > 0))
+    residual_sensor_dof = max(int(effective_sensor_count - nuisance_rank - 1), 0)
+    residual_expectation = (residual_after_deep / residual_sensor_dof
+                            if residual_sensor_dof > 0 else
+                            np.zeros_like(residual_after_deep))
+    studentized_denominator = np.maximum(expected_noise, residual_expectation)
+    baseline_scores[identifiable] = (finite_baseline_correction
+                                    * improvement[identifiable]
+                                    / expected_noise[identifiable] - 1.)
+    studentized_scores[identifiable] = (finite_baseline_correction
+                                       * improvement[identifiable]
+                                       / studentized_denominator[identifiable] - 1.)
+    if score_mode == "baseline":
+        scores = baseline_scores
+        mode = "held_out_low_rank_same_point_deep_scan"
+        score_rule = "(B-3)/(B-1) * partial improvement / plug-in baseline expectation - 1"
+    else:
+        scores = studentized_scores
+        mode = "held_out_studentized_low_rank_same_point_deep_scan"
+        score_rule = (
+            "(B-3)/(B-1) * partial improvement / max(plug-in baseline expectation, "
+            "post-deep residual / residual sensor dof) - 1")
+    if not (np.isfinite(baseline_scores).all() and np.isfinite(studentized_scores).all()):
         raise ValueError("low-rank deep scan produced nonfinite scores")
 
     valid_indices = np.flatnonzero(identifiable)
     selected_local = (int(valid_indices[np.argmax(scores[identifiable])])
                       if valid_indices.size else None)
     return scores, dict(**basis_info,
-        mode="held_out_low_rank_same_point_deep_scan",
-        score="(B-3)/(B-1) * partial improvement / plug-in baseline expectation - 1",
+        mode=mode, score=score_rule, score_mode=score_mode,
         nuisance_definition="column space of W G_surface (X0_surface Phi.T)",
         nuisance_rank=nuisance_rank, nuisance_rank_bound=int(len(basis)),
         deep_candidate_count=int(scores.size),
@@ -83,6 +114,32 @@ def score_low_rank_deep_scan(confirmation, gain, null_estimate, n_surf, *,
             "positive weighted deep-gain norm and conditional_gain_fraction > "
             "eps * max(nuisance.shape), matching the nuisance SVD tolerance"),
         finite_baseline_correction=float(finite_baseline_correction),
+        finite_baseline_correction_applied=True,
+        finite_baseline_correction_note=(
+            "retained in both modes for a denominator-only paired comparison; "
+            "the max denominator does not preserve exact Gaussian zero-centering"),
+        baseline_deep_scores=baseline_scores.tolist(),
+        studentized_deep_scores=studentized_scores.tolist(),
+        total_null_residual=total_null_residual,
+        residual_roundoff_tolerance=float(residual_roundoff_tolerance),
+        residual_after_deep=residual_after_deep.tolist(),
+        effective_weighted_sensor_count=effective_sensor_count,
+        residual_sensor_dof=residual_sensor_dof,
+        residual_studentization_available=bool(residual_sensor_dof > 0),
+        residual_expected_null_improvement=residual_expectation.tolist(),
+        studentized_denominator=studentized_denominator.tolist(),
+        studentization_interpretation=(
+            "empirical residual self-normalization, not a Student/F reference test; "
+            "calibrate decisions on independent pure-surface cases"),
+        residual_sensor_dof_assumption=(
+            "isotropic noise across retained weighted sensors; pooled EEG/MEG "
+            "residual energy is a heuristic if whitening leaves unequal variance"),
+        residual_zero_dof_rule="fall back to plug-in baseline expectation",
+        studentization_scope="combined whitened EEG+MEG channels",
+        modality_fusion=None,
+        modality_studentization_limit=(
+            "combined-block prototype; it does not estimate independent EEG/MEG "
+            "conditional nuisance spaces"),
         loss_improvement=improvement.tolist(),
         projected_baseline_variance=projected_variance.tolist(),
         expected_null_improvement=expected_noise.tolist(),

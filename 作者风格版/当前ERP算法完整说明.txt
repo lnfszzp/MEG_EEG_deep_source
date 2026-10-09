@@ -1,0 +1,190 @@
+当前 ERP OASTER 的实际算法与本次配对核验
+核对日期：2026-10-09（北京时间）
+
+算法名称与目前证据
+
+当前代码是：时域 ERP 自适应图正则逆解 + 低秩深源存在门控。
+以前用频谱功率/协方差定位的路线是另一条路线；这里的 DCT 只表示平滑
+ERP 波形，没有把 ERP 换成功率谱来定位。
+
+MRF=0.5 在15例开发调参集上：H1检出8/9，门控AUROC=0.98148。
+这是“病例是否含深源”的结果，尚不代表源图An_auc、SD、DLE。
+本次固定MRF=0.5，同一次H0逆解同时计算旧分数与残差自归一化分数，
+核验完整39例；两种分数分别只用6个预声明calibration H0形成阈值。
+之前已看过这批病例的其他算法结果，因此本轮仍是development检查。
+
+1. 数据与仿真
+
+本轮输入是40次锁时ERP平均的等价仿真，拆成两个独立20次半平均A、B。
+活动窗固定20--120 ms；基线固定-180-- -20 ms；共601个时刻。
+本轮没有自动GFP选窗；不能声称已经验证了所有真实ERP的自动选窗能力。
+
+每个模态m（EEG或MEG）：
+  Y_m^h = G_m^fine X_true + s_m/sqrt(20) F_m E_m^h，h=A或B。
+E_A、E_B独立；F_m给出空间相关噪声；每个半平均独立做基线中心化。
+s_m由合并40次平均的“期望活动窗能量SNR”解析确定，没有再缩放单次
+噪声样本以强制命中SNR。半平均的期望SNR比标称SNR低约3.01 dB。
+
+真值forward：30032个表层点、135个双侧丘脑点；逆解：7498个表层点、
+16个深层点。因此真值可以落在逆解网格之外（off-grid）。
+39例包含12个纯表层H0和27个H1；H1为纯深层、深层+一表层、深层+两表层。
+三个EEG/MEG SNR组合为(-10,-10)、(-10,+20)、(+20,-10) dB。
+这不是全头所有深部结构：目前深层候选只覆盖有限丘脑网格，每例一个深源。
+表层真值采用邻域连片波形；该真值形状没有作为逆解的空间模板输入。
+
+2. 噪声白化与拼接
+
+用训练试次的基线contrast Z_m估计半平均噪声协方差：
+  C_hat_m = Z_m Z_m^T / ((20-1)(B-1)*20)。
+Z_m同时对试次维度与基线时间维度中心化。仿真只保存高斯充分统计量，
+没有存储40个完整epochs；高斯模型下这些contrast与半平均噪声独立。
+只保留特征值大于最大特征值*1e-8的方向，得到L_m=C_hat_m^(-1/2)。
+两个半平均使用同一训练侧估计的白化矩阵：
+  Y_h = vertical_stack(L_EEG Y_EEG^h, L_MEG Y_MEG^h)，
+  G   = vertical_stack(L_EEG G_EEG,   L_MEG G_MEG)。
+
+当前79脚本对保留传感器的额外权重全部设为1。预处理模块虽计算了训练侧
+模态evidence weights，但该脚本没有使用它们。当前额外模态融合方式是
+共同白化拟合，不能描述为已经实现了完整SNR自适应模态权重。
+
+3. 平滑时间表示
+
+Y_c = Y - mean_baseline(Y)。活动窗内采用正交DCT时间模式Phi：
+  exp(-0.5*(0.1*pi*k)^2) >= 0.01。
+通常保留K=10个模式，活动窗以外Phi=0；R = Y_c Phi^T。
+该模式选择仅由窗口长度和平滑先验决定，不依据ERP幅度挑模式。
+
+4. MRF空间变换
+
+表层邻接图为A_cortex，行归一化得到P=degree^(-1) A_cortex。
+深层点不设图边，P在深层块为0。
+  M_beta = (I-beta P)^(-1)。
+beta即mrf_strength，控制空间扩散；本次固定beta=0.5。
+  s0 = median_i ||G_i||_2，Design = G M_beta / s0。
+优化变量Z表示MRF空间变换前的innovation，物理源模态系数为M_beta Z/s0。
+因此下述源幅度和边差惩罚作用在Z上，并非直接作用在物理电流上。
+
+5. 从基线校准正则化强度
+
+敏感度权重：d_i=max(||G_i||_2/s0,0.1)^0.8。
+从基线抽取至多16个连续窗口，长度等于活动窗，并使用同一DCT模式。
+对每个层ell（表层/深层）分别形成matched-filter的最大值：
+  v_ell,b = max_{i in ell} ||Design_i^T Y_baseline,b Phi_local^T||_2 / d_i。
+  lambda_ell = alpha * quantile_0.99(v_ell,b)，lambda_i=lambda_ell*d_i。
+alpha即noise_multiplier；本次alpha=1。
+边惩罚：lambda_edge = lambda_surface_reference * eta/max(mean_degree,1)。
+eta即edge_fraction；本次eta=0.5。
+
+这里lambda随每份数据的基线噪声变化；固定的是alpha、eta等乘数。
+beta（MRF扩散强度）和eta（边惩罚比例）是两个不同参数。
+这些基线分位数是经验正则化校准，不是显著性检验p值。
+
+6. 自适应源/边正则化目标
+
+令a_i=||Z_i||_2，j_e=||(D Z)_e||_2，D为仅包含表层边的incidence矩阵。
+求解：
+  0.5 ||R-Design Z||_F^2
+  + sum_i lambda_i [f_i*a_i + (1-f_i)*eps_a*log(1+a_i/eps_a)]
+  + lambda_edge sum_e [f_E*j_e + (1-f_E)*eps_E*log(1+j_e/eps_E)]。
+当前表层floor、深层floor和edge floor都为0.5；ridge=0；deep_alias_penalty=False。
+深层没有graph边，所以其边惩罚不参与深源形状扩展。
+
+先用全1权重求一次convex group fused lasso，再固定平滑尺度：
+  eps_a=max(0.05*max_i a_i,1e-12)，
+  eps_E=max(0.05*max_e j_e,1e-12)。
+之后根据当前源/边幅度反复更新：
+  w_i=f_i+(1-f_i)*eps_a/(a_i+eps_a)，
+  v_e=f_E+(1-f_E)*eps_E/(j_e+eps_E)。
+每轮固定w、v，用ADMM求加权group lasso+graph差分子问题。
+幅度大的源惩罚变轻；区域内小边差受较强融合；大边差惩罚减轻。
+这样表层活动区形状、范围随数据改变。epsilon在首轮后固定，权重逐轮更新。
+
+每步检查surrogate目标不增，并检查当前权重下的primal-dual/stationarity gap。
+验收要求outer收敛、最后inner收敛、stationarity相对gap<=0.001；
+outer相对变化阈值为0.01，上限80轮，inner预算2000次、最多20次续算。
+这些检查保证接受的数值解符合当前子问题验收，不能保证非凸目标全局最优。
+
+7. 深源存在门控
+
+H0表示只有表层源；H1表示表层+深层都允许。门控先在A上仅拟合H0源X0_A。
+表层nuisance不是“所有表层lead field的空间”，而是训练H0真正预测的
+传感器时间模式：
+  N_A = G_surface (X0_A,surface Phi^T)，U_A=orth(N_A)。
+rank(U_A)<=K，通常最多10维。
+对每个深点d：
+  q_A,d = (I-U_A U_A^T) g_d / ||(I-U_A U_A^T) g_d||_2。
+在独立B上计算：
+  E_B=(I-U_A U_A^T) Y_B,c Phi^T，
+  Delta_AtoB,d=||q_A,d^T E_B||_2^2。
+Delta表示该深点方向能解释的残差能量。
+
+基线在同一深点方向上的方差sigma_hat_d^2，以及基线均值修正kappa：
+  sigma_hat_d^2=||q_A,d^T Y_B,c,baseline||_2^2/(B-1)，
+  kappa=sum_k (sum_{t in active} Phi_k,t)^2 / B，
+  E0_d=sigma_hat_d^2*(K+kappa)，c=(B-3)/(B-1)。
+原门控逐点分数：S_base,d=c*Delta_d/E0_d-1。
+
+反方向B拟合、A确认重复上述计算。必须同一个深点在两方向都有证据：
+  T_base = max_d min(S_AtoB,d, S_BtoA,d)。
+仅在双向都可数值辨识的候选中取max。条件lead field与原lead field的
+norm比若不大于machine_epsilon*max(N.shape)，该候选分数置为-1。
+这保护数值退化；它不是“深浅源实际解剖可辨识性”的保证。
+
+两种统计均只由预声明6个纯表层calibration H0取阈值：
+  tau_mode = max_{c in calibration_H0} T_mode,c，判H1当且仅当T_mode>tau_mode。
+MRF=0.5旧分数15例调参的tau=1.6731919035472465；本轮重算时应复核一致性。
+
+旧partial版本投影了较大表层lead field集合，可能占满传感器空间，把深源
+方向一起消去。低秩版本改用H0实际预测，保留更多深源可检出方向。
+其现有问题是：H0预测存在表层失配时，残差仍可被深点解释，特别在高SNR下。
+
+8. 本次只改门控分母的配对消融
+
+残差总能量T0=||E_B||_F^2，加入深点后的残差T0-Delta_d。
+在白化等方差近似下，残差传感器自由度nu=m-rank(U_A)-1。
+  S_res,d = c*Delta_d/max(E0_d,(T0-Delta_d)/nu)-1。
+nu=0时回退原基线分母；其余数值负残差只在舍入容差内截为0。
+两种分数来自同一次H0拟合、同一nuisance和Delta；只改分母。
+同点双向min/max规则一致；各自独立用同6个H0冻结阈值。
+
+解释：若表层H0残差很大，深源解释能量必须相对于这个较大的残差背景也
+足够突出。该全局残差floor也可能压低真实深源证据，需要核验漏检。
+这里合并EEG+MEG白化通道；没有独立估计两个模态的残差nuisance。
+max混合分母使它不是标准Student/F检验；沿用c也不保证严格零均值。
+决策依据是经验H0阈值，没有固定5%误报率保证。
+
+9. 最终定位链路与门控的区别
+
+现有完整定位Stage2按门控判H0/H1后，在该family中比较MRF 0.5/0.8：
+用A拟合、B确认的传感器预测误差最小者，然后以(A+B)/2重拟合。
+H0只允许表层；H1同时允许全部7498表层+16深点。
+门控选择的深点没有限制Stage2搜索位置，也没有决定最终深源个数。
+本次配对核验先检验门控；该版本尚无完整Stage2源图指标结果。
+
+实际还原完整源时序：
+  H=R^+ Y_c，X_hat=M_beta Z H/s0。
+并非直接Z*Phi，因此基线也可能有非零估计。
+画图的幅度：sqrt(max(mean_active(X_hat_i^2)-mean_baseline(X_hat_i^2),0))。
+最终源图An_auc优先调用用户函数并按表层/深层分开；SD/DLE分层计算。
+AUC使用fine真值向coarse的冻结映射，位置误差使用真实HEAD坐标；
+支持区域目前按每层峰值的10%能量阈值定义。有/无深源的判定阈值与此不同。
+没有真实阳性源的层，其定位AUC/SD/DLE不可定义，不能记为完美定位。
+
+10. 改进路线与停止条件
+
+先固定MRF=0.5，核验原门控及残差门控在6 audit H0+18其余H1上的表现。
+同时看误报、检出、每SNR/场景和门控深点位置；保持低误报是硬条件。
+若门控改善，再固定选定统计并运行完整联合逆解，核查分层An_auc/SD/DLE。
+若残差门控不改善，再针对证据考虑逐模态归一化或软nuisance投影。
+无论development多好，论文结论还需要新病例、独立校准和正式冻结验证。
+7种对比方法、真实ERP的GFP选窗、运动诱发非锁时活动是后续定位评价任务。
+
+对应代码（以仓库根目录为起点）：
+  benchmark/erp_protocol.py：ERP真值波形和窗口。
+  benchmark/erp_replicates.py：独立20+20半平均。
+  benchmark/erp_trial_covariance.py：训练contrast协方差与白化。
+  candidates/oaster_balanced.py：DCT、MRF、lambda校准和源时序恢复。
+  candidates/graph_reweight_solver.py：源/边权更新与ADMM验收。
+  candidates/oaster_partial_confirmation.py：低秩同点门控及残差分母。
+  作者风格版/79-v3全新开发运行.py：冻结病例、配对门控和现有Stage2。
+  benchmark/metrics.py、refined_grid.py：An_auc与分层SD/DLE。

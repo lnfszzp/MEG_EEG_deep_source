@@ -53,6 +53,99 @@ def test_low_rank_scan_survives_full_rank_surface_support():
         info["conditional_gain_fraction"])
 
 
+def test_studentized_low_rank_scan_uses_residual_floor_without_changing_default():
+    rng = np.random.default_rng(21)
+    n_sensors, n_surf, n_times = 6, 4, 80
+    baseline = np.arange(n_times) < 40
+    active = (np.arange(n_times) >= 45) & (np.arange(n_times) < 75)
+    surface_gain = np.eye(n_sensors)[:, :n_surf]
+    deep_gain = np.c_[np.array([0., 0., 0., 0., 1., 0.]),
+                      np.array([0., 0., 0., 0., 0., 1.])]
+    gain = np.c_[surface_gain, deep_gain]
+    null = np.zeros((gain.shape[1], n_times))
+    null[0, active] = 1.
+    confirmation = .1 * rng.normal(size=(n_sensors, n_times))
+    confirmation[0, active] += 1.
+    confirmation[4, active] += 1.
+    confirmation[5, active] += 3.
+    options = dict(baseline=baseline, active=active,
+                   channel_weights=np.ones(n_sensors))
+
+    default_scores, default_info = score_low_rank_deep_scan(
+        confirmation, gain, null, n_surf, **options)
+    baseline_scores, _ = score_low_rank_deep_scan(
+        confirmation, gain, null, n_surf, score_mode="baseline", **options)
+    scores, info = score_low_rank_deep_scan(
+        confirmation, gain, null, n_surf, score_mode="studentized", **options)
+
+    assert np.array_equal(default_scores, baseline_scores)
+    assert default_info["mode"] == "held_out_low_rank_same_point_deep_scan"
+    assert info["mode"] == "held_out_studentized_low_rank_same_point_deep_scan"
+    assert info["score_mode"] == "studentized"
+    assert info["effective_weighted_sensor_count"] == n_sensors
+    assert info["residual_sensor_dof"] == n_sensors - info["nuisance_rank"] - 1
+    assert info["residual_studentization_available"]
+    improvement = np.asarray(info["loss_improvement"])
+    residual = np.asarray(info["residual_after_deep"])
+    expected = np.asarray(info["expected_null_improvement"])
+    denominator = np.asarray(info["studentized_denominator"])
+    assert residual == pytest.approx(np.maximum(
+        info["total_null_residual"] - improvement, 0.))
+    assert denominator == pytest.approx(np.maximum(
+        expected, residual / info["residual_sensor_dof"]))
+    identifiable = np.asarray(info["identifiable"], bool)
+    assert scores[identifiable] == pytest.approx(
+        info["finite_baseline_correction"] * improvement[identifiable]
+        / denominator[identifiable] - 1.)
+    assert info["finite_baseline_correction_applied"]
+    assert info["baseline_deep_scores"] == pytest.approx(baseline_scores)
+    assert info["studentized_deep_scores"] == pytest.approx(scores)
+    assert np.any(denominator[identifiable] > expected[identifiable])
+    assert np.all(scores <= baseline_scores)
+    assert np.any(scores < baseline_scores)
+    assert info["studentization_scope"] == "combined whitened EEG+MEG channels"
+    assert info["modality_fusion"] is None
+
+    quiet = confirmation.copy()
+    quiet[:, active] = (quiet[:, baseline].mean(axis=1, keepdims=True)
+                        + surface_gain[:, :1] + .01 * deep_gain[:, :1])
+    quiet_baseline, quiet_info = score_low_rank_deep_scan(
+        quiet, gain, null, n_surf, score_mode="baseline", **options)
+    quiet_studentized, _ = score_low_rank_deep_scan(
+        quiet, gain, null, n_surf, score_mode="studentized", **options)
+    assert np.any(np.asarray(quiet_info["loss_improvement"]) > 0)
+    assert np.array_equal(quiet_info["studentized_denominator"],
+                          quiet_info["expected_null_improvement"])
+    assert np.array_equal(quiet_baseline, quiet_studentized)
+    with pytest.raises(ValueError, match="score_mode"):
+        score_low_rank_deep_scan(
+            confirmation, gain, null, n_surf, score_mode="unknown", **options)
+
+
+def test_studentized_low_rank_scan_zero_residual_dof_falls_back_to_baseline():
+    rng = np.random.default_rng(22)
+    n_times = 80
+    baseline = np.arange(n_times) < 40
+    active = (np.arange(n_times) >= 45) & (np.arange(n_times) < 75)
+    gain = np.eye(2)
+    null = np.zeros((2, n_times))
+    null[0, active] = 1.
+    confirmation = .1 * rng.normal(size=(2, n_times))
+    confirmation[:, active] += 1.
+    scores, info = score_low_rank_deep_scan(
+        confirmation, gain, null, 1, baseline=baseline, active=active,
+        channel_weights=np.ones(2), score_mode="studentized")
+
+    assert info["nuisance_rank"] == 1
+    assert info["identifiable"] == [True]
+    assert info["residual_sensor_dof"] == 0
+    assert not info["residual_studentization_available"]
+    assert info["residual_expected_null_improvement"] == [0.]
+    assert info["studentized_denominator"] == info["expected_null_improvement"]
+    assert np.array_equal(scores, info["baseline_deep_scores"])
+    assert info["studentized_deep_scores"] == info["baseline_deep_scores"]
+
+
 def test_low_rank_scan_rejects_exact_and_near_numerical_aliases():
     rng = np.random.default_rng(12)
     n_sensors, n_surf, n_times = 6, 6, 80
@@ -74,6 +167,7 @@ def test_low_rank_scan_rejects_exact_and_near_numerical_aliases():
 
     assert info["nuisance_rank"] == 2
     assert scores.tolist() == [-1., -1.]
+    assert info["baseline_deep_scores"] == info["studentized_deep_scores"] == [-1., -1.]
     assert info["identifiable"] == [False, False]
     assert info["identifiable_count"] == 0
     assert info["selected_deep_local_index"] is None

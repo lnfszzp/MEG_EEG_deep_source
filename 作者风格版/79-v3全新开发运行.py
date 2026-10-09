@@ -38,9 +38,10 @@ import run_erp_whole_head_matrix as original
 parser = argparse.ArgumentParser(description=__doc__)
 parser.add_argument(
     "--output", type=Path, default=None)
-parser.add_argument("--gate-mode", choices=("partial", "lowrank"),
+parser.add_argument("--gate-mode", choices=("partial", "lowrank", "lowrank_studentized"),
                     default="partial",
-                    help="partial保持原门控；lowrank使用同一深点双向低秩扫描")
+                    help=("partial保持原门控；lowrank保持原低秩分数；"
+                          "lowrank_studentized使用残差自归一化低秩分数"))
 parser.add_argument(
     "--parameter-profile",
     choices=("baseline", "mrf05", "mrf095", "noise05", "edge10",
@@ -57,11 +58,21 @@ parser.add_argument(
     "--evaluate-frozen", action="store_true",
     help="只续算已完整冻结的39张final map；沿用原盲运行身份并另记评估脚本哈希")
 args = parser.parse_args()
-default_run_name = (
-    "hierarchical_v3_fresh_development" if args.gate_mode == "partial" else
-    "hierarchical_v3_lowrank_gate_development")
+lowrank_gate = args.gate_mode != "partial"
+paired_gate = bool(args.gate_mode == "lowrank_studentized" and
+                   args.parameter_profile == "mrf05" and
+                   args.case_split == "all" and args.stop_after_gate)
+default_run_name = {
+    "partial": "hierarchical_v3_fresh_development",
+    "lowrank": "hierarchical_v3_lowrank_gate_development",
+    "lowrank_studentized": "hierarchical_v3_lowrank_studentized_gate_development",
+}[args.gate_mode]
+if paired_gate:
+    default_run_name = "hierarchical_v3_lowrank_studentized_gate_development_mrf05"
 if args.case_split == "tuning15":
-    default_run_name = f"hierarchical_v3_lowrank_gate_tuning15_{args.parameter_profile}"
+    gate_name = ("lowrank_studentized" if args.gate_mode == "lowrank_studentized"
+                 else "lowrank")
+    default_run_name = f"hierarchical_v3_{gate_name}_gate_tuning15_{args.parameter_profile}"
 default_output = (root / "results/erp_whole_head/adaptive_v6/development_diagnosis"
                   / default_run_name)
 output = default_output if args.output is None else (
@@ -71,12 +82,12 @@ if args.evaluate_frozen and (args.gate_mode != "partial" or args.stop_after_gate
         or args.parameter_profile != "baseline" or args.case_split != "all"):
     raise ValueError("--evaluate-frozen只能续评估原partial完整final map")
 if args.case_split == "tuning15" and (
-        args.gate_mode != "lowrank" or not args.stop_after_gate
+        not lowrank_gate or not args.stop_after_gate
         or args.evaluate_frozen):
-    raise ValueError("tuning15只允许lowrank + --stop-after-gate开发调参")
-if args.parameter_profile != "baseline" and args.case_split != "tuning15":
-    raise ValueError("非baseline参数profile只允许在tuning15中使用")
-h0_only_gate = bool(args.gate_mode == "lowrank" and args.stop_after_gate)
+    raise ValueError("tuning15只允许低秩门控 + --stop-after-gate开发调参")
+if args.parameter_profile != "baseline" and args.case_split != "tuning15" and not paired_gate:
+    raise ValueError("非baseline完整面板只允许冻结mrf05 + lowrank_studentized + stop-after-gate")
+h0_only_gate = bool(lowrank_gate and args.stop_after_gate)
 
 script_path = Path(__file__).resolve()
 script_text = script_path.read_text(encoding="utf-8")
@@ -214,6 +225,32 @@ for case in cases:
 
 tuning_case_numbers = (
     0, 2, 4, 8, 12, 13, 15, 18, 22, 23, 26, 28, 32, 33, 37)
+remaining_case_numbers = tuple(number for number in range(39)
+                               if number not in tuning_case_numbers)
+parameter_selection = None
+if paired_gate:
+    selection_path = (adaptive_root / "development_diagnosis"
+                      / "parameter_tuning_comparison.json")
+    selection_payload = selection_path.read_bytes()
+    selection_sha256 = hashlib.sha256(selection_payload).hexdigest()
+    if selection_sha256 != "a3d669073325665786691a838643d8a955dc0744ce6985e79c0dd79a857a2ffa":
+        raise ValueError("mrf05参数选择来源与已提交的tuning15汇总哈希不一致")
+    selection = json.loads(selection_payload)
+    if selection.get("complete") is not True or \
+            selection.get("development_only") is not True or \
+            selection.get("audit_h0_opened") is not False or \
+            selection.get("case_numbers") != list(tuning_case_numbers) or \
+            selection.get("selected_profile") != "mrf05" or \
+            selection.get("selected_overrides") != {"mrf_strength": .5}:
+        raise ValueError("mrf05不是预声明tuning15选出的冻结配置")
+    parameter_selection = {
+        "path": str(selection_path.relative_to(root)),
+        "sha256": selection_sha256,
+        "selected_profile": "mrf05", "selected_overrides": {"mrf_strength": .5},
+        "tuning_case_numbers": list(tuning_case_numbers),
+        "remaining_case_numbers": list(remaining_case_numbers),
+        "remaining24_role": "development check after tuning; not formal blind validation",
+    }
 if args.case_split == "tuning15":
     cases = [case for case in cases
              if int(case["case_number"]) in tuning_case_numbers]
@@ -258,10 +295,16 @@ parameter_overrides = {
 }[args.parameter_profile]
 base_settings.update(parameter_overrides)
 strengths = (.5, .8)
-gate_statistic_rule = (
-    "min(partial_A_to_B, partial_B_to_A)" if args.gate_mode == "partial" else
-    "max_jointly_identifiable_deep_index min(lowrank_A_to_B[index], "
-    "lowrank_B_to_A[index]); -1 if none")
+gate_statistic_rule = {
+    "partial": "min(partial_A_to_B, partial_B_to_A)",
+    "lowrank": (
+        "max_jointly_identifiable_deep_index min(lowrank_A_to_B[index], "
+        "lowrank_B_to_A[index]); -1 if none"),
+    "lowrank_studentized": (
+        "max_jointly_identifiable_deep_index "
+        "min(studentized_lowrank_A_to_B[index], "
+        "studentized_lowrank_B_to_A[index]); -1 if none"),
+}[args.gate_mode]
 gate_decision_rule = "H1 iff statistic > max(6 gate_calibration H0 statistics)"
 
 core_files = (
@@ -328,6 +371,14 @@ if args.evaluate_frozen:
 
 # %% 3. preflight 只读核验；不创建结果或checkpoint。
 if args.preflight:
+    if paired_gate:
+        assert len(remaining_case_numbers) == 24
+        assert sum(case["h0_role"] == "gate_audit" for case in cases
+                   if case["case_number"] in remaining_case_numbers) == 6
+        assert sum(case["deep_index"] is not None for case in cases
+                   if case["case_number"] in remaining_case_numbers) == 18
+        # 同一点双向都支持才入选；不能把两个方向各自不同点的最大值拼起来。
+        assert int(np.argmax(np.minimum([9., 3.], [-1., 3.]))) == 1
     role_counts = Counter(case["h0_role"] for case in cases)
     scenario_counts = Counter(case["scenario"] for case in cases)
     expected_roles = (
@@ -349,6 +400,8 @@ if args.preflight:
         "case_split": args.case_split, "case_numbers": list(case_numbers),
         "parameter_profile": args.parameter_profile,
         "parameter_overrides": parameter_overrides,
+        "paired_baseline_studentized": paired_gate,
+        "parameter_selection": parameter_selection,
         "solver_settings": base_settings,
         "gate_score_cases": len(cases), "gate_calibration_h0": 6,
         "gate_audit_h0_not_used_for_threshold": role_counts["gate_audit"],
@@ -402,6 +455,8 @@ else:
         "case_split": args.case_split, "case_numbers": list(case_numbers),
         "parameter_profile": args.parameter_profile,
         "parameter_overrides": parameter_overrides,
+        "paired_baseline_studentized": paired_gate,
+        "parameter_selection": parameter_selection,
         "tuning15_rule": (
             None if args.case_split == "all" else
             "6 predeclared gate_calibration H0 plus 9 H1 balanced across "
@@ -456,14 +511,19 @@ for original_case in cases:
                         {"H0"} if h0_only_gate else {"H0", "H1"}) or \
                 not np.isfinite(score_record.get("gate_statistic", np.nan)):
             raise ValueError(f"{name}: gate score checkpoint 非法，拒绝静默重算")
-        if args.gate_mode == "lowrank" and (
+        if lowrank_gate and (
                 len(score_record.get("same_deep_bidirectional_scores", [])) != n_deep or
                 len(score_record.get("jointly_identifiable", [])) != n_deep or
                 any(len(item.get("deep_scores", [])) != n_deep or
                     len(item.get("lowrank_scan", {}).get("identifiable", [])) != n_deep
                     for item in score_record["directions"])):
             raise ValueError(f"{name}: lowrank gate checkpoint缺少{n_deep}个逐点分数")
-        if args.gate_mode == "lowrank":
+        if lowrank_gate:
+            expected_score_mode = (
+                "studentized" if args.gate_mode == "lowrank_studentized" else "baseline")
+            if any(item["lowrank_scan"].get("score_mode", "baseline") !=
+                   expected_score_mode for item in score_record["directions"]):
+                raise ValueError(f"{name}: lowrank gate checkpoint计分模式不一致")
             saved_direction_scores = np.asarray(
                 [item["deep_scores"] for item in score_record["directions"]], float)
             saved_same_scores = np.asarray(
@@ -489,6 +549,50 @@ for original_case in cases:
                         None if expected_local is None else n_surf + expected_local) or \
                     float(score_record["gate_statistic"]) != expected_statistic:
                 raise ValueError(f"{name}: lowrank gate checkpoint聚合规则不一致")
+            if paired_gate:
+                if score_record.get("fit_count") != 2 or \
+                        score_record.get("all_required_fits_strictly_converged") is not True or \
+                        any(set(direction.get("solver_checks", {})) != {"null"} or
+                            direction["solver_checks"]["null"].get("strict_converged") is not True
+                            for direction in score_record["directions"]):
+                    raise ValueError(f"{name}: 配对checkpoint没有两次严格收敛H0拟合")
+                for direction in score_record["directions"]:
+                    for field in ("baseline_deep_scores", "studentized_deep_scores"):
+                        values = np.asarray(direction["lowrank_scan"].get(field, []), float)
+                        if values.shape != (n_deep,) or not np.isfinite(values).all():
+                            raise ValueError(f"{name}: 配对checkpoint缺少有限{field}")
+                    if not np.array_equal(np.asarray(direction["deep_scores"], float),
+                            np.asarray(direction["lowrank_scan"]["studentized_deep_scores"], float)):
+                        raise ValueError(f"{name}: 配对studentized数组与主统计不一致")
+                    info = direction["lowrank_scan"]
+                    valid = np.asarray(info["identifiable"], bool)
+                    improvement = np.asarray(info["loss_improvement"], float)
+                    correction = float(info["finite_baseline_correction"])
+                    for field, denominator_field in (
+                            ("baseline_deep_scores", "expected_null_improvement"),
+                            ("studentized_deep_scores", "studentized_denominator")):
+                        denominator = np.asarray(info[denominator_field], float)
+                        expected = np.full(n_deep, -1., float)
+                        if improvement.shape != (n_deep,) or denominator.shape != (n_deep,) or \
+                                not np.isfinite(improvement).all() or \
+                                not np.isfinite(denominator).all() or np.any(denominator[valid] <= 0):
+                            raise ValueError(f"{name}: 配对checkpoint的I/E维度或数值非法")
+                        expected[valid] = correction * improvement[valid] / denominator[valid] - 1.
+                        if not np.array_equal(np.asarray(info[field], float), expected):
+                            raise ValueError(f"{name}: 配对checkpoint计分公式不一致")
+                expected_baseline = np.minimum(
+                    score_record["directions"][0]["lowrank_scan"]["baseline_deep_scores"],
+                    score_record["directions"][1]["lowrank_scan"]["baseline_deep_scores"])
+                baseline_local = (None if not joint_indices.size else int(
+                    joint_indices[np.argmax(expected_baseline[joint_indices])]))
+                companion = score_record.get("baseline_companion", {})
+                if companion.get("same_deep_bidirectional_scores") != expected_baseline.tolist() or \
+                        companion.get("selected_deep_local_index") != baseline_local or \
+                        companion.get("selected_deep_index") != (
+                            None if baseline_local is None else n_surf + baseline_local) or \
+                        companion.get("gate_statistic") != (
+                            -1. if baseline_local is None else float(expected_baseline[baseline_local])):
+                    raise ValueError(f"{name}: baseline companion checkpoint聚合规则不一致")
         gate_score_sha256[number] = hashlib.sha256(score_payload).hexdigest()
         print(name, "gate score checkpoint 已核验", flush=True)
         continue
@@ -572,7 +676,9 @@ for original_case in cases:
             deep_scores, lowrank = score_low_rank_deep_scan(
                 blind[check_key], blind["gain"], null, n_surf,
                 baseline=blind["baseline"], active=blind["active"],
-                channel_weights=weights)
+                channel_weights=weights,
+                score_mode=("studentized" if
+                            args.gate_mode == "lowrank_studentized" else "baseline"))
             deep_scores = np.asarray(deep_scores, float)
             if deep_scores.shape != (n_deep,) or \
                     not np.isfinite(deep_scores).all() or \
@@ -580,6 +686,11 @@ for original_case in cases:
                     len(lowrank.get("conditional_gain_fraction", [])) != n_deep or \
                     len(lowrank.get("identifiable", [])) != n_deep:
                 raise RuntimeError(f"{name} {direction}: lowrank逐深点分数非法")
+            if paired_gate and any(
+                    np.asarray(lowrank.get(field, []), float).shape != (n_deep,) or
+                    not np.isfinite(np.asarray(lowrank.get(field, []), float)).all()
+                    for field in ("baseline_deep_scores", "studentized_deep_scores")):
+                raise RuntimeError(f"{name} {direction}: 同一次SVD配对统计缺失")
             direction_local = lowrank.get("selected_deep_local_index")
             if direction_local is not None:
                 direction_local = int(direction_local)
@@ -667,7 +778,7 @@ for original_case in cases:
         statistic = (-1. if selected_deep_local is None else
                      float(same_deep_scores[selected_deep_local]))
         lowrank_record = {
-            "gate_mode": "lowrank",
+            "gate_mode": args.gate_mode,
             "same_deep_bidirectional_scores": same_deep_scores.tolist(),
             "jointly_identifiable": jointly_identifiable.tolist(),
             "selected_deep_local_index": selected_deep_local,
@@ -676,6 +787,23 @@ for original_case in cases:
             "selected_deep_tie_rule": (
                 "numpy argmax among jointly identifiable: lowest local index"),
         }
+        if paired_gate:
+            baseline_same_scores = np.minimum(
+                directions[0]["lowrank_scan"]["baseline_deep_scores"],
+                directions[1]["lowrank_scan"]["baseline_deep_scores"])
+            baseline_local = (None if not joint_indices.size else int(
+                joint_indices[np.argmax(baseline_same_scores[joint_indices])]))
+            lowrank_record["baseline_companion"] = {
+                "gate_statistic": (-1. if baseline_local is None else
+                                   float(baseline_same_scores[baseline_local])),
+                "same_deep_bidirectional_scores": baseline_same_scores.tolist(),
+                "selected_deep_local_index": baseline_local,
+                "selected_deep_index": (None if baseline_local is None else
+                                        n_surf + baseline_local),
+                "shared_with_studentized": (
+                    "same H0 fits, SVD, temporal basis, conditional deep direction, "
+                    "improvement, baseline expectation and finite-baseline factor; denominator only differs"),
+            }
     score_record = {
         "complete": True, "stage": "gate_score_sealed",
         "case_number": number, "case_id": name,
@@ -726,6 +854,8 @@ for case in calibration_cases:
         "case_number": number, "case_id": case["case_id"],
         "gate_statistic": float(record["gate_statistic"]),
         "gate_score_sha256": gate_score_sha256[number],
+        **({"baseline_companion_statistic": float(
+            record["baseline_companion"]["gate_statistic"])} if paired_gate else {}),
     })
 gate_threshold = float(max(item["gate_statistic"] for item in calibration_scores))
 threshold_record = {
@@ -745,6 +875,19 @@ threshold_record = {
     "all_gate_score_sha256": {
         str(number): gate_score_sha256[number] for number in case_numbers},
 }
+if paired_gate:
+    baseline_threshold = max(item["baseline_companion_statistic"]
+                             for item in calibration_scores)
+    threshold_record["baseline_companion"] = {
+        "threshold": baseline_threshold,
+        "calibration_cases": [{
+            "case_number": item["case_number"], "case_id": item["case_id"],
+            "gate_statistic": item["baseline_companion_statistic"],
+            "gate_score_sha256": item["gate_score_sha256"],
+        } for item in calibration_scores],
+        "threshold_rule": "maximum statistic among same 6 predeclared gate_calibration H0 cases",
+        "audit_h0_labels_used": False, "h1_labels_used": False,
+    }
 threshold_payload = (json.dumps(
     threshold_record, ensure_ascii=False, indent=2, sort_keys=True,
     allow_nan=False) + "\n").encode("utf-8")
@@ -837,6 +980,121 @@ if args.stop_after_gate:
         "gate_score_sha256": {
             str(number): gate_score_sha256[number] for number in case_numbers},
     }
+    # 配对报告仅在两种统计及各自6H0阈值都冻结后读取truth位置与开发分组。
+    if paired_gate:
+        paired_rows = {"baseline": [], "residual_self_normalized": []}
+        coarse_deep_head = np.asarray(shared["deep_rr"], float)
+        fine_vertices_head = np.asarray(refined["vertices"], float)
+        if coarse_deep_head.shape != (n_deep, 3) or fine_vertices_head.shape != (n_truth, 3):
+            raise ValueError("配对门控的coarse/refined HEAD坐标轴非法")
+        for original_case in cases:
+            number = int(original_case["case_number"])
+            record = json.loads((output / "gate_scores" / f"case_{number:02d}.json").read_text(
+                encoding="utf-8"))
+            for mode, source, threshold in (
+                    ("baseline", record["baseline_companion"], baseline_threshold),
+                    ("residual_self_normalized", record, gate_threshold)):
+                local = source["selected_deep_local_index"]
+                has_deep = original_case["deep_index"] is not None
+                distance = (None if local is None or not has_deep else float(
+                    np.linalg.norm(coarse_deep_head[local] -
+                                   fine_vertices_head[int(original_case["deep_index"])]) * 1000.))
+                value = float(source["gate_statistic"])
+                paired_rows[mode].append({
+                    "case_number": number, "case_id": original_case["case_id"],
+                    "was_in_tuning15": number in tuning_case_numbers,
+                    "scenario": original_case["scenario"], "h0_role": original_case["h0_role"],
+                    "eeg_snr_db": original_case["eeg_snr_db"],
+                    "meg_snr_db": original_case["meg_snr_db"],
+                    "has_deep_true": has_deep,
+                    "gate_statistic": value, "threshold": threshold,
+                    "threshold_margin": value - threshold,
+                    "deep_present_decision": value > threshold,
+                    "selected_deep_local_index": local,
+                    "coarse_candidate_error_mm_true_refined_HEAD": distance,
+                    "detected_and_coarse_candidate_within10mm": bool(
+                        value > threshold and distance is not None and distance <= 10. + 1e-6),
+                    "fit_count": record["fit_count"],
+                    "all_required_fits_strictly_converged":
+                        record["all_required_fits_strictly_converged"],
+                    "elapsed_seconds": record["elapsed_seconds"],
+                    "gate_score_sha256": gate_score_sha256[number],
+                })
+        paired_views = {}
+        for view, selected_numbers in (
+                ("all39", tuple(range(39))), ("remaining24_after_tuning", remaining_case_numbers)):
+            paired_views[view] = {}
+            for mode, rows_for_mode in paired_rows.items():
+                selected = [row for row in rows_for_mode if row["case_number"] in selected_numbers]
+                groups = {"overall": selected}
+                for eeg_snr, meg_snr in sorted(snr_pairs):
+                    groups[f"eeg{eeg_snr:+g}_meg{meg_snr:+g}"] = [
+                        row for row in selected if (row["eeg_snr_db"], row["meg_snr_db"]) ==
+                        (eeg_snr, meg_snr)]
+                for scenario in ("deep_only", "deep_plus_surface", "deep_plus_two_surface"):
+                    groups[scenario] = [row for row in selected if row["scenario"] == scenario]
+                group_summaries = {}
+                for group_name, group in groups.items():
+                    h1 = [row for row in group if row["has_deep_true"]]
+                    h0 = [row for row in group if not row["has_deep_true"]]
+                    calibration = [row for row in h0 if row["h0_role"] == "gate_calibration"]
+                    audit_h0 = [row for row in h0 if row["h0_role"] == "gate_audit"]
+                    distances = [row["coarse_candidate_error_mm_true_refined_HEAD"] for row in h1
+                                 if row["coarse_candidate_error_mm_true_refined_HEAD"] is not None]
+                    detected_distances = [row["coarse_candidate_error_mm_true_refined_HEAD"]
+                                          for row in h1 if row["deep_present_decision"] and
+                                          row["coarse_candidate_error_mm_true_refined_HEAD"] is not None]
+                    auroc = None
+                    audit_auroc = None
+                    for negatives, metric in ((h0, "all_h0"), (audit_h0, "audit_h0")):
+                        if h1 and negatives:
+                            delta = (np.asarray([row["gate_statistic"] for row in h1])[:, None] -
+                                     np.asarray([row["gate_statistic"] for row in negatives])[None, :])
+                            value = float(np.mean((delta > 0) + .5 * (delta == 0)))
+                            if metric == "all_h0":
+                                auroc = value
+                            else:
+                                audit_auroc = value
+                    group_summaries[group_name] = {
+                        "case_count": len(group), "h1_count": len(h1),
+                        "h1_detection_count": sum(row["deep_present_decision"] for row in h1),
+                        "calibration_h0_count": len(calibration),
+                        "calibration_h0_false_positive_count": sum(
+                            row["deep_present_decision"] for row in calibration),
+                        "audit_h0_count": len(audit_h0),
+                        "audit_h0_false_positive_count": sum(
+                            row["deep_present_decision"] for row in audit_h0),
+                        "minimum_h1_threshold_margin": min(
+                            (row["threshold_margin"] for row in h1), default=None),
+                        "gate_auroc_h1_vs_all_h0": auroc,
+                        "gate_auroc_h1_vs_audit_h0": audit_auroc,
+                        "median_coarse_candidate_error_mm": (
+                            float(np.median(distances)) if distances else None),
+                        "median_detected_coarse_candidate_error_mm": (
+                            float(np.median(detected_distances)) if detected_distances else None),
+                        "h1_detected_and_coarse_candidate_within10mm_count": sum(
+                            row["detected_and_coarse_candidate_within10mm"] for row in h1),
+                        "all_required_fits_strictly_converged": all(
+                            row["all_required_fits_strictly_converged"] for row in group),
+                        "inverse_fit_count": sum(row["fit_count"] for row in group),
+                        "elapsed_seconds_shared_by_both_modes": sum(row["elapsed_seconds"] for row in group),
+                        "median_case_seconds": float(np.median([row["elapsed_seconds"] for row in group])),
+                        "maximum_case_seconds": max(row["elapsed_seconds"] for row in group),
+                    }
+                paired_views[view][mode] = group_summaries
+        gate_only_summary["paired_comparison"] = {
+            "parameter_selection": parameter_selection,
+            "thresholds": {"baseline": baseline_threshold,
+                           "residual_self_normalized": gate_threshold},
+            "rows": paired_rows, "views": paired_views,
+            "same_H0_fits_and_denominator_only_score_change": True,
+            "finite_baseline_correction_retained_in_both_modes": True,
+            "calibration": "two empirical maxima from the same 6 predeclared calibration H0",
+            "remaining24": "6 audit H0 + 18 H1, after choosing MRF on tuning15; development only",
+            "metrics_scope": (
+                "gate AUROC is presence discrimination; coarse candidate error is a scan diagnostic. "
+                "Neither is a final source-map An_auc, SD or DLE; Stage2 did not run."),
+        }
     gate_only_payload = (json.dumps(
         gate_only_summary, ensure_ascii=False, indent=2, sort_keys=True,
         allow_nan=False) + "\n").encode("utf-8")
@@ -849,7 +1107,14 @@ if args.stop_after_gate:
         with temporary.open("xb") as stream:
             stream.write(gate_only_payload)
         os.replace(temporary, gate_only_path)
-    print(json.dumps(gate_only_summary, ensure_ascii=False, indent=2), flush=True)
+    console_summary = gate_only_summary
+    if paired_gate:
+        console_summary = {key: value for key, value in gate_only_summary.items()
+                           if key != "paired_comparison"}
+        console_summary["paired_overall"] = {
+            view: {mode: groups["overall"] for mode, groups in views.items()}
+            for view, views in paired_views.items()}
+    print(json.dumps(console_summary, ensure_ascii=False, indent=2), flush=True)
     raise SystemExit(0)
 
 
