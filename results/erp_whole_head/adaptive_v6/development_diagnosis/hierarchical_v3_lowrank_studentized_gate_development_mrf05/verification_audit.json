@@ -1,0 +1,122 @@
+{
+  "complete": true,
+  "verification_date_asia_shanghai": "2026-10-09",
+  "development_only": true,
+  "formal_or_blind_validation": false,
+  "source_code_commit": "b1a0667b2a551407b6586ef00b3408736fc8c0cf",
+  "verification_did_not_run_inverse_fits_or_change_thresholds": true,
+  "sha256": {
+    "run_identity.json": "d276517a2c510eaccb807fbf0b46e377dbdebbbb25a1bb7a78aa318d990d4e11",
+    "gate_threshold.json": "2055d03d7df98f806fae459220f45856581b64b820147ee3cabe187249ed0f8f",
+    "gate_only_summary.json": "7f5a32d7cfaa19d06bbdc6b6d0335f71fb22e2187b924582cf13659f156fa69e",
+    "parameter_tuning_comparison.json": "a3d669073325665786691a838643d8a955dc0744ce6985e79c0dd79a857a2ffa"
+  },
+  "verified": {
+    "identity_script_core_code_input_and_parameter_selection_hashes": true,
+    "gate_json_count": 39,
+    "direction_count": 78,
+    "direction_deep_candidate_count": 1248,
+    "strictly_converged_h0_inverse_fit_count": 78,
+    "two_h0_fits_per_case_no_h1_fit": true,
+    "baseline_and_residual_scores_denominators_and_identifiability_recomputed": true,
+    "maximum_score_formula_absolute_error": 0.0,
+    "same_point_bidirectional_min_then_max_recomputed": true,
+    "score_threshold_summary_sha_chain": true,
+    "summary_counts_auroc_and_coarse_candidate_head_distance_recomputed": true,
+    "calibration_case_numbers": [0, 2, 13, 15, 26, 28],
+    "thresholds_use_only_six_predeclared_calibration_h0": true,
+    "strict_greater_than_decision": true
+  },
+  "tuning15_baseline_reproduction": {
+    "old_run": "hierarchical_v3_lowrank_gate_tuning15_mrf05",
+    "profile": "mrf05",
+    "case_count": 15,
+    "baseline_direction_deep_score_count": 480,
+    "maximum_baseline_direction_score_absolute_difference": 0.0,
+    "all_same_point_statistics_selected_candidates_and_solver_checks_equal": true,
+    "all_settings_seeds_and_input_fingerprints_equal": true,
+    "threshold_old_and_new": 1.6731919035472465,
+    "h1_detection_count": 8,
+    "h1_count": 9,
+    "raw_sensor_arrays_were_not_persisted_for_direct_comparison": true
+  },
+  "thresholds": {
+    "baseline_mrf05": 1.6731919035472465,
+    "residual_self_normalized_mrf05": 0.9219227910692633
+  },
+  "all39": {
+    "baseline": {
+      "calibration_h0_false_positives": [0, 6],
+      "audit_h0_false_positives": [2, 6],
+      "h1_detected": [21, 27],
+      "gate_auroc_h1_vs_all_h0": 0.8703703703703703,
+      "detected_and_coarse_candidate_within10mm": [14, 27]
+    },
+    "residual_self_normalized": {
+      "calibration_h0_false_positives": [0, 6],
+      "audit_h0_false_positives": [3, 6],
+      "h1_detected": [26, 27],
+      "gate_auroc_h1_vs_all_h0": 0.9166666666666666,
+      "detected_and_coarse_candidate_within10mm": [19, 27]
+    }
+  },
+  "remaining24_after_tuning": {
+    "baseline_h1_detected": [13, 18],
+    "residual_h1_detected": [17, 18],
+    "baseline_audit_h0_false_positives": [2, 6],
+    "residual_audit_h0_false_positives": [3, 6],
+    "baseline_gate_auroc": 0.7962962962962963,
+    "residual_gate_auroc": 0.8425925925925926,
+    "geometry_is_not_independent_of_tuning15": true
+  },
+  "audit_h0_false_positive_cases": [
+    {
+      "case_number": 14,
+      "eeg_snr_db": -10,
+      "meg_snr_db": 20,
+      "baseline_score": 6.481704887287495,
+      "residual_score": 4.033204390437112,
+      "false_positive_in_both_modes": true
+    },
+    {
+      "case_number": 16,
+      "eeg_snr_db": -10,
+      "meg_snr_db": 20,
+      "baseline_score": 4.206106453384437,
+      "residual_score": 3.4098251510914217,
+      "false_positive_in_both_modes": true
+    },
+    {
+      "case_number": 27,
+      "eeg_snr_db": 20,
+      "meg_snr_db": -10,
+      "baseline_score": 1.4775234533734167,
+      "residual_score": 1.4775234533734167,
+      "false_positive_only_in_residual_mode_due_to_lower_frozen_threshold": true
+    }
+  ],
+  "residual_h1_miss": {
+    "case_number": 9,
+    "scenario": "deep_plus_surface",
+    "eeg_snr_db": -10,
+    "meg_snr_db": -10,
+    "score": 0.7300627898687697,
+    "threshold_margin": -0.19186000120049362
+  },
+  "residual_coarse_candidate_error_greater_than10mm_cases": [8, 9, 17, 20, 22, 23, 24, 25],
+  "elapsed_seconds_shared_by_both_scores": 3136.2761565999826,
+  "median_case_seconds": 83.13237340000342,
+  "maximum_case_seconds": 245.96750349999638,
+  "stage2_ran": false,
+  "hard_no_deep_false_positive_acceptance_passed": false,
+  "decision": "Do not promote this residual gate as an accepted final localizer; discuss the failed audit H0 condition before another algorithm iteration.",
+  "limitations": [
+    "The two empirical thresholds have zero calibration false positives by construction, not a fixed population false-positive guarantee.",
+    "All residual case statistics are no larger than their baseline counterparts; improved detection under separately calibrated thresholds is not stronger raw deep evidence.",
+    "The six audit H0 include false positives; increasing thresholds after reading their labels would not validate this experiment.",
+    "Gate AUROC is presence discrimination. Coarse candidate HEAD distance is a scan diagnostic, not final source-map An_auc, SD or DLE.",
+    "The frozen identity truth_access_rule is generic legacy text about Stage2. The gate-only paired summary also computes truth-based candidate distances after both score arrays and thresholds are frozen. Do not claim positions were never accessed or that a final-map hash existed in this gate-only run.",
+    "Some remaining24 geometries appeared at other SNRs in tuning15, and earlier algorithms had already seen this development panel. This is not formal blind validation.",
+    "Deep candidates cover a finite thalamic grid, not all deep brain structures; each H1 case has one deep source."
+  ]
+}
