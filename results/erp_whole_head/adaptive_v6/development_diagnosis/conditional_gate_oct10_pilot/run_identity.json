@@ -1,0 +1,459 @@
+{
+  "alpha": 0.05,
+  "base_identity_sha256": "d276517a2c510eaccb807fbf0b46e377dbdebbbb25a1bb7a78aa318d990d4e11",
+  "code_sha256": {
+    "benchmark/erp_protocol.py": "f74f9b1dd33036105d50d4ccd6242c1a068cb090fe4a234eb7736f8071e16647",
+    "benchmark/erp_replicates.py": "b4274a4fd48554b597e04dc5a479bd48547c50c870eee9da9d6b3c84d2ab1994",
+    "benchmark/erp_trial_covariance.py": "2b62b351ae375d470f993104cc2bc066414b8c0d686838ee3f9135a6624a6c5f",
+    "benchmark/metrics.py": "f07a42e26dc2118c418744e3a4971c5fcd3037b7b93e26a7e2e4e899400986d8",
+    "benchmark/protocol.py": "26f816e0530cf6f36445b7222fc5db3d0ce216f4ec089f0a2779c65e1c4c8d4a",
+    "candidates/graph_reweight_solver.py": "48042de304322ff6715293d485da09af39d203c799b6ee637918a1f6a5381257",
+    "candidates/oaster_balanced.py": "74a9de1efc6d1e83f522024c9a3440d799fc054be348d91884171a62ddd99e92",
+    "candidates/oaster_conditional.py": "c371136f4bd33fd39759e1b5b15dbbdab4c2f412adb185509e7210a6f7507b59",
+    "candidates/oaster_partial_confirmation.py": "fb61914bfde8496105d5f7b9df4088d5f7148026094f5920b8442f722e8e7d33",
+    "candidates/oaster_predictive.py": "82f4e0a3dfd0bea09cbff50ae5d188c5b6e36a9c42610b99fe7c45bf84e37983",
+    "refined_grid.py": "4f0bad2a1f8c437d1e082e1466ac5e8410e1fc79ff3edaa9180e869345828da8",
+    "run_erp_whole_head_matrix.py": "bb4ac256f7b48aeb7a948c2bf175df282f9839d149211944c4d9c2b8b5077d17",
+    "作者风格版/78-v3全新开发面板.py": "f276be97301956e3bae3818b62a11d29fdcf416a3c5dd1746da5958bbfe3c846"
+  },
+  "decision_rule": "p<=0.05 and T>0; unsupported conditional bin abstains with p=1",
+  "formal_or_blind_validation": false,
+  "input_identity": {
+    "channel_order": {
+      "eeg": [
+        "EEG 001",
+        "EEG 002",
+        "EEG 003",
+        "EEG 004",
+        "EEG 005",
+        "EEG 006",
+        "EEG 007",
+        "EEG 008",
+        "EEG 009",
+        "EEG 010",
+        "EEG 011",
+        "EEG 012",
+        "EEG 013",
+        "EEG 014",
+        "EEG 015",
+        "EEG 016",
+        "EEG 017",
+        "EEG 018",
+        "EEG 019",
+        "EEG 020",
+        "EEG 021",
+        "EEG 022",
+        "EEG 023",
+        "EEG 024",
+        "EEG 025",
+        "EEG 026",
+        "EEG 027",
+        "EEG 028",
+        "EEG 029",
+        "EEG 030",
+        "EEG 031",
+        "EEG 032",
+        "EEG 033",
+        "EEG 034",
+        "EEG 035",
+        "EEG 036",
+        "EEG 037",
+        "EEG 038",
+        "EEG 039",
+        "EEG 040",
+        "EEG 041",
+        "EEG 042",
+        "EEG 043",
+        "EEG 044",
+        "EEG 045",
+        "EEG 046",
+        "EEG 047",
+        "EEG 048",
+        "EEG 049",
+        "EEG 050",
+        "EEG 051",
+        "EEG 052",
+        "EEG 054",
+        "EEG 055",
+        "EEG 056",
+        "EEG 057",
+        "EEG 058",
+        "EEG 059",
+        "EEG 060"
+      ],
+      "meg": [
+        "MEG 0111",
+        "MEG 0121",
+        "MEG 0131",
+        "MEG 0141",
+        "MEG 0211",
+        "MEG 0221",
+        "MEG 0231",
+        "MEG 0241",
+        "MEG 0311",
+        "MEG 0321",
+        "MEG 0331",
+        "MEG 0341",
+        "MEG 0411",
+        "MEG 0421",
+        "MEG 0431",
+        "MEG 0441",
+        "MEG 0511",
+        "MEG 0521",
+        "MEG 0531",
+        "MEG 0541",
+        "MEG 0611",
+        "MEG 0621",
+        "MEG 0631",
+        "MEG 0641",
+        "MEG 0711",
+        "MEG 0721",
+        "MEG 0731",
+        "MEG 0741",
+        "MEG 0811",
+        "MEG 0821",
+        "MEG 0911",
+        "MEG 0921",
+        "MEG 0931",
+        "MEG 0941",
+        "MEG 1011",
+        "MEG 1021",
+        "MEG 1031",
+        "MEG 1041",
+        "MEG 1111",
+        "MEG 1121",
+        "MEG 1131",
+        "MEG 1141",
+        "MEG 1211",
+        "MEG 1221",
+        "MEG 1231",
+        "MEG 1241",
+        "MEG 1311",
+        "MEG 1321",
+        "MEG 1331",
+        "MEG 1341",
+        "MEG 1411",
+        "MEG 1421",
+        "MEG 1431",
+        "MEG 1441",
+        "MEG 1511",
+        "MEG 1521",
+        "MEG 1531",
+        "MEG 1541",
+        "MEG 1611",
+        "MEG 1621",
+        "MEG 1631",
+        "MEG 1641",
+        "MEG 1711",
+        "MEG 1721",
+        "MEG 1731",
+        "MEG 1741",
+        "MEG 1811",
+        "MEG 1821",
+        "MEG 1831",
+        "MEG 1841",
+        "MEG 1911",
+        "MEG 1921",
+        "MEG 1931",
+        "MEG 1941",
+        "MEG 2011",
+        "MEG 2021",
+        "MEG 2031",
+        "MEG 2041",
+        "MEG 2111",
+        "MEG 2121",
+        "MEG 2131",
+        "MEG 2141",
+        "MEG 2211",
+        "MEG 2221",
+        "MEG 2231",
+        "MEG 2241",
+        "MEG 2311",
+        "MEG 2321",
+        "MEG 2331",
+        "MEG 2341",
+        "MEG 2411",
+        "MEG 2421",
+        "MEG 2431",
+        "MEG 2441",
+        "MEG 2511",
+        "MEG 2521",
+        "MEG 2531",
+        "MEG 2541",
+        "MEG 2611",
+        "MEG 2621",
+        "MEG 2631",
+        "MEG 2641"
+      ],
+      "sha256": "3ad3abb129987b8216a6e99c973d3bff8dac18423bfd19b10dfb8df72a2d535a"
+    },
+    "code_sha256": {
+      "benchmark/erp_protocol.py": "f74f9b1dd33036105d50d4ccd6242c1a068cb090fe4a234eb7736f8071e16647",
+      "benchmark/erp_replicates.py": "b4274a4fd48554b597e04dc5a479bd48547c50c870eee9da9d6b3c84d2ab1994",
+      "benchmark/erp_trial_covariance.py": "2b62b351ae375d470f993104cc2bc066414b8c0d686838ee3f9135a6624a6c5f",
+      "benchmark/protocol.py": "26f816e0530cf6f36445b7222fc5db3d0ce216f4ec089f0a2779c65e1c4c8d4a",
+      "refined_grid.py": "4f0bad2a1f8c437d1e082e1466ac5e8410e1fc79ff3edaa9180e869345828da8",
+      "run_erp_whole_head_matrix.py": "bb4ac256f7b48aeb7a948c2bf175df282f9839d149211944c4d9c2b8b5077d17"
+    },
+    "history_manifest_records": {
+      "calibration_component_balanced_v2_manifest.json": {
+        "case_count": 57,
+        "sha256": "4d091c2cbc12d1ec2165ff27e754bf1e3d540c2b4f00c89d3967ac6a3e89eefb"
+      },
+      "calibration_component_balanced_v3_manifest.json": {
+        "case_count": 57,
+        "sha256": "bb9f1a7d949efa6ba91dc8aceff604edca79752ecfb507134d06e4ccf56421d2"
+      },
+      "calibration_component_balanced_v4_manifest.json": {
+        "case_count": 57,
+        "sha256": "09dde6a2c14ceeeaa4a3185d218f8017bc6141b37e4172d19f6f85c22cf73ff1"
+      },
+      "calibration_manifest.json": {
+        "case_count": 57,
+        "sha256": "459b7b983b9ad4bbbc8b84e3d0a494e8466dbe093a32af02b78e7d871119a313"
+      },
+      "development_component_balanced_all_snr.json": {
+        "case_count": 20,
+        "sha256": "c64d02429fd5e9e9c2a7831a36b7f86c2a0fe614ecb2c837fa0284fe96fb5425"
+      },
+      "development_component_balanced_all_snr_mixed_only.json": {
+        "case_count": 8,
+        "sha256": "42d1001f3f617b0094dea459a70ea6cb50fefabac0b9daaf88958bb62cee1b56"
+      },
+      "development_component_balanced_m10_m10.json": {
+        "case_count": 5,
+        "sha256": "cab84749b2c6b4ac0c555fe34b2035fe1b88af705181b632be94eee460ee9981"
+      },
+      "development_component_balanced_m10_m10_case00.json": {
+        "case_count": 1,
+        "sha256": "7ee2301fb88987206c544b3a88a6a3058347b0f11f268a8260dc357b59089f10"
+      },
+      "development_component_balanced_m10_m10_case01.json": {
+        "case_count": 1,
+        "sha256": "9b52b8d695150e7db3db7bfd171361e1aa5e0453fcab562e3983decda4a0b1a9"
+      },
+      "development_component_balanced_m10_m10_case02.json": {
+        "case_count": 1,
+        "sha256": "151c6c3e8a80bfc30fc078b9cc41e515b25d607ec59e151daf73d9bf0c1f2231"
+      },
+      "development_component_balanced_m10_m10_case03.json": {
+        "case_count": 1,
+        "sha256": "d97a4cb40cdcc67ae8f0ca5cbc8b7cc1fa111e9843fb0284a68d0eedfcf9f09a"
+      },
+      "development_component_balanced_m10_m10_case04.json": {
+        "case_count": 1,
+        "sha256": "2209d3f5a580bb626ad1fe30d95562e344e2505c0517d1a2e3359f6b09d794f3"
+      },
+      "development_component_balanced_m10_m10_cases00_02_03.json": {
+        "case_count": 3,
+        "sha256": "d24c3f3483755c6ee05c00602525f67a8d721a7d614265d69863d27c8a6ea2df"
+      },
+      "development_component_balanced_m10_m10_cases01_04.json": {
+        "case_count": 2,
+        "sha256": "426aeca7ce9121bae124084f392b880bf0e970795f4fd5d5b8b6bf72f067c356"
+      },
+      "development_component_balanced_new_snr_mixed_only.json": {
+        "case_count": 6,
+        "sha256": "2a1eb5a354a4e10bbd4bd92abf65ca55b69b8d210b2f25c5b49e6a23c5f44647"
+      },
+      "development_localization_v5_mm_floor_probe.json": {
+        "case_count": 4,
+        "sha256": "ba1abe7a2dea848a1a3617df0276c124d81ff19488a302749ce6256bf05228af"
+      },
+      "development_localization_v5_new_positions.json": {
+        "case_count": 15,
+        "sha256": "54fd2126c34b251939f854e73f11901329e7efb24e3c5669ecc28260a100190b"
+      },
+      "development_manifest.json": {
+        "case_count": 20,
+        "sha256": "70f376c2c753e5f9d2adc22b067fdb2f0aba797f80bca7eb1d7951f884f3260e"
+      },
+      "development_sensor_balanced_m10_m10.json": {
+        "case_count": 5,
+        "sha256": "3432879db311544eb1eea7ae08a417e08bcb4842ae9f3a77cef0def5d87b00ad"
+      },
+      "development_sensor_balanced_m10_m10_case01.json": {
+        "case_count": 1,
+        "sha256": "3eca5db9ad2f00c53b552575ba19c839b2f65808f48eb8a7aac82dacf61cb026"
+      },
+      "development_sensor_balanced_m10_m10_case04.json": {
+        "case_count": 1,
+        "sha256": "ab27ff0034c958d2595b5e792d2ac587ad2eda14a4b9bc9410274d46a14bb8c7"
+      },
+      "development_sensor_balanced_m10_m10_cases00_01.json": {
+        "case_count": 2,
+        "sha256": "a8c752227fc448c6883d00d65be000d56279a696ee029c877908aecc5f1fe086"
+      },
+      "development_sensor_balanced_m10_m10_cases02_04.json": {
+        "case_count": 3,
+        "sha256": "dcd34ea081bddd70da7443e120bce290eec34e3a03eeb9f28234245d8f5834a0"
+      },
+      "hierarchical_v1_gate_calibration_manifest.json": {
+        "case_count": 57,
+        "sha256": "46b7b83998792690087241bed802396418e2cb0b192b62c93d8ceb114c7fbde3"
+      },
+      "hierarchical_v1_surface_calibration_manifest.json": {
+        "case_count": 57,
+        "sha256": "2aa6154471c019e55968995a98cd89602c60ba24ef9d9bcb3b3ce45f5fcc28a0"
+      },
+      "hierarchical_v1_validation_manifest.json": {
+        "case_count": 21,
+        "sha256": "6ef97341434bca99bc7c75d205c8dc6d3815b3260ca3c62c10c615ce2efb0eff"
+      },
+      "hierarchical_v2_gate_calibration_manifest.json": {
+        "case_count": 57,
+        "sha256": "bafbd6453a98f42f1fca9a3b853cec998e3dae8756a1b8863e92d4df30550c85"
+      },
+      "hierarchical_v2_surface_calibration_manifest.json": {
+        "case_count": 57,
+        "sha256": "3fd0ed0e94e12bbfa20d5bcd4b2e49791d1583f6bd2b6b06757ce8d26fcd6568"
+      },
+      "hierarchical_v3_fresh_development_manifest.json": {
+        "case_count": 39,
+        "sha256": "e2a49a6c14d7275a49d0d2502b98173ebad4f18237d3d95b970242524e9063fe"
+      },
+      "validation_component_balanced_v2_manifest.json": {
+        "case_count": 24,
+        "sha256": "68a405ace52d0c04a193c37198304682a0440a0007fed0433fe3a43e686d9aa7"
+      },
+      "validation_manifest.json": {
+        "case_count": 24,
+        "sha256": "2da4682fbd23b591a20e56fd9612f5324ecb9cf68ed744f85c51400d11759fb7"
+      }
+    },
+    "history_manifest_sha256": {
+      "calibration_component_balanced_v2_manifest.json": "4d091c2cbc12d1ec2165ff27e754bf1e3d540c2b4f00c89d3967ac6a3e89eefb",
+      "calibration_component_balanced_v3_manifest.json": "bb9f1a7d949efa6ba91dc8aceff604edca79752ecfb507134d06e4ccf56421d2",
+      "calibration_component_balanced_v4_manifest.json": "09dde6a2c14ceeeaa4a3185d218f8017bc6141b37e4172d19f6f85c22cf73ff1",
+      "calibration_manifest.json": "459b7b983b9ad4bbbc8b84e3d0a494e8466dbe093a32af02b78e7d871119a313",
+      "development_component_balanced_all_snr.json": "c64d02429fd5e9e9c2a7831a36b7f86c2a0fe614ecb2c837fa0284fe96fb5425",
+      "development_component_balanced_all_snr_mixed_only.json": "42d1001f3f617b0094dea459a70ea6cb50fefabac0b9daaf88958bb62cee1b56",
+      "development_component_balanced_m10_m10.json": "cab84749b2c6b4ac0c555fe34b2035fe1b88af705181b632be94eee460ee9981",
+      "development_component_balanced_m10_m10_case00.json": "7ee2301fb88987206c544b3a88a6a3058347b0f11f268a8260dc357b59089f10",
+      "development_component_balanced_m10_m10_case01.json": "9b52b8d695150e7db3db7bfd171361e1aa5e0453fcab562e3983decda4a0b1a9",
+      "development_component_balanced_m10_m10_case02.json": "151c6c3e8a80bfc30fc078b9cc41e515b25d607ec59e151daf73d9bf0c1f2231",
+      "development_component_balanced_m10_m10_case03.json": "d97a4cb40cdcc67ae8f0ca5cbc8b7cc1fa111e9843fb0284a68d0eedfcf9f09a",
+      "development_component_balanced_m10_m10_case04.json": "2209d3f5a580bb626ad1fe30d95562e344e2505c0517d1a2e3359f6b09d794f3",
+      "development_component_balanced_m10_m10_cases00_02_03.json": "d24c3f3483755c6ee05c00602525f67a8d721a7d614265d69863d27c8a6ea2df",
+      "development_component_balanced_m10_m10_cases01_04.json": "426aeca7ce9121bae124084f392b880bf0e970795f4fd5d5b8b6bf72f067c356",
+      "development_component_balanced_new_snr_mixed_only.json": "2a1eb5a354a4e10bbd4bd92abf65ca55b69b8d210b2f25c5b49e6a23c5f44647",
+      "development_localization_v5_mm_floor_probe.json": "ba1abe7a2dea848a1a3617df0276c124d81ff19488a302749ce6256bf05228af",
+      "development_localization_v5_new_positions.json": "54fd2126c34b251939f854e73f11901329e7efb24e3c5669ecc28260a100190b",
+      "development_manifest.json": "70f376c2c753e5f9d2adc22b067fdb2f0aba797f80bca7eb1d7951f884f3260e",
+      "development_sensor_balanced_m10_m10.json": "3432879db311544eb1eea7ae08a417e08bcb4842ae9f3a77cef0def5d87b00ad",
+      "development_sensor_balanced_m10_m10_case01.json": "3eca5db9ad2f00c53b552575ba19c839b2f65808f48eb8a7aac82dacf61cb026",
+      "development_sensor_balanced_m10_m10_case04.json": "ab27ff0034c958d2595b5e792d2ac587ad2eda14a4b9bc9410274d46a14bb8c7",
+      "development_sensor_balanced_m10_m10_cases00_01.json": "a8c752227fc448c6883d00d65be000d56279a696ee029c877908aecc5f1fe086",
+      "development_sensor_balanced_m10_m10_cases02_04.json": "dcd34ea081bddd70da7443e120bce290eec34e3a03eeb9f28234245d8f5834a0",
+      "hierarchical_v1_gate_calibration_manifest.json": "46b7b83998792690087241bed802396418e2cb0b192b62c93d8ceb114c7fbde3",
+      "hierarchical_v1_surface_calibration_manifest.json": "2aa6154471c019e55968995a98cd89602c60ba24ef9d9bcb3b3ce45f5fcc28a0",
+      "hierarchical_v1_validation_manifest.json": "6ef97341434bca99bc7c75d205c8dc6d3815b3260ca3c62c10c615ce2efb0eff",
+      "hierarchical_v2_gate_calibration_manifest.json": "bafbd6453a98f42f1fca9a3b853cec998e3dae8756a1b8863e92d4df30550c85",
+      "hierarchical_v2_surface_calibration_manifest.json": "3fd0ed0e94e12bbfa20d5bcd4b2e49791d1583f6bd2b6b06757ce8d26fcd6568",
+      "hierarchical_v3_fresh_development_manifest.json": "e2a49a6c14d7275a49d0d2502b98173ebad4f18237d3d95b970242524e9063fe",
+      "validation_component_balanced_v2_manifest.json": "68a405ace52d0c04a193c37198304682a0440a0007fed0433fe3a43e686d9aa7",
+      "validation_manifest.json": "2da4682fbd23b591a20e56fd9612f5324ecb9cf68ed744f85c51400d11759fb7"
+    },
+    "history_protocol_dir": "D:\\博士\\工作＆汇报\\源定位\\新建文件夹\\results\\erp_whole_head\\adaptive_v6\\protocol",
+    "inverse_forward": {
+      "fingerprint": "a97e6991fde1cedfac66857d5c07683c43af62f16ad19bfa31ea7199a9083556",
+      "n_deep": 16,
+      "n_surface": 7498
+    },
+    "inverse_root": "D:\\博士\\工作＆汇报\\源定位\\新建文件夹\\corrected_v2\\generated",
+    "refined_forward": {
+      "array_bundle_sha256": "044f4e699ab98fbf3881ce3b8448f5a5a4f304a17065ab98218ae31b4c6d2f21",
+      "array_sha256": {
+        "coordinate_frame": "a5f33e264bc9cc2e03012159940d05f8fe9a07aec9619c4305fb899b581be125",
+        "deep_aseg_labels": "e427f9de7dc5dfdbbdd6e517180b9b4fc007a473cfdc42f677a42ce2754aada9",
+        "deep_spacing_mm": "05828936b7a33902ec3b9bd97461f16dc91ee62471134b10408c9cdee6dd0e0d",
+        "deep_xyz_head": "bbee21e3483e7d2a39109c68a664fd9b8fb401ec9c42ecfc1017f650280dc0ea",
+        "deep_xyz_mri": "69cc53bb2f7597f0e06d2b58309a69f98259be04af47ecc9c3ee084f1bd4cb67",
+        "eeg_ch_names": "5cef91256386153110088de7ae34c08432b8ea746deb8d0ca47ad957162f93da",
+        "gain_eeg": "6639c6e9a5ef09de5b1bffb35a6bc8f6527398b49353419df865b35ad6e0a3ec",
+        "gain_meg": "a4fa0aff5562022ab8fa1bc313b7981a905d7a70281c5c2ed039fe1b00479d31",
+        "head_mri_t": "ca77b4966760826694876e70e8dc92d902718017b0397528b61e312440ea70c7",
+        "meg_ch_names": "ccd2962a83ae60c0569f53a63a8ca83489ae07b8984d207b0fea15f76e39b5cc",
+        "mri_head_t": "f6e333c92525b57f3fa48bd5bde74bfb647d706f32432e3d58c34a180d4e34dc",
+        "n_deep": "e72d38b53748cbf2ccdbb75f309a1d8fe997b0fe0fbc62ea79f881b3bf9bb95c",
+        "n_surf": "f03a08452b65b904fa21f77f6271e5f61c9a8d5a3b1eed206e22fd79ac2e129d",
+        "surface_edges": "eb315317ff634124c56cf5ed958154220d144facb2fc0c001247e2cd567e82d4",
+        "surface_hemi": "e0f99496223f92d1f77c6580f6881d7f3732a58bef1c21193b7301928692db0a",
+        "surface_spacing_mm": "9b939315dc3ced2636fe192eb77ca9a7c62304ed33b9f3e96b188786698db9ca",
+        "surface_vertex_numbers": "5a352c10e2fa17b8fce996a4933d271d4e9d144c8572671ff4d696a7bc3062ef",
+        "surface_xyz_head": "6100ea41812e7b3e6268d162df1b298a2a789b8f61490266a39931b9d5647aaa",
+        "surface_xyz_mri": "12031332b820f00369ffdee9b98c0b42a7aa22cc6e9070d0cd7766141babffee",
+        "vertices": "ed24866f17dd319e56daa6d5aa60e935aac1ded663644ee03b1c58c0cc91228d"
+      },
+      "builder_sha256": "4f0bad2a1f8c437d1e082e1466ac5e8410e1fc79ff3edaa9180e869345828da8",
+      "coordinate_frame": "HEAD",
+      "file_sha256": "f7417a1bbabd6ac863da8811470c5c273be3f950b028fff5efae9ac9a899b266",
+      "n_deep": 135,
+      "n_surface": 30032,
+      "path": "D:\\博士\\工作＆汇报\\源定位\\新建文件夹\\results\\refined_forward_oct7_5mm.npz"
+    },
+    "sample_path": "D:\\mne_data\\MNE-sample-data"
+  },
+  "limitations": [
+    "pilot; no formal error guarantee",
+    "geometry repeated across SNR creates dependent cases",
+    "at least 19 per observable bin gives rank resolution, not a verified 5% population FPR",
+    "unsupported bins must abstain; no source-map An_auc/SD/DLE without Stage2"
+  ],
+  "manifest_generator_path": "D:\\博士\\工作＆汇报\\源定位\\新建文件夹\\作者风格版\\80-条件门控新面板.py",
+  "manifest_generator_sha256": "e14126523263efa8a120ae7830938fad2d988146d4824aa6fe952fd6157b1201",
+  "manifest_path": "D:\\博士\\工作＆汇报\\源定位\\新建文件夹\\results\\erp_whole_head\\adaptive_v6\\protocol\\conditional_gate_pilot_manifest.json",
+  "manifest_sha256": "b674df0d9ced6701e0021ac29762a6c6f53ff1e877149381dbc32cfd0d5e38db",
+  "minimum_calibration_per_bin": 19,
+  "observable_bins": [
+    "LL",
+    "LH",
+    "HL",
+    "HH"
+  ],
+  "p_rule": "(1+count(T_cal>=T))/(n_cal+1); ties conservative",
+  "parameter_selection_sha256": "a3d669073325665786691a838643d8a955dc0744ce6985e79c0dd79a857a2ffa",
+  "pilot": true,
+  "protocol": "frozen-residual-conditional-gate-pilot",
+  "quality_threshold_db": 10.0,
+  "quality_threshold_linear": 10.0,
+  "runtime": {
+    "executable": "C:\\Users\\zzp\\.conda\\envs\\meg\\python.exe",
+    "mne": "1.12.1",
+    "numpy": "2.5.2",
+    "python": "3.13.15",
+    "scipy": "1.18.1"
+  },
+  "schema_version": 1,
+  "scorer": "residual self-normalized lowrank scan; same point directional min then masked max",
+  "script_sha256": "598619f2376b1e5485b02e71d116fefc450f90d2878d9d1479d185dd4642c181",
+  "seed_roots": {
+    "check": 2026101002,
+    "fit": 2026101001,
+    "geometry": 2026101000
+  },
+  "solver_settings": {
+    "adaptive_rho": true,
+    "calibration": "layer",
+    "deep_alias_penalty": false,
+    "deep_reweight_floor": 0.5,
+    "edge_fraction": 0.5,
+    "edge_penalty_mode": "group",
+    "edge_weight_floor": 0.5,
+    "epsilon_fraction": 0.05,
+    "max_inner_retries": 20,
+    "max_iter": 2000,
+    "mrf_strength": 0.5,
+    "noise_multiplier": 1.0,
+    "outer_iterations": 80,
+    "outer_tolerance": 0.01,
+    "rho": 1.0,
+    "ridge_fraction": 0.0,
+    "solver_kind": "admm",
+    "source_penalty_mode": "group",
+    "surface_reweight_floor": 0.5,
+    "temporal_mode": "smooth",
+    "tolerance": 0.001
+  },
+  "stage2_ran": false
+}

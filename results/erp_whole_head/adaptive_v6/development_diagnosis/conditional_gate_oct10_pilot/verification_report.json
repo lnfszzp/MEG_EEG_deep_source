@@ -1,0 +1,171 @@
+{
+  "schema_version": 1,
+  "audit_date_local": "2026-10-10",
+  "audit_complete": true,
+  "scope": "冻结117例development pilot的文件身份、中间量一致性、决定、统计和HEAD粗候选误差核验；没有重跑逆解，没有修改算法或阈值。",
+  "formal_or_blind_validation": false,
+  "stage2_ran": false,
+  "identity": {
+    "manifest_sha256": "b674df0d9ced6701e0021ac29762a6c6f53ff1e877149381dbc32cfd0d5e38db",
+    "run_identity_sha256": "7a44d77732be30502373d81250f6bf55653ac06235c9c594b386213619a5a26e",
+    "parameter_selection_sha256": "a3d669073325665786691a838643d8a955dc0744ce6985e79c0dd79a857a2ffa",
+    "calibration_bank_sha256": "cbbbbbb0aef744079138458b03bfd3ac32efa7ec05855d5774bd25d5f315f0a8",
+    "summary_sha256": "4b514dad7ec2b493cde4e8cf37716d9b3baf09dee5f72273f744d73c39a141b5",
+    "profile": "mrf05",
+    "parameter_source": "已冻结tuning15选择；原MRF0.5 residual逆解和scorer未变",
+    "source_hash_mismatch_count": 0,
+    "score_files_verified": 117,
+    "decision_files_verified": 57,
+    "calibration_scores_verified": 60,
+    "audit_scores_verified": 57,
+    "bank_reconstructed_from_predeclared_calibration_only": true
+  },
+  "independent_checks": {
+    "all_234_H0_fits_strictly_converged_from_saved_diagnostics": true,
+    "per_direction_score_recalculations": 234,
+    "per_direction_mask_recalculations": 234,
+    "q_recalculations_from_saved_cross_and_noise_energy": 117,
+    "same_point_bidirectional_min_then_masked_max_recalculations": 117,
+    "global_and_conditional_decisions_recalculated": 57,
+    "maximum_gate_statistic_difference": 0.0,
+    "HEAD_candidate_errors_recalculated_from_fine_and_coarse_coordinates": 27,
+    "maximum_HEAD_error_difference_mm": 0.0,
+    "focused_existing_tests": "tests/test_oaster_conditional.py + tests/test_oaster_partial_confirmation.py: 18 passed in 5.37s; no cacheprovider",
+    "raw_sensor_or_H0_matrix_regeneration_performed": false,
+    "boundary": "小JSON不含原始传感器/H0源矩阵/SVD向量；核验了保存中间量的内部一致性和收敛诊断，不是从原始数据重新生成投影、Delta或KKT证书。"
+  },
+  "algorithm": {
+    "input": "基线协方差白化的ERP独立两半均值A/B；每半相当于20试次。活动窗20–120ms，基线-180至-20ms；smooth DCT基K=10。",
+    "inverse": "M_beta=(I-beta P)^(-1)，beta=0.5；A_design=G M_beta/s0。优化Z，物理源为M_beta Z/s0。source/edge linear-log惩罚用当前Z及DZ幅度反复更新权重；MM外循环+ADMM内循环。当前惩罚不是直接作用于最终物理电流。",
+    "H0": "分别在A、B上拟合仅表层源的H0，每例两个拟合；不是用真值挑选表层或深层位置。",
+    "nuisance": "U_A=orth(G_surface (X0_A,surface Phi^T))；Pi_A=I-U_A U_A^T。低秩空间只含H0实际传感器预测，不使用完整表层lead-field张成空间。",
+    "direction": "v_d=Pi_A g_d；u_d=v_d/||v_d||；Q_B=Pi_A Y_B,centered Phi^T。mask要求||g_d||>0且||v_d||/||g_d||>eps*max(sensor_count,K)。这仅排除数值退化，不保证生理可辨识性。",
+    "score": "Delta_d=||u_d^T Q_B||^2；E0_d=baseline_projected_variance_d*(K+kappa)；c=(B0-3)/(B0-1)；nu=max(sensor_count-rank(U_A)-1,0)；S_AtoB,d=c*Delta_d/max(E0_d,(||Q_B||_F^2-Delta_d)/nu)-1。nu=0时回退E0；仅容差内残差负值可截0。",
+    "aggregation": "T=max_{d jointly identifiable} min(S_AtoB,d,S_BtoA,d)；必须同一深点双向支持，没有共同可辨识点时T=-1。",
+    "quality": "q_m=max(cross_half_smooth_energy_m/sqrt(baseline_noise_A,m*baseline_noise_B,m),0)；每模态固定q>=10为H，否则L。输入不包含真实SNR、源标签或源位置。",
+    "decision": "同一60例纯表层cal库；p=(1+count(T_cal>=T))/(n+1)。两种方案都alpha=0.05，且T>0才报深源；global用全部60，conditional仅用同观测bin。bin n<19必须abstain，不算正确阴性。",
+    "interpretation": "残差自归一化是经验统计量，不是Student/F参考检验。门控是有无深源判别，不是最终源分布。"
+  },
+  "freeze_order": {
+    "calibration_last_file_local": "2026-10-10 11:30:49.186",
+    "bank_file_local": "2026-10-10 11:30:49.191",
+    "audit_first_file_local": "2026-10-10 11:31:05.040",
+    "decision_last_file_local": "2026-10-10 12:51:10.057",
+    "summary_file_local": "2026-10-10 12:51:10.423",
+    "log_bank_line": 64,
+    "log_first_audit_line": 65,
+    "all_calibration_frozen_before_audit": true,
+    "all_decisions_frozen_before_truth_diagnostics": true,
+    "blindness_boundary": "真值解封是代码中的决定/诊断逻辑隔离。manifest事先已加载用于仿真，不是文件权限或加密意义的盲法。"
+  },
+  "calibration": {
+    "counts": {"LL": 20, "LH": 20, "HL": 20, "HH": 0},
+    "minimum_per_conditional_bin": 19,
+    "alpha": 0.05,
+    "strict_T_boundaries_for_this_bank": {"global": 3.090874310503253, "LL": 2.515322746350329, "LH": 5.023159220156886, "HL": 1.7245603617646856, "HH": null},
+    "boundary_rule": "由冻结rank p导出，严格T大于边界才通过本库；不是人工选择的tau。global边界是60分数的第三大，n=20条件库边界为最大值；并列保守。HH缺库不外推。",
+    "top3_by_bin": {
+      "LL": [{"case_number": 9, "T": 2.515322746350329}, {"case_number": 14, "T": 0.6831885405403113}, {"case_number": 5, "T": 0.49864597916312037}],
+      "LH": [{"case_number": 48, "T": 5.023159220156886}, {"case_number": 46, "T": 3.8358496187287336}, {"case_number": 54, "T": 3.090874310503253}],
+      "HL": [{"case_number": 89, "T": 1.7245603617646856}, {"case_number": 88, "T": 1.3346056972171927}, {"case_number": 87, "T": 1.0166595992340128}]
+    },
+    "tail_interpretation": "单表层configuration09在LL/LH都形成最高尾部；LL最高2.5153明显高于第二名0.6832。不能删除这个有效H0或看audit降低阈值。条件化后低SNR仍受表层高分尾部限制。"
+  },
+  "overall": {
+    "global": {"audit_H0": 30, "false_positive": 3, "supported_negative": 27, "H0_abstain": 0, "H1": 27, "detected": 16, "missed": 11, "H1_abstain": 0, "presence_AUROC_1_minus_p": 0.8814814814814815, "detected_and_coarse_candidate_within10mm": 12},
+    "conditional": {"audit_H0": 30, "false_positive": 2, "supported_negative": 28, "H0_abstain": 0, "H1": 27, "detected": 21, "missed": 6, "H1_abstain": 0, "presence_AUROC_1_minus_p": 0.9407407407407408, "detected_and_coarse_candidate_within10mm": 14},
+    "zero_false_deep_hard_requirement_passed": false
+  },
+  "by_true_SNR_and_matching_observed_bin": [
+    {"EEG_dB": -10, "MEG_dB": -10, "observed_bin": "LL", "H0": 10, "H1": 9, "global_FP": 0, "conditional_FP": 0, "global_TP": 0, "conditional_TP": 3, "global_FN": 9, "conditional_FN": 6, "global_TP_within10mm": 0, "conditional_TP_within10mm": 2, "global_presence_AUROC": 0.9222222222222223, "conditional_presence_AUROC": 0.9, "abstain_both": 0},
+    {"EEG_dB": -10, "MEG_dB": 20, "observed_bin": "LH", "H0": 10, "H1": 9, "global_FP": 2, "conditional_FP": 1, "global_TP": 9, "conditional_TP": 9, "global_FN": 0, "conditional_FN": 0, "global_TP_within10mm": 7, "conditional_TP_within10mm": 7, "global_presence_AUROC": 0.95, "conditional_presence_AUROC": 0.95, "abstain_both": 0},
+    {"EEG_dB": 20, "MEG_dB": -10, "observed_bin": "HL", "H0": 10, "H1": 9, "global_FP": 1, "conditional_FP": 1, "global_TP": 7, "conditional_TP": 9, "global_FN": 2, "conditional_FN": 0, "global_TP_within10mm": 5, "conditional_TP_within10mm": 5, "global_presence_AUROC": 0.9166666666666666, "conditional_presence_AUROC": 0.95, "abstain_both": 0}
+  ],
+  "by_H1_scenario": [
+    {"scenario": "deep_only", "n": 9, "global_TP": 5, "conditional_TP": 8, "global_FN": 4, "conditional_FN": 1, "global_TP_within10mm": 3, "conditional_TP_within10mm": 4},
+    {"scenario": "deep_plus_surface", "n": 9, "global_TP": 5, "conditional_TP": 7, "global_FN": 4, "conditional_FN": 2, "global_TP_within10mm": 4, "conditional_TP_within10mm": 5},
+    {"scenario": "deep_plus_two_surface", "n": 9, "global_TP": 6, "conditional_TP": 6, "global_FN": 3, "conditional_FN": 3, "global_TP_within10mm": 5, "conditional_TP_within10mm": 5}
+  ],
+  "false_positive_union": [
+    {"case_number": 60, "configuration": 21, "bin": "LH", "surface_count": 1, "T": 11.372622461217038, "global_p": 0.01639344262295082, "conditional_p": 0.047619047619047616, "global_FP": true, "conditional_FP": true, "HEAD_deep_error_mm": null},
+    {"case_number": 62, "configuration": 23, "bin": "LH", "surface_count": 1, "T": 3.7971656765509305, "global_p": 0.04918032786885246, "conditional_p": 0.14285714285714285, "global_FP": true, "conditional_FP": false, "HEAD_deep_error_mm": null},
+    {"case_number": 103, "configuration": 25, "bin": "HL", "surface_count": 2, "T": 5.075032767766351, "global_p": 0.01639344262295082, "conditional_p": 0.047619047619047616, "global_FP": true, "conditional_FP": true, "HEAD_deep_error_mm": null}
+  ],
+  "conditional_false_negatives_all_LL": [
+    {"case_number": 32, "scenario": "deep_only", "T": 0.6915894491996684, "p": 0.09523809523809523, "HEAD_coarse_error_mm": 5.000000094449671},
+    {"case_number": 33, "scenario": "deep_plus_surface", "T": 0.7589619192070303, "p": 0.09523809523809523, "HEAD_coarse_error_mm": 11.180340525163418},
+    {"case_number": 35, "scenario": "deep_plus_surface", "T": 1.00767006499472, "p": 0.09523809523809523, "HEAD_coarse_error_mm": 5.000000274274253},
+    {"case_number": 36, "scenario": "deep_plus_two_surface", "T": 1.7560571291872251, "p": 0.09523809523809523, "HEAD_coarse_error_mm": 5.0000000944496685},
+    {"case_number": 37, "scenario": "deep_plus_two_surface", "T": 0.8904323477257481, "p": 0.09523809523809523, "HEAD_coarse_error_mm": 11.180340216470357},
+    {"case_number": 38, "scenario": "deep_plus_two_surface", "T": 1.7462665997930835, "p": 0.09523809523809523, "HEAD_coarse_error_mm": 5.000000094449664}
+  ],
+  "additional_global_false_negatives_rescued_by_conditional": [
+    {"case_number": 30, "bin": "LL", "T": 2.938981322761825, "HEAD_coarse_error_mm": 12.247447981512881},
+    {"case_number": 31, "bin": "LL", "T": 2.822445950319227, "HEAD_coarse_error_mm": 4.999999699676773},
+    {"case_number": 34, "bin": "LL", "T": 2.7635193096651727, "HEAD_coarse_error_mm": 5.0000002742742415},
+    {"case_number": 110, "bin": "HL", "T": 1.8876676826943504, "HEAD_coarse_error_mm": 11.180339262546653},
+    {"case_number": 113, "bin": "HL", "T": 2.1740285673352875, "HEAD_coarse_error_mm": 11.180340141759284}
+  ],
+  "spatial_diagnostic": {
+    "all_H1_scan_error_median_mm": 5.0000002742742415,
+    "all_H1_scan_error_max_mm": 12.247447981512881,
+    "nearest_coarse_grid_error_median_mm_approx": 5.0,
+    "nearest_coarse_grid_error_max_mm_approx": 7.07106810212479,
+    "all_H1_selected_non_nearest_point_count": 9,
+    "conditional_TP_selected_non_nearest_point_count": 7,
+    "conditional_TP_beyond10mm": [
+      {"case_number": 30, "mm": 12.247447981512881},
+      {"case_number": 69, "mm": 12.247447981512881},
+      {"case_number": 73, "mm": 11.180340141759288},
+      {"case_number": 109, "mm": 11.180340525163418},
+      {"case_number": 110, "mm": 11.180339262546653},
+      {"case_number": 113, "mm": 11.180340141759284},
+      {"case_number": 115, "mm": 11.180340216470357}
+    ],
+    "interpretation": "条件化只改变决定，不改变同一病例选中的粗深点。额外5例检出只有2例进入<=10mm；7/21检出点仍>10mm。不能将所有误差归因于16点网格量化，不能当作最终DLE。"
+  },
+  "numerics_and_time": {
+    "H0_fit_count": 234,
+    "strictly_converged_count": 234,
+    "maximum_final_stationarity_gap_relative": 0.000995392590567504,
+    "maximum_final_surrogate_gap_relative": 0.0009938594264893546,
+    "maximum_final_outer_relative_change": 0.009976677491430493,
+    "fit_count_with_inner_continuation": 57,
+    "total_inner_continuations": 62,
+    "descent_guard_or_numerical_stall_count": 0,
+    "nuisance_rank_max": 10,
+    "nuisance_rank10_direction_count": 181,
+    "jointly_identifiable_points_per_case": 16,
+    "minimum_conditional_gain_fraction_approx": 0.059227,
+    "sum_case_elapsed_seconds": 9680.005021600024,
+    "calibration_case_seconds": 4860.7631981,
+    "audit_case_seconds": 4819.2418235,
+    "median_case_seconds": 81.09070710002561,
+    "maximum_case_seconds": 253.28845749999164,
+    "slowest_case_number": 91,
+    "startup_local": "2026-10-10 10:08:21.640",
+    "finish_local": "2026-10-10 12:51:10.423"
+  },
+  "old39_exploration": {
+    "file": "../conditional_gate_oct10_old39_exploration.json",
+    "used_to_select_new_threshold_or_bin": false,
+    "scope": "旧39例每观测条件仅4个H0、含看过的audit；每条件H0/H1分数有间隔，但不足独立校准，不是正式证据。",
+    "old_H0_max_by_bin_approx": {"LL": 0.577727, "LH": 4.033204, "HL": 1.477523},
+    "old_H1_min_by_bin_approx": {"LL": 0.730063, "LH": 6.302801, "HL": 3.373218},
+    "comparison_boundary": "新面板/噪声/细网格真值不同，不能将新旧检出率直接作为配对改进。有效配对是本轮相同117例的global与conditional。旧分数间隔没有在新面板完整复现。"
+  },
+  "conclusion_zh": [
+    "支持跨观测条件统一阈值造成一部分误报和明显漏检：相同数据/逆解/scorer/60cal库/alpha下，条件化新增5个TP、去掉1个FP，presence AUROC从0.8815到0.9407。",
+    "不支持仅靠阈值即可解决，或已证实统一阈值是所有问题的主要原因：剩余2个FP超过各自cal最大值，双低SNR仅检出3/9，低SNR校准H0高尾仍与H1重叠。",
+    "纯表层高分与H0表层拟合/网格/模型失配相容，但本轮没有消融证据确认具体机制；不能看audit重新定tau来制造0误报。",
+    "尚不应将这套门控称为达标定位算法；零误报硬条件未通过、粗扫描仍有空间选择错误。可以保留条件化作为候选，但下一步由用户讨论决定，不自动启动Stage2。"
+  ],
+  "limitations": [
+    "仅development pilot，不是formal blind validation，没有正式总体或逐条件5% FPR保证；本次条件化经验FP为2/30。",
+    "54个新fine皮层中心覆盖39/68 aparc，9个新fine深点、新噪声身份，cal/audit patch分离，但39套几何各重复3个SNR，病例并非全部独立。",
+    "16个coarse深点历史全部见过，只有同一MNE sample头模，深部网格限双侧丘脑，不能泛化到全体深脑/不同受试者/实测DBS。",
+    "只覆盖LL/LH/HL三种极端SNR；HH缺cal库且本面板无HH audit，不能声称HH效果，亦未验证中间质量区间。",
+    "presence AUROC(1-p)不是源图An_auc；HEAD粗点误差不是最终SD/DLE。Stage2未运行、七种定位比较方法未在本轮运行。",
+    "没有重新生成原始传感器或重复逆解；没有调新参数、修改阈值、删除校准高分病例或启动下一轮。"
+  ]
+}

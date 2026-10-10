@@ -1,0 +1,32 @@
+{
+  "bank_sha256": "cbbbbbb0aef744079138458b03bfd3ac32efa7ec05855d5774bd25d5f315f0a8",
+  "case_id": "erp-conditional-pilot-38-deep_plus_two_surface-eeg-10-meg-10",
+  "case_number": 38,
+  "complete": true,
+  "conditional": {
+    "alpha": 0.05,
+    "deep_present": false,
+    "minimum_p_value": 0.047619047619047616,
+    "n_calibration": 20,
+    "p_value": 0.09523809523809523,
+    "positive_gain_required": true,
+    "score": 1.7462665997930835,
+    "unsupported": false
+  },
+  "gate_statistic": 1.7462665997930835,
+  "global": {
+    "alpha": 0.05,
+    "deep_present": false,
+    "minimum_p_value": 0.01639344262295082,
+    "n_calibration": 60,
+    "p_value": 0.11475409836065574,
+    "positive_gain_required": true,
+    "score": 1.7462665997930835,
+    "unsupported": false
+  },
+  "identity_sha256": "7a44d77732be30502373d81250f6bf55653ac06235c9c594b386213619a5a26e",
+  "observable_bin": "LL",
+  "score_sha256": "5ee3818d2bf0587ac9d23dc3b4b480d208d4266fc4e6dd1f4b6d83339ef769ea",
+  "selected_deep_local_index": 6,
+  "truth_used_for_decision": false
+}

@@ -1,0 +1,574 @@
+    102 out of 366 channels remain after picking
+    60 out of 366 channels remain after picking
+    59 out of 60 channels remain after picking
+calibration erp-conditional-pilot-00-surface_only-eeg-10-meg-10 bin=LL T=-0.150465
+calibration erp-conditional-pilot-01-surface_only-eeg-10-meg-10 bin=LL T=0.00185965
+calibration erp-conditional-pilot-02-surface_only-eeg-10-meg-10 bin=LL T=0.120063
+calibration erp-conditional-pilot-03-surface_only-eeg-10-meg-10 bin=LL T=0.0314579
+calibration erp-conditional-pilot-04-surface_only-eeg-10-meg-10 bin=LL T=-0.0100206
+calibration erp-conditional-pilot-05-surface_only-eeg-10-meg-10 bin=LL T=0.498646
+calibration erp-conditional-pilot-06-surface_only-eeg-10-meg-10 bin=LL T=-0.366637
+calibration erp-conditional-pilot-07-surface_only-eeg-10-meg-10 bin=LL T=-0.148718
+calibration erp-conditional-pilot-08-surface_only-eeg-10-meg-10 bin=LL T=0.15158
+calibration erp-conditional-pilot-09-surface_only-eeg-10-meg-10 bin=LL T=2.51532
+calibration erp-conditional-pilot-10-surface_only-eeg-10-meg-10 bin=LL T=0.249757
+calibration erp-conditional-pilot-11-surface_only-eeg-10-meg-10 bin=LL T=-0.0812306
+calibration erp-conditional-pilot-12-surface_only-eeg-10-meg-10 bin=LL T=0.0353769
+calibration erp-conditional-pilot-13-surface_only-eeg-10-meg-10 bin=LL T=0.399987
+calibration erp-conditional-pilot-14-surface_only-eeg-10-meg-10 bin=LL T=0.683189
+calibration erp-conditional-pilot-15-surface_only-eeg-10-meg-10 bin=LL T=0.0618645
+calibration erp-conditional-pilot-16-surface_only-eeg-10-meg-10 bin=LL T=0.39666
+calibration erp-conditional-pilot-17-surface_only-eeg-10-meg-10 bin=LL T=-0.186715
+calibration erp-conditional-pilot-18-surface_only-eeg-10-meg-10 bin=LL T=0.104008
+calibration erp-conditional-pilot-19-surface_only-eeg-10-meg-10 bin=LL T=0.288437
+calibration erp-conditional-pilot-00-surface_only-eeg-10-meg+20 bin=LH T=0.0915224
+calibration erp-conditional-pilot-01-surface_only-eeg-10-meg+20 bin=LH T=0.0894373
+calibration erp-conditional-pilot-02-surface_only-eeg-10-meg+20 bin=LH T=0.188833
+calibration erp-conditional-pilot-03-surface_only-eeg-10-meg+20 bin=LH T=0.514656
+calibration erp-conditional-pilot-04-surface_only-eeg-10-meg+20 bin=LH T=0.151403
+calibration erp-conditional-pilot-05-surface_only-eeg-10-meg+20 bin=LH T=1.22375
+calibration erp-conditional-pilot-06-surface_only-eeg-10-meg+20 bin=LH T=1.44545
+calibration erp-conditional-pilot-07-surface_only-eeg-10-meg+20 bin=LH T=3.83585
+calibration erp-conditional-pilot-08-surface_only-eeg-10-meg+20 bin=LH T=0.900193
+calibration erp-conditional-pilot-09-surface_only-eeg-10-meg+20 bin=LH T=5.02316
+calibration erp-conditional-pilot-10-surface_only-eeg-10-meg+20 bin=LH T=1.48497
+calibration erp-conditional-pilot-11-surface_only-eeg-10-meg+20 bin=LH T=2.31489
+calibration erp-conditional-pilot-12-surface_only-eeg-10-meg+20 bin=LH T=0.12494
+calibration erp-conditional-pilot-13-surface_only-eeg-10-meg+20 bin=LH T=1.47137
+calibration erp-conditional-pilot-14-surface_only-eeg-10-meg+20 bin=LH T=-0.0378775
+calibration erp-conditional-pilot-15-surface_only-eeg-10-meg+20 bin=LH T=3.09087
+calibration erp-conditional-pilot-16-surface_only-eeg-10-meg+20 bin=LH T=1.67146
+calibration erp-conditional-pilot-17-surface_only-eeg-10-meg+20 bin=LH T=3.04805
+calibration erp-conditional-pilot-18-surface_only-eeg-10-meg+20 bin=LH T=0.89925
+calibration erp-conditional-pilot-19-surface_only-eeg-10-meg+20 bin=LH T=1.10325
+calibration erp-conditional-pilot-00-surface_only-eeg+20-meg-10 bin=HL T=0.364004
+calibration erp-conditional-pilot-01-surface_only-eeg+20-meg-10 bin=HL T=0.140527
+calibration erp-conditional-pilot-02-surface_only-eeg+20-meg-10 bin=HL T=0.0433766
+calibration erp-conditional-pilot-03-surface_only-eeg+20-meg-10 bin=HL T=0.397943
+calibration erp-conditional-pilot-04-surface_only-eeg+20-meg-10 bin=HL T=-0.139865
+calibration erp-conditional-pilot-05-surface_only-eeg+20-meg-10 bin=HL T=-0.031307
+calibration erp-conditional-pilot-06-surface_only-eeg+20-meg-10 bin=HL T=-0.329161
+calibration erp-conditional-pilot-07-surface_only-eeg+20-meg-10 bin=HL T=0.513366
+calibration erp-conditional-pilot-08-surface_only-eeg+20-meg-10 bin=HL T=0.175636
+calibration erp-conditional-pilot-09-surface_only-eeg+20-meg-10 bin=HL T=1.01666
+calibration erp-conditional-pilot-10-surface_only-eeg+20-meg-10 bin=HL T=1.33461
+calibration erp-conditional-pilot-11-surface_only-eeg+20-meg-10 bin=HL T=1.72456
+calibration erp-conditional-pilot-12-surface_only-eeg+20-meg-10 bin=HL T=0.375326
+calibration erp-conditional-pilot-13-surface_only-eeg+20-meg-10 bin=HL T=0.0812661
+calibration erp-conditional-pilot-14-surface_only-eeg+20-meg-10 bin=HL T=-0.0147846
+calibration erp-conditional-pilot-15-surface_only-eeg+20-meg-10 bin=HL T=0.089711
+calibration erp-conditional-pilot-16-surface_only-eeg+20-meg-10 bin=HL T=0.0721407
+calibration erp-conditional-pilot-17-surface_only-eeg+20-meg-10 bin=HL T=0.911113
+calibration erp-conditional-pilot-18-surface_only-eeg+20-meg-10 bin=HL T=0.609057
+calibration erp-conditional-pilot-19-surface_only-eeg+20-meg-10 bin=HL T=0.578636
+60 calibration scores and bank frozen cbbbbbb0aef744079138458b03bfd3ac32efa7ec05855d5774bd25d5f315f0a8
+audit erp-conditional-pilot-20-surface_only-eeg-10-meg-10 bin=LL T=0.277211
+audit erp-conditional-pilot-21-surface_only-eeg-10-meg-10 bin=LL T=1.23556
+audit erp-conditional-pilot-22-surface_only-eeg-10-meg-10 bin=LL T=0.406424
+audit erp-conditional-pilot-23-surface_only-eeg-10-meg-10 bin=LL T=0.772097
+audit erp-conditional-pilot-24-surface_only-eeg-10-meg-10 bin=LL T=0.526424
+audit erp-conditional-pilot-25-surface_only-eeg-10-meg-10 bin=LL T=-0.179657
+audit erp-conditional-pilot-26-surface_only-eeg-10-meg-10 bin=LL T=0.406303
+audit erp-conditional-pilot-27-surface_only-eeg-10-meg-10 bin=LL T=0.168062
+audit erp-conditional-pilot-28-surface_only-eeg-10-meg-10 bin=LL T=0.372564
+audit erp-conditional-pilot-29-surface_only-eeg-10-meg-10 bin=LL T=0.798484
+audit erp-conditional-pilot-30-deep_only-eeg-10-meg-10 bin=LL T=2.93898
+audit erp-conditional-pilot-31-deep_only-eeg-10-meg-10 bin=LL T=2.82245
+audit erp-conditional-pilot-32-deep_only-eeg-10-meg-10 bin=LL T=0.691589
+audit erp-conditional-pilot-33-deep_plus_surface-eeg-10-meg-10 bin=LL T=0.758962
+audit erp-conditional-pilot-34-deep_plus_surface-eeg-10-meg-10 bin=LL T=2.76352
+audit erp-conditional-pilot-35-deep_plus_surface-eeg-10-meg-10 bin=LL T=1.00767
+audit erp-conditional-pilot-36-deep_plus_two_surface-eeg-10-meg-10 bin=LL T=1.75606
+audit erp-conditional-pilot-37-deep_plus_two_surface-eeg-10-meg-10 bin=LL T=0.890432
+audit erp-conditional-pilot-38-deep_plus_two_surface-eeg-10-meg-10 bin=LL T=1.74627
+audit erp-conditional-pilot-20-surface_only-eeg-10-meg+20 bin=LH T=-0.348065
+audit erp-conditional-pilot-21-surface_only-eeg-10-meg+20 bin=LH T=11.3726
+audit erp-conditional-pilot-22-surface_only-eeg-10-meg+20 bin=LH T=1.84135
+audit erp-conditional-pilot-23-surface_only-eeg-10-meg+20 bin=LH T=3.79717
+audit erp-conditional-pilot-24-surface_only-eeg-10-meg+20 bin=LH T=0.628185
+audit erp-conditional-pilot-25-surface_only-eeg-10-meg+20 bin=LH T=0.303587
+audit erp-conditional-pilot-26-surface_only-eeg-10-meg+20 bin=LH T=2.72809
+audit erp-conditional-pilot-27-surface_only-eeg-10-meg+20 bin=LH T=2.2772
+audit erp-conditional-pilot-28-surface_only-eeg-10-meg+20 bin=LH T=0.748657
+audit erp-conditional-pilot-29-surface_only-eeg-10-meg+20 bin=LH T=0.983547
+audit erp-conditional-pilot-30-deep_only-eeg-10-meg+20 bin=LH T=46.9304
+audit erp-conditional-pilot-31-deep_only-eeg-10-meg+20 bin=LH T=50.2028
+audit erp-conditional-pilot-32-deep_only-eeg-10-meg+20 bin=LH T=28.8553
+audit erp-conditional-pilot-33-deep_plus_surface-eeg-10-meg+20 bin=LH T=15.5322
+audit erp-conditional-pilot-34-deep_plus_surface-eeg-10-meg+20 bin=LH T=18.7528
+audit erp-conditional-pilot-35-deep_plus_surface-eeg-10-meg+20 bin=LH T=6.06606
+audit erp-conditional-pilot-36-deep_plus_two_surface-eeg-10-meg+20 bin=LH T=9.28524
+audit erp-conditional-pilot-37-deep_plus_two_surface-eeg-10-meg+20 bin=LH T=17.3911
+audit erp-conditional-pilot-38-deep_plus_two_surface-eeg-10-meg+20 bin=LH T=53.8189
+audit erp-conditional-pilot-20-surface_only-eeg+20-meg-10 bin=HL T=-0.288567
+audit erp-conditional-pilot-21-surface_only-eeg+20-meg-10 bin=HL T=0.858425
+audit erp-conditional-pilot-22-surface_only-eeg+20-meg-10 bin=HL T=1.49571
+audit erp-conditional-pilot-23-surface_only-eeg+20-meg-10 bin=HL T=0.0469111
+audit erp-conditional-pilot-24-surface_only-eeg+20-meg-10 bin=HL T=1.41209
+audit erp-conditional-pilot-25-surface_only-eeg+20-meg-10 bin=HL T=5.07503
+audit erp-conditional-pilot-26-surface_only-eeg+20-meg-10 bin=HL T=0.555251
+audit erp-conditional-pilot-27-surface_only-eeg+20-meg-10 bin=HL T=-0.0708731
+audit erp-conditional-pilot-28-surface_only-eeg+20-meg-10 bin=HL T=-0.029941
+audit erp-conditional-pilot-29-surface_only-eeg+20-meg-10 bin=HL T=0.112508
+audit erp-conditional-pilot-30-deep_only-eeg+20-meg-10 bin=HL T=4.27373
+audit erp-conditional-pilot-31-deep_only-eeg+20-meg-10 bin=HL T=3.98573
+audit erp-conditional-pilot-32-deep_only-eeg+20-meg-10 bin=HL T=1.88767
+audit erp-conditional-pilot-33-deep_plus_surface-eeg+20-meg-10 bin=HL T=5.10139
+audit erp-conditional-pilot-34-deep_plus_surface-eeg+20-meg-10 bin=HL T=3.90409
+audit erp-conditional-pilot-35-deep_plus_surface-eeg+20-meg-10 bin=HL T=2.17403
+audit erp-conditional-pilot-36-deep_plus_two_surface-eeg+20-meg-10 bin=HL T=3.96278
+audit erp-conditional-pilot-37-deep_plus_two_surface-eeg+20-meg-10 bin=HL T=5.94834
+audit erp-conditional-pilot-38-deep_plus_two_surface-eeg+20-meg-10 bin=HL T=6.94025
+{
+  "complete": true,
+  "pilot": true,
+  "formal_or_blind_validation": false,
+  "stage2_ran": false,
+  "identity_sha256": "7a44d77732be30502373d81250f6bf55653ac06235c9c594b386213619a5a26e",
+  "calibration_bank_sha256": "cbbbbbb0aef744079138458b03bfd3ac32efa7ec05855d5774bd25d5f315f0a8",
+  "case_count": 117,
+  "calibration_H0_count": 60,
+  "audit_H0_count": 30,
+  "H1_count": 27,
+  "alpha": 0.05,
+  "same_calibration_library": true,
+  "calibration_bin_counts": {
+    "LL": 20,
+    "LH": 20,
+    "HL": 20,
+    "HH": 0
+  },
+  "all_234_H0_fits_strictly_converged": true,
+  "inverse_fit_count": 234,
+  "sum_case_elapsed_seconds": 9680.005021600024,
+  "median_case_seconds": 81.09070710002561,
+  "maximum_case_seconds": 253.28845749999164,
+  "comparison": {
+    "overall": {
+      "global": {
+        "audit_H0_count": 30,
+        "H1_count": 27,
+        "audit_H0_false_positive_count": 3,
+        "H1_detection_count": 16,
+        "unsupported_abstention_count": 0,
+        "supported_H0_count": 30,
+        "supported_H1_count": 27,
+        "unsupported_H0_count": 0,
+        "unsupported_H1_count": 0,
+        "H0_negative_accepted_count": 27,
+        "H1_negative_accepted_count": 11,
+        "supported_H0_false_positive_rate": 0.1,
+        "supported_H1_detection_rate": 0.5925925925925926,
+        "supported_only_gate_AUROC_from_1_minus_p": 0.8814814814814815,
+        "detected_and_coarse_candidate_within10mm_count": 12,
+        "median_detected_coarse_candidate_error_mm": 5.000000184361955
+      },
+      "conditional": {
+        "audit_H0_count": 30,
+        "H1_count": 27,
+        "audit_H0_false_positive_count": 2,
+        "H1_detection_count": 21,
+        "unsupported_abstention_count": 0,
+        "supported_H0_count": 30,
+        "supported_H1_count": 27,
+        "unsupported_H0_count": 0,
+        "unsupported_H1_count": 0,
+        "H0_negative_accepted_count": 28,
+        "H1_negative_accepted_count": 6,
+        "supported_H0_false_positive_rate": 0.06666666666666667,
+        "supported_H1_detection_rate": 0.7777777777777778,
+        "supported_only_gate_AUROC_from_1_minus_p": 0.9407407407407408,
+        "detected_and_coarse_candidate_within10mm_count": 14,
+        "median_detected_coarse_candidate_error_mm": 5.0000002742742415
+      }
+    },
+    "eeg-10_meg-10": {
+      "global": {
+        "audit_H0_count": 10,
+        "H1_count": 9,
+        "audit_H0_false_positive_count": 0,
+        "H1_detection_count": 0,
+        "unsupported_abstention_count": 0,
+        "supported_H0_count": 10,
+        "supported_H1_count": 9,
+        "unsupported_H0_count": 0,
+        "unsupported_H1_count": 0,
+        "H0_negative_accepted_count": 10,
+        "H1_negative_accepted_count": 9,
+        "supported_H0_false_positive_rate": 0.0,
+        "supported_H1_detection_rate": 0.0,
+        "supported_only_gate_AUROC_from_1_minus_p": 0.9222222222222223,
+        "detected_and_coarse_candidate_within10mm_count": 0,
+        "median_detected_coarse_candidate_error_mm": null
+      },
+      "conditional": {
+        "audit_H0_count": 10,
+        "H1_count": 9,
+        "audit_H0_false_positive_count": 0,
+        "H1_detection_count": 3,
+        "unsupported_abstention_count": 0,
+        "supported_H0_count": 10,
+        "supported_H1_count": 9,
+        "unsupported_H0_count": 0,
+        "unsupported_H1_count": 0,
+        "H0_negative_accepted_count": 10,
+        "H1_negative_accepted_count": 6,
+        "supported_H0_false_positive_rate": 0.0,
+        "supported_H1_detection_rate": 0.3333333333333333,
+        "supported_only_gate_AUROC_from_1_minus_p": 0.9,
+        "detected_and_coarse_candidate_within10mm_count": 2,
+        "median_detected_coarse_candidate_error_mm": 5.0000002742742415
+      }
+    },
+    "eeg-10_meg+20": {
+      "global": {
+        "audit_H0_count": 10,
+        "H1_count": 9,
+        "audit_H0_false_positive_count": 2,
+        "H1_detection_count": 9,
+        "unsupported_abstention_count": 0,
+        "supported_H0_count": 10,
+        "supported_H1_count": 9,
+        "unsupported_H0_count": 0,
+        "unsupported_H1_count": 0,
+        "H0_negative_accepted_count": 8,
+        "H1_negative_accepted_count": 0,
+        "supported_H0_false_positive_rate": 0.2,
+        "supported_H1_detection_rate": 1.0,
+        "supported_only_gate_AUROC_from_1_minus_p": 0.95,
+        "detected_and_coarse_candidate_within10mm_count": 7,
+        "median_detected_coarse_candidate_error_mm": 5.000000094449671
+      },
+      "conditional": {
+        "audit_H0_count": 10,
+        "H1_count": 9,
+        "audit_H0_false_positive_count": 1,
+        "H1_detection_count": 9,
+        "unsupported_abstention_count": 0,
+        "supported_H0_count": 10,
+        "supported_H1_count": 9,
+        "unsupported_H0_count": 0,
+        "unsupported_H1_count": 0,
+        "H0_negative_accepted_count": 9,
+        "H1_negative_accepted_count": 0,
+        "supported_H0_false_positive_rate": 0.1,
+        "supported_H1_detection_rate": 1.0,
+        "supported_only_gate_AUROC_from_1_minus_p": 0.95,
+        "detected_and_coarse_candidate_within10mm_count": 7,
+        "median_detected_coarse_candidate_error_mm": 5.000000094449671
+      }
+    },
+    "eeg+20_meg-10": {
+      "global": {
+        "audit_H0_count": 10,
+        "H1_count": 9,
+        "audit_H0_false_positive_count": 1,
+        "H1_detection_count": 7,
+        "unsupported_abstention_count": 0,
+        "supported_H0_count": 10,
+        "supported_H1_count": 9,
+        "unsupported_H0_count": 0,
+        "unsupported_H1_count": 0,
+        "H0_negative_accepted_count": 9,
+        "H1_negative_accepted_count": 2,
+        "supported_H0_false_positive_rate": 0.1,
+        "supported_H1_detection_rate": 0.7777777777777778,
+        "supported_only_gate_AUROC_from_1_minus_p": 0.9166666666666666,
+        "detected_and_coarse_candidate_within10mm_count": 5,
+        "median_detected_coarse_candidate_error_mm": 5.0000002742742415
+      },
+      "conditional": {
+        "audit_H0_count": 10,
+        "H1_count": 9,
+        "audit_H0_false_positive_count": 1,
+        "H1_detection_count": 9,
+        "unsupported_abstention_count": 0,
+        "supported_H0_count": 10,
+        "supported_H1_count": 9,
+        "unsupported_H0_count": 0,
+        "unsupported_H1_count": 0,
+        "H0_negative_accepted_count": 9,
+        "H1_negative_accepted_count": 0,
+        "supported_H0_false_positive_rate": 0.1,
+        "supported_H1_detection_rate": 1.0,
+        "supported_only_gate_AUROC_from_1_minus_p": 0.95,
+        "detected_and_coarse_candidate_within10mm_count": 5,
+        "median_detected_coarse_candidate_error_mm": 7.07106810212479
+      }
+    },
+    "observable_LL": {
+      "global": {
+        "audit_H0_count": 10,
+        "H1_count": 9,
+        "audit_H0_false_positive_count": 0,
+        "H1_detection_count": 0,
+        "unsupported_abstention_count": 0,
+        "supported_H0_count": 10,
+        "supported_H1_count": 9,
+        "unsupported_H0_count": 0,
+        "unsupported_H1_count": 0,
+        "H0_negative_accepted_count": 10,
+        "H1_negative_accepted_count": 9,
+        "supported_H0_false_positive_rate": 0.0,
+        "supported_H1_detection_rate": 0.0,
+        "supported_only_gate_AUROC_from_1_minus_p": 0.9222222222222223,
+        "detected_and_coarse_candidate_within10mm_count": 0,
+        "median_detected_coarse_candidate_error_mm": null
+      },
+      "conditional": {
+        "audit_H0_count": 10,
+        "H1_count": 9,
+        "audit_H0_false_positive_count": 0,
+        "H1_detection_count": 3,
+        "unsupported_abstention_count": 0,
+        "supported_H0_count": 10,
+        "supported_H1_count": 9,
+        "unsupported_H0_count": 0,
+        "unsupported_H1_count": 0,
+        "H0_negative_accepted_count": 10,
+        "H1_negative_accepted_count": 6,
+        "supported_H0_false_positive_rate": 0.0,
+        "supported_H1_detection_rate": 0.3333333333333333,
+        "supported_only_gate_AUROC_from_1_minus_p": 0.9,
+        "detected_and_coarse_candidate_within10mm_count": 2,
+        "median_detected_coarse_candidate_error_mm": 5.0000002742742415
+      }
+    },
+    "observable_LH": {
+      "global": {
+        "audit_H0_count": 10,
+        "H1_count": 9,
+        "audit_H0_false_positive_count": 2,
+        "H1_detection_count": 9,
+        "unsupported_abstention_count": 0,
+        "supported_H0_count": 10,
+        "supported_H1_count": 9,
+        "unsupported_H0_count": 0,
+        "unsupported_H1_count": 0,
+        "H0_negative_accepted_count": 8,
+        "H1_negative_accepted_count": 0,
+        "supported_H0_false_positive_rate": 0.2,
+        "supported_H1_detection_rate": 1.0,
+        "supported_only_gate_AUROC_from_1_minus_p": 0.95,
+        "detected_and_coarse_candidate_within10mm_count": 7,
+        "median_detected_coarse_candidate_error_mm": 5.000000094449671
+      },
+      "conditional": {
+        "audit_H0_count": 10,
+        "H1_count": 9,
+        "audit_H0_false_positive_count": 1,
+        "H1_detection_count": 9,
+        "unsupported_abstention_count": 0,
+        "supported_H0_count": 10,
+        "supported_H1_count": 9,
+        "unsupported_H0_count": 0,
+        "unsupported_H1_count": 0,
+        "H0_negative_accepted_count": 9,
+        "H1_negative_accepted_count": 0,
+        "supported_H0_false_positive_rate": 0.1,
+        "supported_H1_detection_rate": 1.0,
+        "supported_only_gate_AUROC_from_1_minus_p": 0.95,
+        "detected_and_coarse_candidate_within10mm_count": 7,
+        "median_detected_coarse_candidate_error_mm": 5.000000094449671
+      }
+    },
+    "observable_HL": {
+      "global": {
+        "audit_H0_count": 10,
+        "H1_count": 9,
+        "audit_H0_false_positive_count": 1,
+        "H1_detection_count": 7,
+        "unsupported_abstention_count": 0,
+        "supported_H0_count": 10,
+        "supported_H1_count": 9,
+        "unsupported_H0_count": 0,
+        "unsupported_H1_count": 0,
+        "H0_negative_accepted_count": 9,
+        "H1_negative_accepted_count": 2,
+        "supported_H0_false_positive_rate": 0.1,
+        "supported_H1_detection_rate": 0.7777777777777778,
+        "supported_only_gate_AUROC_from_1_minus_p": 0.9166666666666666,
+        "detected_and_coarse_candidate_within10mm_count": 5,
+        "median_detected_coarse_candidate_error_mm": 5.0000002742742415
+      },
+      "conditional": {
+        "audit_H0_count": 10,
+        "H1_count": 9,
+        "audit_H0_false_positive_count": 1,
+        "H1_detection_count": 9,
+        "unsupported_abstention_count": 0,
+        "supported_H0_count": 10,
+        "supported_H1_count": 9,
+        "unsupported_H0_count": 0,
+        "unsupported_H1_count": 0,
+        "H0_negative_accepted_count": 9,
+        "H1_negative_accepted_count": 0,
+        "supported_H0_false_positive_rate": 0.1,
+        "supported_H1_detection_rate": 1.0,
+        "supported_only_gate_AUROC_from_1_minus_p": 0.95,
+        "detected_and_coarse_candidate_within10mm_count": 5,
+        "median_detected_coarse_candidate_error_mm": 7.07106810212479
+      }
+    },
+    "observable_HH": {
+      "global": {
+        "audit_H0_count": 0,
+        "H1_count": 0,
+        "audit_H0_false_positive_count": 0,
+        "H1_detection_count": 0,
+        "unsupported_abstention_count": 0,
+        "supported_H0_count": 0,
+        "supported_H1_count": 0,
+        "unsupported_H0_count": 0,
+        "unsupported_H1_count": 0,
+        "H0_negative_accepted_count": 0,
+        "H1_negative_accepted_count": 0,
+        "supported_H0_false_positive_rate": null,
+        "supported_H1_detection_rate": null,
+        "supported_only_gate_AUROC_from_1_minus_p": null,
+        "detected_and_coarse_candidate_within10mm_count": 0,
+        "median_detected_coarse_candidate_error_mm": null
+      },
+      "conditional": {
+        "audit_H0_count": 0,
+        "H1_count": 0,
+        "audit_H0_false_positive_count": 0,
+        "H1_detection_count": 0,
+        "unsupported_abstention_count": 0,
+        "supported_H0_count": 0,
+        "supported_H1_count": 0,
+        "unsupported_H0_count": 0,
+        "unsupported_H1_count": 0,
+        "H0_negative_accepted_count": 0,
+        "H1_negative_accepted_count": 0,
+        "supported_H0_false_positive_rate": null,
+        "supported_H1_detection_rate": null,
+        "supported_only_gate_AUROC_from_1_minus_p": null,
+        "detected_and_coarse_candidate_within10mm_count": 0,
+        "median_detected_coarse_candidate_error_mm": null
+      }
+    },
+    "deep_only": {
+      "global": {
+        "audit_H0_count": 0,
+        "H1_count": 9,
+        "audit_H0_false_positive_count": 0,
+        "H1_detection_count": 5,
+        "unsupported_abstention_count": 0,
+        "supported_H0_count": 0,
+        "supported_H1_count": 9,
+        "unsupported_H0_count": 0,
+        "unsupported_H1_count": 0,
+        "H0_negative_accepted_count": 0,
+        "H1_negative_accepted_count": 4,
+        "supported_H0_false_positive_rate": null,
+        "supported_H1_detection_rate": 0.5555555555555556,
+        "supported_only_gate_AUROC_from_1_minus_p": null,
+        "detected_and_coarse_candidate_within10mm_count": 3,
+        "median_detected_coarse_candidate_error_mm": 7.07106810212479
+      },
+      "conditional": {
+        "audit_H0_count": 0,
+        "H1_count": 9,
+        "audit_H0_false_positive_count": 0,
+        "H1_detection_count": 8,
+        "unsupported_abstention_count": 0,
+        "supported_H0_count": 0,
+        "supported_H1_count": 9,
+        "unsupported_H0_count": 0,
+        "unsupported_H1_count": 0,
+        "H0_negative_accepted_count": 0,
+        "H1_negative_accepted_count": 1,
+        "supported_H0_false_positive_rate": null,
+        "supported_H1_detection_rate": 0.8888888888888888,
+        "supported_only_gate_AUROC_from_1_minus_p": null,
+        "detected_and_coarse_candidate_within10mm_count": 4,
+        "median_detected_coarse_candidate_error_mm": 9.125703682335722
+      }
+    },
+    "deep_plus_surface": {
+      "global": {
+        "audit_H0_count": 0,
+        "H1_count": 9,
+        "audit_H0_false_positive_count": 0,
+        "H1_detection_count": 5,
+        "unsupported_abstention_count": 0,
+        "supported_H0_count": 0,
+        "supported_H1_count": 9,
+        "unsupported_H0_count": 0,
+        "unsupported_H1_count": 0,
+        "H0_negative_accepted_count": 0,
+        "H1_negative_accepted_count": 4,
+        "supported_H0_false_positive_rate": null,
+        "supported_H1_detection_rate": 0.5555555555555556,
+        "supported_only_gate_AUROC_from_1_minus_p": null,
+        "detected_and_coarse_candidate_within10mm_count": 4,
+        "median_detected_coarse_candidate_error_mm": 5.0000002742742415
+      },
+      "conditional": {
+        "audit_H0_count": 0,
+        "H1_count": 9,
+        "audit_H0_false_positive_count": 0,
+        "H1_detection_count": 7,
+        "unsupported_abstention_count": 0,
+        "supported_H0_count": 0,
+        "supported_H1_count": 9,
+        "unsupported_H0_count": 0,
+        "unsupported_H1_count": 0,
+        "H0_negative_accepted_count": 0,
+        "H1_negative_accepted_count": 2,
+        "supported_H0_false_positive_rate": null,
+        "supported_H1_detection_rate": 0.7777777777777778,
+        "supported_only_gate_AUROC_from_1_minus_p": null,
+        "detected_and_coarse_candidate_within10mm_count": 5,
+        "median_detected_coarse_candidate_error_mm": 5.0000002742742415
+      }
+    },
+    "deep_plus_two_surface": {
+      "global": {
+        "audit_H0_count": 0,
+        "H1_count": 9,
+        "audit_H0_false_positive_count": 0,
+        "H1_detection_count": 6,
+        "unsupported_abstention_count": 0,
+        "supported_H0_count": 0,
+        "supported_H1_count": 9,
+        "unsupported_H0_count": 0,
+        "unsupported_H1_count": 0,
+        "H0_negative_accepted_count": 0,
+        "H1_negative_accepted_count": 3,
+        "supported_H0_false_positive_rate": null,
+        "supported_H1_detection_rate": 0.6666666666666666,
+        "supported_only_gate_AUROC_from_1_minus_p": null,
+        "detected_and_coarse_candidate_within10mm_count": 5,
+        "median_detected_coarse_candidate_error_mm": 5.0000000944496685
+      },
+      "conditional": {
+        "audit_H0_count": 0,
+        "H1_count": 9,
+        "audit_H0_false_positive_count": 0,
+        "H1_detection_count": 6,
+        "unsupported_abstention_count": 0,
+        "supported_H0_count": 0,
+        "supported_H1_count": 9,
+        "unsupported_H0_count": 0,
+        "unsupported_H1_count": 0,
+        "H0_negative_accepted_count": 0,
+        "H1_negative_accepted_count": 3,
+        "supported_H0_false_positive_rate": null,
+        "supported_H1_detection_rate": 0.6666666666666666,
+        "supported_only_gate_AUROC_from_1_minus_p": null,
+        "detected_and_coarse_candidate_within10mm_count": 5,
+        "median_detected_coarse_candidate_error_mm": 5.0000000944496685
+      }
+    }
+  },
+  "truth_unsealed_after_all_audit_decisions_frozen": true,
+  "metrics_scope": "presence rank AUROC and coarse candidate diagnostic; no final source-map An_auc/SD/DLE",
+  "limitations": [
+    "pilot; no formal error guarantee",
+    "geometry repeated across SNR creates dependent cases",
+    "at least 19 per observable bin gives rank resolution, not a verified 5% population FPR",
+    "unsupported bins must abstain; no source-map An_auc/SD/DLE without Stage2"
+  ]
+}
