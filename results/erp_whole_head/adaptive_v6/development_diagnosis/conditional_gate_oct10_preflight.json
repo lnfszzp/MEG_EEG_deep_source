@@ -1,0 +1,1675 @@
+{
+  "preflight": "PASS",
+  "pilot": true,
+  "formal_or_blind_validation": false,
+  "manifest_sha256": "b674df0d9ced6701e0021ac29762a6c6f53ff1e877149381dbc32cfd0d5e38db",
+  "run_identity_sha256": "7a44d77732be30502373d81250f6bf55653ac06235c9c594b386213619a5a26e",
+  "solver_settings": {
+    "adaptive_rho": true,
+    "calibration": "layer",
+    "deep_alias_penalty": false,
+    "deep_reweight_floor": 0.5,
+    "edge_fraction": 0.5,
+    "edge_penalty_mode": "group",
+    "edge_weight_floor": 0.5,
+    "epsilon_fraction": 0.05,
+    "max_inner_retries": 20,
+    "max_iter": 2000,
+    "mrf_strength": 0.5,
+    "noise_multiplier": 1,
+    "outer_iterations": 80,
+    "outer_tolerance": 0.01,
+    "rho": 1,
+    "ridge_fraction": 0,
+    "solver_kind": "admm",
+    "source_penalty_mode": "group",
+    "surface_reweight_floor": 0.5,
+    "temporal_mode": "smooth",
+    "tolerance": 0.001
+  },
+  "calibration_sensor_simulations": 60,
+  "inverse_calls": 0,
+  "occupied_calibration_bin_counts": {
+    "LL": 20,
+    "LH": 20,
+    "HL": 20
+  },
+  "minimum_per_occupied_bin": 19,
+  "unsupported_bins": [
+    "HH"
+  ],
+  "inverse_calls_planned": 234,
+  "case_count": 117,
+  "output_created": false,
+  "parameter_selection_sha256": "a3d669073325665786691a838643d8a955dc0744ce6985e79c0dd79a857a2ffa",
+  "calibration_quality": {
+    "0": {
+      "q_eeg": 0.5545961354844839,
+      "q_meg": 0.10831950863671866,
+      "q_eeg_db": -2.5602316098176208,
+      "q_meg_db": -9.65293318718437,
+      "observable_bin": "LL",
+      "threshold_q": 10,
+      "cross_energy": [
+        361.52275010435665,
+        118.96310677302058
+      ],
+      "expected_noise_half_a": [
+        647.2915077192862,
+        1090.4716661214127
+      ],
+      "expected_noise_half_b": [
+        656.4742213789444,
+        1106.1062508101968
+      ],
+      "baseline_mean_mode_correction": 0.6288659793814431,
+      "modality_order": [
+        "EEG",
+        "MEG"
+      ],
+      "truth_used": false,
+      "rule": "q=max(cross-half smooth energy / geometric-mean baseline noise expectation,0); H iff q>=10"
+    },
+    "1": {
+      "q_eeg": 1.019381391871558,
+      "q_meg": 0.19811047390418268,
+      "q_eeg_db": 0.08336701568501649,
+      "q_meg_db": -7.030925631361413,
+      "observable_bin": "LL",
+      "threshold_q": 10,
+      "cross_energy": [
+        645.7138351303522,
+        220.3232498212449
+      ],
+      "expected_noise_half_a": [
+        650.9840104124289,
+        1114.0505806018489
+      ],
+      "expected_noise_half_b": [
+        616.3628560170678,
+        1110.199109846623
+      ],
+      "baseline_mean_mode_correction": 0.6288659793814431,
+      "modality_order": [
+        "EEG",
+        "MEG"
+      ],
+      "truth_used": false,
+      "rule": "q=max(cross-half smooth energy / geometric-mean baseline noise expectation,0); H iff q>=10"
+    },
+    "2": {
+      "q_eeg": 0.6617798335895205,
+      "q_meg": 0.1660179100689402,
+      "q_eeg_db": -1.7928647122608017,
+      "q_meg_db": -7.798450575952682,
+      "observable_bin": "LL",
+      "threshold_q": 10,
+      "cross_energy": [
+        420.9338414632966,
+        182.18084176868828
+      ],
+      "expected_noise_half_a": [
+        629.2672137387574,
+        1092.3327232893023
+      ],
+      "expected_noise_half_b": [
+        642.9327126272425,
+        1102.4034910788862
+      ],
+      "baseline_mean_mode_correction": 0.6288659793814431,
+      "modality_order": [
+        "EEG",
+        "MEG"
+      ],
+      "truth_used": false,
+      "rule": "q=max(cross-half smooth energy / geometric-mean baseline noise expectation,0); H iff q>=10"
+    },
+    "3": {
+      "q_eeg": 0.7059584719862707,
+      "q_meg": 0.18140887856286783,
+      "q_eeg_db": -1.5122084557378057,
+      "q_meg_db": -7.413414613966475,
+      "observable_bin": "LL",
+      "threshold_q": 10,
+      "cross_energy": [
+        442.7980181707242,
+        200.20096346665437
+      ],
+      "expected_noise_half_a": [
+        638.6984895619461,
+        1083.3443563703834
+      ],
+      "expected_noise_half_b": [
+        615.9665647959783,
+        1124.2133130331429
+      ],
+      "baseline_mean_mode_correction": 0.6288659793814431,
+      "modality_order": [
+        "EEG",
+        "MEG"
+      ],
+      "truth_used": false,
+      "rule": "q=max(cross-half smooth energy / geometric-mean baseline noise expectation,0); H iff q>=10"
+    },
+    "4": {
+      "q_eeg": 0.2514690635118951,
+      "q_meg": 0.05359837148450041,
+      "q_eeg_db": -5.995154355483336,
+      "q_meg_db": -12.708484055691622,
+      "observable_bin": "LL",
+      "threshold_q": 10,
+      "cross_energy": [
+        161.19738504678642,
+        58.740192582724006
+      ],
+      "expected_noise_half_a": [
+        649.0547303674634,
+        1088.48972247169
+      ],
+      "expected_noise_half_b": [
+        633.0901206260812,
+        1103.4259934770016
+      ],
+      "baseline_mean_mode_correction": 0.6288659793814431,
+      "modality_order": [
+        "EEG",
+        "MEG"
+      ],
+      "truth_used": false,
+      "rule": "q=max(cross-half smooth energy / geometric-mean baseline noise expectation,0); H iff q>=10"
+    },
+    "5": {
+      "q_eeg": 0.09833385585566932,
+      "q_meg": 0.11128465591805431,
+      "q_eeg_db": -10.0729693099949,
+      "q_meg_db": -9.535647126599745,
+      "observable_bin": "LL",
+      "threshold_q": 10,
+      "cross_energy": [
+        62.754344909917236,
+        122.8315576693301
+      ],
+      "expected_noise_half_a": [
+        639.9149875714088,
+        1108.7231325363252
+      ],
+      "expected_noise_half_b": [
+        636.4425112951214,
+        1098.819189351232
+      ],
+      "baseline_mean_mode_correction": 0.6288659793814431,
+      "modality_order": [
+        "EEG",
+        "MEG"
+      ],
+      "truth_used": false,
+      "rule": "q=max(cross-half smooth energy / geometric-mean baseline noise expectation,0); H iff q>=10"
+    },
+    "6": {
+      "q_eeg": 0.11827229713064366,
+      "q_meg": 0.1381518401409853,
+      "q_eeg_db": -9.27116968070431,
+      "q_meg_db": -8.596433260369848,
+      "observable_bin": "LL",
+      "threshold_q": 10,
+      "cross_energy": [
+        74.82251995068444,
+        153.967108987403
+      ],
+      "expected_noise_half_a": [
+        638.5698175520444,
+        1111.219003881523
+      ],
+      "expected_noise_half_b": [
+        626.7440362505944,
+        1117.745428762176
+      ],
+      "baseline_mean_mode_correction": 0.6288659793814431,
+      "modality_order": [
+        "EEG",
+        "MEG"
+      ],
+      "truth_used": false,
+      "rule": "q=max(cross-half smooth energy / geometric-mean baseline noise expectation,0); H iff q>=10"
+    },
+    "7": {
+      "q_eeg": 0.11819604185620677,
+      "q_meg": 0.23654330168890328,
+      "q_eeg_db": -9.273970668455465,
+      "q_meg_db": -6.260893455682179,
+      "observable_bin": "LL",
+      "threshold_q": 10,
+      "cross_energy": [
+        74.81486591360635,
+        261.7762121629356
+      ],
+      "expected_noise_half_a": [
+        633.3992071599996,
+        1125.3975737650412
+      ],
+      "expected_noise_half_b": [
+        632.5464490988398,
+        1088.2610238804198
+      ],
+      "baseline_mean_mode_correction": 0.6288659793814431,
+      "modality_order": [
+        "EEG",
+        "MEG"
+      ],
+      "truth_used": false,
+      "rule": "q=max(cross-half smooth energy / geometric-mean baseline noise expectation,0); H iff q>=10"
+    },
+    "8": {
+      "q_eeg": 0.06985524986248395,
+      "q_meg": 0.36580627187918047,
+      "q_eeg_db": -11.558009495980315,
+      "q_meg_db": -4.367488526617657,
+      "observable_bin": "LL",
+      "threshold_q": 10,
+      "cross_energy": [
+        44.05739274580889,
+        403.7865254597774
+      ],
+      "expected_noise_half_a": [
+        621.6437687607456,
+        1106.7737082228941
+      ],
+      "expected_noise_half_b": [
+        639.8790623796496,
+        1100.8864238550407
+      ],
+      "baseline_mean_mode_correction": 0.6288659793814431,
+      "modality_order": [
+        "EEG",
+        "MEG"
+      ],
+      "truth_used": false,
+      "rule": "q=max(cross-half smooth energy / geometric-mean baseline noise expectation,0); H iff q>=10"
+    },
+    "9": {
+      "q_eeg": 0.012993383421574784,
+      "q_meg": 0.02996717889675441,
+      "q_eeg_db": -18.862777457714405,
+      "q_meg_db": -15.233541395114845,
+      "observable_bin": "LL",
+      "threshold_q": 10,
+      "cross_energy": [
+        8.247214831101612,
+        33.382236663556924
+      ],
+      "expected_noise_half_a": [
+        639.6130729273699,
+        1113.298515816107
+      ],
+      "expected_noise_half_b": [
+        629.8726849492964,
+        1114.6217476452905
+      ],
+      "baseline_mean_mode_correction": 0.6288659793814431,
+      "modality_order": [
+        "EEG",
+        "MEG"
+      ],
+      "truth_used": false,
+      "rule": "q=max(cross-half smooth energy / geometric-mean baseline noise expectation,0); H iff q>=10"
+    },
+    "10": {
+      "q_eeg": 0.04295888498046101,
+      "q_meg": 0.16682608752747127,
+      "q_eeg_db": -13.669469994946596,
+      "q_meg_db": -7.777360353329369,
+      "observable_bin": "LL",
+      "threshold_q": 10,
+      "cross_energy": [
+        26.829279564573405,
+        187.09960996365234
+      ],
+      "expected_noise_half_a": [
+        619.7215592747406,
+        1140.043544760538
+      ],
+      "expected_noise_half_b": [
+        629.3835907993599,
+        1103.3070547144105
+      ],
+      "baseline_mean_mode_correction": 0.6288659793814431,
+      "modality_order": [
+        "EEG",
+        "MEG"
+      ],
+      "truth_used": false,
+      "rule": "q=max(cross-half smooth energy / geometric-mean baseline noise expectation,0); H iff q>=10"
+    },
+    "11": {
+      "q_eeg": 0.42260472393765747,
+      "q_meg": 0.1898115630934056,
+      "q_eeg_db": -3.74065652649084,
+      "q_meg_db": -7.216773344024246,
+      "observable_bin": "LL",
+      "threshold_q": 10,
+      "cross_energy": [
+        272.36971945663083,
+        209.8256598788822
+      ],
+      "expected_noise_half_a": [
+        644.8951587667999,
+        1099.8516219839332
+      ],
+      "expected_noise_half_b": [
+        644.1096942148728,
+        1111.0606442583903
+      ],
+      "baseline_mean_mode_correction": 0.6288659793814431,
+      "modality_order": [
+        "EEG",
+        "MEG"
+      ],
+      "truth_used": false,
+      "rule": "q=max(cross-half smooth energy / geometric-mean baseline noise expectation,0); H iff q>=10"
+    },
+    "12": {
+      "q_eeg": 0.06939192278679586,
+      "q_meg": 0.13136916786831027,
+      "q_eeg_db": -11.586910784395943,
+      "q_meg_db": -8.81506551030936,
+      "observable_bin": "LL",
+      "threshold_q": 10,
+      "cross_energy": [
+        45.13622433840446,
+        146.99546057395352
+      ],
+      "expected_noise_half_a": [
+        662.154643700393,
+        1116.681834170833
+      ],
+      "expected_noise_half_b": [
+        638.9592806762108,
+        1121.22170784987
+      ],
+      "baseline_mean_mode_correction": 0.6288659793814431,
+      "modality_order": [
+        "EEG",
+        "MEG"
+      ],
+      "truth_used": false,
+      "rule": "q=max(cross-half smooth energy / geometric-mean baseline noise expectation,0); H iff q>=10"
+    },
+    "13": {
+      "q_eeg": 0.09465877285262474,
+      "q_meg": 0.16441894039838947,
+      "q_eeg_db": -10.238391299841041,
+      "q_meg_db": -7.840481549425434,
+      "observable_bin": "LL",
+      "threshold_q": 10,
+      "cross_energy": [
+        59.866650057803525,
+        186.5391848476902
+      ],
+      "expected_noise_half_a": [
+        623.9663625872383,
+        1145.667623157376
+      ],
+      "expected_noise_half_b": [
+        641.0427551399582,
+        1123.5122683608593
+      ],
+      "baseline_mean_mode_correction": 0.6288659793814431,
+      "modality_order": [
+        "EEG",
+        "MEG"
+      ],
+      "truth_used": false,
+      "rule": "q=max(cross-half smooth energy / geometric-mean baseline noise expectation,0); H iff q>=10"
+    },
+    "14": {
+      "q_eeg": 0.6653393492607107,
+      "q_meg": 0.13518583638658574,
+      "q_eeg_db": -1.7695679090620842,
+      "q_meg_db": -8.690688076648879,
+      "observable_bin": "LL",
+      "threshold_q": 10,
+      "cross_energy": [
+        425.353973394411,
+        148.4323412281954
+      ],
+      "expected_noise_half_a": [
+        645.3134890338698,
+        1084.8182028714732
+      ],
+      "expected_noise_half_b": [
+        633.350075511417,
+        1111.3164085193373
+      ],
+      "baseline_mean_mode_correction": 0.6288659793814431,
+      "modality_order": [
+        "EEG",
+        "MEG"
+      ],
+      "truth_used": false,
+      "rule": "q=max(cross-half smooth energy / geometric-mean baseline noise expectation,0); H iff q>=10"
+    },
+    "15": {
+      "q_eeg": 0.3189988975467891,
+      "q_meg": 0.18697969218080868,
+      "q_eeg_db": -4.962108178524533,
+      "q_meg_db": -7.282055595209494,
+      "observable_bin": "LL",
+      "threshold_q": 10,
+      "cross_energy": [
+        200.04184508049488,
+        211.7316539757952
+      ],
+      "expected_noise_half_a": [
+        623.5542106534582,
+        1118.4552799571634
+      ],
+      "expected_noise_half_b": [
+        630.651049327905,
+        1146.473643669789
+      ],
+      "baseline_mean_mode_correction": 0.6288659793814431,
+      "modality_order": [
+        "EEG",
+        "MEG"
+      ],
+      "truth_used": false,
+      "rule": "q=max(cross-half smooth energy / geometric-mean baseline noise expectation,0); H iff q>=10"
+    },
+    "16": {
+      "q_eeg": 0.15673982002965692,
+      "q_meg": 0.35798763748832696,
+      "q_eeg_db": -8.048206562293942,
+      "q_meg_db": -4.461319707396599,
+      "observable_bin": "LL",
+      "threshold_q": 10,
+      "cross_energy": [
+        100.50721784916479,
+        397.9615401460617
+      ],
+      "expected_noise_half_a": [
+        653.220671181414,
+        1112.438483989334
+      ],
+      "expected_noise_half_b": [
+        629.4712448846736,
+        1110.8876607360535
+      ],
+      "baseline_mean_mode_correction": 0.6288659793814431,
+      "modality_order": [
+        "EEG",
+        "MEG"
+      ],
+      "truth_used": false,
+      "rule": "q=max(cross-half smooth energy / geometric-mean baseline noise expectation,0); H iff q>=10"
+    },
+    "17": {
+      "q_eeg": 0.2447234301777673,
+      "q_meg": 0.3483119428089577,
+      "q_eeg_db": -6.11324448671155,
+      "q_meg_db": -4.58031634335597,
+      "observable_bin": "LL",
+      "threshold_q": 10,
+      "cross_energy": [
+        152.69513259019234,
+        389.3562377230615
+      ],
+      "expected_noise_half_a": [
+        630.7880998001548,
+        1102.9961929078154
+      ],
+      "expected_noise_half_b": [
+        617.1856113809761,
+        1132.879006027874
+      ],
+      "baseline_mean_mode_correction": 0.6288659793814431,
+      "modality_order": [
+        "EEG",
+        "MEG"
+      ],
+      "truth_used": false,
+      "rule": "q=max(cross-half smooth energy / geometric-mean baseline noise expectation,0); H iff q>=10"
+    },
+    "18": {
+      "q_eeg": 0.18999942006899115,
+      "q_meg": 0.054677527033682886,
+      "q_eeg_db": -7.212477246325468,
+      "q_meg_db": -12.621911360192215,
+      "observable_bin": "LL",
+      "threshold_q": 10,
+      "cross_energy": [
+        118.28829084288083,
+        61.498934971557205
+      ],
+      "expected_noise_half_a": [
+        621.1369756980231,
+        1136.2206124134157
+      ],
+      "expected_noise_half_b": [
+        624.0100431038999,
+        1113.4091807154186
+      ],
+      "baseline_mean_mode_correction": 0.6288659793814431,
+      "modality_order": [
+        "EEG",
+        "MEG"
+      ],
+      "truth_used": false,
+      "rule": "q=max(cross-half smooth energy / geometric-mean baseline noise expectation,0); H iff q>=10"
+    },
+    "19": {
+      "q_eeg": 0.12571837160468774,
+      "q_meg": 0.1559738742239379,
+      "q_eeg_db": -9.006012529143888,
+      "q_meg_db": -8.069481403031196,
+      "observable_bin": "LL",
+      "threshold_q": 10,
+      "cross_energy": [
+        78.30621570026447,
+        173.00897877624055
+      ],
+      "expected_noise_half_a": [
+        635.1698145101484,
+        1098.788970532233
+      ],
+      "expected_noise_half_b": [
+        610.8085784141152,
+        1119.7453676338869
+      ],
+      "baseline_mean_mode_correction": 0.6288659793814431,
+      "modality_order": [
+        "EEG",
+        "MEG"
+      ],
+      "truth_used": false,
+      "rule": "q=max(cross-half smooth energy / geometric-mean baseline noise expectation,0); H iff q>=10"
+    },
+    "39": {
+      "q_eeg": 0.4333399061478771,
+      "q_meg": 95.4940396100998,
+      "q_eeg_db": -3.631713150695065,
+      "q_meg_db": 19.799762653510097,
+      "observable_bin": "LH",
+      "threshold_q": 10,
+      "cross_energy": [
+        282.2986639921799,
+        107400.8081249494
+      ],
+      "expected_noise_half_a": [
+        660.4048508863061,
+        1116.8750759161799
+      ],
+      "expected_noise_half_b": [
+        642.6137606683726,
+        1132.5515226032646
+      ],
+      "baseline_mean_mode_correction": 0.6288659793814431,
+      "modality_order": [
+        "EEG",
+        "MEG"
+      ],
+      "truth_used": false,
+      "rule": "q=max(cross-half smooth energy / geometric-mean baseline noise expectation,0); H iff q>=10"
+    },
+    "40": {
+      "q_eeg": 0.9311459578082201,
+      "q_meg": 222.10602888861948,
+      "q_eeg_db": -0.3098223770573485,
+      "q_meg_db": 23.46560347281131,
+      "observable_bin": "LH",
+      "threshold_q": 10,
+      "cross_energy": [
+        584.5602978728668,
+        246878.56061097942
+      ],
+      "expected_noise_half_a": [
+        635.4039914092731,
+        1093.8293885977334
+      ],
+      "expected_noise_half_b": [
+        620.2591334743411,
+        1129.5266212682957
+      ],
+      "baseline_mean_mode_correction": 0.6288659793814431,
+      "modality_order": [
+        "EEG",
+        "MEG"
+      ],
+      "truth_used": false,
+      "rule": "q=max(cross-half smooth energy / geometric-mean baseline noise expectation,0); H iff q>=10"
+    },
+    "41": {
+      "q_eeg": 0.7652714044175689,
+      "q_meg": 180.86463665032608,
+      "q_eeg_db": -1.1618451447099152,
+      "q_meg_db": 22.573536602320342,
+      "observable_bin": "LH",
+      "threshold_q": 10,
+      "cross_energy": [
+        480.20921771079344,
+        201627.20709067793
+      ],
+      "expected_noise_half_a": [
+        627.9257615638079,
+        1126.0086576718697
+      ],
+      "expected_noise_half_b": [
+        627.078213353066,
+        1103.6953645876017
+      ],
+      "baseline_mean_mode_correction": 0.6288659793814431,
+      "modality_order": [
+        "EEG",
+        "MEG"
+      ],
+      "truth_used": false,
+      "rule": "q=max(cross-half smooth energy / geometric-mean baseline noise expectation,0); H iff q>=10"
+    },
+    "42": {
+      "q_eeg": 0.6095620089602413,
+      "q_meg": 181.8489443104534,
+      "q_eeg_db": -2.1498210829096065,
+      "q_meg_db": 22.59710784183827,
+      "observable_bin": "LH",
+      "threshold_q": 10,
+      "cross_energy": [
+        378.6930978176178,
+        202555.29395231092
+      ],
+      "expected_noise_half_a": [
+        608.2680862913425,
+        1115.6998332550095
+      ],
+      "expected_noise_half_b": [
+        634.5180262657248,
+        1112.0344974270613
+      ],
+      "baseline_mean_mode_correction": 0.6288659793814431,
+      "modality_order": [
+        "EEG",
+        "MEG"
+      ],
+      "truth_used": false,
+      "rule": "q=max(cross-half smooth energy / geometric-mean baseline noise expectation,0); H iff q>=10"
+    },
+    "43": {
+      "q_eeg": 0.2597727312786443,
+      "q_meg": 107.41533406630685,
+      "q_eeg_db": -5.8540643939371435,
+      "q_meg_db": 20.31066283458708,
+      "observable_bin": "LH",
+      "threshold_q": 10,
+      "cross_energy": [
+        166.07000701312123,
+        119040.20705164548
+      ],
+      "expected_noise_half_a": [
+        646.737036292169,
+        1113.7097684360865
+      ],
+      "expected_noise_half_b": [
+        631.927935666396,
+        1102.764435058994
+      ],
+      "baseline_mean_mode_correction": 0.6288659793814431,
+      "modality_order": [
+        "EEG",
+        "MEG"
+      ],
+      "truth_used": false,
+      "rule": "q=max(cross-half smooth energy / geometric-mean baseline noise expectation,0); H iff q>=10"
+    },
+    "44": {
+      "q_eeg": 0.048242445756389564,
+      "q_meg": 70.12180208033212,
+      "q_eeg_db": -13.165706828003497,
+      "q_meg_db": 18.458530686238042,
+      "observable_bin": "LH",
+      "threshold_q": 10,
+      "cross_energy": [
+        31.407832915823324,
+        77827.78285258898
+      ],
+      "expected_noise_half_a": [
+        654.1786539891098,
+        1106.6507862137287
+      ],
+      "expected_noise_half_b": [
+        647.919335424849,
+        1113.1471606135128
+      ],
+      "baseline_mean_mode_correction": 0.6288659793814431,
+      "modality_order": [
+        "EEG",
+        "MEG"
+      ],
+      "truth_used": false,
+      "rule": "q=max(cross-half smooth energy / geometric-mean baseline noise expectation,0); H iff q>=10"
+    },
+    "45": {
+      "q_eeg": 0.11402771359629496,
+      "q_meg": 192.77552466331585,
+      "q_eeg_db": -9.429895837581565,
+      "q_meg_db": 22.850518937866653,
+      "observable_bin": "LH",
+      "threshold_q": 10,
+      "cross_energy": [
+        72.50062812101704,
+        213647.78032858382
+      ],
+      "expected_noise_half_a": [
+        624.4981249168058,
+        1111.9747605067794
+      ],
+      "expected_noise_half_b": [
+        647.3386937505194,
+        1104.5822316843512
+      ],
+      "baseline_mean_mode_correction": 0.6288659793814431,
+      "modality_order": [
+        "EEG",
+        "MEG"
+      ],
+      "truth_used": false,
+      "rule": "q=max(cross-half smooth energy / geometric-mean baseline noise expectation,0); H iff q>=10"
+    },
+    "46": {
+      "q_eeg": 0.12230209091809192,
+      "q_meg": 212.98765072628203,
+      "q_eeg_db": -9.12566118054254,
+      "q_meg_db": 23.283544232654457,
+      "observable_bin": "LH",
+      "threshold_q": 10,
+      "cross_energy": [
+        78.54757180026316,
+        240243.1985843738
+      ],
+      "expected_noise_half_a": [
+        645.3258738175584,
+        1126.989685980749
+      ],
+      "expected_noise_half_b": [
+        639.1733894340007,
+        1128.9466385600756
+      ],
+      "baseline_mean_mode_correction": 0.6288659793814431,
+      "modality_order": [
+        "EEG",
+        "MEG"
+      ],
+      "truth_used": false,
+      "rule": "q=max(cross-half smooth energy / geometric-mean baseline noise expectation,0); H iff q>=10"
+    },
+    "47": {
+      "q_eeg": 0.10709443666912846,
+      "q_meg": 289.9493847006047,
+      "q_eeg_db": -9.702330892676187,
+      "q_meg_db": 24.623221914721785,
+      "observable_bin": "LH",
+      "threshold_q": 10,
+      "cross_energy": [
+        68.02677491583665,
+        323203.613978887
+      ],
+      "expected_noise_half_a": [
+        627.4596888972847,
+        1121.4520361400619
+      ],
+      "expected_noise_half_b": [
+        643.0431445965065,
+        1107.9682868826337
+      ],
+      "baseline_mean_mode_correction": 0.6288659793814431,
+      "modality_order": [
+        "EEG",
+        "MEG"
+      ],
+      "truth_used": false,
+      "rule": "q=max(cross-half smooth energy / geometric-mean baseline noise expectation,0); H iff q>=10"
+    },
+    "48": {
+      "q_eeg": 0.012985215333380803,
+      "q_meg": 46.4417968185562,
+      "q_eeg_db": -18.865508440844557,
+      "q_meg_db": 16.66909014108914,
+      "observable_bin": "LH",
+      "threshold_q": 10,
+      "cross_energy": [
+        8.095824047788259,
+        51632.2150748673
+      ],
+      "expected_noise_half_a": [
+        634.5618197363425,
+        1102.5754121507778
+      ],
+      "expected_noise_half_b": [
+        612.561745703556,
+        1121.0247026369923
+      ],
+      "baseline_mean_mode_correction": 0.6288659793814431,
+      "modality_order": [
+        "EEG",
+        "MEG"
+      ],
+      "truth_used": false,
+      "rule": "q=max(cross-half smooth energy / geometric-mean baseline noise expectation,0); H iff q>=10"
+    },
+    "49": {
+      "q_eeg": 0.0674962062287512,
+      "q_meg": 148.08060991135278,
+      "q_eeg_db": -11.707206369500412,
+      "q_meg_db": 21.704981945116593,
+      "observable_bin": "LH",
+      "threshold_q": 10,
+      "cross_energy": [
+        43.57466223816306,
+        165216.49374232572
+      ],
+      "expected_noise_half_a": [
+        650.2875085162568,
+        1114.7135718287614
+      ],
+      "expected_noise_half_b": [
+        640.9201432940152,
+        1116.72727805569
+      ],
+      "baseline_mean_mode_correction": 0.6288659793814431,
+      "modality_order": [
+        "EEG",
+        "MEG"
+      ],
+      "truth_used": false,
+      "rule": "q=max(cross-half smooth energy / geometric-mean baseline noise expectation,0); H iff q>=10"
+    },
+    "50": {
+      "q_eeg": 0.36099351648573746,
+      "q_meg": 121.53030155018898,
+      "q_eeg_db": -4.425005980382567,
+      "q_meg_db": 20.846845755089497,
+      "observable_bin": "LH",
+      "threshold_q": 10,
+      "cross_energy": [
+        226.6041684344774,
+        136101.42807150987
+      ],
+      "expected_noise_half_a": [
+        637.5283441498751,
+        1133.2832390391088
+      ],
+      "expected_noise_half_b": [
+        618.0697479725895,
+        1106.6690073943469
+      ],
+      "baseline_mean_mode_correction": 0.6288659793814431,
+      "modality_order": [
+        "EEG",
+        "MEG"
+      ],
+      "truth_used": false,
+      "rule": "q=max(cross-half smooth energy / geometric-mean baseline noise expectation,0); H iff q>=10"
+    },
+    "51": {
+      "q_eeg": 0.13393397931067128,
+      "q_meg": 146.05109386005682,
+      "q_eeg_db": -8.731092276554902,
+      "q_meg_db": 21.645048140011653,
+      "observable_bin": "LH",
+      "threshold_q": 10,
+      "cross_energy": [
+        88.6399864266179,
+        159936.95258204272
+      ],
+      "expected_noise_half_a": [
+        657.4733347748996,
+        1078.9461638093783
+      ],
+      "expected_noise_half_b": [
+        666.1923990583042,
+        1111.4456496834723
+      ],
+      "baseline_mean_mode_correction": 0.6288659793814431,
+      "modality_order": [
+        "EEG",
+        "MEG"
+      ],
+      "truth_used": false,
+      "rule": "q=max(cross-half smooth energy / geometric-mean baseline noise expectation,0); H iff q>=10"
+    },
+    "52": {
+      "q_eeg": 0.14754993346938683,
+      "q_meg": 141.68824783593863,
+      "q_eeg_db": -8.310609819883844,
+      "q_meg_db": 21.513338296993666,
+      "observable_bin": "LH",
+      "threshold_q": 10,
+      "cross_energy": [
+        94.69231899741213,
+        156104.12879584605
+      ],
+      "expected_noise_half_a": [
+        651.1911085744168,
+        1099.2704295841434
+      ],
+      "expected_noise_half_b": [
+        632.4744803571144,
+        1104.222455548268
+      ],
+      "baseline_mean_mode_correction": 0.6288659793814431,
+      "modality_order": [
+        "EEG",
+        "MEG"
+      ],
+      "truth_used": false,
+      "rule": "q=max(cross-half smooth energy / geometric-mean baseline noise expectation,0); H iff q>=10"
+    },
+    "53": {
+      "q_eeg": 0.6492999324873229,
+      "q_meg": 177.017264766404,
+      "q_eeg_db": -1.8755464228415866,
+      "q_meg_db": 22.480156258370798,
+      "observable_bin": "LH",
+      "threshold_q": 10,
+      "cross_energy": [
+        419.5579700427861,
+        196534.35603303008
+      ],
+      "expected_noise_half_a": [
+        638.9674581372739,
+        1115.4537494192543
+      ],
+      "expected_noise_half_b": [
+        653.4532088150779,
+        1105.0810732731923
+      ],
+      "baseline_mean_mode_correction": 0.6288659793814431,
+      "modality_order": [
+        "EEG",
+        "MEG"
+      ],
+      "truth_used": false,
+      "rule": "q=max(cross-half smooth energy / geometric-mean baseline noise expectation,0); H iff q>=10"
+    },
+    "54": {
+      "q_eeg": 0.21111280360741255,
+      "q_meg": 232.3392180012049,
+      "q_eeg_db": -6.754854267234847,
+      "q_meg_db": 23.66122523291199,
+      "observable_bin": "LH",
+      "threshold_q": 10,
+      "cross_energy": [
+        133.41015481994708,
+        259238.65935318114
+      ],
+      "expected_noise_half_a": [
+        624.8604644278495,
+        1104.352132695386
+      ],
+      "expected_noise_half_b": [
+        639.0952393679074,
+        1127.3192236669008
+      ],
+      "baseline_mean_mode_correction": 0.6288659793814431,
+      "modality_order": [
+        "EEG",
+        "MEG"
+      ],
+      "truth_used": false,
+      "rule": "q=max(cross-half smooth energy / geometric-mean baseline noise expectation,0); H iff q>=10"
+    },
+    "55": {
+      "q_eeg": 0.18589322218508983,
+      "q_meg": 318.10737802998915,
+      "q_eeg_db": -7.3073644466208,
+      "q_meg_db": 25.0257374204214,
+      "observable_bin": "LH",
+      "threshold_q": 10,
+      "cross_energy": [
+        119.64086345499257,
+        359604.78837467486
+      ],
+      "expected_noise_half_a": [
+        643.762738527989,
+        1131.4254938039774
+      ],
+      "expected_noise_half_b": [
+        643.4371483321863,
+        1129.4772498743205
+      ],
+      "baseline_mean_mode_correction": 0.6288659793814431,
+      "modality_order": [
+        "EEG",
+        "MEG"
+      ],
+      "truth_used": false,
+      "rule": "q=max(cross-half smooth energy / geometric-mean baseline noise expectation,0); H iff q>=10"
+    },
+    "56": {
+      "q_eeg": 0.2787053830025309,
+      "q_meg": 308.91477824491153,
+      "q_eeg_db": -5.548546431068662,
+      "q_meg_db": 24.898386851117323,
+      "observable_bin": "LH",
+      "threshold_q": 10,
+      "cross_energy": [
+        174.7589369405899,
+        337637.3441647943
+      ],
+      "expected_noise_half_a": [
+        637.9155078286087,
+        1074.6595776811848
+      ],
+      "expected_noise_half_b": [
+        616.3464723218508,
+        1111.6105685046168
+      ],
+      "baseline_mean_mode_correction": 0.6288659793814431,
+      "modality_order": [
+        "EEG",
+        "MEG"
+      ],
+      "truth_used": false,
+      "rule": "q=max(cross-half smooth energy / geometric-mean baseline noise expectation,0); H iff q>=10"
+    },
+    "57": {
+      "q_eeg": 0.14603265408177585,
+      "q_meg": 113.87845271845762,
+      "q_eeg_db": -8.355500216000761,
+      "q_meg_db": 20.56441557698654,
+      "observable_bin": "LH",
+      "threshold_q": 10,
+      "cross_energy": [
+        92.83849396291487,
+        128391.0668471675
+      ],
+      "expected_noise_half_a": [
+        633.4152546724418,
+        1129.6597642167112
+      ],
+      "expected_noise_half_b": [
+        638.0690776152192,
+        1125.2236180170923
+      ],
+      "baseline_mean_mode_correction": 0.6288659793814431,
+      "modality_order": [
+        "EEG",
+        "MEG"
+      ],
+      "truth_used": false,
+      "rule": "q=max(cross-half smooth energy / geometric-mean baseline noise expectation,0); H iff q>=10"
+    },
+    "58": {
+      "q_eeg": 0.07941000676523756,
+      "q_meg": 136.8947732598206,
+      "q_eeg_db": -11.001247669798051,
+      "q_meg_db": 21.363868667771474,
+      "observable_bin": "LH",
+      "threshold_q": 10,
+      "cross_energy": [
+        50.5308624398663,
+        150611.62186541225
+      ],
+      "expected_noise_half_a": [
+        638.9335943913092,
+        1109.7049784322949
+      ],
+      "expected_noise_half_b": [
+        633.7343269809053,
+        1090.776323581065
+      ],
+      "baseline_mean_mode_correction": 0.6288659793814431,
+      "modality_order": [
+        "EEG",
+        "MEG"
+      ],
+      "truth_used": false,
+      "rule": "q=max(cross-half smooth energy / geometric-mean baseline noise expectation,0); H iff q>=10"
+    },
+    "78": {
+      "q_eeg": 556.0886687909522,
+      "q_meg": 0.09452672060035246,
+      "q_eeg_db": 27.451440457122178,
+      "q_meg_db": -10.244454087505336,
+      "observable_bin": "HL",
+      "threshold_q": 10,
+      "cross_energy": [
+        347716.9541001379,
+        105.52255702584043
+      ],
+      "expected_noise_half_a": [
+        621.8120522292335,
+        1121.7231004549787
+      ],
+      "expected_noise_half_b": [
+        628.788378705335,
+        1110.9532065442954
+      ],
+      "baseline_mean_mode_correction": 0.6288659793814431,
+      "modality_order": [
+        "EEG",
+        "MEG"
+      ],
+      "truth_used": false,
+      "rule": "q=max(cross-half smooth energy / geometric-mean baseline noise expectation,0); H iff q>=10"
+    },
+    "79": {
+      "q_eeg": 932.3168800787163,
+      "q_meg": 0.11920870086895341,
+      "q_eeg_db": 29.69563547417964,
+      "q_meg_db": -9.236920449190329,
+      "observable_bin": "HL",
+      "threshold_q": 10,
+      "cross_energy": [
+        593178.7664811858,
+        132.27561240848797
+      ],
+      "expected_noise_half_a": [
+        636.8822454203791,
+        1094.9910244050764
+      ],
+      "expected_noise_half_b": [
+        635.6015625636229,
+        1124.4317300273633
+      ],
+      "baseline_mean_mode_correction": 0.6288659793814431,
+      "modality_order": [
+        "EEG",
+        "MEG"
+      ],
+      "truth_used": false,
+      "rule": "q=max(cross-half smooth energy / geometric-mean baseline noise expectation,0); H iff q>=10"
+    },
+    "80": {
+      "q_eeg": 593.1892582701211,
+      "q_meg": 0.14700491757802836,
+      "q_eeg_db": 27.73193278033602,
+      "q_meg_db": -8.326681370798475,
+      "observable_bin": "HL",
+      "threshold_q": 10,
+      "cross_energy": [
+        378746.0993881789,
+        166.90497677998547
+      ],
+      "expected_noise_half_a": [
+        635.1183852271508,
+        1122.0649722831552
+      ],
+      "expected_noise_half_b": [
+        641.8818517984947,
+        1148.832842082188
+      ],
+      "baseline_mean_mode_correction": 0.6288659793814431,
+      "modality_order": [
+        "EEG",
+        "MEG"
+      ],
+      "truth_used": false,
+      "rule": "q=max(cross-half smooth energy / geometric-mean baseline noise expectation,0); H iff q>=10"
+    },
+    "81": {
+      "q_eeg": 627.6828575922974,
+      "q_meg": 0.14478992987864056,
+      "q_eeg_db": 27.977402679613167,
+      "q_meg_db": -8.392616422149743,
+      "observable_bin": "HL",
+      "threshold_q": 10,
+      "cross_energy": [
+        392392.9502123267,
+        159.3616918203811
+      ],
+      "expected_noise_half_a": [
+        631.923494951528,
+        1110.3834764437831
+      ],
+      "expected_noise_half_b": [
+        618.4396898330381,
+        1090.9834370727287
+      ],
+      "baseline_mean_mode_correction": 0.6288659793814431,
+      "modality_order": [
+        "EEG",
+        "MEG"
+      ],
+      "truth_used": false,
+      "rule": "q=max(cross-half smooth energy / geometric-mean baseline noise expectation,0); H iff q>=10"
+    },
+    "82": {
+      "q_eeg": 270.4134045448361,
+      "q_meg": 0.13316525715648672,
+      "q_eeg_db": 24.320282160253836,
+      "q_meg_db": -8.756090679086984,
+      "observable_bin": "HL",
+      "threshold_q": 10,
+      "cross_energy": [
+        175491.34375339295,
+        147.2590238349655
+      ],
+      "expected_noise_half_a": [
+        645.3949052081222,
+        1100.4257812570766
+      ],
+      "expected_noise_half_b": [
+        652.5735004079223,
+        1111.2741540061788
+      ],
+      "baseline_mean_mode_correction": 0.6288659793814431,
+      "modality_order": [
+        "EEG",
+        "MEG"
+      ],
+      "truth_used": false,
+      "rule": "q=max(cross-half smooth energy / geometric-mean baseline noise expectation,0); H iff q>=10"
+    },
+    "83": {
+      "q_eeg": 81.87226713721576,
+      "q_meg": 0.04988182845043295,
+      "q_eeg_db": 19.13136816669637,
+      "q_meg_db": -13.020576355587831,
+      "observable_bin": "HL",
+      "threshold_q": 10,
+      "cross_energy": [
+        52695.40876417584,
+        56.5733891528657
+      ],
+      "expected_noise_half_a": [
+        642.0380787379261,
+        1136.7330087739324
+      ],
+      "expected_noise_half_b": [
+        645.2249247630073,
+        1131.5693969390422
+      ],
+      "baseline_mean_mode_correction": 0.6288659793814431,
+      "modality_order": [
+        "EEG",
+        "MEG"
+      ],
+      "truth_used": false,
+      "rule": "q=max(cross-half smooth energy / geometric-mean baseline noise expectation,0); H iff q>=10"
+    },
+    "84": {
+      "q_eeg": 143.67329157089034,
+      "q_meg": 0.18620947298758028,
+      "q_eeg_db": 21.57376041610528,
+      "q_meg_db": -7.299982290389697,
+      "observable_bin": "HL",
+      "threshold_q": 10,
+      "cross_energy": [
+        91687.68668255414,
+        209.71965484137786
+      ],
+      "expected_noise_half_a": [
+        641.2684149296192,
+        1130.1115764775143
+      ],
+      "expected_noise_half_b": [
+        635.0824302043252,
+        1122.4148473409928
+      ],
+      "baseline_mean_mode_correction": 0.6288659793814431,
+      "modality_order": [
+        "EEG",
+        "MEG"
+      ],
+      "truth_used": false,
+      "rule": "q=max(cross-half smooth energy / geometric-mean baseline noise expectation,0); H iff q>=10"
+    },
+    "85": {
+      "q_eeg": 89.96269642692172,
+      "q_meg": 0.25600272173561867,
+      "q_eeg_db": 19.540624639465992,
+      "q_meg_db": -5.9175541738941275,
+      "observable_bin": "HL",
+      "threshold_q": 10,
+      "cross_energy": [
+        58661.2231908268,
+        286.8593995768234
+      ],
+      "expected_noise_half_a": [
+        656.6053059725348,
+        1128.5916771845589
+      ],
+      "expected_noise_half_b": [
+        647.54941192328,
+        1112.5311037347153
+      ],
+      "baseline_mean_mode_correction": 0.6288659793814431,
+      "modality_order": [
+        "EEG",
+        "MEG"
+      ],
+      "truth_used": false,
+      "rule": "q=max(cross-half smooth energy / geometric-mean baseline noise expectation,0); H iff q>=10"
+    },
+    "86": {
+      "q_eeg": 83.43310221808278,
+      "q_meg": 0.31450355057781115,
+      "q_eeg_db": 19.213383918655843,
+      "q_meg_db": -5.0237444723732345,
+      "observable_bin": "HL",
+      "threshold_q": 10,
+      "cross_energy": [
+        53401.90594700672,
+        348.42950001754156
+      ],
+      "expected_noise_half_a": [
+        634.6008599123259,
+        1108.044961433066
+      ],
+      "expected_noise_half_b": [
+        645.5592005583655,
+        1107.6979365452942
+      ],
+      "baseline_mean_mode_correction": 0.6288659793814431,
+      "modality_order": [
+        "EEG",
+        "MEG"
+      ],
+      "truth_used": false,
+      "rule": "q=max(cross-half smooth energy / geometric-mean baseline noise expectation,0); H iff q>=10"
+    },
+    "87": {
+      "q_eeg": 55.490730032899336,
+      "q_meg": 0.07871450367997025,
+      "q_eeg_db": 17.442204384053397,
+      "q_meg_db": -11.039452385705646,
+      "observable_bin": "HL",
+      "threshold_q": 10,
+      "cross_energy": [
+        35829.28537251772,
+        86.48967538953758
+      ],
+      "expected_noise_half_a": [
+        638.8010635566529,
+        1095.1468900983755
+      ],
+      "expected_noise_half_b": [
+        652.6341345753564,
+        1102.4188668750055
+      ],
+      "baseline_mean_mode_correction": 0.6288659793814431,
+      "modality_order": [
+        "EEG",
+        "MEG"
+      ],
+      "truth_used": false,
+      "rule": "q=max(cross-half smooth energy / geometric-mean baseline noise expectation,0); H iff q>=10"
+    },
+    "88": {
+      "q_eeg": 63.03738060958774,
+      "q_meg": 0.17638301044121607,
+      "q_eeg_db": 17.995981586306627,
+      "q_meg_db": -7.535432492890793,
+      "observable_bin": "HL",
+      "threshold_q": 10,
+      "cross_energy": [
+        39112.60984594725,
+        195.6592416138517
+      ],
+      "expected_noise_half_a": [
+        628.7023946497818,
+        1109.9187486747524
+      ],
+      "expected_noise_half_b": [
+        612.3393373917924,
+        1108.654036941782
+      ],
+      "baseline_mean_mode_correction": 0.6288659793814431,
+      "modality_order": [
+        "EEG",
+        "MEG"
+      ],
+      "truth_used": false,
+      "rule": "q=max(cross-half smooth energy / geometric-mean baseline noise expectation,0); H iff q>=10"
+    },
+    "89": {
+      "q_eeg": 321.1388367681679,
+      "q_meg": 0.1121170115819142,
+      "q_eeg_db": 25.06692829933343,
+      "q_meg_db": -9.503284866411567,
+      "observable_bin": "HL",
+      "threshold_q": 10,
+      "cross_energy": [
+        205745.917429239,
+        126.32101305292602
+      ],
+      "expected_noise_half_a": [
+        651.8281383083597,
+        1120.9474058924377
+      ],
+      "expected_noise_half_b": [
+        629.7144926819875,
+        1132.4601714467358
+      ],
+      "baseline_mean_mode_correction": 0.6288659793814431,
+      "modality_order": [
+        "EEG",
+        "MEG"
+      ],
+      "truth_used": false,
+      "rule": "q=max(cross-half smooth energy / geometric-mean baseline noise expectation,0); H iff q>=10"
+    },
+    "90": {
+      "q_eeg": 141.9080595816339,
+      "q_meg": 0.1521432755034298,
+      "q_eeg_db": 21.5200706164797,
+      "q_meg_db": -8.177472380234736,
+      "observable_bin": "HL",
+      "threshold_q": 10,
+      "cross_energy": [
+        90874.67052732354,
+        172.00184939246753
+      ],
+      "expected_noise_half_a": [
+        637.1847711600396,
+        1120.34826130076
+      ],
+      "expected_noise_half_b": [
+        643.5854065085172,
+        1140.7951460086863
+      ],
+      "baseline_mean_mode_correction": 0.6288659793814431,
+      "modality_order": [
+        "EEG",
+        "MEG"
+      ],
+      "truth_used": false,
+      "rule": "q=max(cross-half smooth energy / geometric-mean baseline noise expectation,0); H iff q>=10"
+    },
+    "91": {
+      "q_eeg": 142.78892858356195,
+      "q_meg": 0.07760998384701213,
+      "q_eeg_db": 21.546945348808432,
+      "q_meg_db": -11.100824069536179,
+      "observable_bin": "HL",
+      "threshold_q": 10,
+      "cross_energy": [
+        91356.27388158653,
+        85.99673729409643
+      ],
+      "expected_noise_half_a": [
+        654.5704988995194,
+        1087.3459434934045
+      ],
+      "expected_noise_half_b": [
+        625.3616688130306,
+        1129.17440192133
+      ],
+      "baseline_mean_mode_correction": 0.6288659793814431,
+      "modality_order": [
+        "EEG",
+        "MEG"
+      ],
+      "truth_used": false,
+      "rule": "q=max(cross-half smooth energy / geometric-mean baseline noise expectation,0); H iff q>=10"
+    },
+    "92": {
+      "q_eeg": 697.9337462420781,
+      "q_meg": 0.10676814825786428,
+      "q_eeg_db": 28.438141976845564,
+      "q_meg_db": -9.715582894331394,
+      "observable_bin": "HL",
+      "threshold_q": 10,
+      "cross_energy": [
+        448984.32283785765,
+        117.3364309668925
+      ],
+      "expected_noise_half_a": [
+        633.8446148312767,
+        1090.119070438384
+      ],
+      "expected_noise_half_b": [
+        652.9067428802716,
+        1107.919968375881
+      ],
+      "baseline_mean_mode_correction": 0.6288659793814431,
+      "modality_order": [
+        "EEG",
+        "MEG"
+      ],
+      "truth_used": false,
+      "rule": "q=max(cross-half smooth energy / geometric-mean baseline noise expectation,0); H iff q>=10"
+    },
+    "93": {
+      "q_eeg": 237.4810989639518,
+      "q_meg": 0.23064007835266231,
+      "q_eeg_db": 23.756290499932653,
+      "q_meg_db": -6.370652230820273,
+      "observable_bin": "HL",
+      "threshold_q": 10,
+      "cross_energy": [
+        147911.75909304805,
+        253.9063754208529
+      ],
+      "expected_noise_half_a": [
+        636.0767567410884,
+        1093.0888586321282
+      ],
+      "expected_noise_half_b": [
+        609.8707127715528,
+        1108.720787231517
+      ],
+      "baseline_mean_mode_correction": 0.6288659793814431,
+      "modality_order": [
+        "EEG",
+        "MEG"
+      ],
+      "truth_used": false,
+      "rule": "q=max(cross-half smooth energy / geometric-mean baseline noise expectation,0); H iff q>=10"
+    },
+    "94": {
+      "q_eeg": 161.74405520321002,
+      "q_meg": 0.20788108667501334,
+      "q_eeg_db": 22.088283274248965,
+      "q_meg_db": -6.821850216176579,
+      "observable_bin": "HL",
+      "threshold_q": 10,
+      "cross_energy": [
+        103315.6699464017,
+        230.99374410261203
+      ],
+      "expected_noise_half_a": [
+        637.1843498541947,
+        1110.7643759136993
+      ],
+      "expected_noise_half_b": [
+        640.3400081435053,
+        1111.5999971636602
+      ],
+      "baseline_mean_mode_correction": 0.6288659793814431,
+      "modality_order": [
+        "EEG",
+        "MEG"
+      ],
+      "truth_used": false,
+      "rule": "q=max(cross-half smooth energy / geometric-mean baseline noise expectation,0); H iff q>=10"
+    },
+    "95": {
+      "q_eeg": 273.3117921827524,
+      "q_meg": 0.31172453460348704,
+      "q_eeg_db": 24.366583699634884,
+      "q_meg_db": -5.06229014779358,
+      "observable_bin": "HL",
+      "threshold_q": 10,
+      "cross_energy": [
+        172192.84652134957,
+        348.03903536734475
+      ],
+      "expected_noise_half_a": [
+        626.568949913909,
+        1113.3035910969334
+      ],
+      "expected_noise_half_b": [
+        633.4970569468348,
+        1119.6965296911237
+      ],
+      "baseline_mean_mode_correction": 0.6288659793814431,
+      "modality_order": [
+        "EEG",
+        "MEG"
+      ],
+      "truth_used": false,
+      "rule": "q=max(cross-half smooth energy / geometric-mean baseline noise expectation,0); H iff q>=10"
+    },
+    "96": {
+      "q_eeg": 92.32203139713626,
+      "q_meg": 0.15937696479179272,
+      "q_eeg_db": 19.653053518651745,
+      "q_meg_db": -7.975744482268389,
+      "observable_bin": "HL",
+      "threshold_q": 10,
+      "cross_energy": [
+        58971.63000570873,
+        178.62625624473972
+      ],
+      "expected_noise_half_a": [
+        642.4638750132273,
+        1107.2310169407463
+      ],
+      "expected_noise_half_b": [
+        635.0776770439928,
+        1134.4914977550307
+      ],
+      "baseline_mean_mode_correction": 0.6288659793814431,
+      "modality_order": [
+        "EEG",
+        "MEG"
+      ],
+      "truth_used": false,
+      "rule": "q=max(cross-half smooth energy / geometric-mean baseline noise expectation,0); H iff q>=10"
+    },
+    "97": {
+      "q_eeg": 132.4124733451165,
+      "q_meg": 0.13303268297104903,
+      "q_eeg_db": 21.219288978665173,
+      "q_meg_db": -8.760416500835348,
+      "observable_bin": "HL",
+      "threshold_q": 10,
+      "cross_energy": [
+        83181.8228117008,
+        146.3611817473782
+      ],
+      "expected_noise_half_a": [
+        622.0199187040221,
+        1093.1483745931066
+      ],
+      "expected_noise_half_b": [
+        634.4461674814897,
+        1107.2762928096101
+      ],
+      "baseline_mean_mode_correction": 0.6288659793814431,
+      "modality_order": [
+        "EEG",
+        "MEG"
+      ],
+      "truth_used": false,
+      "rule": "q=max(cross-half smooth energy / geometric-mean baseline noise expectation,0); H iff q>=10"
+    }
+  },
+  "validation": {
+    "targeted_tests_passed": 26,
+    "main_repository_tests_passed": 236,
+    "main_repository_subtests_passed": 1,
+    "main_repository_test_seconds": 40.83,
+    "code_commit": "b2ac9f7266a52c1f817aa507621370d92afed859",
+    "experiment_inverse_calls_started": 0
+  }
+}
