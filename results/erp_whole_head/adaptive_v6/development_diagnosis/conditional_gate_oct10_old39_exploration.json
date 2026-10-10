@@ -1,0 +1,1501 @@
+{
+  "development_exploration_only": true,
+  "formal_or_blind_validation": false,
+  "purpose": "Verify an observed sensor-only quality split on the previously seen 39-case panel; no thresholds fitted.",
+  "manifest_sha256": "e2a49a6c14d7275a49d0d2502b98173ebad4f18237d3d95b970242524e9063fe",
+  "scorer_sha256": "fb61914bfde8496105d5f7b9df4088d5f7148026094f5920b8442f722e8e7d33",
+  "quality_helper_sha256": "c371136f4bd33fd39759e1b5b15dbbdab4c2f412adb185509e7210a6f7507b59",
+  "case_count": 39,
+  "observable_bin_matches_nominal_conditions": 39,
+  "no_inverse_fits": true,
+  "deterministic_half_data_hashes": [
+    "e20ef5c8c23d82e8d55af1073190d3e01e4684167ce164ec61e5f892c0dc38cb",
+    "d91717b0666320970ee4bf2415487f89d980f32ac2e6a80a91068da93817f8ba"
+  ],
+  "repeat_hashes_match": true,
+  "thresholds_selected_from_this_exploration": false,
+  "seconds": 35.633703700004844,
+  "groups": {
+    "HL": {
+      "count": 13,
+      "h0_count": 4,
+      "h1_count": 9,
+      "maximum_h0": 1.4775234533734167,
+      "minimum_h1": 3.3732177558007894,
+      "gap": 1.8956943024273727,
+      "calibration_h0_count": 2,
+      "audit_h0_count": 2,
+      "maximum_calibration_h0": 0.9219227910692633,
+      "maximum_audit_h0": 1.4775234533734167
+    },
+    "LH": {
+      "count": 13,
+      "h0_count": 4,
+      "h1_count": 9,
+      "maximum_h0": 4.033204390437112,
+      "minimum_h1": 6.302800777291165,
+      "gap": 2.2695963868540527,
+      "calibration_h0_count": 2,
+      "audit_h0_count": 2,
+      "maximum_calibration_h0": 0.48266687767210925,
+      "maximum_audit_h0": 4.033204390437112
+    },
+    "LL": {
+      "count": 13,
+      "h0_count": 4,
+      "h1_count": 9,
+      "maximum_h0": 0.577727403847524,
+      "minimum_h1": 0.7300627898687697,
+      "gap": 0.15233538602124574,
+      "calibration_h0_count": 2,
+      "audit_h0_count": 2,
+      "maximum_calibration_h0": 0.577727403847524,
+      "maximum_audit_h0": 0.3887000645882468
+    }
+  },
+  "rows": [
+    {
+      "case_number": 0,
+      "case_id": "erp-v3-fresh-dev-00-surface_only-eeg-10-meg-10",
+      "quality": {
+        "q_eeg": 0.14744140392635063,
+        "q_meg": 0.2643250226968123,
+        "q_eeg_db": -8.313805424487477,
+        "q_meg_db": -5.778617218295024,
+        "observable_bin": "LL",
+        "threshold_q": 10,
+        "cross_energy": [
+          93.77769239084924,
+          295.81956808389225
+        ],
+        "expected_noise_half_a": [
+          650.7543015124795,
+          1115.948101794697
+        ],
+        "expected_noise_half_b": [
+          621.6459676366674,
+          1122.3627464443882
+        ],
+        "baseline_mean_mode_correction": 0.6288659793814431,
+        "modality_order": [
+          "EEG",
+          "MEG"
+        ],
+        "truth_used": false,
+        "rule": "q=max(cross-half smooth energy / geometric-mean baseline noise expectation,0); H iff q>=10"
+      },
+      "residual_score": 0.577727403847524,
+      "gate_sha256": "29deb2ee207a78cedc83beb247ac9fa002c5dd07ca2d010121e1765d32394ade",
+      "role": "gate_calibration",
+      "scenario": "surface_only",
+      "eeg_snr_db": -10,
+      "meg_snr_db": -10
+    },
+    {
+      "case_number": 1,
+      "case_id": "erp-v3-fresh-dev-01-surface_only-eeg-10-meg-10",
+      "quality": {
+        "q_eeg": 0.04777711790726593,
+        "q_meg": 0.11652684813473924,
+        "q_eeg_db": -13.207800520479005,
+        "q_meg_db": -9.335740003597271,
+        "observable_bin": "LL",
+        "threshold_q": 10,
+        "cross_energy": [
+          30.44499852367539,
+          130.1749481761488
+        ],
+        "expected_noise_half_a": [
+          620.632152574253,
+          1135.1814912204725
+        ],
+        "expected_noise_half_b": [
+          654.271115697605,
+          1099.3539119545148
+        ],
+        "baseline_mean_mode_correction": 0.6288659793814431,
+        "modality_order": [
+          "EEG",
+          "MEG"
+        ],
+        "truth_used": false,
+        "rule": "q=max(cross-half smooth energy / geometric-mean baseline noise expectation,0); H iff q>=10"
+      },
+      "residual_score": 0.2155009347072665,
+      "gate_sha256": "da2dff9a2d7b508900e1d0f0935835cf4d02ed7b183f7a00b7a7486518586e52",
+      "role": "gate_audit",
+      "scenario": "surface_only",
+      "eeg_snr_db": -10,
+      "meg_snr_db": -10
+    },
+    {
+      "case_number": 2,
+      "case_id": "erp-v3-fresh-dev-02-surface_only-eeg-10-meg-10",
+      "quality": {
+        "q_eeg": 0.09158389514851585,
+        "q_meg": 0.2271694626351018,
+        "q_eeg_db": -10.381808894659697,
+        "q_meg_db": -6.436500492832752,
+        "observable_bin": "LL",
+        "threshold_q": 10,
+        "cross_energy": [
+          58.643573895027544,
+          253.77822901100183
+        ],
+        "expected_noise_half_a": [
+          634.9730344344323,
+          1106.8817969177555
+        ],
+        "expected_noise_half_b": [
+          645.7246351157318,
+          1127.4767056867702
+        ],
+        "baseline_mean_mode_correction": 0.6288659793814431,
+        "modality_order": [
+          "EEG",
+          "MEG"
+        ],
+        "truth_used": false,
+        "rule": "q=max(cross-half smooth energy / geometric-mean baseline noise expectation,0); H iff q>=10"
+      },
+      "residual_score": -0.05979499356257645,
+      "gate_sha256": "b5b9e87a16ba96016b1c993d9c803cab6463a84e857611dde969463b3cfd730c",
+      "role": "gate_calibration",
+      "scenario": "surface_only",
+      "eeg_snr_db": -10,
+      "meg_snr_db": -10
+    },
+    {
+      "case_number": 3,
+      "case_id": "erp-v3-fresh-dev-03-surface_only-eeg-10-meg-10",
+      "quality": {
+        "q_eeg": 0.3793750143149079,
+        "q_meg": 0.1715079949274798,
+        "q_eeg_db": -4.209312751934899,
+        "q_meg_db": -7.65715630303669,
+        "observable_bin": "LL",
+        "threshold_q": 10,
+        "cross_energy": [
+          239.23865541218447,
+          193.8529201431908
+        ],
+        "expected_noise_half_a": [
+          614.5425746701972,
+          1126.8359698148872
+        ],
+        "expected_noise_half_b": [
+          647.1028023343803,
+          1133.7446583207818
+        ],
+        "baseline_mean_mode_correction": 0.6288659793814431,
+        "modality_order": [
+          "EEG",
+          "MEG"
+        ],
+        "truth_used": false,
+        "rule": "q=max(cross-half smooth energy / geometric-mean baseline noise expectation,0); H iff q>=10"
+      },
+      "residual_score": 0.3887000645882468,
+      "gate_sha256": "5e5f28a0538ef5adc5a5b9a3aec175341a95d1d13be8b69f540cf9a83bfc1b89",
+      "role": "gate_audit",
+      "scenario": "surface_only",
+      "eeg_snr_db": -10,
+      "meg_snr_db": -10
+    },
+    {
+      "case_number": 4,
+      "case_id": "erp-v3-fresh-dev-04-deep_only-eeg-10-meg-10",
+      "quality": {
+        "q_eeg": 0.02011844790626852,
+        "q_meg": 0.0334700235899531,
+        "q_eeg_db": -16.96405527181898,
+        "q_meg_db": -14.753439815477247,
+        "observable_bin": "LL",
+        "threshold_q": 10,
+        "cross_energy": [
+          12.840126579673347,
+          36.85591254085933
+        ],
+        "expected_noise_half_a": [
+          637.2294052868119,
+          1092.982151437942
+        ],
+        "expected_noise_half_b": [
+          639.2251536094429,
+          1109.4027306680377
+        ],
+        "baseline_mean_mode_correction": 0.6288659793814431,
+        "modality_order": [
+          "EEG",
+          "MEG"
+        ],
+        "truth_used": false,
+        "rule": "q=max(cross-half smooth energy / geometric-mean baseline noise expectation,0); H iff q>=10"
+      },
+      "residual_score": 1.998043046701285,
+      "gate_sha256": "4e8d3ae2f4cbe4f5bedff73518e8be86f4831aad59832ee76984ff7ff5f16e2f",
+      "role": null,
+      "scenario": "deep_only",
+      "eeg_snr_db": -10,
+      "meg_snr_db": -10
+    },
+    {
+      "case_number": 5,
+      "case_id": "erp-v3-fresh-dev-05-deep_only-eeg-10-meg-10",
+      "quality": {
+        "q_eeg": 0.011940577112716925,
+        "q_meg": 0.10001296660868263,
+        "q_eeg_db": -19.229746823514237,
+        "q_meg_db": -9.999436903846462,
+        "observable_bin": "LL",
+        "threshold_q": 10,
+        "cross_energy": [
+          7.427714071276917,
+          111.03121058210537
+        ],
+        "expected_noise_half_a": [
+          616.1129502877022,
+          1091.2322545732009
+        ],
+        "expected_noise_half_b": [
+          628.0574648122899,
+          1129.4326450282838
+        ],
+        "baseline_mean_mode_correction": 0.6288659793814431,
+        "modality_order": [
+          "EEG",
+          "MEG"
+        ],
+        "truth_used": false,
+        "rule": "q=max(cross-half smooth energy / geometric-mean baseline noise expectation,0); H iff q>=10"
+      },
+      "residual_score": 1.247205748590352,
+      "gate_sha256": "e576461416df544fc005074f81f62ab317d798f5f13afb71c7abdcafa6668935",
+      "role": null,
+      "scenario": "deep_only",
+      "eeg_snr_db": -10,
+      "meg_snr_db": -10
+    },
+    {
+      "case_number": 6,
+      "case_id": "erp-v3-fresh-dev-06-deep_only-eeg-10-meg-10",
+      "quality": {
+        "q_eeg": 0.024054851306538363,
+        "q_meg": 0.08291433002808657,
+        "q_eeg_db": -16.187973233155418,
+        "q_meg_db": -10.813704041385684,
+        "observable_bin": "LL",
+        "threshold_q": 10,
+        "cross_energy": [
+          15.514412565253242,
+          92.6850221648333
+        ],
+        "expected_noise_half_a": [
+          649.912181248352,
+          1123.5074579774546
+        ],
+        "expected_noise_half_b": [
+          640.0451956842564,
+          1112.202750777583
+        ],
+        "baseline_mean_mode_correction": 0.6288659793814431,
+        "modality_order": [
+          "EEG",
+          "MEG"
+        ],
+        "truth_used": false,
+        "rule": "q=max(cross-half smooth energy / geometric-mean baseline noise expectation,0); H iff q>=10"
+      },
+      "residual_score": 1.0044170822348635,
+      "gate_sha256": "6f888ae5cd994e183474874af50d840ba889fb5cb3d587e9cc3b98d18c2a96d1",
+      "role": null,
+      "scenario": "deep_only",
+      "eeg_snr_db": -10,
+      "meg_snr_db": -10
+    },
+    {
+      "case_number": 7,
+      "case_id": "erp-v3-fresh-dev-07-deep_plus_surface-eeg-10-meg-10",
+      "quality": {
+        "q_eeg": 0.18304099192971232,
+        "q_meg": 0.08898484628929763,
+        "q_eeg_db": -7.374516393663463,
+        "q_meg_db": -10.506839454143947,
+        "observable_bin": "LL",
+        "threshold_q": 10,
+        "cross_energy": [
+          116.69010274904416,
+          98.7022334869027
+        ],
+        "expected_noise_half_a": [
+          643.0949673296604,
+          1132.6033259120832
+        ],
+        "expected_noise_half_b": [
+          631.9696358458184,
+          1086.2855904730113
+        ],
+        "baseline_mean_mode_correction": 0.6288659793814431,
+        "modality_order": [
+          "EEG",
+          "MEG"
+        ],
+        "truth_used": false,
+        "rule": "q=max(cross-half smooth energy / geometric-mean baseline noise expectation,0); H iff q>=10"
+      },
+      "residual_score": 2.6170745720409516,
+      "gate_sha256": "f90a92ca5a43a31f5fd741fe86009f9a48584f9faecd1c7141531580eecf7c45",
+      "role": null,
+      "scenario": "deep_plus_surface",
+      "eeg_snr_db": -10,
+      "meg_snr_db": -10
+    },
+    {
+      "case_number": 8,
+      "case_id": "erp-v3-fresh-dev-08-deep_plus_surface-eeg-10-meg-10",
+      "quality": {
+        "q_eeg": 0.05912680527343524,
+        "q_meg": 0.14655151782396447,
+        "q_eeg_db": -12.28215586071093,
+        "q_meg_db": -8.340096792442512,
+        "observable_bin": "LL",
+        "threshold_q": 10,
+        "cross_energy": [
+          38.10168510300571,
+          162.64905560920562
+        ],
+        "expected_noise_half_a": [
+          647.7694554654646,
+          1119.5714158255314
+        ],
+        "expected_noise_half_b": [
+          641.0605816793624,
+          1100.1974870138272
+        ],
+        "baseline_mean_mode_correction": 0.6288659793814431,
+        "modality_order": [
+          "EEG",
+          "MEG"
+        ],
+        "truth_used": false,
+        "rule": "q=max(cross-half smooth energy / geometric-mean baseline noise expectation,0); H iff q>=10"
+      },
+      "residual_score": 1.2732782474176787,
+      "gate_sha256": "e04bddfd5e07dcaf8f9b50c2d3520f23179180438242be8cae39f1b4beb89ff5",
+      "role": null,
+      "scenario": "deep_plus_surface",
+      "eeg_snr_db": -10,
+      "meg_snr_db": -10
+    },
+    {
+      "case_number": 9,
+      "case_id": "erp-v3-fresh-dev-09-deep_plus_surface-eeg-10-meg-10",
+      "quality": {
+        "q_eeg": 0,
+        "q_meg": 0.1633886551754037,
+        "q_eeg_db": null,
+        "q_meg_db": -7.867781018168732,
+        "observable_bin": "LL",
+        "threshold_q": 10,
+        "cross_energy": [
+          -11.120064756953907,
+          178.359667265684
+        ],
+        "expected_noise_half_a": [
+          647.359054897174,
+          1114.4361977394822
+        ],
+        "expected_noise_half_b": [
+          644.857870314257,
+          1069.287034205019
+        ],
+        "baseline_mean_mode_correction": 0.6288659793814431,
+        "modality_order": [
+          "EEG",
+          "MEG"
+        ],
+        "truth_used": false,
+        "rule": "q=max(cross-half smooth energy / geometric-mean baseline noise expectation,0); H iff q>=10"
+      },
+      "residual_score": 0.7300627898687697,
+      "gate_sha256": "c154c80ff8e2611d7fdfad570e98c521673be46adbcde55f0f46cce77eb87263",
+      "role": null,
+      "scenario": "deep_plus_surface",
+      "eeg_snr_db": -10,
+      "meg_snr_db": -10
+    },
+    {
+      "case_number": 10,
+      "case_id": "erp-v3-fresh-dev-10-deep_plus_two_surface-eeg-10-meg-10",
+      "quality": {
+        "q_eeg": 0,
+        "q_meg": 0.08985830149191235,
+        "q_eeg_db": null,
+        "q_meg_db": -10.464417947309911,
+        "observable_bin": "LL",
+        "threshold_q": 10,
+        "cross_energy": [
+          -1.7848999334479956,
+          98.87272026814969
+        ],
+        "expected_noise_half_a": [
+          640.3724260272635,
+          1093.4111109272244
+        ],
+        "expected_noise_half_b": [
+          654.4259122923053,
+          1107.2688252610817
+        ],
+        "baseline_mean_mode_correction": 0.6288659793814431,
+        "modality_order": [
+          "EEG",
+          "MEG"
+        ],
+        "truth_used": false,
+        "rule": "q=max(cross-half smooth energy / geometric-mean baseline noise expectation,0); H iff q>=10"
+      },
+      "residual_score": 0.9955891484578492,
+      "gate_sha256": "7169fa5e02953450d3a89f88bbbc108f0ad70d8bb1ef7612badd1025d67a3818",
+      "role": null,
+      "scenario": "deep_plus_two_surface",
+      "eeg_snr_db": -10,
+      "meg_snr_db": -10
+    },
+    {
+      "case_number": 11,
+      "case_id": "erp-v3-fresh-dev-11-deep_plus_two_surface-eeg-10-meg-10",
+      "quality": {
+        "q_eeg": 0,
+        "q_meg": 0.1454867859122103,
+        "q_eeg_db": null,
+        "q_meg_db": -8.371764504307956,
+        "observable_bin": "LL",
+        "threshold_q": 10,
+        "cross_energy": [
+          -1.286555498039986,
+          159.37062800489625
+        ],
+        "expected_noise_half_a": [
+          639.3977503918559,
+          1084.2153717354752
+        ],
+        "expected_noise_half_b": [
+          641.8252031549823,
+          1106.7611566118615
+        ],
+        "baseline_mean_mode_correction": 0.6288659793814431,
+        "modality_order": [
+          "EEG",
+          "MEG"
+        ],
+        "truth_used": false,
+        "rule": "q=max(cross-half smooth energy / geometric-mean baseline noise expectation,0); H iff q>=10"
+      },
+      "residual_score": 1.5837859421468528,
+      "gate_sha256": "7d90d8ab4ab64bba3ed15e4b1d33a41edaf9aa6462e110a20b889d94019cb483",
+      "role": null,
+      "scenario": "deep_plus_two_surface",
+      "eeg_snr_db": -10,
+      "meg_snr_db": -10
+    },
+    {
+      "case_number": 12,
+      "case_id": "erp-v3-fresh-dev-12-deep_plus_two_surface-eeg-10-meg-10",
+      "quality": {
+        "q_eeg": 0.0760078468504104,
+        "q_meg": 0.07822139398236251,
+        "q_eeg_db": -11.191415699834312,
+        "q_meg_db": -11.066744487590674,
+        "observable_bin": "LL",
+        "threshold_q": 10,
+        "cross_energy": [
+          49.26805420125838,
+          85.61493619197884
+        ],
+        "expected_noise_half_a": [
+          644.056381218418,
+          1088.126379522277
+        ],
+        "expected_noise_half_b": [
+          652.3641300196294,
+          1100.9526297002767
+        ],
+        "baseline_mean_mode_correction": 0.6288659793814431,
+        "modality_order": [
+          "EEG",
+          "MEG"
+        ],
+        "truth_used": false,
+        "rule": "q=max(cross-half smooth energy / geometric-mean baseline noise expectation,0); H iff q>=10"
+      },
+      "residual_score": 3.04006751181313,
+      "gate_sha256": "129a00aefa2e94e99aab8dcbcd8eab6f080554d43ff494c80fe5b66c835061bd",
+      "role": null,
+      "scenario": "deep_plus_two_surface",
+      "eeg_snr_db": -10,
+      "meg_snr_db": -10
+    },
+    {
+      "case_number": 13,
+      "case_id": "erp-v3-fresh-dev-00-surface_only-eeg-10-meg+20",
+      "quality": {
+        "q_eeg": 0.08701264230407099,
+        "q_meg": 258.8828953618867,
+        "q_eeg_db": -10.604176429674316,
+        "q_meg_db": 24.131033571349704,
+        "observable_bin": "LH",
+        "threshold_q": 10,
+        "cross_energy": [
+          54.97741890439614,
+          287956.55287682934
+        ],
+        "expected_noise_half_a": [
+          629.8866690976351,
+          1103.140977312769
+        ],
+        "expected_noise_half_b": [
+          633.7844245918963,
+          1121.5437008804306
+        ],
+        "baseline_mean_mode_correction": 0.6288659793814431,
+        "modality_order": [
+          "EEG",
+          "MEG"
+        ],
+        "truth_used": false,
+        "rule": "q=max(cross-half smooth energy / geometric-mean baseline noise expectation,0); H iff q>=10"
+      },
+      "residual_score": 0.34889508946620773,
+      "gate_sha256": "dabc5edd0912bc8c246ac8eaf8fb31f25c9d8455165129fda0a3773d23bf36eb",
+      "role": "gate_calibration",
+      "scenario": "surface_only",
+      "eeg_snr_db": -10,
+      "meg_snr_db": 20
+    },
+    {
+      "case_number": 14,
+      "case_id": "erp-v3-fresh-dev-01-surface_only-eeg-10-meg+20",
+      "quality": {
+        "q_eeg": 0,
+        "q_meg": 69.2632105851546,
+        "q_eeg_db": null,
+        "q_meg_db": 18.40502618704918,
+        "observable_bin": "LH",
+        "threshold_q": 10,
+        "cross_energy": [
+          -5.46953742093848,
+          76687.77070220781
+        ],
+        "expected_noise_half_a": [
+          644.2131576216393,
+          1083.2987451727247
+        ],
+        "expected_noise_half_b": [
+          619.6050232989676,
+          1131.6151384637992
+        ],
+        "baseline_mean_mode_correction": 0.6288659793814431,
+        "modality_order": [
+          "EEG",
+          "MEG"
+        ],
+        "truth_used": false,
+        "rule": "q=max(cross-half smooth energy / geometric-mean baseline noise expectation,0); H iff q>=10"
+      },
+      "residual_score": 4.033204390437112,
+      "gate_sha256": "88e3aff7760930a67f0dff4937bd42ad1557b7cf2fc803b24997ff6d08a5af12",
+      "role": "gate_audit",
+      "scenario": "surface_only",
+      "eeg_snr_db": -10,
+      "meg_snr_db": 20
+    },
+    {
+      "case_number": 15,
+      "case_id": "erp-v3-fresh-dev-02-surface_only-eeg-10-meg+20",
+      "quality": {
+        "q_eeg": 0.15278305481962245,
+        "q_meg": 166.83930300942228,
+        "q_eeg_db": -8.15924810723826,
+        "q_meg_db": 22.222983668619133,
+        "observable_bin": "LH",
+        "threshold_q": 10,
+        "cross_energy": [
+          96.97307049401613,
+          186238.9889471312
+        ],
+        "expected_noise_half_a": [
+          645.8734564425512,
+          1113.5381119442045
+        ],
+        "expected_noise_half_b": [
+          623.7412681379939,
+          1119.0239742353097
+        ],
+        "baseline_mean_mode_correction": 0.6288659793814431,
+        "modality_order": [
+          "EEG",
+          "MEG"
+        ],
+        "truth_used": false,
+        "rule": "q=max(cross-half smooth energy / geometric-mean baseline noise expectation,0); H iff q>=10"
+      },
+      "residual_score": 0.48266687767210925,
+      "gate_sha256": "93dac86f791083b329988e481e959f5efe8e14881667b6f82bb682d0ca3b8b71",
+      "role": "gate_calibration",
+      "scenario": "surface_only",
+      "eeg_snr_db": -10,
+      "meg_snr_db": 20
+    },
+    {
+      "case_number": 16,
+      "case_id": "erp-v3-fresh-dev-03-surface_only-eeg-10-meg+20",
+      "quality": {
+        "q_eeg": 0.26372124934233987,
+        "q_meg": 156.97391228269103,
+        "q_eeg_db": -5.788548755144149,
+        "q_meg_db": 21.958274823896517,
+        "observable_bin": "LH",
+        "threshold_q": 10,
+        "cross_energy": [
+          172.82557597882362,
+          174140.9613657295
+        ],
+        "expected_noise_half_a": [
+          654.4182156799984,
+          1115.9322828466227
+        ],
+        "expected_noise_half_b": [
+          656.2516336299882,
+          1102.831263456303
+        ],
+        "baseline_mean_mode_correction": 0.6288659793814431,
+        "modality_order": [
+          "EEG",
+          "MEG"
+        ],
+        "truth_used": false,
+        "rule": "q=max(cross-half smooth energy / geometric-mean baseline noise expectation,0); H iff q>=10"
+      },
+      "residual_score": 3.4098251510914217,
+      "gate_sha256": "94626f5de062e5d8eeb150442de12b2eee0c3cd83a7f4da41fe6f422274db48d",
+      "role": "gate_audit",
+      "scenario": "surface_only",
+      "eeg_snr_db": -10,
+      "meg_snr_db": 20
+    },
+    {
+      "case_number": 17,
+      "case_id": "erp-v3-fresh-dev-04-deep_only-eeg-10-meg+20",
+      "quality": {
+        "q_eeg": 0.04052567596831734,
+        "q_meg": 51.853890431842785,
+        "q_eeg_db": -13.922697323866213,
+        "q_meg_db": 17.147813456758325,
+        "observable_bin": "LH",
+        "threshold_q": 10,
+        "cross_energy": [
+          26.170150528032806,
+          58154.49442889511
+        ],
+        "expected_noise_half_a": [
+          644.0904493539394,
+          1107.5769378086566
+        ],
+        "expected_noise_half_b": [
+          647.4482281188343,
+          1135.6120010216516
+        ],
+        "baseline_mean_mode_correction": 0.6288659793814431,
+        "modality_order": [
+          "EEG",
+          "MEG"
+        ],
+        "truth_used": false,
+        "rule": "q=max(cross-half smooth energy / geometric-mean baseline noise expectation,0); H iff q>=10"
+      },
+      "residual_score": 17.615533677156872,
+      "gate_sha256": "46a36c0492dc061e7dc9ede055cf5e8e5336d2f5dce2898c6f1974b0622e9520",
+      "role": null,
+      "scenario": "deep_only",
+      "eeg_snr_db": -10,
+      "meg_snr_db": 20
+    },
+    {
+      "case_number": 18,
+      "case_id": "erp-v3-fresh-dev-05-deep_only-eeg-10-meg+20",
+      "quality": {
+        "q_eeg": 0,
+        "q_meg": 74.01332498884915,
+        "q_eeg_db": null,
+        "q_meg_db": 18.693099149765015,
+        "observable_bin": "LH",
+        "threshold_q": 10,
+        "cross_energy": [
+          -12.70297914790217,
+          82686.28221489328
+        ],
+        "expected_noise_half_a": [
+          645.131930484863,
+          1114.391903905309
+        ],
+        "expected_noise_half_b": [
+          626.4241939041422,
+          1119.977125139452
+        ],
+        "baseline_mean_mode_correction": 0.6288659793814431,
+        "modality_order": [
+          "EEG",
+          "MEG"
+        ],
+        "truth_used": false,
+        "rule": "q=max(cross-half smooth energy / geometric-mean baseline noise expectation,0); H iff q>=10"
+      },
+      "residual_score": 34.567313750009006,
+      "gate_sha256": "945597204a09f870113253a91dc4aa92923dc88f402dbf69646d6941164e050c",
+      "role": null,
+      "scenario": "deep_only",
+      "eeg_snr_db": -10,
+      "meg_snr_db": 20
+    },
+    {
+      "case_number": 19,
+      "case_id": "erp-v3-fresh-dev-06-deep_only-eeg-10-meg+20",
+      "quality": {
+        "q_eeg": 0,
+        "q_meg": 81.94273496742197,
+        "q_eeg_db": null,
+        "q_meg_db": 19.135104551191652,
+        "observable_bin": "LH",
+        "threshold_q": 10,
+        "cross_energy": [
+          -40.20470513693069,
+          90602.17606953098
+        ],
+        "expected_noise_half_a": [
+          651.1224784283879,
+          1106.05588599078
+        ],
+        "expected_noise_half_b": [
+          656.1346471886749,
+          1105.2977240762998
+        ],
+        "baseline_mean_mode_correction": 0.6288659793814431,
+        "modality_order": [
+          "EEG",
+          "MEG"
+        ],
+        "truth_used": false,
+        "rule": "q=max(cross-half smooth energy / geometric-mean baseline noise expectation,0); H iff q>=10"
+      },
+      "residual_score": 23.1325327867347,
+      "gate_sha256": "67dfca548e323f43ff7032c76041c1554bd861cd7ffa47f28d2f7c143afd6ba3",
+      "role": null,
+      "scenario": "deep_only",
+      "eeg_snr_db": -10,
+      "meg_snr_db": 20
+    },
+    {
+      "case_number": 20,
+      "case_id": "erp-v3-fresh-dev-07-deep_plus_surface-eeg-10-meg+20",
+      "quality": {
+        "q_eeg": 0.1471267303132288,
+        "q_meg": 127.79176920408791,
+        "q_eeg_db": -8.323084165116809,
+        "q_meg_db": 21.065028827397548,
+        "observable_bin": "LH",
+        "threshold_q": 10,
+        "cross_energy": [
+          93.0151597272249,
+          143178.80289381224
+        ],
+        "expected_noise_half_a": [
+          642.8363559499356,
+          1138.7226097628486
+        ],
+        "expected_noise_half_b": [
+          621.7615689904933,
+          1102.386140931584
+        ],
+        "baseline_mean_mode_correction": 0.6288659793814431,
+        "modality_order": [
+          "EEG",
+          "MEG"
+        ],
+        "truth_used": false,
+        "rule": "q=max(cross-half smooth energy / geometric-mean baseline noise expectation,0); H iff q>=10"
+      },
+      "residual_score": 13.172839315501971,
+      "gate_sha256": "8244725618cda67ec61686ec73856500036fb824146852bdb06e203be6f57729",
+      "role": null,
+      "scenario": "deep_plus_surface",
+      "eeg_snr_db": -10,
+      "meg_snr_db": 20
+    },
+    {
+      "case_number": 21,
+      "case_id": "erp-v3-fresh-dev-08-deep_plus_surface-eeg-10-meg+20",
+      "quality": {
+        "q_eeg": 0.005890739414173728,
+        "q_meg": 107.72302765573126,
+        "q_eeg_db": -22.298301885166836,
+        "q_meg_db": 20.323085511607395,
+        "observable_bin": "LH",
+        "threshold_q": 10,
+        "cross_energy": [
+          3.8319179544735036,
+          120817.32710035608
+        ],
+        "expected_noise_half_a": [
+          647.3548661474085,
+          1101.056695174176
+        ],
+        "expected_noise_half_b": [
+          653.6576732193805,
+          1142.435427681805
+        ],
+        "baseline_mean_mode_correction": 0.6288659793814431,
+        "modality_order": [
+          "EEG",
+          "MEG"
+        ],
+        "truth_used": false,
+        "rule": "q=max(cross-half smooth energy / geometric-mean baseline noise expectation,0); H iff q>=10"
+      },
+      "residual_score": 27.68500046192351,
+      "gate_sha256": "f990bf9e39a2ecfdee022966dfc1581d3fdacad92ff441aa65464b4a6c5b24d0",
+      "role": null,
+      "scenario": "deep_plus_surface",
+      "eeg_snr_db": -10,
+      "meg_snr_db": 20
+    },
+    {
+      "case_number": 22,
+      "case_id": "erp-v3-fresh-dev-09-deep_plus_surface-eeg-10-meg+20",
+      "quality": {
+        "q_eeg": 0.022044914695943336,
+        "q_meg": 179.93728174597607,
+        "q_eeg_db": -16.566915773617126,
+        "q_meg_db": 22.551211554471617,
+        "observable_bin": "LH",
+        "threshold_q": 10,
+        "cross_energy": [
+          13.963990003943216,
+          199254.9745321726
+        ],
+        "expected_noise_half_a": [
+          621.2439346343903,
+          1101.815159010473
+        ],
+        "expected_noise_half_b": [
+          645.8624736552795,
+          1112.9285696960385
+        ],
+        "baseline_mean_mode_correction": 0.6288659793814431,
+        "modality_order": [
+          "EEG",
+          "MEG"
+        ],
+        "truth_used": false,
+        "rule": "q=max(cross-half smooth energy / geometric-mean baseline noise expectation,0); H iff q>=10"
+      },
+      "residual_score": 51.796367450307365,
+      "gate_sha256": "cac86c58540203ad113f89f855eb61f55eb2c2094beadd922292d5576e670f01",
+      "role": null,
+      "scenario": "deep_plus_surface",
+      "eeg_snr_db": -10,
+      "meg_snr_db": 20
+    },
+    {
+      "case_number": 23,
+      "case_id": "erp-v3-fresh-dev-10-deep_plus_two_surface-eeg-10-meg+20",
+      "quality": {
+        "q_eeg": 0.011523240759603664,
+        "q_meg": 92.20945330988921,
+        "q_eeg_db": -19.384253641348597,
+        "q_meg_db": 19.647754471909884,
+        "observable_bin": "LH",
+        "threshold_q": 10,
+        "cross_energy": [
+          7.401483787480016,
+          103330.87707597401
+        ],
+        "expected_noise_half_a": [
+          647.3200142674417,
+          1119.8131500660331
+        ],
+        "expected_noise_half_b": [
+          637.3372140092672,
+          1121.4083199533907
+        ],
+        "baseline_mean_mode_correction": 0.6288659793814431,
+        "modality_order": [
+          "EEG",
+          "MEG"
+        ],
+        "truth_used": false,
+        "rule": "q=max(cross-half smooth energy / geometric-mean baseline noise expectation,0); H iff q>=10"
+      },
+      "residual_score": 19.584785710079203,
+      "gate_sha256": "7c961abf6059265247dbfd649f695e54af48b8f3f3a9c41def7c9e52603336a6",
+      "role": null,
+      "scenario": "deep_plus_two_surface",
+      "eeg_snr_db": -10,
+      "meg_snr_db": 20
+    },
+    {
+      "case_number": 24,
+      "case_id": "erp-v3-fresh-dev-11-deep_plus_two_surface-eeg-10-meg+20",
+      "quality": {
+        "q_eeg": 0.010101756556987708,
+        "q_meg": 114.29188403537053,
+        "q_eeg_db": -19.95603101793857,
+        "q_meg_db": 20.58015391866869,
+        "observable_bin": "LH",
+        "threshold_q": 10,
+        "cross_energy": [
+          6.5456485465833225,
+          130139.86205086819
+        ],
+        "expected_noise_half_a": [
+          634.2923523552968,
+          1140.7385426245435
+        ],
+        "expected_noise_half_b": [
+          661.9452875954814,
+          1136.589880051007
+        ],
+        "baseline_mean_mode_correction": 0.6288659793814431,
+        "modality_order": [
+          "EEG",
+          "MEG"
+        ],
+        "truth_used": false,
+        "rule": "q=max(cross-half smooth energy / geometric-mean baseline noise expectation,0); H iff q>=10"
+      },
+      "residual_score": 6.968210573515364,
+      "gate_sha256": "4de28edeef0701a84e259a8849903ae2893cbe8532e14813489f6e2bb59465b6",
+      "role": null,
+      "scenario": "deep_plus_two_surface",
+      "eeg_snr_db": -10,
+      "meg_snr_db": 20
+    },
+    {
+      "case_number": 25,
+      "case_id": "erp-v3-fresh-dev-12-deep_plus_two_surface-eeg-10-meg+20",
+      "quality": {
+        "q_eeg": 0.06551331525395676,
+        "q_meg": 73.00789583171752,
+        "q_eeg_db": -11.83670422853681,
+        "q_meg_db": 18.633698317739924,
+        "observable_bin": "LH",
+        "threshold_q": 10,
+        "cross_energy": [
+          41.50635332812445,
+          81704.90713667311
+        ],
+        "expected_noise_half_a": [
+          629.2614064764176,
+          1131.6040367970675
+        ],
+        "expected_noise_half_b": [
+          637.8798839435947,
+          1106.7821080682668
+        ],
+        "baseline_mean_mode_correction": 0.6288659793814431,
+        "modality_order": [
+          "EEG",
+          "MEG"
+        ],
+        "truth_used": false,
+        "rule": "q=max(cross-half smooth energy / geometric-mean baseline noise expectation,0); H iff q>=10"
+      },
+      "residual_score": 6.302800777291165,
+      "gate_sha256": "033fd7c82361ef1d281101c8e3e72095f2393e281f6923040e13e1c22cb55143",
+      "role": null,
+      "scenario": "deep_plus_two_surface",
+      "eeg_snr_db": -10,
+      "meg_snr_db": 20
+    },
+    {
+      "case_number": 26,
+      "case_id": "erp-v3-fresh-dev-00-surface_only-eeg+20-meg-10",
+      "quality": {
+        "q_eeg": 118.72373010116682,
+        "q_meg": 0.32118478006168943,
+        "q_eeg_db": 20.745375329560535,
+        "q_meg_db": -4.9324504275771766,
+        "observable_bin": "HL",
+        "threshold_q": 10,
+        "cross_energy": [
+          75340.38975246114,
+          364.27872287533603
+        ],
+        "expected_noise_half_a": [
+          633.8203289166985,
+          1158.586973261934
+        ],
+        "expected_noise_half_b": [
+          635.3521366405967,
+          1110.2711500767396
+        ],
+        "baseline_mean_mode_correction": 0.6288659793814431,
+        "modality_order": [
+          "EEG",
+          "MEG"
+        ],
+        "truth_used": false,
+        "rule": "q=max(cross-half smooth energy / geometric-mean baseline noise expectation,0); H iff q>=10"
+      },
+      "residual_score": 0.7120185450006036,
+      "gate_sha256": "09d9da93eaf8f1d65109f49ddde8ac0037c41892436677f6d9f75127ac888030",
+      "role": "gate_calibration",
+      "scenario": "surface_only",
+      "eeg_snr_db": 20,
+      "meg_snr_db": -10
+    },
+    {
+      "case_number": 27,
+      "case_id": "erp-v3-fresh-dev-01-surface_only-eeg+20-meg-10",
+      "quality": {
+        "q_eeg": 31.27983145564151,
+        "q_meg": 0.053718457932436285,
+        "q_eeg_db": 14.95264404295673,
+        "q_meg_db": -12.698764628880221,
+        "observable_bin": "HL",
+        "threshold_q": 10,
+        "cross_energy": [
+          19940.21080818018,
+          60.21407112923466
+        ],
+        "expected_noise_half_a": [
+          644.8075957091916,
+          1114.4732832780544
+        ],
+        "expected_noise_half_b": [
+          630.2321258604615,
+          1127.4031566225042
+        ],
+        "baseline_mean_mode_correction": 0.6288659793814431,
+        "modality_order": [
+          "EEG",
+          "MEG"
+        ],
+        "truth_used": false,
+        "rule": "q=max(cross-half smooth energy / geometric-mean baseline noise expectation,0); H iff q>=10"
+      },
+      "residual_score": 1.4775234533734167,
+      "gate_sha256": "365ca2a018d52c873a900ad0b4c9d1595bf6d2bf91217cc54831a482bebdff3c",
+      "role": "gate_audit",
+      "scenario": "surface_only",
+      "eeg_snr_db": 20,
+      "meg_snr_db": -10
+    },
+    {
+      "case_number": 28,
+      "case_id": "erp-v3-fresh-dev-02-surface_only-eeg+20-meg-10",
+      "quality": {
+        "q_eeg": 183.0259938468434,
+        "q_meg": 0.21382036697148044,
+        "q_eeg_db": 22.625127737881535,
+        "q_meg_db": -6.69950929426371,
+        "observable_bin": "HL",
+        "threshold_q": 10,
+        "cross_energy": [
+          114765.4078422813,
+          238.75844879392133
+        ],
+        "expected_noise_half_a": [
+          630.5259786522621,
+          1114.9527053018141
+        ],
+        "expected_noise_half_b": [
+          623.5818646209106,
+          1118.3118078752534
+        ],
+        "baseline_mean_mode_correction": 0.6288659793814431,
+        "modality_order": [
+          "EEG",
+          "MEG"
+        ],
+        "truth_used": false,
+        "rule": "q=max(cross-half smooth energy / geometric-mean baseline noise expectation,0); H iff q>=10"
+      },
+      "residual_score": 0.9219227910692633,
+      "gate_sha256": "2a581f5189fab5f95c524bd9b3a010951ce6bbe8a8cf5456567e841b3a9c7284",
+      "role": "gate_calibration",
+      "scenario": "surface_only",
+      "eeg_snr_db": 20,
+      "meg_snr_db": -10
+    },
+    {
+      "case_number": 29,
+      "case_id": "erp-v3-fresh-dev-03-surface_only-eeg+20-meg-10",
+      "quality": {
+        "q_eeg": 314.71754671925044,
+        "q_meg": 0.15678719967751842,
+        "q_eeg_db": 24.9792095718366,
+        "q_meg_db": -8.046893966027335,
+        "observable_bin": "HL",
+        "threshold_q": 10,
+        "cross_energy": [
+          199428.1289468077,
+          176.02594490574938
+        ],
+        "expected_noise_half_a": [
+          633.593274234049,
+          1125.5282049972955
+        ],
+        "expected_noise_half_b": [
+          633.7534791904371,
+          1119.8910637322117
+        ],
+        "baseline_mean_mode_correction": 0.6288659793814431,
+        "modality_order": [
+          "EEG",
+          "MEG"
+        ],
+        "truth_used": false,
+        "rule": "q=max(cross-half smooth energy / geometric-mean baseline noise expectation,0); H iff q>=10"
+      },
+      "residual_score": 0.8944132694581863,
+      "gate_sha256": "3e5308ec940af19dfee1216eeb3d05bf90e04e0a0224f8acb4649b19ce32ab4b",
+      "role": "gate_audit",
+      "scenario": "surface_only",
+      "eeg_snr_db": 20,
+      "meg_snr_db": -10
+    },
+    {
+      "case_number": 30,
+      "case_id": "erp-v3-fresh-dev-04-deep_only-eeg+20-meg-10",
+      "quality": {
+        "q_eeg": 26.83321024621897,
+        "q_meg": 0.03665418853859213,
+        "q_eeg_db": 14.286726334925353,
+        "q_meg_db": -14.358763905928315,
+        "observable_bin": "HL",
+        "threshold_q": 10,
+        "cross_energy": [
+          16889.258898626264,
+          41.28215755048937
+        ],
+        "expected_noise_half_a": [
+          634.7068566058114,
+          1131.5037265704957
+        ],
+        "expected_noise_half_b": [
+          624.1697676995126,
+          1121.041180919792
+        ],
+        "baseline_mean_mode_correction": 0.6288659793814431,
+        "modality_order": [
+          "EEG",
+          "MEG"
+        ],
+        "truth_used": false,
+        "rule": "q=max(cross-half smooth energy / geometric-mean baseline noise expectation,0); H iff q>=10"
+      },
+      "residual_score": 10.280205830169056,
+      "gate_sha256": "f077e22e681ce71c2eff0f4d12d010ac02f6809348d664c7c9f6335ec78ea25a",
+      "role": null,
+      "scenario": "deep_only",
+      "eeg_snr_db": 20,
+      "meg_snr_db": -10
+    },
+    {
+      "case_number": 31,
+      "case_id": "erp-v3-fresh-dev-05-deep_only-eeg+20-meg-10",
+      "quality": {
+        "q_eeg": 20.171411114503254,
+        "q_meg": 0.09566507101975516,
+        "q_eeg_db": 13.047362808506264,
+        "q_meg_db": -10.192466017462413,
+        "observable_bin": "HL",
+        "threshold_q": 10,
+        "cross_energy": [
+          12777.958493654842,
+          106.188831598202
+        ],
+        "expected_noise_half_a": [
+          634.6684426318503,
+          1116.4390284301708
+        ],
+        "expected_noise_half_b": [
+          632.2713161227972,
+          1103.6106374240667
+        ],
+        "baseline_mean_mode_correction": 0.6288659793814431,
+        "modality_order": [
+          "EEG",
+          "MEG"
+        ],
+        "truth_used": false,
+        "rule": "q=max(cross-half smooth energy / geometric-mean baseline noise expectation,0); H iff q>=10"
+      },
+      "residual_score": 6.014657054350889,
+      "gate_sha256": "d26ba79c4a41c17a18936c3f728d4cd46a83057b4da35fc0f67c5019b6b5e04e",
+      "role": null,
+      "scenario": "deep_only",
+      "eeg_snr_db": 20,
+      "meg_snr_db": -10
+    },
+    {
+      "case_number": 32,
+      "case_id": "erp-v3-fresh-dev-06-deep_only-eeg+20-meg-10",
+      "quality": {
+        "q_eeg": 16.97208828824118,
+        "q_meg": 0.08580255801620867,
+        "q_eeg_db": 12.29735282285966,
+        "q_meg_db": -10.664997644151189,
+        "observable_bin": "HL",
+        "threshold_q": 10,
+        "cross_energy": [
+          10573.196100599507,
+          95.22170551784859
+        ],
+        "expected_noise_half_a": [
+          618.5873401532817,
+          1092.0330853450375
+        ],
+        "expected_noise_half_b": [
+          627.3948971261725,
+          1127.8092290359664
+        ],
+        "baseline_mean_mode_correction": 0.6288659793814431,
+        "modality_order": [
+          "EEG",
+          "MEG"
+        ],
+        "truth_used": false,
+        "rule": "q=max(cross-half smooth energy / geometric-mean baseline noise expectation,0); H iff q>=10"
+      },
+      "residual_score": 7.503207900166101,
+      "gate_sha256": "a2d63d277ed3b86e70cd037dbe2f235fd747dbc75fc950bb5cf3612013c722e8",
+      "role": null,
+      "scenario": "deep_only",
+      "eeg_snr_db": 20,
+      "meg_snr_db": -10
+    },
+    {
+      "case_number": 33,
+      "case_id": "erp-v3-fresh-dev-07-deep_plus_surface-eeg+20-meg-10",
+      "quality": {
+        "q_eeg": 113.78244825814548,
+        "q_meg": 0.1268707644657876,
+        "q_eeg_db": 20.560752742512605,
+        "q_meg_db": -8.966384432636263,
+        "observable_bin": "HL",
+        "threshold_q": 10,
+        "cross_energy": [
+          72493.20297254116,
+          139.51246295551118
+        ],
+        "expected_noise_half_a": [
+          641.5363985033816,
+          1081.9998406136863
+        ],
+        "expected_noise_half_b": [
+          632.7362656847512,
+          1117.5724865843688
+        ],
+        "baseline_mean_mode_correction": 0.6288659793814431,
+        "modality_order": [
+          "EEG",
+          "MEG"
+        ],
+        "truth_used": false,
+        "rule": "q=max(cross-half smooth energy / geometric-mean baseline noise expectation,0); H iff q>=10"
+      },
+      "residual_score": 6.434213417108393,
+      "gate_sha256": "5c1dfeb87f6db8a6aba9998add2e5f0dd3b3ab96ee79c0ae9c965b2fca5c8eb2",
+      "role": null,
+      "scenario": "deep_plus_surface",
+      "eeg_snr_db": 20,
+      "meg_snr_db": -10
+    },
+    {
+      "case_number": 34,
+      "case_id": "erp-v3-fresh-dev-08-deep_plus_surface-eeg+20-meg-10",
+      "quality": {
+        "q_eeg": 32.64547054411225,
+        "q_meg": 0.12424289255858822,
+        "q_eeg_db": 15.138229328038202,
+        "q_meg_db": -9.057284461429076,
+        "observable_bin": "HL",
+        "threshold_q": 10,
+        "cross_energy": [
+          20398.383045702205,
+          137.61017357207868
+        ],
+        "expected_noise_half_a": [
+          620.1717181894842,
+          1125.9177687156905
+        ],
+        "expected_noise_half_b": [
+          629.5549788010441,
+          1089.5603851847443
+        ],
+        "baseline_mean_mode_correction": 0.6288659793814431,
+        "modality_order": [
+          "EEG",
+          "MEG"
+        ],
+        "truth_used": false,
+        "rule": "q=max(cross-half smooth energy / geometric-mean baseline noise expectation,0); H iff q>=10"
+      },
+      "residual_score": 4.19309730074873,
+      "gate_sha256": "e2cfbd7145eabbaff425ed08e8e1f199e7f8363f807f933819e432bdff53bc82",
+      "role": null,
+      "scenario": "deep_plus_surface",
+      "eeg_snr_db": 20,
+      "meg_snr_db": -10
+    },
+    {
+      "case_number": 35,
+      "case_id": "erp-v3-fresh-dev-09-deep_plus_surface-eeg+20-meg-10",
+      "quality": {
+        "q_eeg": 22.973940319372627,
+        "q_meg": 0.18699906636624994,
+        "q_eeg_db": 13.61235488542909,
+        "q_meg_db": -7.28160561768303,
+        "observable_bin": "HL",
+        "threshold_q": 10,
+        "cross_energy": [
+          14754.586294025048,
+          212.18570332343535
+        ],
+        "expected_noise_half_a": [
+          638.8620718714388,
+          1138.5410700956163
+        ],
+        "expected_noise_half_b": [
+          645.6185362406715,
+          1130.849106919051
+        ],
+        "baseline_mean_mode_correction": 0.6288659793814431,
+        "modality_order": [
+          "EEG",
+          "MEG"
+        ],
+        "truth_used": false,
+        "rule": "q=max(cross-half smooth energy / geometric-mean baseline noise expectation,0); H iff q>=10"
+      },
+      "residual_score": 4.979129762069877,
+      "gate_sha256": "00fd872925a4f67948eb1799d360aef0ac7eee855fd84f60c68c61a48db7f8ff",
+      "role": null,
+      "scenario": "deep_plus_surface",
+      "eeg_snr_db": 20,
+      "meg_snr_db": -10
+    },
+    {
+      "case_number": 36,
+      "case_id": "erp-v3-fresh-dev-10-deep_plus_two_surface-eeg+20-meg-10",
+      "quality": {
+        "q_eeg": 27.301062095335517,
+        "q_meg": 0.06661714824819762,
+        "q_eeg_db": 14.361795427613089,
+        "q_meg_db": -11.764139625571815,
+        "observable_bin": "HL",
+        "threshold_q": 10,
+        "cross_energy": [
+          17245.10410936064,
+          73.40726729376256
+        ],
+        "expected_noise_half_a": [
+          628.3383433835388,
+          1095.7004246940496
+        ],
+        "expected_noise_half_b": [
+          635.0077020732803,
+          1108.189954927961
+        ],
+        "baseline_mean_mode_correction": 0.6288659793814431,
+        "modality_order": [
+          "EEG",
+          "MEG"
+        ],
+        "truth_used": false,
+        "rule": "q=max(cross-half smooth energy / geometric-mean baseline noise expectation,0); H iff q>=10"
+      },
+      "residual_score": 12.44583744631403,
+      "gate_sha256": "880280245ef8862ab0074bfa83411642153772a240b3247d79e471ffe470037b",
+      "role": null,
+      "scenario": "deep_plus_two_surface",
+      "eeg_snr_db": 20,
+      "meg_snr_db": -10
+    },
+    {
+      "case_number": 37,
+      "case_id": "erp-v3-fresh-dev-11-deep_plus_two_surface-eeg+20-meg-10",
+      "quality": {
+        "q_eeg": 35.82261081577877,
+        "q_meg": 0.0770057000160698,
+        "q_eeg_db": 15.541572348230632,
+        "q_meg_db": -11.134771268547256,
+        "observable_bin": "HL",
+        "threshold_q": 10,
+        "cross_energy": [
+          23305.067592174688,
+          87.04791236946943
+        ],
+        "expected_noise_half_a": [
+          644.6917778351883,
+          1132.3894980197963
+        ],
+        "expected_noise_half_b": [
+          656.4990964039547,
+          1128.4313440600918
+        ],
+        "baseline_mean_mode_correction": 0.6288659793814431,
+        "modality_order": [
+          "EEG",
+          "MEG"
+        ],
+        "truth_used": false,
+        "rule": "q=max(cross-half smooth energy / geometric-mean baseline noise expectation,0); H iff q>=10"
+      },
+      "residual_score": 3.3732177558007894,
+      "gate_sha256": "662dee91902091b718516b41ee8bf1b6f461dedafec47cc8cb422632e2822e82",
+      "role": null,
+      "scenario": "deep_plus_two_surface",
+      "eeg_snr_db": 20,
+      "meg_snr_db": -10
+    },
+    {
+      "case_number": 38,
+      "case_id": "erp-v3-fresh-dev-12-deep_plus_two_surface-eeg+20-meg-10",
+      "quality": {
+        "q_eeg": 39.7734249793835,
+        "q_meg": 0.040713020607671346,
+        "q_eeg_db": 15.995929906742184,
+        "q_meg_db": -13.902666749583982,
+        "observable_bin": "HL",
+        "threshold_q": 10,
+        "cross_energy": [
+          25871.16190611101,
+          45.04401779027534
+        ],
+        "expected_noise_half_a": [
+          653.1825119229172,
+          1110.2520265179028
+        ],
+        "expected_noise_half_b": [
+          647.7558409493828,
+          1102.5188362575495
+        ],
+        "baseline_mean_mode_correction": 0.6288659793814431,
+        "modality_order": [
+          "EEG",
+          "MEG"
+        ],
+        "truth_used": false,
+        "rule": "q=max(cross-half smooth energy / geometric-mean baseline noise expectation,0); H iff q>=10"
+      },
+      "residual_score": 6.046760930054112,
+      "gate_sha256": "fc421843be1c5fd33aa7bc32984e9079b7baeb2a27158988f07fa7e96c16b5df",
+      "role": null,
+      "scenario": "deep_plus_two_surface",
+      "eeg_snr_db": 20,
+      "meg_snr_db": -10
+    }
+  ]
+}
