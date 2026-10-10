@@ -1,0 +1,22 @@
+{
+  "date": "2026-10-10",
+  "document": "OASTER当前ERP算法完整说明20261010.docx",
+  "document_sha256": "540d9dc61724aa4c43f5d3dfb78302bfb00072f25b608f9e8d5b4985ff0f5476",
+  "algorithm_code_commit": "edb56795fd3223c78f0f2bc3f0f892aca7af16c2",
+  "rendered_pages": 19,
+  "native_editable_omml_equations": 55,
+  "tables": 4,
+  "visual_review": "All 19 final page PNGs inspected at original resolution; no clipping, missing glyphs, broken tables or orphan continuation page",
+  "renderer": "Microsoft Word 2019 native fixed-format export, then bundled Poppler PNG rendering",
+  "renderer_fallback_reason": "Packaged render_docx.py could not resolve LibreOffice on this Windows runtime; no system LibreOffice was used",
+  "qa_pdf_sha256": "06157892f7f879ab2a1f97273d423757b6ce295e356aca1fe9d3b81550763308",
+  "qa_intermediates_delivered": false,
+  "formula_review": "Two independent read-only source reviews; corrections applied for rectangular whitener, row-normalized P, baseline-centered simulation and DLE center definition",
+  "algorithm_source_hashes_verified": true,
+  "running_experiment_identity_sha256": "7a44d77732be30502373d81250f6bf55653ac06235c9c594b386213619a5a26e",
+  "running_experiment_manifest_sha256": "b674df0d9ced6701e0021ac29762a6c6f53ff1e877149381dbc32cfd0d5e38db",
+  "running_experiment_source_hashes_unchanged": true,
+  "new_experiment_started": false,
+  "new_pilot_audit_outputs_read": false,
+  "numerical_experiment_rerun_for_document": false
+}

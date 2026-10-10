@@ -1,0 +1,61 @@
+{
+  "code_commit": "edb56795fd3223c78f0f2bc3f0f892aca7af16c2",
+  "equation_count": 55,
+  "source_files": [
+    {
+      "path": "candidates/oaster_balanced.py",
+      "sha256": "74a9de1efc6d1e83f522024c9a3440d799fc054be348d91884171a62ddd99e92"
+    },
+    {
+      "path": "candidates/graph_reweight_solver.py",
+      "sha256": "48042de304322ff6715293d485da09af39d203c799b6ee637918a1f6a5381257"
+    },
+    {
+      "path": "candidates/oaster_partial_confirmation.py",
+      "sha256": "fb61914bfde8496105d5f7b9df4088d5f7148026094f5920b8442f722e8e7d33"
+    },
+    {
+      "path": "candidates/oaster_predictive.py",
+      "sha256": "82f4e0a3dfd0bea09cbff50ae5d188c5b6e36a9c42610b99fe7c45bf84e37983"
+    },
+    {
+      "path": "candidates/oaster_conditional.py",
+      "sha256": "c371136f4bd33fd39759e1b5b15dbbdab4c2f412adb185509e7210a6f7507b59"
+    },
+    {
+      "path": "benchmark/erp_protocol.py",
+      "sha256": "f74f9b1dd33036105d50d4ccd6242c1a068cb090fe4a234eb7736f8071e16647"
+    },
+    {
+      "path": "benchmark/erp_replicates.py",
+      "sha256": "b4274a4fd48554b597e04dc5a479bd48547c50c870eee9da9d6b3c84d2ab1994"
+    },
+    {
+      "path": "benchmark/erp_trial_covariance.py",
+      "sha256": "2b62b351ae375d470f993104cc2bc066414b8c0d686838ee3f9135a6624a6c5f"
+    },
+    {
+      "path": "benchmark/metrics.py",
+      "sha256": "f07a42e26dc2118c418744e3a4971c5fcd3037b7b93e26a7e2e4e899400986d8"
+    },
+    {
+      "path": "refined_grid.py",
+      "sha256": "4f0bad2a1f8c437d1e082e1466ac5e8410e1fc79ff3edaa9180e869345828da8"
+    },
+    {
+      "path": "作者风格版/79-v3全新开发运行.py",
+      "sha256": "ab9fd8150d3ed47b277bdb4f55e10334864f5c34242ee091c162f35c26c9de68"
+    },
+    {
+      "path": "作者风格版/80-条件门控新面板.py",
+      "sha256": "e14126523263efa8a120ae7830938fad2d988146d4824aa6fe952fd6157b1201"
+    },
+    {
+      "path": "作者风格版/81-条件门控冻结验证.py",
+      "sha256": "598619f2376b1e5485b02e71d116fefc450f90d2878d9d1479d185dd4642c181"
+    }
+  ],
+  "content_sha256": "4727475c8937fa48969c555ee90010c0d5e1dfab70791b7599fc44b0c25284ee",
+  "output_sha256": "540d9dc61724aa4c43f5d3dfb78302bfb00072f25b608f9e8d5b4985ff0f5476",
+  "experiment_code_modified": false
+}
